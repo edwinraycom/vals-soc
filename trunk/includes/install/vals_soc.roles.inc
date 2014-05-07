@@ -59,7 +59,7 @@ function get_default_roles() {
 			'weight' => '2',
 			'code' => 'BHTGSKKRWP'
 	);
-    // why do we need the role soc?
+    // We need the role soc for the members of the team setting up a Semester of Code
     $roles['soc'] = array(
 			'name' => 'Semester of Code',
 			'weight' => '2',
