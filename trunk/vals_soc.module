@@ -1,0 +1,148 @@
+<?php
+/*
+ * To modularise the drupal hooks we load in our code as needed using module_load_include
+ * We should only use this file for drupal hooks  
+ * (Otherwise this file will get rather large)
+ * NOTE: module_load_include results in a "require_once" anyway
+ * The functionality that needs to be there always is included in the standard way.
+ */
+define('_DEBUG', TRUE);
+include('includes/module/vals_soc.handle_forms.inc');
+include('includes/module/vals_soc.forms.inc');
+//***********************************************************************************
+// BLOCKS
+//***********************************************************************************
+/**
+ * Implements Drupal hook_block_info().
+ */
+function vals_soc_block_info() {
+	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.block');
+	return vals_soc_block_info_handler();
+}
+
+
+/**
+ * Implements Drupal hook_block_view().
+ * @param string $delta
+ * @return multitype:string NULL
+ */
+function vals_soc_block_view($delta = '') {
+	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.block');
+	return vals_soc_block_view_handler($delta);
+}
+
+/*
+ * Implements Drupal hook_cron_queue_info().
+ */
+function vals_soc_cron_queue_info(){
+	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.cron');
+	return vals_soc_cron_queue_info_handler();
+}
+
+//***********************************************************************************
+// FORMS
+//***********************************************************************************
+/**
+ * Implements Drupal hook_form_FORM_ID_alter().
+ * @param unknown $form
+ * @param unknown $form_state
+ * @return Ambigous <multitype:string, multitype:string number NULL >
+ */
+function vals_soc_form_user_register_form_alter(&$form, &$form_state) {
+	//module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.forms');
+	return vals_soc_form_user_register_form_alter_handler($form, $form_state);
+}
+
+function vals_soc_form_user_profile_form_alter(&$form, &$form_state) {
+	//module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.forms');
+	return vals_soc_form_user_profile_form_alter_handler($form, $form_state);
+}
+//***********************************************************************************
+// HELP
+//***********************************************************************************
+/**
+ * Implements Drupal hook_help().
+ *
+ * Displays help and module information.
+ *
+ * @param path
+ *   Which path of the site we're using to display help
+ * @param arg
+ *   Array that holds the current path as returned from arg() function
+ */
+function vals_soc_help($path, $arg) {
+	switch ($path) {
+		case "admin/help#soc":
+			return '<p>' . t("Laat ons semester of code blok zien") . '</p>';
+			break;
+	}
+}
+
+/**
+ * Implements hook_forms().
+ */
+function vals_soc_forms() {
+  $forms['vals_soc_organisation_form']= array(
+    'callback' => 'vals_soc_organisation_form',
+    'callback arguments' => array('vals_soc_organisation_form'),
+  );
+  $forms['vals_soc_group_form']= array(
+    'callback' => 'vals_soc_group_form',
+    'callback arguments' => array('vals_soc_group_form'),
+  );
+  $forms['vals_soc_institute_form']= array(
+    'callback' => 'vals_soc_institute_form',
+    'callback arguments' => array('vals_soc_institute_form'),
+  );
+//  $forms['vals_soc_organisation_form']= array(
+//    'callback' => 'vals_soc_organisation_form',
+//    'callback arguments' => array('vals_soc_organisation_form'),
+//  );
+  return $forms;
+}
+
+function vals_soc_js_alter(&$javascript) {
+  // Swap out jQuery to use an updated version of the library.
+  //$javascript['misc/jquery.js']['data'] = drupal_get_path('module', 'jquery_update') . '/jquery.js';
+}
+//***********************************************************************************
+// MAIL
+//***********************************************************************************
+/**
+ * Implements Drupal _hook_mail()
+ * 
+ * @param unknown $key
+ * @param unknown $message
+ * @param unknown $params
+ */
+function vals_soc_mail($key, &$message, $params) {
+	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
+	return vals_soc_mail_handler($key, $message, $params);
+}
+
+
+/**
+ * Implements Drupal _hook_mail_alter()
+ * 
+ * @param unknown $message
+ */
+function vals_soc_mail_alter(&$message) {
+	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
+	return vals_soc_mail_alter_handler($message);
+}
+
+
+//***********************************************************************************
+// MENUS
+//***********************************************************************************
+
+/**
+ * Implements Drupal _hook_menu()
+ *
+ * include menu handler file and call the handler function
+ * @return multitype:string multitype:string  multitype:string multitype:string
+ */
+function vals_soc_menu(){
+	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.menus');
+	return vals_soc_menu_handler();
+}
