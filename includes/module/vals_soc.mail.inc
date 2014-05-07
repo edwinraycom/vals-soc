@@ -1,5 +1,20 @@
-<?php 
+<?php
+//TODO: move this function to better location.
+//It was necessary to remove the syntax error in vals_soc_mail_handler
+/*
+ * Gets a system variable with variable_get which is expected to be an array with
+ * the field supplied as a key, if not: a default will be returned
+ */
 
+function variableGetFromStruct($var, $field, $default='')
+{
+	$arr = variable_get($var);
+	if ($arr && issset($arr[$field])){
+		return $arr[$field];
+	} else {
+		return $default;
+	}
+}
 /**
  * Handle mail requests
  * @param unknown $key
@@ -10,7 +25,7 @@ function vals_soc_mail_handler($key, &$message, $params) {
 	switch($key) {
 		case 'vals_soc_email_accepted_organisation':
 			$message['subject'] = t('Organisation application for VALS summer of code');
-			$message['body'][] = variable_get('vals_accepted_organisations_message')['value'];
+			$message['body'][] = variableGetFromStruct('vals_accepted_organisations_message', 'value');
 			if (isset($params['headers']) && is_array($params['headers'])) {
 				$message['headers'] += $params['headers'];
 			}
@@ -18,27 +33,27 @@ function vals_soc_mail_handler($key, &$message, $params) {
 
 		case 'vals_soc_email_rejected_organisation':
 			$message['subject'] = t('Organisation application for VALS summer of code');
-			$message['body'][] = variable_get('vals_rejected_organisations_message')['value'];
+			$message['body'][] = variableGetFromStruct('vals_rejected_organisations_message', 'value');
 			break;
 
 		case 'vals_soc_email_mentor_welcome':
 			$message['subject'] = t('Welcome mentor to the VALS summer of code');
-			$message['body'][] = variable_get('vals_mentor_welcome_message')['value'];
+			$message['body'][] = variableGetFromStruct('vals_mentor_welcome_message', 'value');
 			break;
 
 		case 'vals_soc_email_student_welcome':
 			$message['subject'] = t('Welcome student to the VALS summer of code');
-			$message['body'][] = variable_get('vals_student_welcome_message')['value'];
+			$message['body'][] = variableGetFromStruct('vals_student_welcome_message', 'value');
 			break;
 
 		case 'vals_soc_accepted_students':
 			$message['subject'] = t('Your project proposal to the VALS summer of code');
-			$message['body'][] = variable_get('vals_accepted_students_message')['value'];
+			$message['body'][] = variableGetFromStruct('vals_accepted_students_message', 'value');
 			break;
 
 		case 'vals_soc_rejected_students':
 			$message['subject'] = t('Your project proposal to the VALS summer of code');
-			$message['body'][] = variable_get('vals_rejected_students_message')['value'];
+			$message['body'][] = variableGetFromStruct('vals_rejected_students_message', 'value');
 			break;
 	}
 }
