@@ -22,12 +22,12 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
      
     //Check the student belonging to a valid group
     if ($requested_user_type == 'student'){
-        //if (! isset($form_state['values']['institute']) || $form_state['values']['institute']  == 0){
-          //  form_set_error('institute', t('You should select your university or institute.'));
-        //}
+        if (! isset($form_state['values']['institute']) || $form_state['values']['institute']  == 0){
+           form_set_error('institute', t('You should select your university or institute.'));
+        }
         $db_and = db_and();
         $db_and->condition('code', $code_entered);
-        //$db_and->condition('type', 'group');//Since we do not want a long list of groups during registration
+        $db_and->condition('type', 'group');//Since we do not want a long list of groups during registration
         //we use the institute instead and so we select not on type student, but on group
         $db_and->condition('org', $form_state['values']['institute']);
         $valid_groups_cnt = db_select('soc_codes')->fields('soc_codes')->condition($db_and)->execute()->rowCount();
