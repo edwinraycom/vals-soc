@@ -43,14 +43,14 @@ function some_callback_function(){
     if (!$groups){
         $particpants = new Participants();
          //if we pass empty value to getGroups the current supervisor is assumed
-        $groups = $particpants->getGroups(30);//$supervisor_selection););//TODO:  tijdelijk even 30
+        $groups = $particpants->getGroups($supervisor_selection);
     }
     if ($groups){
         echo "<ul class='grouplist'>";
         foreach($groups as $group){
             echo "<li>";
            // $member_url = "/vals/actions/group" 
-            echo "<a href='javascript: void(0);' onclick='ajaxCall(\"vals_soc\", \"showmembers\", {group_id:${group['group_id']},type:\"group\"}, null, null,\"html\", \"members_${group['group_id']}\");'>${group['name']}</a>: ${group['description']}";
+            echo "<a href='javascript: void(0);' onclick='ajaxCall(\"vals_soc\", \"showmembers\", {group_id:${group['group_id']},type:\"group\"}, \"members_${group['group_id']}\");'>${group['name']}</a>: ${group['description']}";
             echo "<div id='members_${group['group_id']}'></div>";
             echo "</li>";
         }
@@ -66,7 +66,7 @@ function renderStudents($group_selection='', $students=''){
         $particpants = new Participants();
         //if we pass empty value to getStudents the current supervisor is assumed and we 
         //get all his students
-        $students = $particpants->getStudents($group_selection);//$groups);//TODO: $groups tijdelijk even 30
+        $students = $particpants->getStudents($group_selection);
     }
     if ($students->rowCount()){
         echo "<ul class='grouplist'>";
@@ -86,7 +86,7 @@ function renderSupervisors($group_selection='', $supervisors=''){
         $particpants = new Participants();
         //if we pass empty value to getSupervisors the current institute_admin is assumed and we 
         //get all his supervisors in his/her institute
-        $supervisors = $particpants->getSupervisors($group_selection);//$groups);//TODO: $groups tijdelijk even 30
+        $supervisors = $particpants->getSupervisors($group_selection);
     }
     if ($supervisors->rowCount()){
         echo "<ul class='grouplist'>";
@@ -103,10 +103,13 @@ function renderSupervisors($group_selection='', $supervisors=''){
     
 function renderParticipants($type='', $participants='', $group_selection='', $group_type=''){
     if (!$participants){
-        $particpant_obj = new Participants();
+    	$particpant_obj = new Participants();
         $participants = $particpant_obj->getParticipants($type, $group_type, $group_selection);
+        if (!($participants && $participants->rowCount())){
+        	$participants = null;
+        }
     }
-    if ($participants->rowCount()){
+    if ($participants && $participants->rowCount()){
         echo "<ul class='grouplist'>";
         foreach($participants as $member){
             echo "<li>";

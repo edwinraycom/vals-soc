@@ -25,7 +25,7 @@ class Participants {
         //todo: find out whether current user is supervisor
        
         if ($group == 'all'){
-            $students = db_query('select * from users as u left join  users_roles as ur on u.uid=ur.uid left join  role as r on r.rid=ur.rid where r.name=:role ', array(':role' => 'student'));
+            $students = db_query('select * from users as u left join users_roles as ur on u.uid=ur.uid left join role as r on r.rid=ur.rid where r.name=:role ', array(':role' => 'student'));
         } elseif ($group) {
             $students = db_query("SELECT * from users as u left join soc_user_membership as um".
                 " on u.uid = um.uid WHERE um.type = 'group' AND um.oid = $group AND u.uid != $supervisor ");
@@ -49,7 +49,7 @@ class Participants {
         global $user;
         
         $group_head = $user->uid;
-        //todo: find out whether current user is institute_admin
+        //todo: find out whether current user is indeed head of the group
         
         if ($group_id == 'all'){
             $members = db_query(
@@ -64,8 +64,8 @@ class Participants {
                     "WHERE u.uid = '$id'");
                 
             } else {
-                if (!$group_id) {
-                     //get the institute from the institute admin
+                if (!$group_id && $group_type) {
+                     //get the organisation from the current user, assuming he/she is head of the organisation/group/etc
                     $group_id = db_query(
                         "SELECT oid from soc_user_membership um".
                         " WHERE um.type = '$group_type' AND um.uid = $group_head ")
@@ -107,11 +107,13 @@ class Participants {
                 'institute' => 'inst_id', 
                 'organisation' => 'org_id');
             $key_column = $key_columns[$org_type];
+            $code_key_column = ($org_type == 'group') ? 'group_id' : 'org';
             if ($id){
+            	
                 $members = db_query(
                     "SELECT o.*, c.code from soc_${org_type}s as o ".                   
                     "left join soc_codes as c ".
-                    " on o.$key_column = c.org ".
+                    " on o.$key_column = c.$code_key_column ".
                     "WHERE o.$key_column = $id ");
             } else {
                 $group_head_id = $group_head_id ?: $group_head;
@@ -121,7 +123,7 @@ class Participants {
                     "left join soc_user_membership as um ".
                     " on o.$key_column = um.oid ".
                     "left join soc_codes as c ".
-                    " on o.$key_column = c.org ".
+                    " on o.$key_column = c.$code_key_column ".
                     "WHERE um.type = '$org_type' AND um.uid = $group_head_id ");
             }
         }
@@ -283,6 +285,10 @@ class Participants {
     
     function updateOrganisation($type, $organisation, $id)
     {
+    	if (! $organisation){
+    		drupal_set_message(t('Update requested with empty data set'));
+    		return false;
+    	}
         $key_columns = array(
             'group' => 'group_id', 
             'institute' => 'inst_id', 
@@ -296,19 +302,73 @@ class Participants {
             ->execute();
     }
     
-    function filterPost($type, $post){
-        $input = array();
-        //todo: get the db fields from schema and move foreach out of switch
-        switch ($type){
-            case 'institute':
-                foreach (array('name', 'contact_name', 'contact_email') as $prop){
-                    if (isset($post[$prop])){
-                        $input[$prop] = $post[$prop];
-                    }
-                }
-            break;
-            //etc
+    function insertGroup($group){
+    	if (! $group){
+    		drupal_set_message(t('Insert requested with empty data set'));
+    		return false;
+    	}
+    	
+    	global $user;
+    	
+    	$txn = db_transaction();
+    	try {
+    		$uid = $user->uid;
+    		drupal_set_message('testing in insertgroup' );
+    		//->fields('soc_groups')->condition('supervisor_id', $supervisor)->
+    		$institute = db_select('soc_user_membership')->fields('soc_user_membership', array('oid'))
+    			->condition('supervisor_id', $uid)
+    			->condition('type', 'institute')
+    			->execute()->fetchCol();
+    		drupal_set_message(" insert geval:".print_r($institute, 1));
+    		$oid = db_insert('soc_groups')->fields(array(
+    				'name'=>$group['name'],
+    				'supervisor_id' => $uid,
+    				'inst_id' => 45,//TODO: NOT 45
+    				'url' => $group['url'],
+    				'description' => ($group['description'] ?: ''),
+    		))->execute();
+    	
+    		$result = $oid && db_insert('soc_user_membership')->fields( array(
+    				'uid'=>$uid,
+    				'type' => 'group',
+    				'oid'=>$oid,
+    		))->execute();
+    		$result = $result && db_insert('soc_codes')->fields( array(
+    				'type'=>'group',
+    				'code' => createRandomCode(),
+    				'org'=> $oid))->execute();
+    		if ($result) {
+    			drupal_set_message(t('You have succesfully added your group to the Semester of Code.'));
+    			return TRUE;
+    		} else {
+    			drupal_set_message(t('We could not add your group.'), 'error');
+    		}
+    	} catch (Exception $ex) {
+    		$txn->rollback();
+    		drupal_set_message(t('We could not add your group.'). (_DEBUG? $ex->__toString(): ''), 'error');
+    	}
+    	return FALSE;
+    }
+    
+    function filterPost($type){
+        
+        //TODO: get the db fields from schema and move foreach out of switch
+        $fields = array(
+        	'institute' => array('name', 'contact_name', 'contact_email'),
+        	'organisation'=> array('name', 'contact_name', 'contact_email', 'url', 'description'),
+        	'group'=> array('name', 'description'),
+        		);
+        if (!$type || !isset($fields[$type])){
+        	return null;
+        } else {
+        	$input = array();
         }
+        
+    	foreach ($fields[$type] as $prop){
+			if (isset($_POST[$prop])){
+				$input[$prop] = $_POST[$prop];
+			}
+		}
         return $input;
     }
 }

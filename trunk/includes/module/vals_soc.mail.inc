@@ -1,20 +1,6 @@
 <?php
-//TODO: move this function to better location.
-//It was necessary to remove the syntax error in vals_soc_mail_handler
-/*
- * Gets a system variable with variable_get which is expected to be an array with
- * the field supplied as a key, if not: a default will be returned
- */
+module_load_include('inc', 'vals_soc', 'includes/vals_soc.helper');
 
-function variableGetFromStruct($var, $field, $default='')
-{
-	$arr = variable_get($var);
-	if ($arr && issset($arr[$field])){
-		return $arr[$field];
-	} else {
-		return $default;
-	}
-}
 /**
  * Handle mail requests
  * @param unknown $key

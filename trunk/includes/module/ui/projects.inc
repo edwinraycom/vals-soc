@@ -7,13 +7,17 @@ function initProjectLayout(){
 	$allProjects = Project::getInstance()->getProjects();
 	
 	echo "<div id='project_container'>";
-	foreach($allProjects as $project){
-		echo "<div id='project_item'>";
-		echo "<div id='project_header'>";
-		echo "${project['title']}";
-		echo "</div>";
-		echo "<div id='project_desc'>${project['description']}</div>";
-		echo "</div>";
+	if ($allProjects){
+		foreach($allProjects as $project){
+			echo "<div id='project_item'>";
+			echo "<div id='project_header'>";
+			echo "${project['title']}";
+			echo "</div>";
+			echo "<div id='project_desc'>${project['description']}</div>";
+			echo "</div>";
+		}
+	} else {
+		echo t('There are no projects yet');
 	}
 	
 	echo "</div>";

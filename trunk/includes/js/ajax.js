@@ -1,7 +1,7 @@
 //var $jq = jquery.noConflict();
 var debugging = true;
-//var baseUrl = '/vals/';
-var baseUrl = '/site/';
+var baseUrl = '/vals/';
+
 
 var $jq = jQuery;
 
@@ -41,12 +41,18 @@ function ajaxCall(module, action, data, target, type, err) {
             call.success =
                     function(msg) {
                         if (type == 'json') {
-                            if (msg.result == "OK") {
+                            if (msg.result == "html") {
                                 //$jq("#" + target).html(msg.html);
                                  ajaxInsert(msg.html, target);
-                            } else {
+                            } else if (msg.result == "error") {
                                 //$jq("#" + target).html(msg.error);
                                  ajaxInsert(msg.error, target);
+                            } else {
+                            	if (typeof msg.msg != 'undefined'){
+                            		ajaxInsert(msg.msg, target);
+                            	} else {
+                            		alertdev('The action '+ action + ' succeeded. Specify a success message or some function');
+                            	}
                             }
                         } else {//assume text or html, we don't care: all can be valid
                             ajaxInsert(msg, target);
@@ -62,7 +68,7 @@ function ajaxCall(module, action, data, target, type, err) {
     else
         call.fail = function(jqXHR, textStatus, errorThrown) {
             console.log('AjaxCall failed with some error.Redirected to its fail function with: ' + errorThrown);
-        }
+        };
     call.target = target;
     return $jq.ajax(call);
 }
