@@ -60,10 +60,12 @@ function showObject(obj, d){
     }
     return s;
 }
+
 // Takes an array of either element IDs or a hash with the element ID as the key
 // and an array of sub-element IDs as the value.
 // When activating these sub-elements, all parent elements will also be
 // activated in the process.
+// When no initial tab id is given, the first tab will be made active
 function makeTabsActive(tab_name, active_tabs, initial) {
     
     var all = {},
@@ -95,11 +97,12 @@ function makeTabsActive(tab_name, active_tabs, initial) {
     
     // Find all anchors (<a href="#something">.)
     function findTabs(){
-       var temp = document.getElementsByTagName('a');
+        var temp = document.getElementsByTagName('a');
         var regex = new RegExp('#'+ tab_name +'([A-Za-z0-9:._-]+)$');
         var reg_js = new RegExp('^[j,J]avascript');
         var $match = false;
         var target = '';
+        
         for (var i = 0; i < temp.length; i++) {
             var a = temp[i];
             if (reg_js.test(a.href)){
@@ -107,6 +110,7 @@ function makeTabsActive(tab_name, active_tabs, initial) {
                     //this attribute serves as anchor now
                     target = a.getAttribute("data-target");
                 } else {
+                	//this is not a tab with javascript
                     continue;
                 }
             } else {
@@ -147,7 +151,8 @@ function makeTabsActive(tab_name, active_tabs, initial) {
 				setClass(all[cur][i], false);
 			}
 		}
-
+		//Set all targets from the current tab and the current tab (all in the lookup table all[id])
+		// on active class
 		for (var i = 0; i < all[id].length; i++) {
 			setClass(all[id][i], true);
 		}
@@ -227,6 +232,6 @@ function makeTabsActive(tab_name, active_tabs, initial) {
         activate(first);
     }
 }
-//We just return the main function, but the intended use is to call makeActivatable
+//We just return the main function, but the intended use is to call makeTabsActive
 return makeTabsActive;
 })();

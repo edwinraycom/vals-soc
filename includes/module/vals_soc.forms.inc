@@ -2,6 +2,13 @@
 //require_once('vals_soc.helper.inc');
 module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
 
+/*
+ * We use this function to populate fields in the form of an entity if it already exists
+ */
+function populate($obj, $prop, $default=''){
+	return ($obj && isset($obj->$prop)) ? $obj->$prop : $default;
+}
+
 /**
  * Form to edit the programme email messages
  * @param unknown $form
@@ -382,19 +389,21 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 	return $form;
 }
 
-function vals_soc_organisation_form($form, &$form_state){
+function vals_soc_organisation_form($form, &$form_state, $org=''){
     
     $form['name'] = array(
             "#type" => "textfield",
 			'#title' => t('What is the name of your organisation?'),
             "#size" => 60,
             '#required' => '1',
+             "#default_value" => populate($org, 'name'),
             //"#description" => t("This code is different per role."),
 	);
 	$form['description'] = array(
             "#type" => "textarea",
 			'#title' => t('Describe your organisation, if you like'),
             "#size" => 60,
+             "#default_value" => populate($org, 'description'),
             //"#description" => t("This code is different per role."),
 	);
     $form['url'] = array(
@@ -402,6 +411,7 @@ function vals_soc_organisation_form($form, &$form_state){
 			'#title' => t('At what website can your organisation be found'),
             "#size" => 150,
             '#required' => '1',
+             "#default_value" => populate($org, 'url'),
             //"#description" => t("This code is different per role."),
 	);
     $form['contact_name'] = array(
@@ -409,6 +419,7 @@ function vals_soc_organisation_form($form, &$form_state){
 			'#title' => t('Who is the contact person (you?)'),
             "#size" => 100,
             '#required' => '1',
+             "#default_value" => populate($org, 'contact_name'),
             //"#description" => t("This code is different per role."),
 	);
     $form['contact_email'] = array(
@@ -416,19 +427,30 @@ function vals_soc_organisation_form($form, &$form_state){
 			'#title' => t('What is the email of the contact person'),
             "#size" => 100,
             '#required' => '1',
+             "#default_value" => populate($org, 'contact_email'),
             //"#description" => t("This code is different per role."),
 	);
-    $form['submit'] = array(
-        '#type' => 'submit',
-        '#value' => 'Submit',
-    );
-    $form['#submit'][] = 'vals_soc_organisation_form_submit_handler';
-    $form['#validate'][] = 'vals_soc_organisation_form_validate_handler';
+	if (!$org){
+         $form['submit'] = array(
+             '#type' => 'submit',
+             '#value' => 'Save',
+         );
+		$form['#submit'][] = 'vals_soc_organisation_form_submit_handler';
+    	$form['#validate'][] = 'vals_soc_organisation_form_validate_handler';
+     } else {
+         unset($form['#submit']);
+         $form['sumbit'] = array(
+           '#type' => 'button',
+           '#button_type' => 'button',
+           '#value' => t('Save'),
+           //'#theme' => 'garland_button',module, action, data, target, type, err
+           '#attributes' => array(
+               'onclick' => 'ajaxFormCall("vals-soc-organisation-form", "vals_soc", "save", '.
+               '{type: "organisation", id: '.$org->org_id.' }, "org_page-2", "json");')
+         );
+     }
+    
     return $form;
-}
-
-function populate($obj, $prop, $default=''){
-    return ($obj && isset($obj->$prop)) ? $obj->$prop : $default;
 }
 
 function vals_soc_institute_form($form, &$form_state, $institute=''){
@@ -471,7 +493,7 @@ function vals_soc_institute_form($form, &$form_state, $institute=''){
      if (!$institute){
          $form['submit'] = array(
              '#type' => 'submit',
-             '#value' => 'Submit',
+             '#value' => 'Save',
          );
          $form['#submit'][] = 'vals_soc_institute_form_submit_handler';
          $form['#validate'][] = 'vals_soc_institute_form_validate_handler';
@@ -480,7 +502,7 @@ function vals_soc_institute_form($form, &$form_state, $institute=''){
          $form['sumbit'] = array(
            '#type' => 'button',
            '#button_type' => 'button',
-           '#value' => 'Zenden',
+           '#value' => t('Save'),
            //'#theme' => 'garland_button',
            '#attributes' => array(
                'onclick' => 'ajaxFormCall("vals-soc-institute-form", "vals_soc", "save", {type: "institute", id: '.
@@ -490,26 +512,54 @@ function vals_soc_institute_form($form, &$form_state, $institute=''){
     return $form;
 }
 
-function vals_soc_group_form($form, &$form_state){ 
+function vals_soc_group_form($form, &$form_state, $group='', $target='group_page-2'){ 
     $form['name'] = array(
             "#type" => "textfield",
 			'#title' => t('Give a name to remember your student group'),
             "#size" => 60,
             '#required' => '1',
+            "#default_value" => populate($group, 'name')
             //"#description" => t("This code is different per role."),
 	);
 	$form['description'] = array(
             "#type" => "textarea",
 			'#title' => t('Some additional note to describe the group'),
             "#size" => 1024,
+            "#default_value" => populate($group, 'description')
             //"#description" => t("This code is different per role."),
 	);
-  
-    $form['submit'] = array(
-        '#type' => 'submit',
-        '#value' => 'Submit',
-    );
-    $form['#submit'][] = 'vals_soc_group_form_submit_handler';
-    $form['#validate'][] = 'vals_soc_group_form_validate_handler';
+  	
+	//If we never need a stand alone form and only use ajax, remove the commented code 
+	//and get common code outside
+	if (!$group){
+		unset($form['#submit']);
+		$form['sumbit'] = array(
+				'#type' => 'button',
+				'#button_type' => 'button',
+				'#value' => t('Save'),
+				//'#theme' => 'garland_button',
+				'#attributes' => array(
+					'onclick' => 'ajaxFormCall("vals-soc-group-form", "vals_soc", "save",'.
+						' {type: "group", id:0}, "'.$target.'", "json");')
+		);
+//          $form['submit'] = array(
+//              '#type' => 'submit',
+//              '#value' => 'Save',
+//          );
+//          $form['#submit'][] = 'vals_soc_group_form_submit_handler';
+//          $form['#validate'][] = 'vals_soc_group_form_validate_handler';
+     } else {
+         unset($form['#submit']);
+         $form['sumbit'] = array(
+         		'#type' => 'button',
+         		'#button_type' => 'button',
+         		'#value' => t('Save'),
+         		//'#theme' => 'garland_button',
+         		'#attributes' => array(
+         				'onclick' => 'ajaxFormCall("vals-soc-group-form", "vals_soc", "save",'.
+         				' {type: "group", id:'.$group->group_id.'}, "'.$target.'", "json");')
+         );
+     }
+
     return $form;
 }

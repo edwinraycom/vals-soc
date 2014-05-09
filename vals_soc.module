@@ -43,6 +43,26 @@ function vals_soc_cron_queue_info(){
 // FORMS
 //***********************************************************************************
 /**
+ * Implements hook_forms().
+ */
+ 
+function vals_soc_forms() {
+  $forms['vals_soc_organisation_form']= array(
+    'callback' => 'vals_soc_organisation_form',
+    'callback arguments' => array('vals_soc_organisation_form'),
+  );
+  $forms['vals_soc_group_form']= array(
+    'callback' => 'vals_soc_group_form',
+    'callback arguments' => array('vals_soc_group_form'),
+  );
+  $forms['vals_soc_institute_form']= array(
+    'callback' => 'vals_soc_institute_form',
+    'callback arguments' => array('vals_soc_institute_form'),
+  );
+  return $forms;
+}
+
+/**
  * Implements Drupal hook_form_FORM_ID_alter().
  * @param unknown $form
  * @param unknown $form_state
@@ -76,29 +96,6 @@ function vals_soc_help($path, $arg) {
 			return '<p>' . t("Laat ons semester of code blok zien") . '</p>';
 			break;
 	}
-}
-
-/**
- * Implements hook_forms().
- */
-function vals_soc_forms() {
-  $forms['vals_soc_organisation_form']= array(
-    'callback' => 'vals_soc_organisation_form',
-    'callback arguments' => array('vals_soc_organisation_form'),
-  );
-  $forms['vals_soc_group_form']= array(
-    'callback' => 'vals_soc_group_form',
-    'callback arguments' => array('vals_soc_group_form'),
-  );
-  $forms['vals_soc_institute_form']= array(
-    'callback' => 'vals_soc_institute_form',
-    'callback arguments' => array('vals_soc_institute_form'),
-  );
-//  $forms['vals_soc_organisation_form']= array(
-//    'callback' => 'vals_soc_organisation_form',
-//    'callback arguments' => array('vals_soc_organisation_form'),
-//  );
-  return $forms;
 }
 
 function vals_soc_js_alter(&$javascript) {

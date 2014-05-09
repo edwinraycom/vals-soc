@@ -10,7 +10,15 @@ function vals_soc_menu_handler(){
 			'file' => 'vals_soc.pages.inc',
 			'file path' => drupal_get_path('module', 'vals_soc') . '/includes/module/',
 	);	
-	
+	$items['administer/members'] = array(
+			'title' => 'Administer',
+			'type' => MENU_NORMAL_ITEM,
+			'page callback' => 'vals_soc_administer_page',
+			'access arguments' => array('authenticated user'), // This needs to be revisited
+			'description' => 'Administer page',
+			'file' => 'vals_soc.pages.inc',
+			'file path' => drupal_get_path('module', 'vals_soc') . '/includes/module/',
+	);
 	$items['admin/config/vals_soc'] = array(
 			'title' => 'VALS Summer of code',
 			'type' => MENU_NORMAL_ITEM,
@@ -61,13 +69,5 @@ function vals_soc_menu_handler(){
 			'file' => 'vals_soc.pages.inc',
 			'file path' => drupal_get_path('module', 'vals_soc') . '/includes/module/',
 	);
-//	$items['admin/config/vals_soc/administer/add/organisation'] = array(
-//            'title' => t('Add your organisation'),
-//            'page callback' => 'drupal_get_form',
-//            'page arguments' => array('vals_soc_organisation_form'),
-//            'access arguments' => array('access content'),
-//            'description' => t('Add your organisation'),
-//            'type' => MENU_CALLBACK,
-//    );
 	return $items;
 }
