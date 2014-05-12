@@ -5,7 +5,10 @@ function vals_soc_menu_handler(){
 			'title' => 'Projects',
 			'type' => MENU_NORMAL_ITEM,
 			'page callback' => 'vals_soc_browse_projects',
-			'access arguments' => array('authenticated user'), // This needs to be revisited
+			'access arguments' => array('authenticated user'), // was 'access_contents'
+			// uncomment the 2 lines below to restrict access to menu items based on role
+			//'access callback' => 'vals_soc_user_role_check',
+			//'access arguments' => array(1, array('Organisation Administrator','Student')),
 			'description' => 'Projects page',
 			'file' => 'vals_soc.pages.inc',
 			'file path' => drupal_get_path('module', 'vals_soc') . '/includes/module/',
