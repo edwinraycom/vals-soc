@@ -23,7 +23,8 @@ if (user_access('administer site configuration')) {
 	echo '<b>IS SITE ADMIN</b><br>';
 }
 */
-function renderTabs($count, $tab_label, $target_label, $type, $data, $actions, $id=''){?>
+function renderTabs($count, $tab_label, $target_label, $type, $data, $id='',
+	$render_targets=false, $active_content='', $active_tab=1){?>
 	<ol id="toc"><?php
 	$label_start = t($tab_label);
 	$title = "";
@@ -52,7 +53,7 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $actions, $
 			if (isset($data[$t][5])){
 				$action	.= "&".$data[$t][5];
 			}
-			echo "onclick=\"ajaxCall('vals_soc', '$action', {type:'$type', id:$id}, '$target');\"";
+			echo "onclick=\"ajaxCall('administration', '$action', {type:'$type', id:$id}, '$target');\"";
 		}
 		
 		?>><span><?php echo $link_text;?></span></a>
@@ -60,9 +61,16 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $actions, $
 	<?php
 	}?>
 	</ol><?php
+	if ($render_targets){
+		for ($i=1; $i<= $count;$i++){
+			echo "<div id='group_page-$i' class='content'>".
+				(($i == $active_tab) ? $active_content:'')."</div>";
+		}
+	}
+	
 }
 
-echo '<BR>In admin.php: I am a '.$role;
+echo '<BR>In admin.php: I am a '.$role. ' and my user is '. $GLOBALS['user']->uid;
 echo "<div id='admin_container' class='tabs_container'>";
 switch ($role){
     case 'administrator':
@@ -72,13 +80,23 @@ switch ($role){
     case 'supervisor':
         echo '<h2>'.t('Your student groups').'</h2>';
         renderGroups();
+        echo "<hr/>";
         //Get my groups
         $groups = Participants::getOrganisations('group', $GLOBALS['user']->uid);
         if (! $groups->rowCount()){
         	echo t('You have no group yet registered');
-        	echo '<h2>'.t('Add your group').'</h2>';
-        	$f3 = drupal_get_form('vals_soc_group_form');
-        	print drupal_render($f3);
+        	$add_tab = '<h2>'.t('Add your group').'</h2>';
+        	$f3 = drupal_get_form('vals_soc_group_form', '', 'group_page-1');
+        	$add_tab .= drupal_render($f3);
+        	$data = array();
+        	$data[] = array(1, 'Add', 'addgroup', 'group', null, "target=admin_container");
+        	echo renderTabs(1, null, 'group_page-', 'group', $data, null, TRUE, $add_tab);
+        	?>
+        	<script type="text/javascript">
+        	   activatetabs('tab_', ['group_page-1']);
+        	</script><?php
+        	
+
         } else {
         	//$my_group = $groups->fetchObject();
         	//print_r($groups);
@@ -143,7 +161,7 @@ switch ($role){
             echo sprintf('<h3>%1$s</h3>', t('Your institute'));?>
             <ol id="toc">
                 <li><a href="#tab_inst_page-1"><span><?php echo $my_institute->name;?></span></a></li>
-                <li><a href="javascript:void(0);" data-target='#tab_inst_page-2' onclick="ajaxCall('vals_soc', 'edit', {type:'institute', id:<?php echo $my_institute->inst_id;?>}, 'inst_page-2');"><span><?php echo t('Edit');?></span></a></li>
+                <li><a href="javascript:void(0);" data-target='#tab_inst_page-2' onclick="ajaxCall('administration', 'edit', {type:'institute', id:<?php echo $my_institute->inst_id;?>}, 'inst_page-2');"><span><?php echo t('Edit');?></span></a></li>
             </ol>
             <div class="content" id="inst_page-1">
                 <?php renderOrganisation('institute', $my_institute);?>

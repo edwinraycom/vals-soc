@@ -154,7 +154,8 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
     }
 
     
-    if ((($type == 'student') || ($type == 'supervisor') || ($type == 'organisation_admin')) && ($form_state['values']['institute'])){
+    if ((($type == 'student') || ($type == 'supervisor') || ($type == 'organisation_admin')) && 
+    		(isset($form_state['values']['institute']) && $form_state['values']['institute'])){
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => 'institute', 
@@ -162,7 +163,8 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
             ))->execute();
     }
     
-    if ((($type == 'organisation_admin') || ($type == 'mentor')) && ($form_state['values']['organisation'])){
+    if ((($type == 'organisation_admin') || ($type == 'mentor')) && 
+    		(isset($form_state['values']['organisation']) && $form_state['values']['organisation'])){
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => 'organisation', 
