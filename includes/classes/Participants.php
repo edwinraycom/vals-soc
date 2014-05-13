@@ -313,13 +313,14 @@ class Participants {
     	$txn = db_transaction();
     	try {
     		$uid = $user->uid;
-    		drupal_set_message('testing in insertgroup' );
+    		drupal_set_message('testing in insertgroup is de uid '.$uid.print_r($user, 1) );
     		//->fields('soc_groups')->condition('supervisor_id', $supervisor)->
     		$institute = db_select('soc_user_membership')->fields('soc_user_membership', array('oid'))
     			->condition('supervisor_id', $uid)
     			->condition('type', 'institute')
-    			->execute()->fetchCol();
+    			;//->fetchCol();->execute();//->fetchCol();
     		drupal_set_message(" insert geval:".print_r($institute, 1));
+    		return false;
     		$oid = db_insert('soc_groups')->fields(array(
     				'name'=>$group['name'],
     				'supervisor_id' => $uid,

@@ -50,7 +50,7 @@ function some_callback_function(){
         foreach($groups as $group){
             echo "<li>";
            // $member_url = "/vals/actions/group" 
-            echo "<a href='javascript: void(0);' onclick='ajaxCall(\"vals_soc\", \"showmembers\", {group_id:${group['group_id']},type:\"group\"}, \"members_${group['group_id']}\");'>${group['name']}</a>: ${group['description']}";
+            echo "<a href='javascript: void(0);' onclick='ajaxCall(\"administration\", \"showmembers\", {group_id:${group['group_id']},type:\"group\"}, \"members_${group['group_id']}\");'>${group['name']}</a>: ${group['description']}";
             echo "<div id='members_${group['group_id']}'></div>";
             echo "</li>";
         }

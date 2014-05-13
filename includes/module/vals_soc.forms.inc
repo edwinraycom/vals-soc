@@ -445,7 +445,7 @@ function vals_soc_organisation_form($form, &$form_state, $org=''){
            '#value' => t('Save'),
            //'#theme' => 'garland_button',module, action, data, target, type, err
            '#attributes' => array(
-               'onclick' => 'ajaxFormCall("vals-soc-organisation-form", "vals_soc", "save", '.
+               'onclick' => 'ajaxFormCall("vals-soc-organisation-form", "administration", "save", '.
                '{type: "organisation", id: '.$org->org_id.' }, "org_page-2", "json");')
          );
      }
@@ -505,7 +505,7 @@ function vals_soc_institute_form($form, &$form_state, $institute=''){
            '#value' => t('Save'),
            //'#theme' => 'garland_button',
            '#attributes' => array(
-               'onclick' => 'ajaxFormCall("vals-soc-institute-form", "vals_soc", "save", {type: "institute", id: '.
+               'onclick' => 'ajaxFormCall("vals-soc-institute-form", "administration", "save", {type: "institute", id: '.
                   $institute->inst_id.' }, "inst_page-2", "json");')
          );
      }
@@ -539,7 +539,7 @@ function vals_soc_group_form($form, &$form_state, $group='', $target='group_page
 				'#value' => t('Save'),
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
-					'onclick' => 'ajaxFormCall("vals-soc-group-form", "vals_soc", "save",'.
+					'onclick' => 'ajaxFormCall("vals-soc-group-form", "administration", "save",'.
 						' {type: "group", id:0}, "'.$target.'", "json");')
 		);
 //          $form['submit'] = array(
@@ -556,7 +556,7 @@ function vals_soc_group_form($form, &$form_state, $group='', $target='group_page
          		'#value' => t('Save'),
          		//'#theme' => 'garland_button',
          		'#attributes' => array(
-         				'onclick' => 'ajaxFormCall("vals-soc-group-form", "vals_soc", "save",'.
+         				'onclick' => 'ajaxFormCall("vals-soc-group-form", "administration", "save",'.
          				' {type: "group", id:'.$group->group_id.'}, "'.$target.'", "json");')
          );
      }
