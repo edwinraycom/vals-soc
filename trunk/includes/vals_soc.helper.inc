@@ -10,8 +10,11 @@ function get_vals_version(){
 }
 
 function altSubValue($arr, $field, $default=''){
-	if ($arr && isset($arr[$field])) return $arr[$field];
-	else return $default;
+	if ($arr && isset($arr[$field])) {
+		return $arr[$field];
+	} else {
+		return $default;
+	}
 }
 
 //It was necessary to remove the syntax error in vals_soc_mail_handler
@@ -28,4 +31,10 @@ function variableGetFromStruct($var, $field, $default='')
 	} else {
 		return $default;
 	}
+}
+
+function tt($str){
+	$args = func_get_args();
+	$args[0] = t($str);
+	return call_user_func_array('sprintf', $args);
 }

@@ -23,6 +23,12 @@ THE SOFTWARE.
 */
 
 /*
+ * The software has been slightly modified by E. Veenendaal, Raycom BV in 2014
+ * Functionality is provided to cope with tabs that need to do an update of content: with a click
+ * the content can be filled with an ajaxcall and in these cases the links are recognised as well as
+ * tab links. By making use of the preventDefault js call, we can alternatively create a link with the 
+ * href being an anchor and just adding an onclick event.
+ * 
 !!! Usage notes !!!
 * All the tabs are contained in a div with class tabs_container
 * The tabs are formed by an ordered list with the class 'toc' and within each li an 
@@ -30,7 +36,7 @@ THE SOFTWARE.
 ****   as href a url of the form #tab_<id> where <id>= the id of the corresponding content pane
 *      as href javascript:void(0); and as onclick an ajaxcall with as target the content pane id
 * In the latter case the target is specified in a data-target attribute of the form #tab_<id>
-* The content pane is a div with as class 'content'
+* The content pane is a div with as class 'content'.
 * 
 * Include this file and after the html is loaded, call activetabs('tab_', [id1, id2, id3,...])
 * If ids are specified that are not in the page this will be reported in development modus, but will
@@ -41,16 +47,12 @@ THE SOFTWARE.
 // Wrapped in a function so as to not pollute the global scope.
 var activatetabs = (function () {
 // The CSS classes to use for active/inactive elements.
-    var anchors_found = false;
     var anchors = {};
-
-
 
 function showObject(obj, d){
     var depth = d ? d : 3;
     var s ='';
     for (var o in obj){
-        //alert2('bekijkt nu '+o);
         s = s + "OBJ: " + o + "=";
         if ((typeof obj[o] == 'object') && depth > 0){
             s = s + showObject(obj[o], d - 1);
@@ -66,10 +68,11 @@ function showObject(obj, d){
 // When activating these sub-elements, all parent elements will also be
 // activated in the process.
 // When no initial tab id is given, the first tab will be made active
-function makeTabsActive(tab_name, active_tabs, initial) {
-    
+function makeTabsActive(tab_name, active_tabs, initial, anchors_found) {
+//TODO    alertdev('Een call van makeTabsActive voor o.a.'+ active_tabs[0]);
     var all = {},
-        first = initial,
+        first = (typeof initial != 'undefined') ? initial : '',
+        anchors_found = (typeof anchors_found != 'undefined') ? anchors_found : false,
         current = null;
         
     var activeClass = 'active';
@@ -183,10 +186,7 @@ function makeTabsActive(tab_name, active_tabs, initial) {
                 first = item;
             }
 
-			// Store the elements in a lookup table.
-			all[item] = path;
-
-            // Attach a function that will activate the appropriate element
+			// Attach a function that will activate the appropriate element
 			// to all anchors.
 			if (item in anchors) {
                 // Create a function that will call the 'activate' function with
@@ -210,9 +210,12 @@ function makeTabsActive(tab_name, active_tabs, initial) {
 						throw 'Unsupported event model.';
 					}
                     //push the link too to set its class
-					all[item].push(a);
+					path.push(a);
 				}
 			}
+			// Store the elements in a lookup table: all is an array of arrays of elements (tab links and 
+			// content div element objects
+			all[item] = path;
 		} else {
 			throw 'Unexpected type.';
 		}
@@ -221,13 +224,14 @@ function makeTabsActive(tab_name, active_tabs, initial) {
     //Get the tabs object (we only need to do that once)
     if (!anchors_found) {
         findTabs();
-        anchors_found = true;
+    } else {
+    	//TODO alertdev('de tabs zouden er moeten zijn ');
     }
     //Get the corresponding targets in the lookup table and attach the activating 
     //event to the link in the tab
 	attach(active_tabs);
 
-	// Activate an element.
+	// Activate an element if there is any.
 	if (first) {
         activate(first);
     }

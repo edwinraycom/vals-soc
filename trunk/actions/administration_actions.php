@@ -8,121 +8,183 @@
 
 define('DRUPAL_ROOT', realpath(getcwd().'/../../../../..'));
 define('_VALS_SOC_ROOT', DRUPAL_ROOT.'/sites/all/modules/vals_soc');
+$base_url = $_SERVER['REQUEST_SCHEME']. '://'.$_SERVER['HTTP_HOST'].'/vals'; //This seems to be necessary to get to the user object: see
+//http://drupal.stackexchange.com/questions/76995/cant-access-global-user-object-after-drupal-bootstrap, May 2014
 require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);//Used to be DRUPAL_BOOTSTRAP_SESSION
 include(_VALS_SOC_ROOT.'/includes/vals_soc.helper.inc');
+include(_VALS_SOC_ROOT.'/includes/classes/Participants.php');
+include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
+include(_VALS_SOC_ROOT.'/includes/functions/administration.php');
 
-function jsonWrongResult($type='status'){
-	$errors = drupal_get_messages($type);
-	echo json_encode(array('result'=> 0, 'msg'=> t('Something went wrong').
-			($errors ? '<br/>'.implode('<br/>', $errors[$type]): (_DEBUG ? t(' No error message available'): '')
-					)));
+function jsonResult($result, $type, $show_always=FALSE){
+	$msgs = drupal_get_messages($type);
+	if ($msgs){
+		if ($type){
+			$msg = implode('<br/>', $msgs[$type]);
+		} else {
+			$msg = '';
+			foreach ($msgs as $cat => $msg_arr){
+				$msg .= "$cat:".implode('<br/>', $msg_arr);
+			}
+		}
+	} else {
+		$msg = (_DEBUG && $show_always ? sprintf(t(' No %1$s message available'), $type): '');
+	}
+	$struct = array('result'=> $result);
+	if (empty($result) || ($result === 'error')) {
+		$struct['error'] = $msg;
+	} else {
+		$struct['msg'] = $msg;
+	}
+	echo json_encode($struct);
+}
+
+function jsonBadResult($result='error', $type='error'){
+	jsonResult($result, $type, TRUE);
+}
+
+function jsonGooResult($result=TRUE, $type='status'){
+	jsonResult($result, $type);
+}
+
+function isValidOrganisationType($type){
+	return in_array($type, array('organisation', 'institute', 'group'));
+}
+
+function showDrupalMessages($category='status', $echo=FALSE){
+	if (empty($category)){
+		$s = '';
+		$msgs = drupal_get_messages();
+		foreach ($msgs as $type =>$msgs1){
+			$s .= "<br/>$type :<br/>";
+			$s.= implode('<br/>', $msgs1);
+		}
+	} else {
+		$msgs = drupal_get_messages($category);
+		$s = $msgs[$category] ? "<br/>$category:<br/>".implode('<br/>', $msgs[$category]) : '';
+	}
+	
+	if ($echo) echo $s;
+	return $s;
 }
 
 //return result depending on action parameter
 switch ($_GET['action']){
+	case 'listgroups':
+echo "VERVANGEN PAGINA";
+		showSupervisorPage();
+	break;
 	case 'addgroup':
 		$target = altSubValue( $_GET, 'target');
 		echo '<h2>'.t('Add a group to your list of groups').'</h2>';
 		$f2 = drupal_get_form('vals_soc_group_form', null, $target);
 		print drupal_render($f2);
-	break;	
-    case 'showmembers':
-        include(_VALS_SOC_ROOT.'/includes/classes/Participants.php');
-        include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');     
+	break;
+	case 'add':
+		$target = altSubValue($_POST, 'target');
+		$type = altSubValue($_POST, 'type');
+		echo 
+		'<h2>'.
+			(($type == 'group') ? t('Add a group to your list of groups') :
+			sprintf(t('Add your %1$s'), t($type))).
+		'</h2>';
+		echo "<div id='msg_$target'></div>";
+		$f2 = drupal_get_form("vals_soc_${type}_form", null, $target);
+		print drupal_render($f2);
+	break;
+    case 'showmembers':     
         if ($_POST['type'] == 'group'){
-            renderParticipants('student', '', $_POST['group_id'], $_POST['type']);
-            //renderStudents($_POST['group_id']);
+            echo renderParticipants('student', '', $_POST['group_id'], $_POST['type']);
+            //echo renderStudents($_POST['group_id']);
         } elseif ($_POST['type'] == 'institute'){
             $type = altSubValue($_POST, 'subtype', 'all');
             if ($type == 'student'){
-                $participants = new Participants();
-                $students = $participants->getAllStudents($_POST['institute_id']);
-                renderStudents('', $students);
+                $students = Participants::getAllStudents($_POST['institute_id']);
+                echo renderStudents('', $students);
             } elseif ($type == 'supervisor'){
-                $participants = new Participants();
-                $teachers = $participants->getSupervisors($_POST['institute_id']);
-                renderSupervisors('', $teachers);
+                $teachers = Participants::getSupervisors($_POST['institute_id']);
+                echo renderSupervisors('', $teachers);
             }
                 
         } elseif ($_POST['type'] == 'organisation'){
-           $type = altSubValue($_POST, 'subtype', 'all');
-           $organisation_id = altSubValue($_POST, 'organisation_id', '');
-           renderParticipants($type, '', $organisation_id);
+           $organisation_id = altSubValue($_POST, 'id', '');
+           echo renderParticipants('mentor', '', $organisation_id, 'organisation');
         }
      break;
+    case 'show':
+    	showRoleDependentAdminPage(getRole());
+    break;
     case 'view':
-    	include(_VALS_SOC_ROOT.'/includes/classes/Participants.php');
-    	include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
     	$type = altSubValue($_POST, 'type');
     	$id = altSubValue($_POST, 'id');
+    	$target = altSubValue($_POST, 'target', '');
     	$organisation = Participants::getOrganisation($type, $id);
+    	if (Participants::isOwner($type, $id)){
+    		echo "IK BEN DE OWNER";
+    	} else {
+    		echo "IK BEN NIET DE EIGENAAR";
+    	}
     	if (! $organisation){
-    		echo t('You have no organisation yet registered');
-//     		echo '<h2>'.t('Add your organisation').'</h2>';
-//     		$f3 = drupal_get_form('vals_soc_organisation_form');
-//     		print drupal_render($f3);
+    		echo sprintf(t('You have no %1$s yet registered'), t($type));
     	} else {
     		 echo sprintf('<h3>%1$s</h3>', sprintf(t('Your %1$s'), t($type)));
-    		 renderOrganisation($type, $organisation);
+    		 echo "<div id='msg_$target'></div>";
+    		 echo renderOrganisation($type, $organisation, null, $target);
+    	}
+    break;
+    case 'delete':
+    	$type = altSubValue($_POST, 'type', '');
+    	$id = altSubValue($_POST, 'id', '');
+    	if (! isValidOrganisationType($type)) {
+    		echo t('There is no such type we can delete');
+    	} else {
+    		$result = Participants::deleteOrganisation($type, $id);
+    		echo $result ? jsonGooResult() : jsonBadResult();
     	}
     break;
     case 'edit':
-        include(_VALS_SOC_ROOT.'/includes/classes/Participants.php');
-        include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
-        $type = altSubValue($_POST, 'type', '');
-        switch ($type) {
-        	case 'group':
-        		$id = $_POST['id'];
-        		$group = Participants::getOrganisation('group', $id);
-        		$f1 = drupal_get_form('vals_soc_group_form', $group);
-        		print drupal_render($f1);        	
-            break;
-            case 'institute':
-            	$inst_id = $_POST['id'];
-	            $inst = Participants::getOrganisation('institute', $inst_id);
-	            $f1 = drupal_get_form('vals_soc_institute_form', $inst);
-	            print drupal_render($f1);     
-            break;
-			case 'organisation':
-				$organisation_id = altSubValue($_POST, 'id', '');
-				$org = Participants::getOrganisation('organisation', $organisation_id);
-				 
-				$f1 = drupal_get_form('vals_soc_organisation_form', $org);
-				print drupal_render($f1); 
-			break;
-        	default: echo t('There is no such type to edit');
-        }
-        
-    break;
-    case 'save':
-        include(_VALS_SOC_ROOT.'/includes/classes/Participants.php');
-        //include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
         $type = altSubValue($_POST, 'type', '');
         $id = altSubValue($_POST, 'id', '');
+        $target = altSubValue($_POST, 'target', '');
+        if (! isValidOrganisationType($type)) {
+        	echo t('There is no such type to edit');
+        } else {
+        	$obj = Participants::getOrganisation($type, $id);
+        	$f = drupal_get_form("vals_soc_${$type}_form", $obj, $target);
+        	print drupal_render($f); 
+        }        
+    break;
+    case 'save':
+        $type = altSubValue($_POST, 'type', '');
+        $id = altSubValue($_POST, 'id', '');
+
         //TODO do some checks here
-        $properties = Participants::filterPost($type, $_POST);
-        if (in_array($type, array('organisation', 'institute'))){
-        	$result = Participants::updateOrganisation($type, $properties, $id);
-        } elseif ($type == 'group') {
-        	if ($id){
-        		$result = Participants::updateOrganisation($type, $properties, $id);
-        	} else {
-        		drupal_set_message(" insert geval");
-        		$result = Participants::insertGroup($properties);
-        	}
-        } else {
+        if(! isValidOrganisationType($type)){
         	$result = NULL;
-//         	$result = Participants::updateParticipant($type, $properties, $id);
-		}
-		if ($result){
-            echo json_encode(array('result'=>TRUE, 'msg'=> 
-            		sprintf(t('You succesfully changed the data of your %1$s'), t($type))));
+        	drupal_set_message(sprintf(t('This is not a valid type: %s'), $type), 'error');
+        }
+        
+        $properties = Participants::filterPost($type, $_POST);
+        if (!$id){
+        	$result = ($type == 'group') ? Participants::insertGroup($properties) :
+        		Participants::insertOrganisation($properties, $type);
         } else {
-        	drupal_set_message(" het type is $type en $id");
-        	 
-        	drupal_set_message('Het ging mis met deze data '.print_r($properties, 1));
-        	echo jsonWrongResult();
+        	$result = Participants::updateOrganisation($type, $properties, $id);
+        }	
+
+		if ($result){
+            echo json_encode(array(
+            		'result'=>TRUE,
+            		'id' => $id,
+            		'type'=> $type,
+            		'msg'=>
+            		($id ? sprintf(t('You succesfully changed the data of your %1$s'), t($type)):
+            			   sprintf(t('You succesfully added your %1$s'), t($type))).
+            		(_DEBUG ? showDrupalMessages(): '') 
+            		));
+        } else {
+        	echo jsonBadResult();
         }
 
         

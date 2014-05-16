@@ -23,7 +23,44 @@ function ajaxInsert(msg, target) {
 	}
 }
 
-function ajaxCall(category, action, data, target, type, err) {
+function ajaxError(targ, msg) {
+	if (msg){
+		var err_target = $jq('#'+targ);	
+	
+		if (err_target.length){
+			err_target.html(msg);
+			err_target.addClass('messages error');
+		}
+	}
+}
+
+function ajaxMessage(targ, msg) {
+	if (msg){
+		var err_target = $jq('#'+targ);	
+	
+		if (err_target.length){
+			err_target.html(msg);
+			err_target.addClass('messages status');
+		}
+	}
+}
+
+function sanitizeTarget(target){
+	return target.replace(/[\(,\),;,\,]/g, '');
+}
+
+function isFunction(func){
+	//Since func could also be a string of the form action=modules&sub=.... the eval might raise an error if we
+	//do not enclose it in quotes. We just want to return false in that case
+	//Doing return (func !== null) && (typeof( func ) == 'function'); does not work, so we have to use eval
+	try {
+		return eval("typeof " + sanitizeTarget(func) + " == 'function'");
+	} catch (e){
+		return false;
+	}
+}
+
+function ajaxCall(category, action, data, target, type, args) {
 	if (!type)
 		type = 'html';// possible types are html, json, xml, text, script,
 						// jsonp
@@ -38,10 +75,22 @@ function ajaxCall(category, action, data, target, type, err) {
 	// long as the returned val is corresponding with dataType and in time.
 	// If the success function is not speicifed, a target is necessary to show
 	// the result
+
 	if (target)
-		if (typeof target == 'function')
-			call.success = target;
-		else {
+		if (isFunction(target)) {
+			if (arguments.length < 6){
+				var args = [];
+				
+			}
+			call.success = function(msg){
+					window[target](msg, args);
+				};		
+//			call.success = (function(args){
+//				return function(msg){
+//					eval(target + "(msg, args)");
+//				};
+//				})(args);
+		} else {
 			call.success = function(msg) {
 				if (type == 'json') {
 					if (msg.result == "html") {
@@ -69,19 +118,17 @@ function ajaxCall(category, action, data, target, type, err) {
 		alertdev('No target or function has been specified: see console for details.');
 	}
 
-	if (err)
-		call.fail = err;
-	else
-		call.fail = function(jqXHR, textStatus, errorThrown) {
-			console
-					.log('AjaxCall failed with some error.Redirected to its fail function with: '
-							+ errorThrown);
-		};
-	call.target = target;
+	call.fail = function(jqXHR, textStatus, errorThrown) {
+		console
+				.log('AjaxCall failed with some error.Redirected to its fail function with: '
+						+ errorThrown);
+	};
+		
+	
 	return $jq.ajax(call);
 }
 
-function ajaxFormCall(frm, category, action, data, target, type, err) {
+function ajaxFormCall(frm, category, action, data, target, type, args) {
 	var call_args = $jq('#' + frm).serialize();
 	if (data) {
 		if (data instanceof Object) {
@@ -94,7 +141,7 @@ function ajaxFormCall(frm, category, action, data, target, type, err) {
 			call_args = call_args.concat('&' + data);
 		}
 	}
-	return ajaxCall(category, action, call_args, target, type, err);
+	return ajaxCall(category, action, call_args, target, type, args);
 
 }
 
