@@ -336,10 +336,10 @@ function vals_soc_group_form_submit_handler(&$form, &$form_state)
                 'oid' => $group_id,
             ))->execute();
         $result = $result && db_insert('soc_codes')->fields( array(
-            'type'=>'group',
-            'code' => createRandomCode(), 
-            'org'=> $inst_id,
-            'group_id' =>$group_id
+	            'type'=>'group',
+	            'code' => createRandomCode(), 
+	            'org'=> $inst_id,
+	            'group_id' =>$group_id
             ))->execute();
         if ($result) {
             drupal_set_message(t('You have succesfully added your group to the Semester of Code.'));

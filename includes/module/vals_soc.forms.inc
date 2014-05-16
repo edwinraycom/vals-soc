@@ -389,7 +389,7 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 	return $form;
 }
 
-function vals_soc_organisation_form($form, &$form_state, $org=''){
+function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
     
     $form['name'] = array(
             "#type" => "textfield",
@@ -431,12 +431,23 @@ function vals_soc_organisation_form($form, &$form_state, $org=''){
             //"#description" => t("This code is different per role."),
 	);
 	if (!$org){
-         $form['submit'] = array(
-             '#type' => 'submit',
-             '#value' => 'Save',
-         );
-		$form['#submit'][] = 'vals_soc_organisation_form_submit_handler';
-    	$form['#validate'][] = 'vals_soc_organisation_form_validate_handler';
+//          $form['submit'] = array(
+//              '#type' => 'submit',
+//              '#value' => t('Save'),
+//          );
+// 		$form['#submit'][] = 'vals_soc_organisation_form_submit_handler';
+//     	$form['#validate'][] = 'vals_soc_organisation_form_validate_handler';
+		unset($form['#submit']);
+		$form['sumbit'] = array(
+				'#type' => 'button',
+				'#button_type' => 'button',
+				'#value' => t('Save'),
+				//'#theme' => 'garland_button',
+				'#attributes' => array(
+						'onclick' => 'ajaxFormCall("vals-soc-organisation-form", "administration", "save",'.
+						' {type: "organisation", id:0}, "refreshTabs", "json", ["organisation", "'.$target.'"]);')//'.$target.' instead of refreshTabs
+		);
+		
      } else {
          unset($form['#submit']);
          $form['sumbit'] = array(
@@ -445,15 +456,15 @@ function vals_soc_organisation_form($form, &$form_state, $org=''){
            '#value' => t('Save'),
            //'#theme' => 'garland_button',module, action, data, target, type, err
            '#attributes' => array(
-               'onclick' => 'ajaxFormCall("vals-soc-organisation-form", "administration", "save", '.
-               '{type: "organisation", id: '.$org->org_id.' }, "org_page-2", "json");')
-         );
+           		'onclick' => 'ajaxFormCall("vals-soc-organisation-form", "administration", "save",'.
+           		' {type: "organisation", id:'.$org->org_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
+        );
      }
     
     return $form;
 }
 
-function vals_soc_institute_form($form, &$form_state, $institute=''){
+function vals_soc_institute_form($form, &$form_state, $institute='', $target=''){
     
      $form['name'] = array(
              "#type" => "textfield",
@@ -491,9 +502,43 @@ function vals_soc_institute_form($form, &$form_state, $institute=''){
              //"#description" => t("This code is different per role."),
  	);
      if (!$institute){
+     	//          $form['submit'] = array(
+     	//              '#type' => 'submit',
+     	//              '#value' => t('Save'),
+     	//          );
+     	// 		$form['#submit'][] = 'vals_soc_organisation_form_submit_handler';
+     	//     	$form['#validate'][] = 'vals_soc_organisation_form_validate_handler';
+     	unset($form['#submit']);
+     	$form['sumbit'] = array(
+     			'#type' => 'button',
+     			'#button_type' => 'button',
+     			'#value' => t('Save'),
+     			//'#theme' => 'garland_button',
+     			'#attributes' => array(
+     					'onclick' => 'ajaxFormCall("vals-soc-institute-form", "administration", "save",'.
+     					' {type: "institute", id:0}, "refreshTabs", "json", ["institute", "'.$target.'"]);')//'.$target.' instead of refreshTabs
+     	);
+     
+     } else {
+     	unset($form['#submit']);
+     	$form['sumbit'] = array(
+     			'#type' => 'button',
+     			'#button_type' => 'button',
+     			'#value' => t('Save'),
+     			//'#theme' => 'garland_button',module, action, data, target, type, err
+     			'#attributes' => array(
+     					'onclick' => 'ajaxFormCall("vals-soc-institute-form", "administration", "save",'.
+     					' {type: "institute", id:'.$institute->inst_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
+     	);
+     } 
+/*      
+     
+     
+     
+     if (!$institute){
          $form['submit'] = array(
              '#type' => 'submit',
-             '#value' => 'Save',
+             '#value' => t('Save'),
          );
          $form['#submit'][] = 'vals_soc_institute_form_submit_handler';
          $form['#validate'][] = 'vals_soc_institute_form_validate_handler';
@@ -506,13 +551,13 @@ function vals_soc_institute_form($form, &$form_state, $institute=''){
            //'#theme' => 'garland_button',
            '#attributes' => array(
                'onclick' => 'ajaxFormCall("vals-soc-institute-form", "administration", "save", {type: "institute", id: '.
-                  $institute->inst_id.' }, "inst_page-2", "json");')
+                  $institute->inst_id.' }, "'.$target.'", "json");')
          );
-     }
+     } */
     return $form;
 }
 
-function vals_soc_group_form($form, &$form_state, $group='', $target='group_page-2'){ 
+function vals_soc_group_form($form, &$form_state, $group='', $target=''){ 
     $form['name'] = array(
             "#type" => "textfield",
 			'#title' => t('Give a name to remember your student group'),
@@ -540,9 +585,9 @@ function vals_soc_group_form($form, &$form_state, $group='', $target='group_page
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
 					'onclick' => 'ajaxFormCall("vals-soc-group-form", "administration", "save",'.
-						' {type: "group", id:0}, "'.$target.'", "json");')
+						' {type: "group", id:0}, "refreshTabs", "json", ["group", "'.$target.'"]);')//'.$target.' instead of refreshTabs
 		);
-//          $form['submit'] = array(
+//          $form['submit'] = array(function ajaxFormCall(frm, category, action, data, target, type, err) {
 //              '#type' => 'submit',
 //              '#value' => 'Save',
 //          );
@@ -557,7 +602,7 @@ function vals_soc_group_form($form, &$form_state, $group='', $target='group_page
          		//'#theme' => 'garland_button',
          		'#attributes' => array(
          				'onclick' => 'ajaxFormCall("vals-soc-group-form", "administration", "save",'.
-         				' {type: "group", id:'.$group->group_id.'}, "'.$target.'", "json");')
+         				' {type: "group", id:'.$group->group_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
          );
      }
 

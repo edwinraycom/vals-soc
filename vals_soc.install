@@ -110,3 +110,14 @@ function vals_soc_update_7102() {
 	);	
 	db_change_field('soc_projects', 'description', 'description', $new_field);
 }
+
+function vals_soc_update_7103(){
+/*
+ALTER TABLE `soc_institutes` ADD `owner_id` INT NOT NULL AFTER `inst_id`
+ALTER TABLE `soc_projects` ADD `owner_id` INT NOT NULL AFTER `pid`
+ALTER TABLE `soc_groups` ADD `owner_id` INT NOT NULL AFTER `group_id`
+ALTER TABLE `soc_organisations` ADD `owner_id` INT NOT NULL AFTER `org_id`
+NOt yet reflected in drupal_soc.sql
+
+*/
+}
