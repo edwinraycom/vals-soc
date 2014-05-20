@@ -34,7 +34,7 @@ function vals_soc_block_view_handler($delta = '') {
 				$block['content'] .= ob_get_clean();
 				*/
 				ob_start();
-				module_load_include('inc', 'vals_soc', 'includes/module/ui/blocklayout');
+				module_load_include('inc', 'vals_soc', 'includes/module/ui/homepage/blocklayout');
 				$block['content'] = ob_get_clean();
 			}
 			return $block;

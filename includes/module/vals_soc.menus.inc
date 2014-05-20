@@ -12,7 +12,16 @@ function vals_soc_menu_handler(){
 			'description' => 'Projects page',
 			'file' => 'vals_soc.pages.inc',
 			'file path' => drupal_get_path('module', 'vals_soc') . '/includes/module/',
-	);	
+	);
+	$items['organisations/browse'] = array(
+			'title' => 'Organisations',
+			'type' => MENU_NORMAL_ITEM,
+			'page callback' => 'vals_soc_browse_organisations',
+			'access arguments' => array('authenticated user'), // was 'access_contents'
+			'description' => 'Organisations page',
+			'file' => 'vals_soc.pages.inc',
+			'file path' => drupal_get_path('module', 'vals_soc') . '/includes/module/',
+	);
 	$items['administer/members'] = array(
 			'title' => 'Administer',
 			'type' => MENU_NORMAL_ITEM,

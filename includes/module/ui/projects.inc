@@ -6,10 +6,16 @@ drupal_add_library('system','ui.dialog');
 drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/jquery-migrate-1.2.1.js');
 drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/jtable/jquery.jtable.js');
 drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/js/jtable/jtable.css');
+ctools_include('modal');
+ctools_modal_add_js();
 
-function initProjectLayout(){
+
+function initBrowseProjectLayout(){
+	$orgId=0;
+	if(isset($_GET['oid'])){
+		$orgId = $_GET['oid'];
+	}
 	echo '
-
 	<div class="filtering">
 	<span id="infotext" style="margin-left: 34px"></span>
     <form id="project_filter">
@@ -17,9 +23,10 @@ function initProjectLayout(){
         Organisations:
         <select id="organisation" name="organisation">
             <option selected="selected" value="0">All Organisations</option>';
-			$result = Organisations::getInstance()->getOrganisations();
+			$result = Organisations::getInstance()->getOrganisationsLite();
 			foreach ($result as $record) {
-				echo '<option value="'.$record->org_id.'">'.$record->name.'</option>';
+				$selected = ($record->org_id == $orgId ? 'selected ' : '');
+				echo '<option ' .$selected.'value="'.$record->org_id.'">'.$record->name.'</option>';
 			}
 			echo '
         </select>
@@ -31,7 +38,7 @@ function initProjectLayout(){
 		jQuery(document).ready(function($){
 					
 			function testTagInput() {
-				var filter = /^[a-z0-9+_.]+$/i;
+				var filter = /^[a-z0-9+_.\s]+$/i;
 				if (filter.test($("#tags").val()) || $("#tags").val()=="") {
 					$("#tags").removeClass("error");
 					$("#infotext").removeClass("error");
@@ -45,7 +52,19 @@ function initProjectLayout(){
 					return false;
 				}
 			}
-					
+		
+			function generateAndPopulateModal(data){
+					//TODO - work more on the formating
+				var result = jQuery.parseJSON(data);
+				var content = result[0].description;
+					content +="<br/><br/><a href=\"#\" onclick=\"Drupal.CTools.Modal.dismiss()\">close</a>";
+				var title = result[0].title;
+				Drupal.CTools.Modal.show();
+				$("#modal-title").html(title);
+				$("#modal-content").html(content);
+				Drupal.attachBehaviors();	
+			}
+
 			var baseUrl = "../sites/all/modules/vals_soc/actions/";
 		    //Prepare jTable
 			$("#ProjectTableContainer").jtable({
@@ -83,22 +102,31 @@ function initProjectLayout(){
 				recordsLoaded: function(event, data) {
         			$(".jtable-data-row").click(function() {
             			var row_id = $(this).attr("data-record-key");
-            			alert("clicked row with id "+row_id);
-					/*
-						var url = baseUrl + "project_actions.php?action=project_detail&project_id=" + row_id;
-						var overlay = jQuery("<div id=\"d_overlay\"></div>");
-						overlay.appendTo(document.body);
-						$( "#d_overlay" ).load( url, function() {
-							alert( "Load was performed." );
-						});
-					*/
+            			var url = baseUrl + "project_actions.php?action=project_detail&project_id=" + row_id;
+						$.get(url,function(data,status){
+    						 generateAndPopulateModal(data);
+  						});
         			});
     			}
 			});
 
-			//Load person list from server on initial page load
-			$("#ProjectTableContainer").jtable("load");
+			//Load project list from server on initial page load
+			$("#ProjectTableContainer").jtable("load", {
+				tags: $("#tags").val(),
+                organisation: $("#organisation").val()
+			});
 			
+			$("#tags").keyup(function(e) {
+				e.preventDefault();
+					// only auto clear when there is no tag info
+				if(testTagInput() && $("#tags").val()==""){
+            		$("#ProjectTableContainer").jtable("load", {
+	                	tags: $("#tags").val(),
+                		organisation: $("#organisation").val()
+            		});
+				}
+			});
+					
 			$("#organisation").change(function(e) {
            		e.preventDefault();
 				if(testTagInput()){
@@ -124,4 +152,4 @@ function initProjectLayout(){
 	';
 }
 
-initProjectLayout();
+initBrowseProjectLayout();

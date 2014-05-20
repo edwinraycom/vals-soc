@@ -35,7 +35,7 @@ switch ($_GET['action']){
 	case 'project_detail':
 		$project_id=null;
 		if(isset($_GET['project_id'])){
-			$results = Project::getInstance()->getProjectbyId($_GET['project_id']);
+			$results = Project::getInstance()->getProjectById($_GET['project_id']);
 			$projectDetail = array();
 			$projectDetail['title'] = $results->title;
 			$projectDetail['description'] = $results->description;
