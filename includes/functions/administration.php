@@ -203,10 +203,6 @@ function showOrganisationPage(){
 		<script type="text/javascript">
         	   activatetabs('tab_', ['organisation_page-1']);
         </script><?php
-		
-		
-		$f3 = drupal_get_form('vals_soc_organisation_form');
-		print drupal_render($f3);
 	} else {
 		$nr = 0;
 		$data = array();
