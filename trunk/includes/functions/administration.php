@@ -7,6 +7,7 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $id='',
 	<ol id="toc"><?php
 	$label_start = t($tab_label);
 	$title = "";
+	$un_named = 1;
 	for ($t=0; $t < $count;$t++){
 		$target = $target_label.($t + 1); ?>
 		<li><a href="#tab_<?php echo $target;?>" <?php
@@ -15,7 +16,8 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $id='',
 			$link_text = t($data[$t][1]);
 			$title = "";
 		} elseif ($data[$t][0] == 0) {
-			$link_text = $label_start.' '.($t + 1);
+			$link_text = "$label_start $un_named";
+			$un_named++;
 			$title = " title = '".$data[$t][1]."' ";
 		} else {
 			$link_text = $data[$t][1];
@@ -88,50 +90,45 @@ function showSupervisorPage(){
 	} else {
 		$nr = 1;
 		$data = array();
+		$activating_tabs = array();
+		
+		$nr2 = 1;
+		$data2 = array();
+		// 		[translate, label, action, type, id, extra GET arguments]
+		$data2[] = array(1, 'All Students', 'showmembers', 'group', null);
+		$activating_tabs2 = array("'group2_page-$nr2'");
 		foreach ($groups as $group){
 			if ($nr == 1){
 				$id = $group->group_id;
 				$my_group = $group;
 			}
-			$nr++;
+			$activating_tabs[] = "'group_page-$nr'";
 			$data[] = array(0, $group->name, 'view', 'group', $group->group_id);
+			$nr++;
+			
+			
+			$nr2++;
+			$activating_tabs2[] = "'group2_page-$nr2'";
+			$data2[] = array(0, 'Group', 'showmembers', 'group', $group->group_id);
 		}
+		
 		$data[] = array(1, 'Add', 'addgroup', 'group', null, "target=group_page-$nr");
+		$activating_tabs[] = "'group_page-$nr'";
+		
 		echo sprintf('<h3>%1$s</h3>', t('Your groups'));
-		echo renderTabs($nr, 'Group', 'group_page-', 'group', $data, $id);
-		$activating_tabs = array();
-		$tabs_done = 0;
-		?>
-
-	<div class="content" id="group_page-1">
-		<div id='msg_group_page-1'></div>
-		<?php 
-		echo renderOrganisation('group', $my_group, null, "group_page-1");
-		$tabs_done++;
-		$activating_tabs[] = "'group_page-1'";
-		?>
-	</div>
-	<?php
-	//Add the remaining target divs and gather the labels to activate
-	
-	for($g=$tabs_done + 1; $g <= $nr;$g++){
-		echo "<div class='content' id='group_page-$g'></div>";
-		$activating_tabs[] = "'group_page-$g'";
-	}
+		echo renderTabs($nr, 'Group', 'group_page-', 'group', $data, $id, TRUE, 
+			renderOrganisation('group', $my_group, null, "group_page-1"));
 	
 	echo "<hr>";
-	echo '<h2>'.t('All the registered students of your groups').'</h2>';?>
-	<ol id="toc">
-		<li><a href="#tab_page-1"><span><?php echo t('All Students');?> </span>
-		</a></li>
-	</ol>
-	<div class="content" id="page-1">
-		<?php echo renderParticipants('student', '', $my_group->group_id, 'group');?>
-	</div>
+	echo '<h2>'.t('All the registered students of your groups').'</h2>';
+	echo renderTabs($nr2, 'Group', 'group2_page-', 'group', $data2, $id, TRUE, 
+			renderParticipants('student', '', $my_group->group_id, 'group'));
+	?>
+
 
 	<script type="text/javascript">
 		activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>]);
-		activatetabs('tab_', ['page-1'], null, true);
+		activatetabs('tab_', [<?php echo implode(', ', $activating_tabs2);?>], null, true);
 	</script>
 <?php
 	}
@@ -156,29 +153,31 @@ function showInstitutePage(){
 		
 	} else {
 		$my_institute = $institutes->fetchObject();
-        echo sprintf('<h3>%1$s</h3>', t('Your institute'));
+		echo sprintf('<h3>%1$s</h3>', t('Your institute'));
         
         $nr = 2;
 		$data = array();
 		$tabs = array();
+		$data[] = array(2, $my_institute->name, 'view', 'institute', $my_institute->inst_id);
+		$data[] = array(1, 'Edit', 'edit', 'institute', $my_institute->inst_id);
+		$tabs = array("'inst_page-1'", "'inst_page-2'");
+		
 		
 		$nr2 = 2;
 		$data2 = array();
 // 		[translate, label, action, type, id, extra GET arguments]
-		$data2[] = array(1, 'All your Supervisors', 'showmembers', 'institute', null, );
-		$data2[] = array(1, 'All your Students', 'showmembers', 'institute', null);
-		$data[] = array(2, $my_institute->name, 'view', 'institute', $my_institute->inst_id);
-		$data[] = array(1, 'Edit', 'edit', 'institute', $my_institute->inst_id);
-		$tabs = array("'inst_page-1'", "'inst_page-2'");
+		$data2[] = array(1, 'All your Supervisors', 'showmembers', 'institute', $my_institute->inst_id, "subtype=supervisor");
+		$data2[] = array(1, 'All your Students', 'showmembers', 'institute', $my_institute->inst_id, "subtype=student");
+		
 		$tabs2 = array("'member_page-1'", "'member_page-2'");
 		
-		
-		echo renderTabs($nr, 'Org', 'inst_page-', 'institute', $data, $my_institute->inst_id, TRUE,
+		//[number of tabs, label start, tab id start, type, data, id, render targets, active target content, active tab]
+		echo renderTabs($nr, '', 'inst_page-', 'institute', $data, $my_institute->inst_id, TRUE,
 				renderOrganisation('institute', $my_institute, null, "inst_page-1"));
 	    echo "<hr>";
 	    	
-	    echo '<h2>'.t('The registered suparvisors and students of your institute').'</h2>';
-	    echo renderTabs($nr2, '', 'member_page-', 'institute', $data2, null, TRUE,
+	    echo '<h2>'.t('The registered supervisors and students of your institute').'</h2>';
+	    echo renderTabs($nr2, '', 'member_page-', 'institute', $data2, $my_institute->inst_id, TRUE,
 	    		renderParticipants('supervisor', '', $my_institute->inst_id, 'institute'));
 	    ?>
 	    <script type="text/javascript">

@@ -17,6 +17,8 @@ $role = getRole();
 echo '<BR>In admin.php: I am a '.$role. ' and my user is '. $GLOBALS['user']->uid;
 echo "<div id='ajax_error'></div>";
 echo "<div id='admin_container' class='tabs_container'>";
-
+// echo "HIER GAAN WE HET ZIEN ".
+// 		print_r($GLOBALS['language'],1);
+// echo locale_language_from_session(array('en'=>true,'es'=>true,'nl'=>true,'de'=>true, ));
 showRoleDependentAdminPage($role);
 echo "</div>";//end of admin_container
