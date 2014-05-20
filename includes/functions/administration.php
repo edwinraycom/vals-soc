@@ -195,7 +195,7 @@ function showOrganisationPage(){
 		echo t('You have no organisation yet registered');
 		echo '<h2>'.t('Add your organisation').'</h2>';
 		$f3 = drupal_get_form('vals_soc_organisation_form', '', 'organisation_page-1');
-		$add_tab .= drupal_render($f3);
+		$add_tab = drupal_render($f3);
 		$data = array();
 		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=admin_container");
 		echo renderTabs(1, null, 'organisation_page-', 'organisation', $data, null, TRUE, $add_tab);
