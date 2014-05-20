@@ -13,6 +13,8 @@ div.jtable-main-container div.jtable-title .jtable-close-button {
 }
 div.jtable-main-container table.jtable {
   width: 100%;
+  margin: 0; /**override drupals style for tables**/
+  margin-top:8px;
 }
 div.jtable-main-container table.jtable thead th {
   vertical-align: middle;
