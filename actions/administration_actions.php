@@ -93,18 +93,20 @@ echo "VERVANGEN PAGINA";
 		$f2 = drupal_get_form("vals_soc_${type}_form", null, $target);
 		print drupal_render($f2);
 	break;
-    case 'showmembers':     
-        if ($_POST['type'] == 'group'){
+    case 'showmembers':
+    	if ($_POST['type'] == 'group'){
             echo renderParticipants('student', '', $_POST['group_id'], $_POST['type']);
             //echo renderStudents($_POST['group_id']);
         } elseif ($_POST['type'] == 'institute'){
-            $type = altSubValue($_POST, 'subtype', 'all');
+            $type = altSubValue($_GET, 'subtype', 'all');
             if ($type == 'student'){
-                $students = Participants::getAllStudents($_POST['institute_id']);
+                $students = Participants::getAllStudents($_POST['id']);
                 echo renderStudents('', $students);
             } elseif ($type == 'supervisor'){
-                $teachers = Participants::getSupervisors($_POST['institute_id']);
+                $teachers = Participants::getSupervisors($_POST['id']);
                 echo renderSupervisors('', $teachers);
+            } else {
+            	echo "No such type $type";
             }
                 
         } elseif ($_POST['type'] == 'organisation'){
@@ -120,11 +122,11 @@ echo "VERVANGEN PAGINA";
     	$id = altSubValue($_POST, 'id');
     	$target = altSubValue($_POST, 'target', '');
     	$organisation = Participants::getOrganisation($type, $id);
-    	if (Participants::isOwner($type, $id)){
-    		echo "IK BEN DE OWNER";
-    	} else {
-    		echo "IK BEN NIET DE EIGENAAR";
-    	}
+						    	if (Participants::isOwner($type, $id)){
+						    		echo "IK BEN DE OWNER";
+						    	} else {
+						    		echo "IK BEN NIET DE EIGENAAR";
+						    	}
     	if (! $organisation){
     		echo sprintf(t('You have no %1$s yet registered'), t($type));
     	} else {
@@ -151,8 +153,8 @@ echo "VERVANGEN PAGINA";
         	echo t('There is no such type to edit');
         } else {
         	$obj = Participants::getOrganisation($type, $id);
-        	$f = drupal_get_form("vals_soc_${$type}_form", $obj, $target);
-        	print drupal_render($f); 
+        	$f = drupal_get_form("vals_soc_${type}_form", $obj, $target);
+        	print drupal_render($f);
         }        
     break;
     case 'save':
@@ -163,6 +165,8 @@ echo "VERVANGEN PAGINA";
         if(! isValidOrganisationType($type)){
         	$result = NULL;
         	drupal_set_message(sprintf(t('This is not a valid type: %s'), $type), 'error');
+        	echo jsonBadResult();
+        	return;
         }
         
         $properties = Participants::filterPost($type, $_POST);

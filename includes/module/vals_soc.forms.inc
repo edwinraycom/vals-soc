@@ -473,20 +473,20 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='')
              "#default_value" => populate($institute, 'name')
              //"#description" => t("This code is different per role."),
  	);
- 	$form['description'] = array(
-             "#type" => "textarea",
- 			'#title' => t('Describe your institute, if you like'),
-             "#size" => 60,
-             "#default_value" => populate($institute, 'description')
-             //"#description" => t("This code is different per role."),
- 	);
-     $form['url'] = array(
-             "#type" => "textfield",
- 			'#title' => t('At what website can your institute be found').$form['id'],
-             "#size" => 120,
-             "#default_value" => populate($institute, 'url')
-             //"#description" => t("This code is different per role."),
- 	);
+//  	$form['description'] = array(
+//              "#type" => "textarea",
+//  			'#title' => t('Describe your institute, if you like'),
+//              "#size" => 60,
+//              "#default_value" => populate($institute, 'description')
+//              //"#description" => t("This code is different per role."),
+//  	);
+//      $form['url'] = array(
+//              "#type" => "textfield",
+//  			'#title' => t('At what website can your institute be found').$form['id'],
+//              "#size" => 120,
+//              "#default_value" => populate($institute, 'url')
+//              //"#description" => t("This code is different per role."),
+//  	);
      $form['contact_name'] = array(
              "#type" => "textfield",
  			'#title' => t('Who is the contact person (you?)'),
