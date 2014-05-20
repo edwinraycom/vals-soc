@@ -18,7 +18,7 @@ class Project {
     	return $projects;
     }
     
-    public function getProjectbyId($id){
+    public function getProjectById($id){
     	$project = db_select('soc_projects')->fields('soc_projects')->condition('pid', $id)->execute()->fetchAll(PDO::FETCH_ASSOC);
     	return $project;
     }
