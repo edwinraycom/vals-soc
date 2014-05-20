@@ -10,12 +10,12 @@ define('_USER_ROLE', 2);
 function create_roles(){
 	$roles = get_default_roles();
 	// Call the array with your default roles.
-	foreach ($roles as $value) {
+	foreach ($roles as $key => $value) {
 		// Check that a role is not already returned.
 		if (!user_role_load_by_name($value)) {
 			$role = new stdClass(); // create your Class
 			// Match values to the role Class.
-			$role->name = $value['name'];
+			$role->name = $key; // $value['name'];
 			$role->weight = $value['weight'];
 			// Save the Role using Drupal's API.
 			user_role_save($role);
