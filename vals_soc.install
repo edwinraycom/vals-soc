@@ -13,6 +13,7 @@ function vals_soc_install(){
     drupal_install_schema('soc_groups');
     
     create_roles();
+    create_permissions();
     create_codes();
 }
 
@@ -67,7 +68,7 @@ function vals_soc_schema() {
 /**
 * Create new database table {soc_groups}.
 */
-function vals_soc_update_7101() {
+function vals_soc_DONOTDOTHISupdate_7101() {
   $schema['soc_groups'] = array(
 			'description' => 'The students will be divided in groups, each teacher probably having one or more groups',
 			'fields' => array(
@@ -102,7 +103,7 @@ function vals_soc_update_7101() {
   db_create_table('soc_groups', $schema['soc_groups']);
 }
 
-function vals_soc_update_7102() {
+function vals_soc_DONOTDOTHISupdate_7102() {
 	$new_field = array(
 		'description' => 'The description of the project.',
 		'type' => 'text',
@@ -111,7 +112,7 @@ function vals_soc_update_7102() {
 	db_change_field('soc_projects', 'description', 'description', $new_field);
 }
 
-function vals_soc_update_7103(){
+function vals_soc_DONOTDOTHISupdate_7103(){
 /*
 ALTER TABLE `soc_institutes` ADD `owner_id` INT NOT NULL AFTER `inst_id`
 ALTER TABLE `soc_projects` ADD `owner_id` INT NOT NULL AFTER `pid`

@@ -26,7 +26,7 @@ function vals_soc_menu_handler(){
 			'title' => 'Administer',
 			'type' => MENU_NORMAL_ITEM,
 			'page callback' => 'vals_soc_administer_page',
-			'access arguments' => array('authenticated user'), // This needs to be revisited
+			'access arguments' => array('vals admin register'), // This needs to be revisited
 			'description' => 'Administer page',
 			'file' => 'vals_soc.pages.inc',
 			'file path' => drupal_get_path('module', 'vals_soc') . '/includes/module/',

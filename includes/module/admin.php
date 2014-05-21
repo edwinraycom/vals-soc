@@ -20,5 +20,8 @@ echo "<div id='admin_container' class='tabs_container'>";
 // echo "HIER GAAN WE HET ZIEN ".
 // 		print_r($GLOBALS['language'],1);
 // echo locale_language_from_session(array('en'=>true,'es'=>true,'nl'=>true,'de'=>true, ));
+//echo "kijken of het lukt";
+//  create_roles();
+//     create_permissions();
 showRoleDependentAdminPage($role);
 echo "</div>";//end of admin_container

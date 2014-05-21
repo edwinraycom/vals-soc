@@ -1,6 +1,6 @@
 //var $jq = jquery.noConflict();
 var debugging = true;
-var baseUrl = '/vals/nl/';
+var baseUrl = '/vals/';
 
 var $jq = jQuery;
 

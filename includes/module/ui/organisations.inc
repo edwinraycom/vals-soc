@@ -35,7 +35,7 @@ function initBrowseOrgsLayout(){
 				}
 			}
 		
-			var baseUrl = "../";
+			var baseUrl = "/vals/";
 			var modulePath = "sites/all/modules/vals_soc/actions/";
 		    //Prepare jTable
 			$("#OrganisationTableContainer").jtable({
