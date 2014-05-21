@@ -184,8 +184,8 @@ UNLOCK TABLES;
 TRUNCATE TABLE `role`;
 INSERT INTO `role` (`rid`, `name`, `weight`) VALUES
 (3, 'administrator', 2),
-(1, 'anonieme gebruiker', 0),
-(2, 'geverifieerde gebruiker', 1),
+(1, 'anonymous user', 0),
+(2, 'authenticated user', 1),
 (12, 'institute_admin', 2),
 (5, 'mentor', 4),
 (8, 'organisation_admin', 3),

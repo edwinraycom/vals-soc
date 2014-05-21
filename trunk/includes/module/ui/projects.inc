@@ -64,8 +64,10 @@ function initBrowseProjectLayout(){
 				$("#modal-content").html(content);
 				Drupal.attachBehaviors();	
 			}
-
-			var baseUrl = "../sites/all/modules/vals_soc/actions/";
+			
+			//We make the ajax script path absolute as the language module might add a language code
+			//to the path
+			var baseUrl = "/vals/sites/all/modules/vals_soc/actions/";
 		    //Prepare jTable
 			$("#ProjectTableContainer").jtable({
 				//title: "Table of projects",

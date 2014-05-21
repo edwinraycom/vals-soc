@@ -33,6 +33,48 @@ function vals_soc_user_role_check($item, $roles = array()) {
 	return empty($check) ? FALSE : TRUE;
 }
 
+
+/**
+ * We define the permissions that can be set for this module
+ * @param unknown $item
+ * @param unknown $roles
+ * @return boolean
+ */
+function vals_soc_permission() {
+	$perms = array();
+	$perms['vals admin register'] = array(
+		'title' => t('Grant access to administer groups, organisations and institutes.'),
+		'description' => t('There is an admin page where you can add, delete and edit your organisation and groups.'),
+		'restrict access' => FALSE,
+		//'warning' => t(''),
+	);
+	$perms['vals admin projects'] = array(
+		'title' => t('Grant access to register and admin projects.'),
+		'description' => t('Typically for mentors and organisation admins.'),
+		'restrict access' => FALSE,
+		//'warning' => t(''),
+	);
+	$perms['vals browse projects'] = array(
+		'title' => t('Browsing to the projects (read only).'),
+		'description' => t('Non logged in users should be able to browse the projects'),
+		'restrict access' => FALSE,
+		//'warning' => t(''),
+	);
+	$perms['vals apply projects'] = array(
+		'title' => t('Selecting a project and/or submitting a proposal.'),
+		'description' => t('This should be for students and perhaps for supervisors'),
+		'restrict access' => FALSE,
+		//'warning' => t(''),
+	);
+	$perms['vals edit projects'] = array(
+		'title' => t('Editing a project to propose small amendments or suggestions.'),
+		'description' => t('This should be for institute admins and perhaps for supervisors'),
+		'restrict access' => FALSE,
+		//'warning' => t(''),
+	);
+	return $perms;
+}
+
 /**
  * Implements Drupal hook_block_view().
  * @param string $delta

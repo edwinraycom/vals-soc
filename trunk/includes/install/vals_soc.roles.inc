@@ -12,10 +12,10 @@ function create_roles(){
 	// Call the array with your default roles.
 	foreach ($roles as $key => $value) {
 		// Check that a role is not already returned.
-		if (!user_role_load_by_name($value)) {
+		if (!user_role_load_by_name($key)) {
 			$role = new stdClass(); // create your Class
 			// Match values to the role Class.
-			$role->name = $key; // $value['name'];
+			$role->name = $key; // Used to be $value['name'], but that is reserved for a readable string in the UI
 			$role->weight = $value['weight'];
 			// Save the Role using Drupal's API.
 			user_role_save($role);
@@ -23,6 +23,68 @@ function create_roles(){
 	}
 }
 
+function create_permissions(){
+// 	$perms['anonymous user'] = array(
+// 			//'vals admin register' => TRUE,
+// 			'vals browse projects' => TRUE,
+// 			//'vals admin projects' => TRUE,
+// 	);
+// 	$perms[' authenticated user'] = array(
+// 			'vals admin register' => TRUE,
+// 			'vals browse projects' => TRUE,
+// 			'vals admin projects' => TRUE,
+// 	);
+	$perms['soc'] = array(
+			//'vals admin register' => TRUE,
+			'vals browse projects' => TRUE,
+			//'vals admin projects' => TRUE,
+	);
+	$perms['organisation_admin'] = array(
+			'vals admin register' => TRUE,
+			'vals browse projects' => TRUE,
+			'vals admin projects' => TRUE,
+	);
+	$perms['supervisor'] = array(
+			'vals admin register' => TRUE,
+			'vals browse projects' => TRUE,
+			//'vals admin projects' => TRUE,
+	);
+	$perms['mentor'] = array(
+			//'vals admin register' => TRUE,
+			'vals browse projects' => TRUE,
+			'vals admin projects' => TRUE,
+	);
+	$perms['student'] = array(
+			//'vals admin register' => TRUE,
+			'vals browse projects' => TRUE,
+			//'vals admin projects' => TRUE,
+			'vals apply projects' => TRUE,
+	);
+	$perms['institute_admin'] = array(
+			'vals admin register' => TRUE,
+			'vals browse projects' => TRUE,
+			'vals edit projects' => TRUE,
+	);
+	foreach ($perms as $role => $permissions){
+		echo "Bekijkt nu $role";
+		if (!$role_obj = user_role_load_by_name($role)) {
+			$role_temp = new stdClass(); // create your Class
+			// Match values to the role Class.
+			$role_temp->name = $role; // Used to be $value['name'], but that is reserved for a readable string in the UI
+			//If we leave the wight out, user_role_save will take the max weight sofar
+			//$role_temp->weight = 2;//TODO: find out whether this value is important and what it should be
+			// Save the Role using Drupal's API.
+			if (user_role_save($role_temp)) {
+				$role_obj = user_role_load_by_name($role);
+				$rid = $role_obj->rid;
+			}
+		} else {
+			$rid = $role_obj->rid;
+		}
+		// Grant permissions to this role
+		user_role_change_permissions($rid, $permissions);
+	}
+}
 
 /**
  * Create codes
@@ -50,6 +112,8 @@ function create_codes(){
  */
 /**
  * Function which defines a set of roles and returns them in an array.
+ * Note that we use the key as the string in the database and throughout the code. The name is used in the interface
+ * in case the admin likes to revise the roles and permissions.
  * @return multitype:multitype:string
  */
 function get_default_roles() {
@@ -120,7 +184,7 @@ function getRole(){
 
 function getUserRoleId($roles=''){
     $roles = $roles ?: getRoles();
-    //Every user has exactly two roles: verified user (role 2) and some other role > 2
+    //Every user has exactly two roles:  authenticated user (role 2) and some other role > 2
     //Sort associative, reversed: [10 => 0, 9 => 9, 8 => 0,....]
     arsort($roles);
     foreach ($roles as $rid => $role_val){
@@ -130,20 +194,3 @@ function getUserRoleId($roles=''){
     }
     return _USER_ROLE;
 }
-/*
- * TODO - REFINE ROLES and ACCESS per role instance
-*
-* THIS IS HOW TO SET PERMISSIONS ON A ROLE
-*
-// Role to grant the permissions to
-$editor_role = user_role_load_by_name('editor');
-$editor_rid = $editor_role->rid;
-// Define our 'editor' role permissions
-$editor_permissions = array(
-		'administer blocks' => TRUE, // Grant permission
-		'access dashboard' => FALSE, // Revoke permission
-		..., // more permissions' name
-);
-// Grant permissions to our 'editor' role
-user_role_change_permissions($editor_rid, $editor_permissions);
-*/
