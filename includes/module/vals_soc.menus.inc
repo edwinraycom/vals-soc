@@ -5,7 +5,7 @@ function vals_soc_menu_handler(){
 			'title' => 'Projects',
 			'type' => MENU_NORMAL_ITEM,
 			'page callback' => 'vals_soc_browse_projects',
-			'access arguments' => array('authenticated user'), // was 'access_contents'
+			'access arguments' => array('use text format filtered_html'), // Voor alle gebruikers (incl guests: 'use text format filtered_html'
 			// uncomment the 2 lines below to restrict access to menu items based on role
 			//'access callback' => 'vals_soc_user_role_check',
 			//'access arguments' => array(1, array('Organisation Administrator','Student')),
@@ -17,7 +17,7 @@ function vals_soc_menu_handler(){
 			'title' => 'Organisations',
 			'type' => MENU_NORMAL_ITEM,
 			'page callback' => 'vals_soc_browse_organisations',
-			'access arguments' => array('authenticated user'), // was 'access_contents'
+			'access arguments' => array('access content'), // was 'access_contents'
 			'description' => 'Organisations page',
 			'file' => 'vals_soc.pages.inc',
 			'file path' => drupal_get_path('module', 'vals_soc') . '/includes/module/',
