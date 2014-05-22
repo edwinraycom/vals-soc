@@ -38,3 +38,10 @@ function vals_soc_browse_organisations(){
 	module_load_include('inc', 'vals_soc', 'includes/module/ui/organisations');
 	return ob_get_clean();
 }
+
+function vals_soc_apply_projects(){
+	ob_start();
+	module_load_include('inc', 'vals_soc', 'includes/module/ui/projects_apply');
+	return ob_get_clean();
+}
+

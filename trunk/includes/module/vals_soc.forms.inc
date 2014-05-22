@@ -605,3 +605,56 @@ function vals_soc_group_form($form, &$form_state, $group='', $target=''){
 
     return $form;
 }
+
+
+function vals_soc_apply_form($form, &$form_state, $application='', $target=''){
+	$form['name'] = array(
+			"#type" => "textfield",
+			'#title' => t('Give your name'),
+			"#size" => 60,
+			'#required' => '1',
+			"#default_value" => populate($application, 'name')
+			//"#description" => t("This code is different per role."),
+	);
+	$form['description'] = array(
+			"#type" => "textarea",
+			'#title' => t('What is your solution'),
+			"#size" => 1024,
+			"#default_value" => populate($application, 'description')
+			//"#description" => t("This code is different per role."),
+	);
+	 
+	//If we never need a stand alone form and only use ajax, remove the commented code
+	//and get common code outside
+	if (!$application){
+		unset($form['#submit']);
+		$form['sumbit'] = array(
+				'#type' => 'button',
+				'#button_type' => 'button',
+				'#value' => t('Submit'),
+				//'#theme' => 'garland_button',
+				'#attributes' => array(
+						'onclick' => 'alert("absolutely not finished yet");ajaxFormCall("vals-soc-apply-form", "administration", "save",'.
+						' {type: "proposal", id:0}, "refreshTabs", "json", ["group", "'.$target.'"]);')//'.$target.' instead of refreshTabs
+		);
+		//          $form['submit'] = array(function ajaxFormCall(frm, category, action, data, target, type, err) {
+		//              '#type' => 'submit',
+		//              '#value' => 'Save',
+		//          );
+		//          $form['#submit'][] = 'vals_soc_group_form_submit_handler';
+		//          $form['#validate'][] = 'vals_soc_group_form_validate_handler';
+	} else {
+		unset($form['#submit']);
+		$form['sumbit'] = array(
+				'#type' => 'button',
+				'#button_type' => 'button',
+				'#value' => t('Save'),
+				//'#theme' => 'garland_button',
+				'#attributes' => array(
+						'onclick' => 'ajaxFormCall("vals-soc-group-form", "administration", "save",'.
+						' {type: "group", id:'.$group->group_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
+		);
+	}
+
+	return $form;
+}
