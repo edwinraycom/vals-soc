@@ -12,6 +12,10 @@ $base_url = $_SERVER['REQUEST_SCHEME']. '://'.$_SERVER['HTTP_HOST'].'/vals'; //T
 //http://drupal.stackexchange.com/questions/76995/cant-access-global-user-object-after-drupal-bootstrap, May 2014
 require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);//Used to be DRUPAL_BOOTSTRAP_SESSION
+// print_r(get_included_files());die('dat waren ze');
+//This file is included as part of the bootstrap process as the handle_forms file includes it which is included itself
+//automatically
+module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
 include(_VALS_SOC_ROOT.'/includes/vals_soc.helper.inc');
 include(_VALS_SOC_ROOT.'/includes/classes/Participants.php');
 include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
@@ -69,11 +73,32 @@ function showDrupalMessages($category='status', $echo=FALSE){
 	return $s;
 }
 
+function showError($msg='') {
+	$msg .= showDrupalMessages('error');
+	if ($msg){
+		echo "<div class='messages error'>'$msg'</div>";
+	}
+}
+
 //return result depending on action parameter
 switch ($_GET['action']){
-	case 'listgroups':
-echo "VERVANGEN PAGINA";
-		showSupervisorPage();
+	case 'list':
+		$type = altSubValue($_POST, 'type');
+		switch ($type){
+			case 'institute': 
+			case 'organisation':  
+			case 'group': echo renderOrganisations($type, '', 'all', $_POST['target']);break;
+			case 'supervisor': 
+			case 'student':
+			case 'mentor':
+			case 'organisation_admin': 
+			case 'institute_admin': 
+			case 'administer': echo renderParticipants($type, '', 'all');break;
+			default: 
+				echo tt('No such type: %1$s', $type);
+// 				showError(tt('No such type: %1$s', $type));
+		}
+		//echo jsonResult($result);
 	break;
 	case 'addgroup':
 		$target = altSubValue( $_GET, 'target');
@@ -106,7 +131,7 @@ echo "VERVANGEN PAGINA";
                 $teachers = Participants::getSupervisors($_POST['id']);
                 echo renderSupervisors('', $teachers);
             } else {
-            	echo "No such type $type";
+            	echo tt('No such type %1$s', $type);
             }
                 
         } elseif ($_POST['type'] == 'organisation'){

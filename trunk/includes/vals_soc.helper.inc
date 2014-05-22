@@ -39,7 +39,24 @@ function tt($str){
 	return call_user_func_array('sprintf', $args);
 }
 
+function objectToArray($o) {
+	$a = array();
+	foreach ($o as $k => $v) 
+		$a[$k] = (is_array($v) || is_object($v)) ? objectToArray($v): $v; 
+	return $a;
+}
 
+function simpleObjectToArray($o){
+	return (array) $o;
+}
+
+function doAssocQuery($q){
+	return db_query($q)->fetchAllKeyed();
+}
+
+function doQuery2($q){
+	return array_map('simpleObjectToArray', db_query($q)->fetchAll());
+}
 
 function mapOrganisation($org){
 	switch ($org){

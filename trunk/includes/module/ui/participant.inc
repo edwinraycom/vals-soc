@@ -89,6 +89,33 @@ function renderParticipants($type='', $participants='', $group_selection='', $gr
     }  
 }
 
+function renderOrganisations($type='', $organisations='', $organisation_head='', $target=''){
+	//If no organisations dataset is passed on, retrieve them based on the other arguments
+	if (!$organisations){
+		$organisations = Participants::getOrganisations($type, $organisation_head);
+		if (!($organisations && $organisations->rowCount())){
+			$organisations = null;
+		}
+	}
+	if ($organisations && $organisations->rowCount()){
+		$key = Participants::keyField($type);
+		//$id = $organisation->$key;
+		$s = "<ul class='grouplist'>";
+		foreach($organisations as $member){
+			$id = $member->$key;
+			$s .=  "<li>";
+			$s .= "<a href='javascript:void(0);' onclick=\"ajaxCall('administration', 'view', {type:'$type', id:$id, target:'$target'}, '$target');\">".$member->name."</a>";
+			$s .= "</li>";
+		}
+		$s .= "</ul>";
+		return $s;
+	} else {
+		$type = $type ?: 'group';
+		return $organisation_head ? tt('You have no %1$s yet.', t($type)):
+			tt('There is no %1$s yet.', t($type));
+	}
+}
+
 function renderOrganisation($type, $organisation='', $organisation_owner='', $target=''){
     if (!$organisation){
         $organisations = Participants::getOrganisations($type, $organisation_owner);

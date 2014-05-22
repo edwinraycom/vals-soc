@@ -13,9 +13,7 @@ module_load_include('inc', 'vals_soc', 'includes/module/ui/participant');
 //31 student stuutje, 30 tutor zelfstandig, 27 salamanca (org inst), 25 orgadmin, 1 admin
 //$GLOBALS['user'] = user_load(30,  TRUE);
 $role = getRole();
-
-// drupal_set_message('Dit is om te proberen');
-echo '<BR>In admin.php: I am a '.$role. ' and my user is '. $GLOBALS['user']->uid;
+echo '<BR>In administer/blocklayout.inc: I am a '.$role. ' and my user is '. $GLOBALS['user']->uid;
 echo "<div id='ajax_error'></div>";
 echo "<div id='admin_container' class='tabs_container'>";
 

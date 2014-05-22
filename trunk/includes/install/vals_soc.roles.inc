@@ -158,13 +158,19 @@ function get_default_roles() {
 	return $roles;
 }
 
-function getRoles(){
+function getRoles($uid=''){
     global $user;
-
-    if (isset($user)){
-        return $user->roles;
+	
+    if ($uid) {
+    	$roles = doAssocQuery("select r.rid,r.name from users_roles as ur left join role as r on r.rid=ur.rid ".
+    			"where ur.uid = $uid");//->fetchAll();
+    	return $roles;
     } else {
-        return array();
+    	 if (isset($user)){
+	        return $user->roles;
+	    } else {
+	        return array();
+	    }
     }
 }
 

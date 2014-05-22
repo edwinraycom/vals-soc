@@ -30,6 +30,8 @@ function ajaxError(targ, msg) {
 		if (err_target.length){
 			err_target.html(msg);
 			err_target.addClass('messages error');
+		} else {
+			alertdev('Target for error '+ targ+ ' could not be found.');
 		}
 	}
 }
@@ -70,13 +72,13 @@ function ajaxCall(category, action, data, target, type, args) {
 		data : data,
 		dataType : type
 	};
-	// Handling a succsfull call which can be a programmed returned error too.
+	// Handling a successfull call which can be a programmed returned error too.
 	// As
 	// long as the returned val is corresponding with dataType and in time.
 	// If the success function is not speicifed, a target is necessary to show
 	// the result
 
-	if (target)
+	if (target) {
 		if (isFunction(target)) {
 			if (arguments.length < 6){
 				var args = [];
@@ -85,19 +87,12 @@ function ajaxCall(category, action, data, target, type, args) {
 			call.success = function(msg){
 					window[target](msg, args);
 				};		
-//			call.success = (function(args){
-//				return function(msg){
-//					eval(target + "(msg, args)");
-//				};
-//				})(args);
 		} else {
 			call.success = function(msg) {
 				if (type == 'json') {
 					if (msg.result == "html") {
-						// $jq("#" + target).html(msg.html);
 						ajaxInsert(msg.html, target);
 					} else if (msg.result == "error") {
-						// $jq("#" + target).html(msg.error);
 						ajaxInsert(msg.error, target);
 					} else {
 						if (typeof msg.msg != 'undefined') {
@@ -110,11 +105,10 @@ function ajaxCall(category, action, data, target, type, args) {
 					}
 				} else {// assume text or html, we don't care: all can be valid
 					ajaxInsert(msg, target);
-					// $jq("#" + target).html(msg);
 				}
 			};
 		}
-	else {
+	} else {
 		alertdev('No target or function has been specified: see console for details.');
 	}
 
