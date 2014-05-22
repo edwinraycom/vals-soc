@@ -22,7 +22,8 @@ function vals_soc_timeline_admin_program_page() {
 
 function vals_soc_administer_page(){
     ob_start();
-    include('admin.php');
+    module_load_include('inc', 'vals_soc', 'includes/module/ui/administer/blocklayout');
+    //include('admin.php');
     return ob_get_clean();
 }
 

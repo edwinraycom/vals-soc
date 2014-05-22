@@ -1,14 +1,10 @@
 <?php
-
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+module_load_include('inc', 'vals_soc', 'includes/vals_soc.helper');
 
 function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state){
     $current_role = getRole();
     
+    //If no  errors are encountered, just return, otherwise call form_set_error
     if ($current_role == 'administrator'){
         return;
     }
@@ -17,9 +13,13 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
         form_set_error('account_key', t('There is no key entered. Ask the Semester of Code Admin.'));
         return;
     }
+    
     $code_entered = $form_state['values']['account_key'];
     $requested_user_type = isset($form_state['values']['account_type']) ? $form_state['values']['account_type'] : 'none';
-     
+    if ($requested_user_type == 'none'){
+    	form_set_error('account_key', t('There is no type of the account entered.'));
+    	return;
+    }
     //Check the student belonging to a valid group
     if ($requested_user_type == 'student'){
         if (! isset($form_state['values']['institute']) || $form_state['values']['institute']  == 0){
@@ -34,13 +34,14 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
         if ($valid_groups_cnt == 0){
             form_set_error('account_key', t('This is no valid key you entered. Ask your tutor.'));
         }
+
         return;
     }
     $org = 0;
-    if (($requested_user_type == 'mentor' ) && $form_state['values']['organisation']){
+    if (in_array($requested_user_type, array('mentor', 'institute_admin') ) && $form_state['values']['organisation']){
         $org = $form_state['values']['organisation'];
     }
-    if (($requested_user_type == 'supervisor' ) && $form_state['values']['institute']){
+    if (in_array($requested_user_type, array('supervisor', 'organisation_admin')) && $form_state['values']['institute']){
         $org = $form_state['values']['institute'];
     }
     $db_and2 = db_and();
@@ -68,7 +69,7 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
 function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
     $email = isset($form_state['values']['mail']) ? $form_state['values']['mail'] : ''; 
     
-    //First get the current user
+    //First get the current user. As the user gets at this hook, the user is already entered in the system
     $user = db_select('users', 'r')->fields('r')->condition('mail', $email)->execute()->fetchAssoc();
     if ($user){
         $uid = $user['uid'];
@@ -78,7 +79,7 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
     $code_entered = $form_state['values']['account_key'];
     $current_role = getRole();
     if ($current_role == 'administrator'){
-        $rid = getUserRoleId($form_state['values']['roles']);
+        $rid = $form_state['values']['roles'];//The standard Drupal form for admins to add users submits an int id
         $role = db_select('role', 'r')->fields('r')->condition('rid', $rid)->execute()->fetchAssoc();
         if ($role){
             $type = $role['name'];
@@ -108,7 +109,7 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
 //    }
     
     
-    if ((($type == 'student') || ($type == 'supervisor')) && ($form_state['values']['institute'])){
+    if ((($type == 'student') || ($type == 'supervisor') || ($type == 'institute')) && ($form_state['values']['institute'])){
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => 'institute', 
@@ -172,40 +173,12 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
             ))->execute();
     }
 }
-//function testObligatedFields($form_id, $values, $stop_on_error= TRUE, $show_field_error_detail=FALSE){
-//    $obligated_fields = array(
-//        'vals_soc_organisation_form' => array(
-//            'name', 'url', 'contact_name', 'contact_email',
-//        ),
-//        
-//    );
-//    $ok = TRUE;
-//    foreach ($obligated_fields[$form_id] as $f){
-//        if (!isset($values[$f]) || $values[$f] == ''){
-//           if ($show_field_error_detail){
-//               form_set_error($f, sprintf(t('You have to fill in the field: %1$s'), $f));
-//           } else {
-//               
-//           }
-//           $ok = FALSE;
-//           if ($stop_on_error){
-//               break;
-//           }
-//        }
-//    }
-//    return $ok;
-//}
 
 function vals_soc_organisation_form_validate_handler(&$form, &$form_state)
 {
      $current_role = getRole();
      if ($current_role == 'administrator' || $current_role == 'organisation_admin'){
          return;
-//         $all_fields = testObligatedFields('vals_soc_organisation_form', $form_state['values'], 0);
-//         if (!$all_fields){
-//             form_set_error($f, t('You have to fill in all the marked fields'));
-//         }
-//         return $all_fields;
      } else {
          form_set_error('', t('You have not sufficient rights to submit this form'));
      }
@@ -250,78 +223,6 @@ function vals_soc_organisation_form_submit_handler(&$form, &$form_state)
 function vals_soc_institute_form_validate_handler(&$form, &$form_state)
 {
  
-}
-/* Taken from the Opendocument project
- * This function may be used under the Creative Commons license: by-nc-sa
- * Original written by E. Veenendaal, spring 2006
- */
-//I have left out the forbidden words and set the desired length to 9, meaning it has max length 10.
-//Note that every code produced is unique as long as the int passed in is unique
-//The length adapts itself to the number with a length of 5 we already have 26^5 >= 11,000,000 elements to cover
-//Note that if the full length of chars -say 5- is needed to code the int, we need an extra char in front telling
-//the first char is not a padding indicator, but an included char. In that case we would have a 6-char string
-//starting with an A. As an invariant we have that the 10 positions shifted result of base_convert can never start
-//with an 'a' since base_convert returns a string with 1-9,[a-q] (so it never starts with 0).
-
-function my_convert($int, $wishedlen = 9){
-	$map = array(
-			'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', //  7
-			'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', // 15
-			'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', // 23
-			'Y', 'Z');
-	$map2 = array_merge(array(
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'), $map);
-	//base_convert uses int chars as well, So the mapping set is 0-9 + a-q, so 15 maps to f and not to p. We correct for
-	//that so that we do not have integers in the resulting code
-	$start = str_split(strtoupper(base_convert($int, 10, 26)));
-	$string = '';
-	foreach($start as $c){
-		$pos = array_search($c, $map2);
-		$string .= $map2[$pos + 10];
-	}
-
-	$len = count($start);
-	if ($len < $wishedlen){
-		$pad = $wishedlen - $len - 1;//Leave one position as pad number indicator
-		if ($pad > 0){
-			for ($i=1; $i <= $pad;$i++){
-				$string = $map[rand(0,25)] . $string;
-			}
-		}
-		$string = $map[max($pad, 0)]. "$string";
-	} elseif ($len == $wishedlen){
-		$string = "A$string";
-	}
-
-	return $string;
-}
-
-function mapOrganisation($org){
-	switch ($org){
-		case 'group': return 'group';break;
-		case 'institute': return 'supervisor';break;
-		case 'organisation': return 'mentor';break;
-		default: return $org;
-	}
-}
-
-function createRandomCode($org, $id=1 ){
-	$fixed_prefixes = array(
-		'administrator' => 1,
-		'soc' => 2,
-		'organisation_admin' => 3,
-		'institute_admin' => 4,
-		'supervisor' => 5,
-		'student' => 6,
-		//'institute_admin' => 7,
-		'organisation' => 7,
-		'institute' => 8,
-		'group' => 9,
-		'mentor' => 0
-		
-	);
-	$int = (int) $id.$fixed_prefixes[$org];
-    return my_convert($int);
 }
 
 function vals_soc_institute_form_submit_handler(&$form, &$form_state)
