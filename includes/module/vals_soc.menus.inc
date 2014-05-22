@@ -31,6 +31,18 @@ function vals_soc_menu_handler(){
 			'file' => 'vals_soc.pages.inc',
 			'file path' => drupal_get_path('module', 'vals_soc') . '/includes/module/',
 	);
+	$items['projects/apply'] = array(
+			'title' => t('Apply for Projects'),
+			'type' => MENU_NORMAL_ITEM,
+			'page callback' => 'vals_soc_apply_projects',
+			'access arguments' => array('vals apply projects'), // Voor alle gebruikers (incl guests: 'use text format filtered_html'
+			// uncomment the 2 lines below to restrict access to menu items based on role
+			//'access callback' => 'vals_soc_user_role_check',
+// 			'access arguments' => array(1, array('Organisation Administrator','Student')),
+			'description' => 'Proposal page',
+			'file' => 'vals_soc.pages.inc',
+			'file path' => drupal_get_path('module', 'vals_soc') . '/includes/module/',
+	);
 	$items['admin/config/vals_soc'] = array(
 			'title' => 'VALS Summer of code',
 			'type' => MENU_NORMAL_ITEM,
