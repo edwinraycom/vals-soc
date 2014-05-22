@@ -6,24 +6,41 @@ class Participants {
 		global $user;
 
 		$supervisor = $supervisor ?: $user->uid;
+		if (! self::isOfType('supervisor', $supervisor)){
+			drupal_set_message(t('You cannot view this data'), 'error');
+			return array();
+		}
 		//todo: find out whether current user is supervisor
-
+		$table = self::tableName('group');
 		if ($supervisor == 'all'){
-			$groups = db_select('soc_groups')->fields('soc_groups')->execute()->fetchAll(PDO::FETCH_ASSOC);
+			$groups = db_select($table)->fields($table)->execute()->fetchAll(PDO::FETCH_ASSOC);
 		} else {
-			$groups = db_select('soc_groups')->fields('soc_groups')->condition('supervisor_id', $supervisor)->
+			$groups = db_select($table)->fields($table)->condition('supervisor_id', $supervisor)->
 			execute()->fetchAll(PDO::FETCH_ASSOC);
 		}
 
 		return $groups;
 	}
 
+	public static function isOfType($type, $uid=''){
+		global $user;
+		
+		if ($uid){
+			return in_array($type, getRoles($uid));
+		} else {
+			return in_array($type, $user->roles);
+		}
+	}
+	
 	public static function getStudents($group=''){
 		global $user;
 
 		$supervisor = $user->uid;
 		//todo: find out whether current user is supervisor
-		 
+		if (! self::isOfType('supervisor', $supervisor)){
+			drupal_set_message(t('You cannot view this data'), 'error');
+			return array();
+		} 
 		if ($group == 'all'){
 			$students = db_query('select * from users as u left join users_roles as ur on u.uid=ur.uid left join role as r on r.rid=ur.rid where r.name=:role ', array(':role' => 'student'));
 		} elseif ($group) {
@@ -51,15 +68,15 @@ class Participants {
 	 */
 	public static function getParticipants($member_type, $group_type='', $group_id='', $id='')
 	{
-		global $user;
+		global $user;  
 
 		$group_head = $user->uid;
 		//todo: find out whether current user is indeed head of the group
 
 		if ($group_id == 'all'){
 			$members = db_query(
-					'select * from users as u '.
-					'left join  users_roles as ur on u.uid=ur.uid '.
+					'select u.* from users as u '.
+					'left join users_roles as ur on u.uid=ur.uid '.
 					'left join role as r on r.rid=ur.rid '.
 					'WHERE r.name=:role ', array(':role' => $member_type));
 		} else {
@@ -69,15 +86,26 @@ class Participants {
 						"WHERE u.uid = '$id'");
 
 			} else {
-				if (!$group_id && $group_type) {
-					//get the organisation from the current user, assuming he/she is head of the organisation/group/etc
-					$group_ids = db_query(
-							"SELECT oid from soc_user_membership um".
-							" WHERE um.type = '$group_type' AND um.uid = $group_head ")
-							->fetchCol();
+				
+				if ($group_id && $group_type){
+					$group_ids = array($group_id);
+				} else {
+					if ($group_type) {
+						$key = self::keyField($group_type);
+						$table = self::tableName($group_type);
+						//get the organisation from the current user, assuming he/she is head of the organisation/group/etc
+						$group_ids = db_query(
+								"SELECT $key from $table t".
+								" WHERE t.owner_id = $group_head ")
+								->fetchCol();
+// 								"SELECT oid from soc_user_membership um".
+// 								" WHERE um.type = '$group_type' AND um.uid = $group_head ")
+// 								->fetchCol();
+					} else {
+						$group_ids = null;
+					}
 				}
-				$group_id = 0;
-				if ($group_id){
+				if ($group_ids){
 					$members = db_query(
 							"SELECT u.* from users as u left join users_roles as ur ".
 							" on u.uid = ur.uid left join role as r ".
@@ -107,19 +135,15 @@ class Participants {
 		//todo: find out whether current user is institute_admin
 
 		if ($group_head_id == 'all'){
-			$members = db_query("SELECT o.* from soc_$org_type as o");
+			$members = db_query("SELECT o.* from soc_${org_type}s as o");
 		} else {
-// 			$key_columns = array(
-// 					'group' => 'group_id',
-// 					'institute' => 'inst_id',
-// 					'organisation' => 'org_id');
 			$key_column = self::keyField($org_type);
 			$code_key_column = ($org_type == 'group') ? 'group_id' : 'org';
 			$member_type = ($org_type == 'group') ? 'group' :(($org_type == 'organisation') ? 'mentor': 'supervisor');
 			if ($id){
 				 
 				$members = db_query(
-						"SELECT o.*, c.code from soc_${org_type}s as o ".
+						"SELECT o.*, c.code from ".self::tableName(org_type)." as o ".
 						"left join soc_codes as c ".
 						" on o.$key_column = c.$code_key_column ".
 						"WHERE o.$key_column = $id ");
@@ -127,7 +151,7 @@ class Participants {
 				$group_head_id = $group_head_id ?: $group_head;
 	
 				$members = db_query(
-						"SELECT o.*, c.code from soc_${org_type}s as o ".
+						"SELECT o.*, c.code from ".self::tableName(org_type)." as o ".
 						"left join soc_user_membership as um ".
 						" on o.$key_column = um.oid ".
 						"left join soc_codes as c ".
@@ -297,14 +321,10 @@ class Participants {
 			drupal_set_message(t('Update requested with empty data set'));
 			return false;
 		}
-		$key_columns = array(
-				'group' => 'group_id',
-				'institute' => 'inst_id',
-				'organisation' => 'org_id'
-		);
+		$key = self::keyField($type);
 	
 		return
-		db_update("soc_${type}s")
+		db_update(self::tableName($type))
 		->condition($key_columns[$type], $id)
 		->fields($organisation)
 		->execute();
@@ -326,7 +346,7 @@ class Participants {
 			return FALSE;
 		}
 		$key_field = self::keyField($type);
-		$obj = db_query("SELECT * FROM soc_${type}s WHERE $key_field = $id")->fetchAssoc();
+		$obj = db_query("SELECT * FROM ".self::tableName($type)." WHERE $key_field = $id")->fetchAssoc();
 		return $obj['owner_id'] == $GLOBALS['user']->uid;
 	}
 	
@@ -349,7 +369,7 @@ class Participants {
 		if (!isValidOrganisationType($type)){
 			
 		}
-		$num_deleted = db_delete("soc_${type}s")
+		$num_deleted = db_delete(self::tableName($type))
 		->condition(self::keyField($type), $id)
 		->execute();
 		if ($num_deleted){

@@ -1,6 +1,4 @@
 <?php
-module_load_include('inc', 'vals_soc', 'includes/vals_soc.helper');
-
 function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state){
     $current_role = getRole();
     

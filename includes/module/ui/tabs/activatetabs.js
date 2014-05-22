@@ -69,7 +69,6 @@ function showObject(obj, d){
 // activated in the process.
 // When no initial tab id is given, the first tab will be made active
 function makeTabsActive(tab_name, active_tabs, initial, anchors_found) {
-//TODO    alertdev('Een call van makeTabsActive voor o.a.'+ active_tabs[0]);
     var all = {},
         first = (typeof initial != 'undefined') ? initial : '',
         anchors_found = (typeof anchors_found != 'undefined') ? anchors_found : false,

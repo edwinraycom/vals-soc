@@ -2,7 +2,7 @@
 /*Expects data for every tab:
  * [translate, label, action, type, id, extra GET arguments]
  */
-function renderTabs($count, $tab_label, $target_label, $type, $data, $id='',
+function renderTabs($count, $tab_label, $target_label, $type, $data, $id=0,
 	$render_targets=false, $active_content='', $active_tab=1){?>
 	<ol id="toc"><?php
 	$label_start = t($tab_label);
@@ -53,8 +53,7 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $id='',
 function showRoleDependentAdminPage($role){
 	switch ($role){
 		case 'administrator':
-			echo '<h2>'.t('Your groups').'</h2>';
-			echo renderGroups();
+			showAdminPage();
 			break;
 		case 'supervisor':
 			showSupervisorPage();
@@ -67,6 +66,35 @@ function showRoleDependentAdminPage($role){
 			break;
 	}
 }
+
+function showAdminPage(){
+	//TODO check for the role of current user
+	echo '<h2>'.t('All the groups and persons').'</h2>';
+	if (TRUE || ! $groups->rowCount()){
+		
+		$data = array();
+		$data[] = array(1, 'Institutes', 'list', 'institute');
+		$data[] = array(1, 'Organisations', 'list', 'organisation');
+		$data[] = array(1, 'Tutors', 'list', 'supervisor');
+		$data[] = array(1, 'Mentors', 'list', 'mentor');
+		$data[] = array(1, 'Students', 'list', 'student');
+		$data[] = array(1, 'Organisation Admins', 'list', 'organisation_admin');
+		$data[] = array(1, 'Institute Admins', 'list', 'institute_admin');
+		$nr_tabs = count($data);
+		echo renderTabs($nr_tabs, null, 'admin_page-', '', $data, 0, TRUE, 
+				renderOrganisations('institute', '', 'all'));
+		$s = '';
+		for ($i=1;$i <= $nr_tabs;$i++){
+			$s .= ($i > 1)? ', ':'';
+			$s .= "'admin_page-$i'";
+		}
+		?>
+		<script type="text/javascript">
+        	   activatetabs('tab_', [<?php echo $s;?>]);
+        </script><?php
+	} 
+}
+
 
 function showSupervisorPage(){
 	//TODO check for the role of current user
