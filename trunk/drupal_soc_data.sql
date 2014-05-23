@@ -5,6 +5,8 @@ use drupal;
 --
 
 LOCK TABLES `soc_codes` WRITE;
+TRUNCATE TABLE `soc_codes`;
+
 /*!40000 ALTER TABLE `soc_codes` DISABLE KEYS */;
 INSERT INTO `soc_codes` VALUES 
 (1,'administrator','BHTGSKKRWP',0,NULL),
@@ -21,8 +23,9 @@ UNLOCK TABLES;
 --
 -- Dumping data for table `soc_groups`
 --
-
 LOCK TABLES `soc_groups` WRITE;
+TRUNCATE TABLE `soc_groups`;
+
 INSERT INTO `soc_groups` (`group_id`, `owner_id`, `inst_id`, `name`, `description`, `supervisor_id`) VALUES
 (1, 0, 3, 'Een of andere groep met één woord erin met acute', 'NIets te zeggen', 30),
 (2, 0, 3, 'nog een groep maar nu zonder ', 'dusss', 30),
@@ -37,18 +40,19 @@ INSERT INTO `soc_groups` (`group_id`, `owner_id`, `inst_id`, `name`, `descriptio
 (11, 0, 0, 'qwertyy', '', 0),
 (12, 0, 0, 'qwertyy', '', 0),
 (13, 0, 0, 'qwerty keyboard', '', 0),
-(14, 29, 5, 'tralalala', 'jajha', 29),
-(15, 29, 5, 'tralalala2', 'jajha', 29),
-(21, 29, 5, 'meer van dat en zo', 'beschr', 29),
-(22, 29, 5, 'nog een groep', 'klajsdlkfj', 29),
-(23, 29, 5, 'nog een groep', 'klajsdlkfj', 29);
+(14, 31, 5, 'tralalala', 'jajha', 29),
+(15, 31, 5, 'tralalala2', 'jajha', 29),
+(21, 31, 5, 'meer van dat en zo', 'beschr', 29),
+(22, 31, 5, 'nog een groep', 'klajsdlkfj', 29),
+(23, 31, 5, 'nog een groep', 'klajsdlkfj', 29);
 UNLOCK TABLES;
 
 --
 -- Dumping data for table `soc_institutes`
 --
-
 LOCK TABLES `soc_institutes` WRITE;
+TRUNCATE TABLE `soc_institutes`;
+
 INSERT INTO `soc_institutes` (`inst_id`, `owner_id`, `name`, `contact_name`, `contact_email`) VALUES
 (1, 0, 'London University', 'John', 'johnny_walker@wiskey.com'),
 (3, 0, 'Salamanca Universidad', 'JUan', 'juan@raycom.com'),
@@ -62,6 +66,7 @@ UNLOCK TABLES;
 --
 
 LOCK TABLES `soc_organisations` WRITE;
+TRUNCATE TABLE `soc_organisations`;
 /*!40000 ALTER TABLE `soc_organisations` DISABLE KEYS */;
 INSERT INTO `soc_organisations` VALUES 
 (1, 26, 'Apache Software Foundation','P Sharples','psharples@apache.org','http://www.apache.org',
@@ -73,8 +78,6 @@ including Apache HTTP Server the world's most popular Web server software. Throu
 "The Groovy programming language for the JVM gathers a community and ecosystem around it made of various 
 projects, like web frameworks, testing libraries, concurrency toolkits, and more. The Groovy Community proposes 
 to be the umbrella for all the project of the Groovy ecosystem.");
-
-
 /*!40000 ALTER TABLE `soc_organisations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -83,6 +86,7 @@ UNLOCK TABLES;
 --
 
 LOCK TABLES `soc_projects` WRITE;
+TRUNCATE TABLE `soc_projects`;
 /*!40000 ALTER TABLE `soc_projects` DISABLE KEYS */;
 INSERT INTO soc_projects (pid,title,description,selected,state,oid,tags) VALUES (1,"Poor performance / OutOfMemoryError for sequences, choices and nested with large minOccurs/maxOccurs","We now handle large minOccurs/maxOccurs on element/wildcard particles more gracefully by creating a compact representation in the DFA and using counters to check the occurence constraints, however we will still fully expand the content model for minOccurs/maxOccurs on sequences and choices which could still lead to an OutOfMemoryError or very poor performance (i.e. could still take several minutes to build the DFA). Sequences, choices and nested minOccurs/maxOccurs are somewhat tricker to handle. We would need a more general solution than the one implemented for elements and wildcards to improve those. With the introduction of XML Schema 1.1 support we would also need to consider how to improve this for the enhanced xs:all model groups.",0,"pending",1,"java, php, python, javascript, c++, CSS, HTML, node.js, open source");
 INSERT INTO soc_projects (pid,title,description,selected,state,oid,tags) VALUES (2,"Improvements to Autoscaling in Apache Stratos","You can find some details about autoscaling from [1] and [2]. 1. Improve Autoscaling to predict the number of instances required in the next time interval. Currently we predict the load for next time interval. Then we use a threshold to decide on scale up or down. Factors that we are considering are the requests in flight at load balancer and Load average and memory consumption of cartridge instance. Best approach would be to decide the number of instances that will be required to handle the load in next time interval. 2. Predict the load according to a schedule defined by end user. This aspect will be needed to handle seasonal load expectations. E.g. High load on Christmas and new year period. [1] http://www.sc.ehu.es/ccwbayes/isg/administrator/components/com_jresearch/files/publications/autoscaling.pdf [2] http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/WhatIsAutoScaling.html",0,"pending",1,"java, php, python, javascript, c++, CSS, HTML, node.js, open source");
@@ -116,20 +120,21 @@ UNLOCK TABLES;
 -- Dumping data for table `soc_user_membership`
 --
 LOCK TABLES `soc_user_membership` WRITE;
+TRUNCATE TABLE `soc_user_membership`;
 INSERT INTO `soc_user_membership` (`mem_id`, `uid`, `type`, `oid`) VALUES
 (1, 1,'institute',1),
-(3, 25, 'organisation', 3),
-(4, 26, 'organisation', 3),
-(6, 27, 'institute', 5),
-(7, 29, 'institute', 5),
-(8, 30, 'institute', 3),
-(9, 30, 'group', 2),
-(10, 31, 'institute', 3),
-(11, 31, 'group', 2),
-(12, 30, 'group', 3),
-(13, 30, 'group', 4),
-(14, 30, 'group', 1),
-(15, 29, 'group', 5),
+(3, 10, 'organisation', 3),
+(4, 11, 'organisation', 3),
+(6, 20, 'institute', 5),
+(7, 31, 'institute', 5),
+(8, 32, 'institute', 3),
+(9, 32, 'group', 2),
+(10, 50, 'institute', 3),
+(11, 50, 'group', 2),
+(12, 32, 'group', 3),
+(13, 32, 'group', 4),
+(14, 32, 'group', 1),
+(15, 31, 'group', 5),
 (16, 0, 'group', 6),
 (17, 0, 'group', 7),
 (18, 0, 'group', 8),
@@ -138,33 +143,14 @@ INSERT INTO `soc_user_membership` (`mem_id`, `uid`, `type`, `oid`) VALUES
 (21, 0, 'group', 11),
 (22, 0, 'group', 12),
 (23, 0, 'group', 13),
-(24, 29, 'group', 14),
-(25, 29, 'group', 15),
-(31, 29, 'group', 21),
-(32, 29, 'group', 22),
-(33, 29, 'group', 23),
-(34, 32, 'organisation', 3),
-(35, 32, 'organisation', 3);
+(24, 31, 'group', 14),
+(25, 31, 'group', 15),
+(31, 31, 'group', 21),
+(32, 31, 'group', 22),
+(33, 31, 'group', 23),
+(34, 40, 'organisation', 3),
+(35, 40, 'organisation', 3);
 UNLOCK TABLES;
-
-TRUNCATE TABLE `users`;
-
---
--- Gegevens worden uitgevoerd voor tabel `users`
---
-
-INSERT INTO `users` (`uid`, `name`, `pass`, `mail`, `theme`, `signature`, `signature_format`, `created`, `access`, `login`, `status`, `timezone`, `language`, `picture`, `init`, `data`) VALUES
-(0, '', '', '', '', '', NULL, 0, 0, 0, 0, NULL, '', 0, '', NULL),
-(1, 'admin', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin@raycom.com', '', '', 'filtered_html', 1394721311, 1400587637, 1400587637, 1, 'Europe/Paris', 'nl', 0, 'edwin@raycom.com', 'a:6:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";s:7:"overlay";i:1;}'),
-(25, 'orgadmin', '$S$DYWYtzyJ5vQ9ycprFQIidBsQopzehN2SeIH0FuLOeFLJowXklBOA', 'edwin+1@raycom.com', '', '', 'filtered_html', 1397205806, 1400256334, 1400160734, 1, 'Europe/Paris', 'es', 0, 'edwin+1@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
-(26, 'orgadmin2', '$S$Dzy.Xc.PKl3sDQQ3eOCGwHlgvKUc7mIWoSmIxCRpt23ZXkgXaetJ', 'edwin+2@raycom.com', '', '', 'filtered_html', 1397209973, 0, 0, 1, 'Europe/Paris', 'es', 0, 'edwin+2@raycom.com', NULL),
-(27, 'instadmin', '$S$DDxmcp7.O2PU.IwYoJnCh9RjtIoHbfME0I8qRvIvMGTJ7VEskgbW', 'edwin+3@raycom.com', '', '', 'filtered_html', 1397210143, 1400577479, 1400257398, 1, 'Europe/Paris', 'es', 0, 'edwin+3@raycom.com', 'b:0;'),
-(28, 'tutor1', '$S$DVTNls.DSTIcWxJJtwBQ0loQcqoBFLpvyBBo8BkP68X01CaJOjuD', 'edwin+4@raycom.com', '', '', 'filtered_html', 1397211191, 0, 0, 1, 'Europe/Paris', 'it', 0, 'edwin+4@raycom.com', NULL),
-(29, 'tutor2', '$S$DVZPzlQUv2lSre4/ZCPKKB1Ru6MoeNp7THcCytAtXGzEe7NwdwLm', 'edwin+5@raycom.com', '', '', 'filtered_html', 1397211502, 1400599171, 1400587679, 1, 'Europe/Paris', 'en', 0, 'edwin+5@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
-(30, 'tutor3', '$S$DnIPP8LTBFbSQpJf3qI0/Qbw1aZoANRh1y91zLEHURCStVCncznK', 'edwin+6@raycom.com', '', '', 'filtered_html', 1397211598, 1399972053, 1397224028, 1, 'Europe/Paris', 'el', 0, 'edwin+6@raycom.com', 'b:0;'),
-(31, 'student1', '$S$D2aE50D5yhDu70.5bdo3nB02t9INLlyRKiKhiaDxt6Xx2AReK6MJ', 'edwin+9@raycom.com', '', '', 'filtered_html', 1397222564, 0, 0, 1, 'Europe/Paris', 'en', 0, 'edwin+9@raycom.com', NULL),
-(32, 'mentor1', '$S$Dq2t3M2XTxsR./.brs7wPBu6k.q4K75GoTYOS5uNvaFFtl88SJ4t', 'edwin+10@raycom.com', '', '', 'filtered_html', 1400586065, 1400586093, 1400586093, 1, 'Europe/Paris', 'en', 0, 'edwin+21@raycom.com', 'b:0;');
-
 
 LOCK TABLES `soc_codes` WRITE;
 TRUNCATE TABLE `soc_codes`;
@@ -179,27 +165,64 @@ INSERT INTO `soc_codes` (`code_id`, `type`, `code`, `org`, `group_id`) VALUES
 (8, 'group', 'MNU77783SF', 5, 22),
 (9, 'group', 'MPOPUFD783', 5, 23);
 
+LOCK TABLES `users` WRITE;
+TRUNCATE TABLE `users`;
+--
+-- Gegevens worden uitgevoerd voor tabel `users`
+--
+INSERT INTO `users` (`uid`, `name`, `pass`, `mail`, `theme`, `signature`, `signature_format`, `created`, `access`, `login`, `status`, `timezone`, `language`, `picture`, `init`, `data`) VALUES
+(0, '', '', '', '', '', NULL, 0, 0, 0, 0, NULL, '', 0, '', NULL),
+(1, 'admin', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin@raycom.com', '', '', 'filtered_html', 1394721311, 1400587637, 1400587637, 1, 'Europe/Paris', 'nl', 0, 'edwin@raycom.com', 'a:6:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";s:7:"overlay";i:1;}'),
+(10, 'orgadmin', '$S$DAJDFmiWBQtirjj7G3LoiVbKRFAq.w0OmtDSsJwtxwtD.R49SgQD', 'edwin+1@raycom.com', '', '', 'filtered_html', 1397205806, 1400256334, 1400160734, 1, 'Europe/Paris', 'es', 0, 'edwin+1@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
+(11, 'orgadmin2', '$S$DoXC3XUY.38zgX1JTlt8wWxQiCMa1nn8LODOg.q2afZ.2.ARkNeP', 'edwin+2@raycom.com', '', '', 'filtered_html', 1397209973, 0, 0, 1, 'Europe/Paris', 'es', 0, 'edwin+2@raycom.com', NULL),
+(20, 'instadmin', '$S$DrHCQA707HtESB3QNywD/0FQANQ9kG08woUCXW/es2Y4L.XJUwqr', 'edwin+3@raycom.com', '', '', 'filtered_html', 1397210143, 1400577479, 1400257398, 1, 'Europe/Paris', 'es', 0, 'edwin+3@raycom.com', 'b:0;'),
+(30, 'tutor1', '$S$DAbq/gKRrkbdvx2npafhp1qC0JWGmU8IqyfsYOM87B15hlpQWI5R', 'edwin+4@raycom.com', '', '', 'filtered_html', 1397211191, 0, 0, 1, 'Europe/Paris', 'it', 0, 'edwin+4@raycom.com', NULL),
+(31, 'tutor2', '$S$DNOcJw0SC/cumjvZR6hkI1DYS6RN4heRDZze1ELDECGHlX7k0r9C', 'edwin+5@raycom.com', '', '', 'filtered_html', 1397211502, 1400599171, 1400587679, 1, 'Europe/Paris', 'en', 0, 'edwin+5@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
+(32, 'tutor3', '$S$DoalMdcTqFxz/0xnJtKm01UhYTF9BFu5D/pdQd4SfR6LbcnXo6jP', 'edwin+6@raycom.com', '', '', 'filtered_html', 1397211598, 1399972053, 1397224028, 1, 'Europe/Paris', 'el', 0, 'edwin+6@raycom.com', 'b:0;'),
+(40, 'mentor1', '$S$DfyLOLz1iJpBiSHfG9xbWbQMM8hvP09C2GnQYoW7B6OEVku27fmP', 'edwin+10@raycom.com', '', '', 'filtered_html', 1400586065, 1400586093, 1400586093, 1, 'Europe/Paris', 'en', 0, 'edwin+21@raycom.com', 'b:0;'),
+(50, 'student1', '$S$DdK9pCk1Nu5Zc9p5zFrKoib6jkUxOW0eSglRP8D.NAIgQGBp0aki', 'edwin+9@raycom.com', '', '', 'filtered_html', 1397222564, 0, 0, 1, 'Europe/Paris', 'en', 0, 'edwin+9@raycom.com', NULL);
 UNLOCK TABLES;
-
-TRUNCATE TABLE `role`;
-INSERT INTO `role` (`rid`, `name`, `weight`) VALUES
-(3, 'administrator', 2),
-(1, 'anonymous user', 0),
-(2, 'authenticated user', 1),
-(12, 'institute_admin', 2),
-(5, 'mentor', 4),
-(8, 'organisation_admin', 3),
-(4, 'student', 6),
-(9, 'supervisor', 5);
 
 TRUNCATE TABLE `users_roles`;
 INSERT INTO `users_roles` (`uid`, `rid`) VALUES
-(1, 3),
-(31, 4),
-(32, 5),
-(25, 8),
-(26, 8),
-(28, 9),
-(29, 9),
-(30, 9),
-(27, 12);
+(1, 3),  # user admin is Admin
+(10, 4), # user orgadmin is an organisation_admin
+(11, 4), # user orgadmin2 is an organisation_admin
+(20, 5), # user instadmin is a institute_admin
+(30, 8), # user tutor1 is a supervisor
+(31, 8), # user tutor2 is a supervisor
+(32, 8), # user tutor3 is a supervisor
+(40, 6), # user mentor1 is a mentor
+(50, 7); # user student1 is a student
+
+TRUNCATE TABLE `role`;
+INSERT INTO `role` (`rid`, `name`, `weight`) VALUES
+(1, 'anonymous user', 0),
+(2, 'authenticated user', 1),
+(3, 'administrator', 2),
+(4, 'organisation_admin', 3),
+(5, 'institute_admin', 2),
+(6, 'mentor', 4),
+(7, 'student', 6),
+(8, 'supervisor', 5),
+(9, 'soc', 4);
+
+TRUNCATE TABLE `role_permission`;
+INSERT INTO `role_permission` (`rid`, `permission`, `module`) VALUES
+(2, 'access content', 'node'),
+(2, 'create news content', 'node'),
+(2, 'delete own news content', 'node'),
+(2, 'edit own news content', 'node'),
+(4, 'vals admin projects', 'vals_soc'),	 # organisation_admin role
+(4, 'vals admin register', 'vals_soc'),  # organisation_admin role
+(4, 'vals browse projects', 'vals_soc'), # organisation_admin role
+(5, 'vals admin register', 'vals_soc'),  # institute_admin role
+(5, 'vals browse projects', 'vals_soc'), # institute_admin role
+(5, 'vals edit projects', 'vals_soc'),   # institute_admin role
+(6, 'vals admin projects', 'vals_soc'),  # mentor role
+(6, 'vals browse projects', 'vals_soc'), # mentor role
+(7, 'vals apply projects', 'vals_soc'),  # student role
+(7, 'vals browse projects', 'vals_soc'), # student role
+(8, 'vals admin register', 'vals_soc'),  # supervisor role
+(8, 'vals browse projects', 'vals_soc'), # supervisor role
+(9, 'vals browse projects', 'vals_soc'); # soc role
