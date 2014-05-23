@@ -4,6 +4,75 @@ function vals_soc_schema_handler() {
 	// NOTE: {variable} needs to be created before all other tables, as
 	// some database drivers, e.g. Oracle and DB2, will require variable_get()
 	// and variable_set() for overcoming some database specific limitations.
+	$schema['soc_proposals'] = array(
+			'description' => 'The table of the proposals',
+			'fields' => array(
+					'pid' => array(
+							'description' => 'Proposal id.',
+							'type' => 'serial',
+							'length' => 'medium',
+							'not null' => TRUE,
+					),
+					'studid' => array(
+							'description' => 'The student id, owner of the proposal.',
+							'type' => 'int',
+							'length' => 'medium',
+							'not null' => TRUE,
+					),
+					'instid' => array(
+							'description' => 'The institute, for convenience',
+							'type' => 'int',
+							'length' => 'medium',
+							'not null' => TRUE,
+					),
+					'oid' => array(
+							'description' => 'The organisation.',
+							'type' => 'int',
+							'length' => 'medium',
+							'not null' => TRUE,
+					),
+					'projectid' => array(
+							'description' => 'The project id',
+							'type' => 'int',
+							'length' => 'medium',
+							'not null' => TRUE,
+					),
+					'solution_short' => array(
+							'description' => 'The short description of the proposal.',
+							'type' => 'varchar',
+							'length' => 255, // TODO perhaps change this to another data type
+							'not null' => FALSE,
+							'default' => '',
+					),
+					'solution_long' => array(
+							'description' => 'A longer description of the proposal',
+							'type' => 'varchar',
+							'size' => '1024',
+							'not null' => TRUE,
+					),
+					'cv' => array(
+							'description' => 'The cv of this student',
+							'type' => 'varchar',
+							'size' => '1024',
+							'not null' => TRUE,
+					),
+					'state' => array(
+							'description' => 'The state of the proposal',
+							'type' => 'varchar',
+							'length' => 128,
+							'not null' => FALSE,
+					),
+			),
+			'primary key' => array('pid'),
+			/*
+			 * ALTER TABLE `soc_proposals` ADD `organisation` MEDIUMINT NOT NULL AFTER `state` ,
+	ADD `mentor` MEDIUMINT NOT NULL AFTER `organisation` ,
+	ADD `student` MEDIUMINT NOT NULL AFTER `mentor` ,
+	ADD `supervisor` MEDIUMINT NOT NULL AFTER `student`
+	* ALTER TABLE `soc_proposals` ADD `url` VARCHAR( 1024 ) NOT NULL AFTER `description`
+	*
+	*/
+	);
 
 	$schema['soc_projects'] = array(
 			'description' => 'The table of the projects',

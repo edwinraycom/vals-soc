@@ -45,3 +45,9 @@ function vals_soc_apply_projects(){
 	return ob_get_clean();
 }
 
+function vals_soc_browse_proposals(){
+	ob_start();
+	module_load_include('inc', 'vals_soc', 'includes/module/ui/proposals_browse');
+	return ob_get_clean();
+}
+
