@@ -1,4 +1,5 @@
 <?php 
+module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
 /*
  * We use this function to populate fields in the form of an entity if it already exists
  */
