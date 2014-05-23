@@ -628,10 +628,19 @@ function vals_soc_apply_form($form, &$form_state, $application='', $target=''){
 	//and get common code outside
 	if (!$application){
 		unset($form['#submit']);
+		$form['save'] = array(
+				'#type' => 'button',
+				'#button_type' => 'button',
+				'#value' => t('Save draft'),
+				//'#theme' => 'garland_button',
+				'#attributes' => array(
+						'onclick' => 'alert("absolutely not finished yet");ajaxFormCall("vals-soc-apply-form", "administration", "save",'.
+						' {type: "proposal", id:0}, "refreshTabs", "json", ["group", "'.$target.'"]);')//'.$target.' instead of refreshTabs
+		);
 		$form['sumbit'] = array(
 				'#type' => 'button',
 				'#button_type' => 'button',
-				'#value' => t('Submit'),
+				'#value' => t('Submit proposal'),
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
 						'onclick' => 'alert("absolutely not finished yet");ajaxFormCall("vals-soc-apply-form", "administration", "save",'.
@@ -645,10 +654,19 @@ function vals_soc_apply_form($form, &$form_state, $application='', $target=''){
 		//          $form['#validate'][] = 'vals_soc_group_form_validate_handler';
 	} else {
 		unset($form['#submit']);
+		$form['save'] = array(
+				'#type' => 'button',
+				'#button_type' => 'button',
+				'#value' => t('Save draft'),
+				//'#theme' => 'garland_button',
+				'#attributes' => array(
+						'onclick' => 'ajaxFormCall("vals-soc-group-form", "administration", "save",'.
+						' {type: "group", id:'.$group->group_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
+		);
 		$form['sumbit'] = array(
 				'#type' => 'button',
 				'#button_type' => 'button',
-				'#value' => t('Save'),
+				'#value' => t('Submit proposal'),
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
 						'onclick' => 'ajaxFormCall("vals-soc-group-form", "administration", "save",'.
