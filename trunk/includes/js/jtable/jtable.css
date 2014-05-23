@@ -470,3 +470,10 @@ div.jtable-busy-message {
   border-color: #2B5177;
   background-color: #78B1ED;
 }
+
+.centered{
+	margin-left:auto;
+	margin-right:auto;
+	text-align: center ; 
+}
+

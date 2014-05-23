@@ -3,12 +3,12 @@ module_load_include('php', 'vals_soc', 'includes/classes/Project');
 module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 drupal_add_library('system','ui.widget');
 drupal_add_library('system','ui.dialog');
+drupal_add_library('system','ui.icon');
 drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/jquery-migrate-1.2.1.js');
 drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/jtable/jquery.jtable.js');
 drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/js/jtable/jtable.css');
 ctools_include('modal');
 ctools_modal_add_js();
-
 
 function initBrowseProjectLayout(){
 	$orgId=0;
@@ -35,7 +35,24 @@ function initBrowseProjectLayout(){
 	<div id="ProjectTableContainer" style="width: 600px;"></div>
 					
 	<script type="text/javascript">
+					
 		jQuery(document).ready(function($){
+
+			//We make the ajax script path absolute as the language module might add a language code
+			//to the path
+			var baseUrl = "/vals/sites/all/modules/vals_soc/";
+
+			function getProposalFormForProject(projectId){
+				Drupal.CTools.Modal.dismiss()
+				alert("get the proposal form for project#"+projectId);
+			}
+
+			function getProjectDetail(projectId){
+				var url = baseUrl + "actions/project_actions.php?action=project_detail&project_id=" + projectId;
+				$.get(url,function(data,status){
+    				 generateAndPopulateModal(data);
+  				});
+			}
 					
 			function testTagInput() {
 				var filter = /^[a-z0-9+_.\s]+$/i;
@@ -54,20 +71,23 @@ function initBrowseProjectLayout(){
 			}
 		
 			function generateAndPopulateModal(data){
-					//TODO - work more on the formating
+				//TODO - work more on the formating
+				// and add other fields from DB
 				var result = jQuery.parseJSON(data);
-				var content = result[0].description;
-					content +="<br/><br/><a href=\"#\" onclick=\"Drupal.CTools.Modal.dismiss()\">close</a>";
-				var title = result[0].title;
+				var content = "<h2>"+result[0].title+"</h2>";
+					content += result[0].description;
+					content +="<div class=\"centered\">";
+					content +="<br/><br/><a href=\"#\" onclick=\"Drupal.CTools.Modal.dismiss()\">Close</a>";
+					content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+					content +="<a href=\"#\" onclick=\"getProposalFormForProject("+result[0].pid+")\">Submit proposal for this project</a>";
+					content +="</div>";
 				Drupal.CTools.Modal.show();
-				$("#modal-title").html(title);
+				$("#modal-title").html("&nbsp;"); // doesnt render unless theres something there!
 				$("#modal-content").html(content);
-				Drupal.attachBehaviors();	
+				Drupal.attachBehaviors();
 			}
 			
-			//We make the ajax script path absolute as the language module might add a language code
-			//to the path
-			var baseUrl = "/vals/sites/all/modules/vals_soc/actions/";
+			
 		    //Prepare jTable
 			$("#ProjectTableContainer").jtable({
 				//title: "Table of projects",
@@ -76,7 +96,7 @@ function initBrowseProjectLayout(){
 				sorting: true,
 				defaultSorting: "title ASC",
 				actions: {
-					listAction: baseUrl + "project_actions.php?action=list_projects"
+					listAction: baseUrl + "actions/project_actions.php?action=list_projects"
 				},
 				fields: {
 					pid: {
@@ -95,19 +115,39 @@ function initBrowseProjectLayout(){
 					},
 					tags: {
 						title: "Tags",
-						width: "30%",
+						width: "26%",
 						create: false,
 						edit: false
+					},
+										Detail: {
+						width: "2%",
+    					title: "",
+						sorting: false,
+    					display: function (data) {
+							return "<a title=\"View project details\" href=\"#\" onclick=\"getProjectDetail("+data.record.pid+")\">"+
+									"<span class=\"ui-icon ui-icon-info\"></span></a>";
+    					},
+    					create: false,
+    					edit: false
+					},
+					Propose: {
+						width: "2%",
+    					title: "",
+						sorting: false,
+    					display: function (data) {
+							return "<a title=\"Propose a project for this idea\" href=\"#\" onclick=\"getProposalFormForProject("+data.record.pid+")\">"+
+									"<span class=\"ui-icon ui-icon-script\"></span></a>";
+    					},
+    					create: false,
+    					edit: false
 					}
+					
 				},
 					
 				recordsLoaded: function(event, data) {
-        			$(".jtable-data-row").click(function() {
-            			var row_id = $(this).attr("data-record-key");
-            			var url = baseUrl + "project_actions.php?action=project_detail&project_id=" + row_id;
-						$.get(url,function(data,status){
-    						 generateAndPopulateModal(data);
-  						});
+					$(".jtable-data-row td:first-child").click(function() {
+						var row_id = $(this).parent().attr("data-record-key");
+						getProjectDetail(row_id);
         			});
     			}
 			});
@@ -148,6 +188,10 @@ function initBrowseProjectLayout(){
             		});
 				}
 			});
+			
+			// define these at the window level so that they can still be called once loaded
+			window.getProposalFormForProject = getProposalFormForProject;
+			window.getProjectDetail = getProjectDetail;
 
 		});
 	</script>
