@@ -143,7 +143,7 @@ class Participants {
 			if ($id){
 				 
 				$members = db_query(
-						"SELECT o.*, c.code from ".self::tableName(org_type)." as o ".
+						"SELECT o.*, c.code from ".self::tableName($org_type)." as o ".
 						"left join soc_codes as c ".
 						" on o.$key_column = c.$code_key_column ".
 						"WHERE o.$key_column = $id ");
@@ -151,7 +151,7 @@ class Participants {
 				$group_head_id = $group_head_id ?: $group_head;
 	
 				$members = db_query(
-						"SELECT o.*, c.code from ".self::tableName(org_type)." as o ".
+						"SELECT o.*, c.code from ".self::tableName($org_type)." as o ".
 						"left join soc_user_membership as um ".
 						" on o.$key_column = um.oid ".
 						"left join soc_codes as c ".
