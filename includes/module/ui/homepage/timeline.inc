@@ -184,7 +184,7 @@ function generateTimelineOutput(){
 	$timeline_args['now'] = $now;
 	
 	// Is there is an active program
-	if(Timeline::getInstance()->isProgramActive()){
+	if(Timeline::getInstance()->getProgramActive()){
 		// has it started?
 		if(!Timeline::getInstance()->hasProgramStarted()){
 			$timeline_args['deadline_one'] = t('Program starts:');

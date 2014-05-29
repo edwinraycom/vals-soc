@@ -56,7 +56,7 @@ class Timeline {
 	 * 		Getter methods
 	* *********************************
 	*/
-	public function isProgramActive(){
+	public function getProgramActive(){
 		return $this->cached_program_active;
 	}
 	
@@ -140,7 +140,7 @@ class Timeline {
 
 	public function isStudentsSignupPeriod(){
 		$now = new DateTime();
-		if($this->cached_student_signup_start_date < $now && $this->cached_student_signup_end_date > $now){
+		if($this->cached_student_signup_start_date < $now && $this->cached_student_signup_end_date > $now && $this->isProgramActive()){
 			return true;
 		}
 		return false;
@@ -179,6 +179,22 @@ class Timeline {
 		}
 		return false;
 	}
+	
+	public function isAfterOrgsAnnouncedDate(){
+		$now = new DateTime();
+		if($this->cached_accepted_org_announced_date < $now && $this->isProgramActive()){
+			return true;
+		}
+		return false;
+	}
+	
+	public function isProgramActive(){
+		if($this->cached_program_active && $this->hasProgramStarted()){
+			return true;
+		}
+		return false;
+	}
+	
 	
 	public function hasProgramStarted(){
 		if($this->cached_program_start_date < new DateTime()){
