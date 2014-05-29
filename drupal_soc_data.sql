@@ -28,10 +28,10 @@ TRUNCATE TABLE `soc_groups`;
 
 INSERT INTO `soc_groups` (`group_id`, `owner_id`, `inst_id`, `name`, `description`, `supervisor_id`) VALUES
 (1, 0, 3, 'Een of andere groep met één woord erin met acute', 'NIets te zeggen', 30),
-(2, 0, 3, 'nog een groep maar nu zonder ', 'dusss', 30),
-(3, 0, 3, 'Mijn klasje', 'Wiskunde B voor autisten', 30),
-(4, 0, 3, 'Tabor', 'wis b bijles', 30),
-(5, 0, 5, 'test', 'meer van dat', 29),
+(2, 0, 3, 'nog een groep maar nu zonder ', 'dusss', 32),
+(3, 0, 3, 'Mijn klasje', 'Wiskunde B voor autisten', 32),
+(4, 0, 3, 'Tabor', 'wis b bijles', 32),
+(5, 0, 5, 'test', 'meer van dat', 31),
 (6, 0, 0, 'test2', '', 0),
 (7, 0, 0, 'aap', '', 0),
 (8, 0, 0, 'aap', '', 0),
@@ -40,11 +40,11 @@ INSERT INTO `soc_groups` (`group_id`, `owner_id`, `inst_id`, `name`, `descriptio
 (11, 0, 0, 'qwertyy', '', 0),
 (12, 0, 0, 'qwertyy', '', 0),
 (13, 0, 0, 'qwerty keyboard', '', 0),
-(14, 31, 5, 'tralalala', 'jajha', 29),
-(15, 31, 5, 'tralalala2', 'jajha', 29),
-(21, 31, 5, 'meer van dat en zo', 'beschr', 29),
-(22, 31, 5, 'nog een groep', 'klajsdlkfj', 29),
-(23, 31, 5, 'nog een groep', 'klajsdlkfj', 29);
+(14, 31, 5, 'tralalala', 'jajha', 31),
+(15, 31, 5, 'tralalala2', 'jajha', 31),
+(21, 31, 5, 'meer van dat en zo', 'beschr', 31),
+(22, 31, 5, 'nog een groep', 'klajsdlkfj', 31),
+(23, 31, 5, 'nog een groep', 'klajsdlkfj', 31);
 UNLOCK TABLES;
 
 --
@@ -69,12 +69,12 @@ LOCK TABLES `soc_organisations` WRITE;
 TRUNCATE TABLE `soc_organisations`;
 /*!40000 ALTER TABLE `soc_organisations` DISABLE KEYS */;
 INSERT INTO `soc_organisations` VALUES 
-(1, 26, 'Apache Software Foundation','P Sharples','psharples@apache.org','http://www.apache.org',
+(1, 11, 'Apache Software Foundation','P Sharples','psharples@apache.org','http://www.apache.org',
 "Established in 1999, the all-volunteer Foundation oversees nearly one hundred fifty leading Open Source projects, 
 including Apache HTTP Server the world's most popular Web server software. Through the ASF's meritocratic process known as 'The Apache Way', more than 350 individual Members and 3,000 Committers successfully collaborate to develop freely available enterprise-grade software, benefiting millions of users worldwide: thousands of software solutions are distributed under the Apache License; and the community actively participates in ASF mailing lists, mentoring initiatives, and ApacheCon, the Foundation\'s official user conference, trainings, and expo. The ASF is a US 501(3)(c) not-for-profit charity, funded by individual donations and corporate sponsors including Citrix, Facebook, Google, Yahoo!, Microsoft, AMD, Basis Technology, Cloudera, Go Daddy, Hortonworks, HP, Huawei, InMotion Hosting, IBM, Matt Mullenweg, PSW GROUP, SpringSource/VMWare, and WANDisco."),
-(2,26, 'Acme Foundation','F Smith','fsmith@acme.org','http://www.acme.org','blah blah blah'),
-(3,26, 'Drupal','David Day','dday@drupal.org','http://www.drupal.org','blah blah blah'),
-(4,26, 'Groovy Community','Pat Garr','pgarr@groovy.org','http://www.groovy.org',
+(2,11, 'Acme Foundation','F Smith','fsmith@acme.org','http://www.acme.org','blah blah blah'),
+(3,11, 'Drupal','David Day','dday@drupal.org','http://www.drupal.org','blah blah blah'),
+(4,11, 'Groovy Community','Pat Garr','pgarr@groovy.org','http://www.groovy.org',
 "The Groovy programming language for the JVM gathers a community and ecosystem around it made of various 
 projects, like web frameworks, testing libraries, concurrency toolkits, and more. The Groovy Community proposes 
 to be the umbrella for all the project of the Groovy ecosystem.");
@@ -209,6 +209,7 @@ INSERT INTO `role` (`rid`, `name`, `weight`) VALUES
 
 TRUNCATE TABLE `role_permission`;
 INSERT INTO `role_permission` (`rid`, `permission`, `module`) VALUES
+(1, 'vals browse projects', 'vals_soc'), # anybody can browse the projects
 (2, 'access content', 'node'),
 (2, 'create news content', 'node'),
 (2, 'delete own news content', 'node'),
@@ -216,13 +217,19 @@ INSERT INTO `role_permission` (`rid`, `permission`, `module`) VALUES
 (4, 'vals admin projects', 'vals_soc'),	 # organisation_admin role
 (4, 'vals admin register', 'vals_soc'),  # organisation_admin role
 (4, 'vals browse projects', 'vals_soc'), # organisation_admin role
+(6, 'vals admin projects', 'vals_soc'),  # mentor role
+(6, 'vals browse projects', 'vals_soc'), # mentor role
 (5, 'vals admin register', 'vals_soc'),  # institute_admin role
 (5, 'vals browse projects', 'vals_soc'), # institute_admin role
 (5, 'vals edit projects', 'vals_soc'),   # institute_admin role
-(6, 'vals admin projects', 'vals_soc'),  # mentor role
-(6, 'vals browse projects', 'vals_soc'), # mentor role
-(7, 'vals apply projects', 'vals_soc'),  # student role
-(7, 'vals browse projects', 'vals_soc'), # student role
 (8, 'vals admin register', 'vals_soc'),  # supervisor role
 (8, 'vals browse projects', 'vals_soc'), # supervisor role
-(9, 'vals browse projects', 'vals_soc'); # soc role
+(7, 'vals apply projects', 'vals_soc'),  # student role
+(7, 'vals browse projects', 'vals_soc'), # student role
+(9, 'vals browse projects', 'vals_soc'), # soc role
+
+(4, 'vals access dashboard', 'vals_soc'), # organisation_admin role
+(6, 'vals access dashboard', 'vals_soc'), # mentor role
+(5, 'vals access dashboard', 'vals_soc'), # institute_admin role
+(8, 'vals access dashboard', 'vals_soc'), # supervisor role
+(7, 'vals access dashboard', 'vals_soc'); # student role
