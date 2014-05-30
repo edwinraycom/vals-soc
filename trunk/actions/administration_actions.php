@@ -1,6 +1,7 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
-include(_VALS_SOC_ROOT.'/includes/classes/Participants.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Users.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');
 include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
 include(_VALS_SOC_ROOT.'/includes/functions/administration.php');
 
@@ -17,7 +18,7 @@ switch ($_GET['action']){
 			case 'mentor':
 			case 'organisation_admin': 
 			case 'institute_admin': 
-			case 'administer': echo renderParticipants($type, '', 'all');break;
+			case 'administer': echo renderUsers($type, '', 'all');break;
 			default: 
 				echo tt('No such type: %1$s', $type);
 // 				showError(tt('No such type: %1$s', $type));
@@ -44,15 +45,15 @@ switch ($_GET['action']){
 	break;
     case 'showmembers':
     	if ($_POST['type'] == 'group'){
-            echo renderParticipants('student', '', $_POST['group_id'], $_POST['type']);
+            echo renderUsers('student', '', $_POST['group_id'], $_POST['type']);
             //echo renderStudents($_POST['group_id']);
         } elseif ($_POST['type'] == 'institute'){
             $type = altSubValue($_GET, 'subtype', 'all');
             if ($type == 'student'){
-                $students = Participants::getAllStudents($_POST['id']);
+                $students = Users::getAllStudents($_POST['id']);
                 echo renderStudents('', $students);
             } elseif ($type == 'supervisor'){
-                $teachers = Participants::getSupervisors($_POST['id']);
+                $teachers = Users::getSupervisors($_POST['id']);
                 echo renderSupervisors('', $teachers);
             } else {
             	echo tt('No such type %1$s', $type);
@@ -60,7 +61,7 @@ switch ($_GET['action']){
                 
         } elseif ($_POST['type'] == 'organisation'){
            $organisation_id = altSubValue($_POST, 'id', '');
-           echo renderParticipants('mentor', '', $organisation_id, 'organisation');
+           echo renderUsers('mentor', '', $organisation_id, 'organisation');
         }
      break;
     case 'show':
@@ -70,8 +71,8 @@ switch ($_GET['action']){
     	$type = altSubValue($_POST, 'type');
     	$id = altSubValue($_POST, 'id');
     	$target = altSubValue($_POST, 'target', '');
-    	$organisation = Participants::getOrganisation($type, $id);
-    	$is_owner = Participants::isOwner($type, $id);
+    	$organisation = Groups::getGroup($type, $id);
+    	$is_owner = Groups::isOwner($type, $id);
     	if (! $organisation){
     		echo tt('The %1$s cannot be found', t($type));
     	} else {
@@ -87,7 +88,7 @@ switch ($_GET['action']){
     	if (! isValidOrganisationType($type)) {
     		echo t('There is no such type we can delete');
     	} else {
-    		$result = Participants::deleteOrganisation($type, $id);
+    		$result = Groups::removeGroup($type, $id);
     		echo $result ? jsonGooResult() : jsonBadResult();
     	}
     break;
@@ -98,7 +99,7 @@ switch ($_GET['action']){
         if (! isValidOrganisationType($type)) {
         	echo t('There is no such type to edit');
         } else {
-        	$obj = Participants::getOrganisation($type, $id);
+        	$obj = Groups::getGroup($type, $id);
         	$f = drupal_get_form("vals_soc_${type}_form", $obj, $target);
         	print drupal_render($f);
         }        
@@ -115,12 +116,12 @@ switch ($_GET['action']){
         	return;
         }
         
-        $properties = Participants::filterPost($type, $_POST);
+        $properties = Groups::filterPost($type, $_POST);
         if (!$id){
-        	$result = ($type == 'group') ? Participants::insertGroup($properties) :
-        		Participants::insertOrganisation($properties, $type);
+        	$result = ($type == 'group') ? Groups::addStudentGroup($properties) :
+        		Groups::addGroup($properties, $type);
         } else {
-        	$result = Participants::updateOrganisation($type, $properties, $id);
+        	$result = Groups::changeGroup($type, $properties, $id);
         }	
 
 		if ($result){

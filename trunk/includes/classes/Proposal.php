@@ -9,10 +9,6 @@ class Proposal {
 		}
 		return self::$instance;
 	}
-	
-	static function tableName($type){
-		return "soc_${type}s";
-	}
     
     public function getProposals(){
     	$proposals = db_select('soc_proposals')->fields('soc_proposals')->execute()->fetchAll(PDO::FETCH_ASSOC);
@@ -65,20 +61,20 @@ class Proposal {
     	$txn = db_transaction();
     	try {
     		$uid = $user->uid;
-    		if (!Participants::isOfType('student', $uid)){
+    		if (!Users::isOfType('student', $uid)){
     			drupal_set_message(t('You must be a student to submit a proposal'), 'error');
     			return false; 
     		}
     		$project = Project::getInstance()->getProjectById($project_id);
     		
-    		$student_details = Participants::getStudentDetails($uid);
+    		$student_details = Users::getStudentDetails($uid);
     		$props['owner_id'] = $uid;
     		$props['oid'] = $project['oid'];
     		$props['instid'] = $student_details->inst_id ;
     		$props['supervisor_id'] = $student_details->supervisor_id ;  		
     		$props['pid'] =$project['pid'];
     		$props['state'] = 'draft' ;
-    		$id = db_insert(self::tableName('proposal'))->fields($props)->execute();
+    		$id = db_insert(tableName('proposal'))->fields($props)->execute();
     		if ($id){
     			//TODO: notify mentor???
     			drupal_set_message('You have saved your proposal. Later you can edit it.');

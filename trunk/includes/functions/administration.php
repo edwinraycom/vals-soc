@@ -97,7 +97,7 @@ function showSupervisorPage(){
 	//TODO check for the role of current user
 	echo '<h2>'.t('Your student groups').'</h2>';
 	//Get my groups
-	$groups = Participants::getOrganisations('group', $GLOBALS['user']->uid);
+	$groups = Groups::getGroups('group', $GLOBALS['user']->uid);
 	if (! $groups->rowCount()){
 		echo t('You have no group yet registered');
 		$add_tab = '<h2>'.t('Add your group').'</h2>';
@@ -145,7 +145,7 @@ function showSupervisorPage(){
 	echo "<hr>";
 	echo '<h2>'.t('All the registered students of your groups').'</h2>';
 	echo renderTabs($nr2, 'Group', 'group2_page-', 'group', $data2, $id, TRUE, 
-			renderParticipants('student', '', $my_group->group_id, 'group'));
+			renderUsers('student', '', $my_group->group_id, 'group'));
 	?>
 
 
@@ -159,7 +159,7 @@ function showSupervisorPage(){
 
 function showInstitutePage(){
 	//Get my institutions
-	$institutes = Participants::getOrganisations('institute', $GLOBALS['user']->uid);
+	$institutes = Groups::getGroups('institute', $GLOBALS['user']->uid);
 	if (! $institutes->rowCount()){
 		echo t('You have no institute yet registered');
 		echo '<h2>'.t('Add your institute').'</h2>';
@@ -201,7 +201,7 @@ function showInstitutePage(){
 	    	
 	    echo '<h2>'.t('The registered supervisors and students of your institute').'</h2>';
 	    echo renderTabs($nr2, '', 'member_page-', 'institute', $data2, $my_institute->inst_id, TRUE,
-	    		renderParticipants('supervisor', '', $my_institute->inst_id, 'institute'));
+	    		renderUsers('supervisor', '', $my_institute->inst_id, 'institute'));
 	    ?>
 	    <script type="text/javascript">
 			activatetabs('tab_', [<?php echo implode(',', $tabs);?>]);
@@ -213,7 +213,7 @@ function showInstitutePage(){
 
 function showOrganisationPage(){
 	//Get my organisations
-	$organisations = Participants::getOrganisations('organisation', $GLOBALS['user']->uid);
+	$organisations = Groups::getGroups('organisation', $GLOBALS['user']->uid);
 	if (! $organisations->rowCount()){
 		echo t('You have no organisation yet registered');
 		echo '<h2>'.t('Add your organisation').'</h2>';
@@ -260,7 +260,7 @@ function showOrganisationPage(){
 	    	
 	    echo '<h2>'.t('The registered mentors of your organisation').'</h2>';
 	    echo renderTabs($nr2, 'Org', 'mentor_page-', 'organisation', $data2, null, TRUE,
-	    		renderParticipants('mentor', '', '', 'organisation'));
+	    		renderUsers('mentor', '', '', 'organisation'));
 	    ?>
 	    <script type="text/javascript">
 			activatetabs('tab_', [<?php echo implode(',', $tabs);?>]);
