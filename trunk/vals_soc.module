@@ -7,6 +7,8 @@
  * The functionality that needs to be there always is included in the standard way.
  */
 define('_DEBUG', TRUE);
+define('_VALS_SOC_PATH', drupal_get_path('module', 'vals_soc'));
+define('_VALS_SOC_ROOT', DRUPAL_ROOT.'/'._VALS_SOC_PATH);
 include('includes/module/vals_soc.handle_forms.inc');
 include('includes/module/vals_soc.forms.inc');
 //***********************************************************************************
