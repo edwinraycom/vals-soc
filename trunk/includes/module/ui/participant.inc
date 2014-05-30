@@ -140,6 +140,6 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
         $s .=  "</ul>";
         return $s;
     } else {
-        return sprintf (t('You have no %1$s registered yet'), $type);
+        return tt('You have no %1$s registered yet', $type);
     }  
 }
