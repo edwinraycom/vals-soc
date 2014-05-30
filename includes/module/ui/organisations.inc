@@ -2,12 +2,12 @@
 module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 drupal_add_library('system','ui.widget');
 drupal_add_library('system','ui.dialog');
-drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/settings.js');
-drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/ajax.js');
-drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/target_functions.js');
-drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/jquery-migrate-1.2.1.js');
-drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/jtable/jquery.jtable.js');
-drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/js/jtable/jtable.css');
+drupal_add_js(_VALS_SOC_PATH .'/includes/js/settings.js');
+drupal_add_js(_VALS_SOC_PATH .'/includes/js/ajax.js');
+drupal_add_js(_VALS_SOC_PATH .'/includes/js/target_functions.js');
+drupal_add_js(_VALS_SOC_PATH .'/includes/js/jquery-migrate-1.2.1.js');
+drupal_add_js(_VALS_SOC_PATH .'/includes/js/jtable/jquery.jtable.js');
+drupal_add_css(_VALS_SOC_PATH . '/includes/js/jtable/jtable.css');
 
 function initBrowseOrgsLayout(){
 	echo '

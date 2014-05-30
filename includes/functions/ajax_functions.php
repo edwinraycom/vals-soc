@@ -11,7 +11,7 @@ function jsonResult($result, $type, $show_always=FALSE){
 			}
 		}
 	} else {
-		$msg = (_DEBUG && $show_always ? sprintf(t(' No %1$s message available'), $type): '');
+		$msg = (_DEBUG && $show_always ? tt(' No %1$s message available', $type): '');
 	}
 	$struct = array();
 	if (($result === false) || is_nan($result)|| ($result === 'error')) {

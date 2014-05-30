@@ -69,27 +69,27 @@ function vals_soc_handle_test_emails($to){
 	$mail_results='';
 	$message = drupal_mail('vals_soc', 'vals_soc_email_accepted_organisation', $to, language_default());
 	if (!empty($message['result'])) {		
-		$mail_results .= 'accepted organisation mail sent<br/>';
+		$mail_results .= t('accepted organisation mail sent').'<br/>';
 	}
 	$message = drupal_mail('vals_soc', 'vals_soc_email_rejected_organisation', $to, language_default());
 	if (!empty($message['result'])) {
-		$mail_results .= 'rejected organisation mail sent<br/>';
+		$mail_results .= t('rejected organisation mail sent').'<br/>';
 	}
 	$message = drupal_mail('vals_soc', 'vals_soc_email_mentor_welcome', $to, language_default());
 	if (!empty($message['result'])) {
-		$mail_results .= 'mentor welcome mail sent<br/>';
+		$mail_results .= t('mentor welcome mail sent').'<br/>';
 	}
 	$message = drupal_mail('vals_soc', 'vals_soc_email_student_welcome', $to, language_default());
 	if (!empty($message['result'])) {
-		$mail_results .= 'student welcome mail sent<br/>';
+		$mail_results .= t('student welcome mail sent').'<br/>';
 	}
 	$message = drupal_mail('vals_soc', 'vals_soc_accepted_students', $to, language_default());
 	if (!empty($message['result'])) {
-		$mail_results .= 'accepted students mail sent<br/>';
+		$mail_results .= t('accepted students mail sent').'<br/>';
 	}
 	$message = drupal_mail('vals_soc', 'vals_soc_rejected_students', $to, language_default());
 	if (!empty($message['result'])) {
-		$mail_results .= 'rejected students mail sent<br/>';
+		$mail_results .= t('rejected students mail sent').'<br/>';
 	}
 	drupal_set_message($mail_results);
 }
@@ -100,7 +100,7 @@ function vals_soc_handle_test_emails($to){
 
 // populate our queue with email recipients - Normally we'd get these from the DB
 function vals_soc_cron_email_test_setup(){
-	drupal_set_message('vals_soc_cron_email_test_setup called');
+	drupal_set_message(t('vals_soc_cron_email_test_setup called'));
 	//$items = array("Hello", "World"); // Put everything in a queue for processing.
 	$items = array();
 	$items[0] = array('to' => 'ps3com40@gmail.com', 'bar' => 'foo',);
@@ -116,12 +116,12 @@ function vals_soc_cron_email_test_setup(){
 // this is the callback function for all entries posted on to the
 // 'vals_soc_cron_email' queue
 function vals_soc_cron_email_handler($item){
-	drupal_set_message('vals_soc_cron_email_handler called with:'.$item['to']);
+	drupal_set_message('TEST: vals_soc_cron_email_handler called with:'.$item['to']);
 	//drupal_mail('vals_soc', 'vals_soc_email_accepted_organisation', $item['to'], language_default());
 	$mail_results='';
 	$message = drupal_mail('vals_soc', 'vals_soc_email_accepted_organisation', $item['to'], language_default());
 	if (!empty($message['result'])) {
-		$mail_results .= 'accepted organisation mail sent<br/>';
+		$mail_results .= t('accepted organisation mail sent').'<br/>';
 	}
 	drupal_set_message($mail_results);
 }

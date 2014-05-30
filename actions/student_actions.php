@@ -123,8 +123,8 @@ case 'show':
 					'id' => $id,
 					'type'=> $type,
 					'msg'=>
-					($id ? sprintf(t('You succesfully changed your proposal for %$1s'), $project['title']):
-					sprintf(t('You succesfully added your proposal for %1$s'), $project['title'])).
+					($id ? tt('You succesfully changed your proposal for %$1s', $project['title']):
+					tt('You succesfully added your proposal for %1$s', $project['title'])).
 				(_DEBUG ? showDrupalMessages(): '')
 				));
 		} else {

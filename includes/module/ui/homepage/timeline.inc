@@ -1,11 +1,11 @@
 <?php 
 
 module_load_include('php', 'vals_soc', 'includes/classes/Timeline');
-drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/melange.timeline.js');
-drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/raphael.js');
-drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/countdown/jquery.plugin.js');
-drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/countdown/jquery.countdown.js');
-drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/vals_soc.css');
+drupal_add_js(_VALS_SOC_PATH .'/includes/js/melange.timeline.js');
+drupal_add_js(_VALS_SOC_PATH .'/includes/js/raphael.js');
+drupal_add_js(_VALS_SOC_PATH .'/includes/js/countdown/jquery.plugin.js');
+drupal_add_js(_VALS_SOC_PATH .'/includes/js/countdown/jquery.countdown.js');
+drupal_add_css(_VALS_SOC_PATH . '/includes/vals_soc.css');
 
 /**
  * Function which will setup the timeline graphic showing the timeline as

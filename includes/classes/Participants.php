@@ -353,7 +353,7 @@ class Participants {
 	
 	static function isOwner($type, $id){
 		if (! in_array($type, array('group', 'institute', 'organisation', 'project', 'proposal'))){
-			drupal_set_message(sprintf(t('You cannot be the owner of an entity called %1$s'), $type));
+			drupal_set_message(tt('You cannot be the owner of an entity called %1$s', $type));
 			return FALSE;
 		}
 		$key_field = self::keyField($type);
@@ -373,7 +373,7 @@ class Participants {
 		}
 		
 		if (self::hasMembers($type, $id)){
-			drupal_set_message(sprintf(t('There are already members in this %1$s. You can still edit the %1$s though.'),
+			drupal_set_message(tt('There are already members in this %1$s. You can still edit the %1$s though.',
 					t($type)), 'error');
 			return FALSE;
 		}

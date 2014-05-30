@@ -7,65 +7,6 @@ include('include.php');//Includes the necessary bootstrapping and the ajax funct
 include(_VALS_SOC_ROOT.'/includes/classes/Participants.php');
 include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
 include(_VALS_SOC_ROOT.'/includes/functions/administration.php');
-/* 
-function jsonResult($result, $type, $show_always=FALSE){
-	$msgs = drupal_get_messages($type);
-	if ($msgs){
-		if ($type){
-			$msg = implode('<br/>', $msgs[$type]);
-		} else {
-			$msg = '';
-			foreach ($msgs as $cat => $msg_arr){
-				$msg .= "$cat:".implode('<br/>', $msg_arr);
-			}
-		}
-	} else {
-		$msg = (_DEBUG && $show_always ? sprintf(t(' No %1$s message available'), $type): '');
-	}
-	$struct = array('result'=> $result);
-	if (empty($result) || ($result === 'error')) {
-		$struct['error'] = $msg;
-	} else {
-		$struct['msg'] = $msg;
-	}
-	echo json_encode($struct);
-}
-
-function jsonBadResult($result='error', $type='error'){
-	jsonResult($result, $type, TRUE);
-}
-
-function jsonGooResult($result=TRUE, $type='status'){
-	jsonResult($result, $type);
-}
-
-function isValidOrganisationType($type){
-	return in_array($type, array('organisation', 'institute', 'group'));
-}
-
-function showDrupalMessages($category='status', $echo=FALSE){
-	if (empty($category)){
-		$s = '';
-		$msgs = drupal_get_messages();
-		foreach ($msgs as $type =>$msgs1){
-			$s .= "<br/>$type :<br/>";
-			$s.= implode('<br/>', $msgs1);
-		}
-	} else {
-		$msgs = drupal_get_messages($category);
-		$s = $msgs[$category] ? "<br/>$category:<br/>".implode('<br/>', $msgs[$category]) : '';
-	}
-	
-	if ($echo) echo $s;
-	return $s;
-}
-
-function showError($msg='') {
-	$msg .= showDrupalMessages('error');
-	if ($msg){
-		echo "<div class='messages error'>'$msg'</div>";
-	}
-} */
 
 //return result depending on action parameter
 switch ($_GET['action']){
@@ -99,7 +40,7 @@ switch ($_GET['action']){
 		echo 
 		'<h2>'.
 			(($type == 'group') ? t('Add a group to your list of groups') :
-			sprintf(t('Add your %1$s'), t($type))).
+			tt('Add your %1$s', t($type))).
 		'</h2>';
 		echo "<div id='msg_$target'></div>";
 		$f2 = drupal_get_form("vals_soc_${type}_form", null, $target);
@@ -140,9 +81,9 @@ switch ($_GET['action']){
 						    		echo "IK BEN NIET DE EIGENAAR";
 						    	}
     	if (! $organisation){
-    		echo sprintf(t('You have no %1$s yet registered'), t($type));
+    		echo tt('You have no %1$s yet registered', t($type));
     	} else {
-    		 echo sprintf('<h3>%1$s</h3>', sprintf(t('Your %1$s'), t($type)));
+    		 echo sprintf('<h3>%1$s</h3>', tt('Your %1$s', t($type)));
     		 echo "<div id='msg_$target'></div>";
     		 echo renderOrganisation($type, $organisation, null, $target);
     	}
@@ -176,7 +117,7 @@ switch ($_GET['action']){
         //TODO do some checks here
         if(! isValidOrganisationType($type)){
         	$result = NULL;
-        	drupal_set_message(sprintf(t('This is not a valid type: %s'), $type), 'error');
+        	drupal_set_message(tt('This is not a valid type: %s', $type), 'error');
         	echo jsonBadResult();
         	return;
         }
@@ -195,8 +136,8 @@ switch ($_GET['action']){
             		'id' => $id,
             		'type'=> $type,
             		'msg'=>
-            		($id ? sprintf(t('You succesfully changed the data of your %1$s'), t($type)):
-            			   sprintf(t('You succesfully added your %1$s'), t($type))).
+            		($id ? tt('You succesfully changed the data of your %1$s', t($type)):
+            			   tt('You succesfully added your %1$s', t($type))).
             		(_DEBUG ? showDrupalMessages(): '') 
             		));
         } else {

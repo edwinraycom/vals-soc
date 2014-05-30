@@ -127,7 +127,7 @@ function vals_soc_admin_messages_form_submit($form, $form_state) {
 	}
 	// A test here to email via queues and cron
 	if ($form_state['values']['vals_messages_test_cron_email']==1){
-		drupal_set_message('cron email test started');
+		drupal_set_message(t('cron email test started'));
 		module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
 		vals_soc_cron_email_test_setup();
 	}

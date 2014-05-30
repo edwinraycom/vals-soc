@@ -1,7 +1,6 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
 module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
-drupal_set_message(t('1 '));
 switch ($_GET['action']){
 	case 'list_organisations':
 		try{
