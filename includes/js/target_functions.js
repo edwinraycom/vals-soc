@@ -22,7 +22,7 @@
 function refreshTabs(json_data, args){
 	var targ = '';
 	if (arguments.length > 1 && args) {
-		var targ = (args.length > 1) ? 'msg_'+ args[1] : '';
+		targ = (args.length > 1) ? 'msg_'+ args[1] : '';
 		var type = args[0];
 	}
 	if (json_data && (json_data.result !== 'error')){
@@ -56,5 +56,27 @@ function refreshSingleTab(json_data, args){
 	} else {
 		ajaxError('msg_'+target, json_data.error);
 		//$jq('#error_'+target).html(json_data.error);
+	}
+}
+
+function handleResult(result, args){
+	var target = args[0];
+	var before = (args.length > 1 ? args[1]: '');
+	if (result){
+		if (result.result == "html") {
+			ajaxInsert(result.html, target);
+		} else if (result.result == "error") {
+			ajaxAppend(result.error, target, 'error', before);
+		} else {
+			if (typeof result.msg != 'undefined') {
+				ajaxAppend(result.msg, target, 'status', before);
+			} else {
+				alertdev('The action '
+						+ action
+						+ ' succeeded.');
+			}
+		}
+	} else {
+		alertdev('Not a valid result');
 	}
 }

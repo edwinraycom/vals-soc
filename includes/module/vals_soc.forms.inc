@@ -608,23 +608,48 @@ function vals_soc_group_form($form, &$form_state, $group='', $target=''){
 }
 
 
-function vals_soc_apply_form($form, &$form_state, $application='', $target=''){
+function vals_soc_proposal_form($form, &$form_state, $application='', $target='', $project_id=''){
+	$project_id = $application ? $application->pid : $project_id;
+	if (! $project_id){
+		echo showError(t('The project id has not been passed on well. Cannot continue. Please inform the system administrator'));
+		return;
+	}
 	$form['name'] = array(
 			"#type" => "textfield",
-			'#title' => t('Give your name'),
+			'#title' => t('Give your full name'),
 			"#size" => 60,
 			'#required' => '1',
-			"#default_value" => populate($application, 'name')
-			//"#description" => t("This code is different per role."),
+			"#default_value" => populate($application, 'name'),
+			"#description" => t("For easy communication, it is nice to have your name next to your email address"),
 	);
-	$form['description'] = array(
+	$form['solution_short'] = array(
 			"#type" => "textarea",
-			'#title' => t('What is your solution'),
+			'#title' => t('Give a summary of your solution'),
 			"#size" => 1024,
-			"#default_value" => populate($application, 'description')
+			"#default_value" => populate($application, 'solution_short')
 			//"#description" => t("This code is different per role."),
 	);
-	 
+	$form['solution_long'] = array(
+			"#type" => "textarea",
+			'#title' => t('Give a more detailed description of your solution'),
+			"#size" => 1024,
+			"#default_value" => populate($application, 'solution_long')
+			//"#description" => t("This code is different per role."),
+	);
+	$form['modules'] = array(
+			"#type" => "textarea",
+			'#title' => t('Which extra modules and libraries will you use, if any?'),
+			"#size" => 1024,
+			"#default_value" => populate($application, 'modules'),
+			"#description" => t("Write the name of the library, it's url and its purpose, divided by bars ('|')"),
+	);
+	$form['cv'] = array(
+			"#type" => "textarea",
+			'#title' => t('Describe your Curriculum Vitae'),
+			"#size" => 1024,
+			"#default_value" => populate($application, 'description'),
+			"#description" => t("You might want to discuss with your supervisor which courses you should put on your cv."),
+	);	 
 	//If we never need a stand alone form and only use ajax, remove the commented code
 	//and get common code outside
 	if (!$application){
@@ -635,8 +660,8 @@ function vals_soc_apply_form($form, &$form_state, $application='', $target=''){
 				'#value' => t('Save draft'),
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
-						'onclick' => 'alert("absolutely not finished yet");ajaxFormCall("vals-soc-apply-form", "administration", "save",'.
-						' {type: "proposal", id:0}, "refreshTabs", "json", ["group", "'.$target.'"]);')//'.$target.' instead of refreshTabs
+						'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
+						' {project_id: '.$project_id.', id:0}, "handleResult", "json", ["'.$target.'", "student_details"]);')//'.$target.' instead of refreshTabs
 		);
 		$form['sumbit'] = array(
 				'#type' => 'button',
@@ -644,15 +669,18 @@ function vals_soc_apply_form($form, &$form_state, $application='', $target=''){
 				'#value' => t('Submit proposal'),
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
-						'onclick' => 'alert("absolutely not finished yet");ajaxFormCall("vals-soc-apply-form", "administration", "save",'.
-						' {type: "proposal", id:0}, "refreshTabs", "json", ["group", "'.$target.'"]);')//'.$target.' instead of refreshTabs
+						'onclick' => 'if (confirm("'.t('Are you sure you want to submit your proposal now?').'")){'.
+						'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
+						' {project_id: '.$project_id.', id:0}, "refreshTabs", "json", ["group", "'.$target.'"]);}')//'.$target.' instead of refreshTabs
 		);
-		//          $form['submit'] = array(function ajaxFormCall(frm, category, action, data, target, type, err) {
-		//              '#type' => 'submit',
-		//              '#value' => 'Save',
-		//          );
-		//          $form['#submit'][] = 'vals_soc_group_form_submit_handler';
-		//          $form['#validate'][] = 'vals_soc_group_form_validate_handler';
+		$form['cancel'] = array(
+				'#type' => 'button',
+				'#button_type' => 'button',
+				'#value' => t('Cancel'),
+				//'#theme' => 'garland_button',
+				'#attributes' => array(
+						'onclick' => 'ajaxCall("project", "project_page", null, "content", "html", ["'.$target.'"]);')
+		);
 	} else {
 		unset($form['#submit']);
 		$form['save'] = array(
@@ -661,8 +689,8 @@ function vals_soc_apply_form($form, &$form_state, $application='', $target=''){
 				'#value' => t('Save draft'),
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
-						'onclick' => 'ajaxFormCall("vals-soc-group-form", "administration", "save",'.
-						' {type: "group", id:'.$group->group_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
+						'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
+						' {id:'.$application->propid.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
 		);
 		$form['sumbit'] = array(
 				'#type' => 'button',
@@ -670,10 +698,9 @@ function vals_soc_apply_form($form, &$form_state, $application='', $target=''){
 				'#value' => t('Submit proposal'),
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
-						'onclick' => 'ajaxFormCall("vals-soc-group-form", "administration", "save",'.
-						' {type: "group", id:'.$group->group_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
+						'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
+						' {id:'.$application->propid.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
 		);
 	}
-
 	return $form;
 }

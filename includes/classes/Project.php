@@ -1,7 +1,4 @@
 <?php
-/* 
-*
- */
 class Project {
 	
 	private static $instance;
@@ -19,7 +16,9 @@ class Project {
     }
     
     public function getProjectById($id){
-    	$project = db_select('soc_projects')->fields('soc_projects')->condition('pid', $id)->execute()->fetchAll(PDO::FETCH_ASSOC);
+    	//todo: better to use fetch to get just one project instead of an array with one array in it
+    	//DONE
+    	$project = db_select('soc_projects')->fields('soc_projects')->condition('pid', $id)->execute()->fetch(PDO::FETCH_ASSOC);
     	return $project;
     }
     

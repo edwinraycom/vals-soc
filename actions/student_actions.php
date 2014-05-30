@@ -1,100 +1,37 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
-* To change this template file, choose Tools | Templates
-* and open the template in the editor.
-*/
-
-define('DRUPAL_ROOT', realpath(getcwd().'/../../../../..'));
-define('_VALS_SOC_ROOT', DRUPAL_ROOT.'/sites/all/modules/vals_soc');
-$base_url = $_SERVER['REQUEST_SCHEME']. '://'.$_SERVER['HTTP_HOST'].'/vals'; //This seems to be necessary to get to the user object: see
-//http://drupal.stackexchange.com/questions/76995/cant-access-global-user-object-after-drupal-bootstrap, May 2014
-require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
-drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);//Used to be DRUPAL_BOOTSTRAP_SESSION
+include('include.php');
 // print_r(get_included_files());die('dat waren ze');
 //This file is included as part of the bootstrap process as the handle_forms file includes it which is included itself
 //automatically
 module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
 include(_VALS_SOC_ROOT.'/includes/vals_soc.helper.inc');
+
 include(_VALS_SOC_ROOT.'/includes/classes/Participants.php');
-include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
-include(_VALS_SOC_ROOT.'/includes/functions/administration.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Project.php');//action:proposal,...
+include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');//action:proposal,...
 
-function jsonResult($result, $type, $show_always=FALSE){
-	$msgs = drupal_get_messages($type);
-	if ($msgs){
-		if ($type){
-			$msg = implode('<br/>', $msgs[$type]);
-		} else {
-			$msg = '';
-			foreach ($msgs as $cat => $msg_arr){
-				$msg .= "$cat:".implode('<br/>', $msg_arr);
-			}
-		}
-	} else {
-		$msg = (_DEBUG && $show_always ? sprintf(t(' No %1$s message available'), $type): '');
-	}
-	$struct = array('result'=> $result);
-	if (empty($result) || ($result === 'error')) {
-		$struct['error'] = $msg;
-	} else {
-		$struct['msg'] = $msg;
-	}
-	echo json_encode($struct);
-}
-
-function jsonBadResult($result='error', $type='error'){
-	jsonResult($result, $type, TRUE);
-}
-
-function jsonGooResult($result=TRUE, $type='status'){
-	jsonResult($result, $type);
-}
-
-function isValidOrganisationType($type){
-	return in_array($type, array('organisation', 'institute', 'group'));
-}
-
-function showDrupalMessages($category='status', $echo=FALSE){
-	if (empty($category)){
-		$s = '';
-		$msgs = drupal_get_messages();
-		foreach ($msgs as $type =>$msgs1){
-			$s .= "<br/>$type :<br/>";
-			$s.= implode('<br/>', $msgs1);
-		}
-	} else {
-		$msgs = drupal_get_messages($category);
-		$s = $msgs[$category] ? "<br/>$category:<br/>".implode('<br/>', $msgs[$category]) : '';
-	}
-
-	if ($echo) echo $s;
-	return $s;
-}
-
-function showError($msg='') {
-	$msg .= showDrupalMessages('error');
-	if ($msg){
-		echo "<div class='messages error'>'$msg'</div>";
-	}
-}
-
-//return result depending on action parameter
 switch ($_GET['action']){
 	case 'proposal':
 		$target = altSubValue( $_POST, 'target');
-		echo " So you want to apply for this project ...".$_POST['id'];
-		$f = drupal_get_form('vals_soc_apply_form', null, $target);
+		$project_id = altSubValue( $_POST, 'id');
+		$proposal_id = altSubValue( $_POST, 'proposalid');
+		if (! Participants::isOfType('student', $GLOBALS['user']->uid)){
+			echo "Since you are an admin, you can test a bit";
+			$owner_id = 31;
+		} else {
+			$owner_id = $GLOBALS['user']->uid;
+		}
+		$project = Project::getInstance()->getProjectById($project_id);
+		echo "<h2>".t('Solution proposal for '.$project['title'])."</h2>";
+		$student_details = Participants::getStudentDetails($owner_id);
+		$proposal = $proposal_id ? Proposal::getInstance()->getProposalById($proposal_id): null;
+		echo '<h3>'.t('Student details').'</h3>';
+		echo "<div id='student_details'>Institute: ".$student_details->name."<br/>Supervisor: ".$student_details->supervisor."</div>";
+		$f = drupal_get_form('vals_soc_proposal_form', $proposal, $target, $project_id);
 		print drupal_render($f);
 		break;
-	case 'addgroup':
-		$target = altSubValue( $_GET, 'target');
-		echo '<h2>'.t('Add a group to your list of groups').'</h2>';
-		$f2 = drupal_get_form('vals_soc_group_form', null, $target);
-		print drupal_render($f2);
-		break;
-	case 'add':
+	
+/* 	case 'add':
 		$target = altSubValue($_POST, 'target');
 		$type = altSubValue($_POST, 'type');
 		echo
@@ -129,80 +66,70 @@ case 'showmembers':
 	break;
 case 'show':
 	showRoleDependentAdminPage(getRole());
-	break;
-case 'view':
-	$type = altSubValue($_POST, 'type');
-	$id = altSubValue($_POST, 'id');
-	$target = altSubValue($_POST, 'target', '');
-	$organisation = Participants::getOrganisation($type, $id);
-	if (Participants::isOwner($type, $id)){
-		echo "IK BEN DE OWNER";
-	} else {
-		echo "IK BEN NIET DE EIGENAAR";
-	}
-	if (! $organisation){
-		echo sprintf(t('You have no %1$s yet registered'), t($type));
-	} else {
-		echo sprintf('<h3>%1$s</h3>', sprintf(t('Your %1$s'), t($type)));
-		echo "<div id='msg_$target'></div>";
-		echo renderOrganisation($type, $organisation, null, $target);
-	}
+	break; */
+/* 	case 'view':
+		$type = altSubValue($_POST, 'type');
+		$id = altSubValue($_POST, 'id');
+		$target = altSubValue($_POST, 'target', '');
+		$organisation = Participants::getOrganisation($type, $id);
+		if (Participants::isOwner($type, $id)){
+			echo "IK BEN DE OWNER";
+		} else {
+			echo "IK BEN NIET DE EIGENAAR";
+		}
+		if (! $organisation){
+			echo sprintf(t('You have no %1$s yet registered'), t($type));
+		} else {
+			echo sprintf('<h3>%1$s</h3>', sprintf(t('Your %1$s'), t($type)));
+			echo "<div id='msg_$target'></div>";
+			echo renderOrganisation($type, $organisation, null, $target);
+		}
 	break;
 	case 'delete':
-	$type = altSubValue($_POST, 'type', '');
-	$id = altSubValue($_POST, 'id', '');
-	if (! isValidOrganisationType($type)) {
-	echo t('There is no such type we can delete');
-	} else {
-	$result = Participants::deleteOrganisation($type, $id);
-	echo $result ? jsonGooResult() : jsonBadResult();
-	}
-	break;
-	case 'edit':
-	$type = altSubValue($_POST, 'type', '');
-	$id = altSubValue($_POST, 'id', '');
-	$target = altSubValue($_POST, 'target', '');
-	if (! isValidOrganisationType($type)) {
-	echo t('There is no such type to edit');
-	} else {
-	$obj = Participants::getOrganisation($type, $id);
-	$f = drupal_get_form("vals_soc_${type}_form", $obj, $target);
-	print drupal_render($f);
-	}
-	break;
+		$type = altSubValue($_POST, 'type', '');
+		$id = altSubValue($_POST, 'id', '');
+		if (! isValidOrganisationType($type)) {
+		echo t('There is no such type we can delete');
+		} else {
+		$result = Participants::deleteOrganisation($type, $id);
+		echo $result ? jsonGooResult() : jsonBadResult();
+		}
+	break; */
+// 	case 'edit':
+// 		$id = altSubValue($_POST, 'id', '');
+// 		$obj = Proposal::getProposal($id);
+// 		$f = drupal_get_form("vals_soc_proposal_form", $obj, $target);
+// 		print drupal_render($f);
+// 	break;
 	case 'save':
-	$type = altSubValue($_POST, 'type', '');
-	$id = altSubValue($_POST, 'id', '');
-
-	//TODO do some checks here
-	if(! isValidOrganisationType($type)){
-	$result = NULL;
-	drupal_set_message(sprintf(t('This is not a valid type: %s'), $type), 'error');
-	echo jsonBadResult();
-	return;
-	}
-
-	$properties = Participants::filterPost($type, $_POST);
-	if (!$id){
-	$result = ($type == 'group') ? Participants::insertGroup($properties) :
-	Participants::insertOrganisation($properties, $type);
-	} else {
-	$result = Participants::updateOrganisation($type, $properties, $id);
-	}
-
+		$id = altSubValue($_POST, 'id', '');
+		$project_id = altSubValue($_POST, 'project_id', '');
+		$project = Project::getInstance()->getProjectById($project_id);
+		$properties = Proposal::filterPost($_POST);
+		if (!$id){
+			$result = Proposal::insertProposal($properties, $project_id);
+		} else {
+			if (!Participants::isOwner('proposal', $id)){
+				drupal_set_message(t('You are not the owner of this proposal'));
+				$result = null;
+			} else {
+				$result = Proposal::updateProposal($properties, $id, $project_id);
+			}
+		}
+	
 		if ($result){
-		echo json_encode(array(
-				'result'=>TRUE,
-				'id' => $id,
-				'type'=> $type,
-				'msg'=>
-				($id ? sprintf(t('You succesfully changed the data of your %1$s'), t($type)):
-				sprintf(t('You succesfully added your %1$s'), t($type))).
-			(_DEBUG ? showDrupalMessages(): '')
-			));
-	} else {
-	echo jsonBadResult();
-	}
+			echo json_encode(array(
+					'result'=>TRUE,
+					'id' => $id,
+					'type'=> $type,
+					'msg'=>
+					($id ? sprintf(t('You succesfully changed your proposal for %$1s'), $project['title']):
+					sprintf(t('You succesfully added your proposal for %1$s'), $project['title'])).
+				(_DEBUG ? showDrupalMessages(): '')
+				));
+		} else {
+			echo jsonBadResult();
+		}
 
 
 	break;

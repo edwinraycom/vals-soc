@@ -1,5 +1,7 @@
 //var $jq = jquery.noConflict();
+//These settings are now included in a general settings file
 var debugging = true;
+//var console_Jquery_migrate_warnings = false;
 var baseUrl = '/vals/';
 
 var $jq = jQuery;
@@ -23,9 +25,64 @@ function ajaxInsert(msg, target) {
 	}
 }
 
+function isObject(mixed_var){ 	
+	if (mixed_var instanceof Array) { 
+		return false; 
+	} else { 
+		return (mixed_var !== null) && (typeof( mixed_var ) == 'object'); 
+	} 
+}
+
+function Obj(name_or_object){
+	if (isObject(name_or_object)){
+		return name_or_object;
+	} else 
+		var obj = $jq('#'+name_or_object);
+	if (obj.length == 0){
+		return false;
+	} else {
+		return obj;
+	}
+}
+
+function createDiv(div_name, container){
+	var div = Obj(div_name);
+	if(div){
+		return div;
+	} else{
+		var obj = document.createElement('div');
+		obj.setAttribute("id", div_name);
+		var cont_obj = Obj(container);
+		if (cont_obj) {
+			if (arguments.length > 2 && arguments[2] !== ''){
+				//Insert before an element inside container
+				//we use the normal objects
+				var first = Obj(arguments[2]);
+				cont_obj[0].insertBefore(obj, first[0]);
+			} else {
+				cont_obj[0].appendChild(obj);
+			}
+			return Obj(div_name);
+		} else {
+			alertDev('Could not find parent object '+ container);
+			return null;
+		}
+	}
+}
+
+function ajaxAppend(msg, container, err, before){
+	var t = createDiv(container+err, container, before);
+	alertdev('Op het moment van ajaxAppend is het '+ msg);
+	if (t) {
+		t.addClass('messages '+err);
+		t.html(msg);
+	}
+
+}
+
 function ajaxError(targ, msg) {
 	if (msg){
-		var err_target = $jq('#'+targ);	
+		var err_target = Obj(targ);//$jq('#'+targ);	
 	
 		if (err_target.length){
 			err_target.html(msg);
@@ -202,12 +259,30 @@ $jq(document)
 					}
 				});
 
+function inspect(arg){
+	alertdev('Just inspecting the object two level deep');
+	for (a in arg){
+		if (typeof (arg[a]) == 'object'){
+			alert('het is een object '+ a);
+			for (b in arg[a]){
+				if (typeof (arg[a][b]) == 'object'){
+					alert('het is een object '+ b);
+					
+				} else
+				alert('laat zien '+ b + arg[a][b]);
+			}
+		} else
+		alert('laat zien '+ a + arg[a]);
+	}
+}
+/* Returns a js object to process. Note that the json has been parsed by Jquery as the input comes in the 
+ * success function. I do the request with post as this seems slightly faster than get (1.38 s vs 1.7 s)*/ 
 jQuery.extend({
-	getJsonObject : function(url, data_obj) {
+	getJsonObject : function(category, action, data_obj) {
 		var result = null;
 		$jq.ajax({
-			url : url,
-			type : 'get',
+			url : url(category, action),
+			type : 'post',
 			dataType : 'json',
 			data : data_obj,
 			async : false,
