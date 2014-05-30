@@ -5,6 +5,11 @@ drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);//Used to be DRUPAL_BOOTSTRAP_SESSION
 module_load_include('php', 'vals_soc', 'includes/classes/Project');
 
 switch ($_GET['action']){
+	case 'project_page':
+		module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
+		module_load_include('php', 'vals_soc', 'includes/functions/projects');
+		initBrowseProjectLayout();
+	break;
 	case 'list_projects':
 		try{
 			$tags=null;
@@ -36,8 +41,10 @@ switch ($_GET['action']){
 		$project_id=null;
 		if(isset($_GET['project_id'])){
 			$results = Project::getInstance()->getProjectById($_GET['project_id']);
+			
 			$projectDetail = array();
 			$projectDetail['title'] = $results->title;
+			$projectDetail['title_llala'] =print_r ($results, 1);
 			$projectDetail['description'] = $results->description;
 			print json_encode($results);
 		}

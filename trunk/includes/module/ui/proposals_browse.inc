@@ -4,6 +4,8 @@ module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 drupal_add_library('system','ui.widget');
 drupal_add_library('system','ui.dialog');
 drupal_add_library('system','ui.icon');
+drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/settings.js');
+// drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/ajax.js');//Not necessary here
 drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/jquery-migrate-1.2.1.js');
 drupal_add_js(drupal_get_path('module', 'vals_soc') .'/includes/js/jtable/jquery.jtable.js');
 drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/js/jtable/jtable.css');
@@ -50,8 +52,8 @@ function initBrowseProposalsLayout(){
             <option selected="selected" value="0"><?php echo t('All Organisations');?></option><?php
 			$result = Participants::getParticipants('student', ($inst_id ? 'institute': 'all'), $inst_id);
 			foreach ($result as $record) {
-				$selected = ($record->studid == $student_id ? 'selected ' : '');
-				echo '<option ' .$selected.'value="'.$record->studid.'">'.$record->name.':'.$record->mail.'</option>';
+				$selected = ($record->owner_id == $student_id ? 'selected ' : '');
+				echo '<option ' .$selected.'value="'.$record->owner_id.'">'.$record->name.':'.$record->mail.'</option>';
 			}?>
         </select>
     </form>
@@ -121,7 +123,7 @@ function initBrowseProposalsLayout(){
 						edit: false,
 						list: false
 					},
-					studid: {
+					owner_id: {
 						title: "Student",
 						width: "40%"
 					},

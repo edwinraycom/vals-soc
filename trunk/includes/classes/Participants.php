@@ -32,6 +32,16 @@ class Participants {
 		}
 	}
 	
+	public static function getStudentDetails($id){
+		return db_query(
+				"SELECT u.name as supervisor, u.mail as supervisor_mail, u.uid as supervisor_id ,g.*,i.* ".
+				"from soc_user_membership um ".
+				"left join soc_groups as g on um.oid = g.group_id ".
+				"left join users as u on u.uid = g.supervisor_id ".
+				"left join soc_institutes as i on i.inst_id = g.inst_id ".
+				"WHERE um.uid = $id AND um.type = 'group'")->fetchObject();
+	}
+	
 	public static function getStudents($group=''){
 		global $user;
 
@@ -42,15 +52,15 @@ class Participants {
 			return array();
 		} 
 		if ($group == 'all'){
-			$students = db_query('select * from users as u left join users_roles as ur on u.uid=ur.uid left join role as r on r.rid=ur.rid where r.name=:role ', array(':role' => 'student'));
+			$students = db_query('select u.* from users as u left join users_roles as ur on u.uid=ur.uid left join role as r on r.rid=ur.rid where r.name=:role ', array(':role' => 'student'));
 		} elseif ($group) {
-			$students = db_query("SELECT * from users as u left join soc_user_membership as um".
+			$students = db_query("SELECT u.* from users as u left join soc_user_membership as um".
 					" on u.uid = um.uid WHERE um.type = 'group' AND um.oid = $group AND u.uid != $supervisor ");
 		} else {
 			$groups = db_query("SELECT oid from soc_user_membership um".
 					" WHERE um.type = 'group' AND um.uid = $supervisor ")->fetchCol();
 			if ($groups){
-				$students = db_query("SELECT * from users as u left join soc_user_membership um ".
+				$students = db_query("SELECT u.* from users as u left join soc_user_membership um ".
 						"on u.uid = um.uid WHERE um.type = 'group' AND um.oid IN (:groups) AND u.uid != $supervisor ", array(':groups' => $groups));
 			} else {
 				return NULL;
@@ -336,12 +346,13 @@ class Participants {
 			case 'institute': return 'inst_id';break;
 			case 'organisation': return 'org_id';break;
 			case 'project': return 'pid';break;
+			case 'proposal': return 'propid';break;
 			default: return '';
 		}
 	}
 	
 	static function isOwner($type, $id){
-		if (! in_array($type, array('group', 'institute', 'organisation', 'project'))){
+		if (! in_array($type, array('group', 'institute', 'organisation', 'project', 'proposal'))){
 			drupal_set_message(sprintf(t('You cannot be the owner of an entity called %1$s'), $type));
 			return FALSE;
 		}

@@ -13,7 +13,7 @@ function vals_soc_schema_handler() {
 							'length' => 'medium',
 							'not null' => TRUE,
 					),
-					'studid' => array(
+					'owner_id' => array(
 							'description' => 'The student id, owner of the proposal.',
 							'type' => 'int',
 							'length' => 'medium',
@@ -65,11 +65,9 @@ function vals_soc_schema_handler() {
 			),
 			'primary key' => array('pid'),
 			/*
-			 * ALTER TABLE `soc_proposals` ADD `organisation` MEDIUMINT NOT NULL AFTER `state` ,
-	ADD `mentor` MEDIUMINT NOT NULL AFTER `organisation` ,
-	ADD `student` MEDIUMINT NOT NULL AFTER `mentor` ,
-	ADD `supervisor` MEDIUMINT NOT NULL AFTER `student`
-	* ALTER TABLE `soc_proposals` ADD `url` VARCHAR( 1024 ) NOT NULL AFTER `description`
+			 * ALTER TABLE `soc_proposals` ADD `name` VARCHAR( 128 ) NULL DEFAULT NULL AFTER `pid`
+			 * ALTER TABLE `soc_proposals` ADD `modules` VARCHAR( 1024 ) NULL AFTER `solution_long` 
+			 * ALTER TABLE `soc_proposals` CHANGE `studid` `owner_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL 
 	*
 	*/
 	);
