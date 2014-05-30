@@ -1,5 +1,4 @@
 <?php 
-module_load_include('inc', 'vals_soc', 'includes/vals_soc.helper');
 
 /**
  * Callback for the admin overview page

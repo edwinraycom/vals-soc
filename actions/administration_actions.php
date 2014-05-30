@@ -8,8 +8,8 @@ drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);//Used to be DRUPAL_BOOTSTRAP_SESSION
 
 //This file is included as part of the bootstrap process as the handle_forms file includes it which is included itself
 //automatically
-module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
-include(_VALS_SOC_ROOT.'/includes/vals_soc.helper.inc');
+// module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
+// include(_VALS_SOC_ROOT.'/includes/vals_soc.helper.inc');
 include(_VALS_SOC_ROOT.'/includes/classes/Participants.php');
 include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
 include(_VALS_SOC_ROOT.'/includes/functions/administration.php');
