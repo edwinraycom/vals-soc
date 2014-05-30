@@ -9,6 +9,10 @@ class Proposal {
 		}
 		return self::$instance;
 	}
+	
+	static function tableName($type){
+		return "soc_${type}s";
+	}
     
     public function getProposals(){
     	$proposals = db_select('soc_proposals')->fields('soc_proposals')->execute()->fetchAll(PDO::FETCH_ASSOC);
@@ -74,10 +78,10 @@ class Proposal {
     		$props['supervisor_id'] = $student_details->supervisor_id ;  		
     		$props['pid'] =$project['pid'];
     		$props['state'] = 'draft' ;
-    		$id = db_insert(self::tableName($type))->fields($props)->execute();
+    		$id = db_insert(self::tableName('proposal'))->fields($props)->execute();
     		if ($id){
-    			//Make current user creating this organisation, member
     			//TODO: notify mentor???
+    			drupal_set_message('You have saved your proposal. Later you can edit it.');
     			return TRUE;
     		} else {
     			drupal_set_message(tt('We could not add your %1$s.', $type), 'error');

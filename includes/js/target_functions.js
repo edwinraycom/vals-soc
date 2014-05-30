@@ -45,6 +45,7 @@ function refreshSingleTab(json_data, args){
 function handleResult(result, args){
 	var target = args[0];
 	var before = (args.length > 1 ? args[1]: '');
+	var replace_target = (args.length > 2 ? args[2]: false);
 	if (result){
 		if (result.result == "html") {
 			ajaxInsert(result.html, target);
@@ -52,6 +53,10 @@ function handleResult(result, args){
 			ajaxAppend(result.error, target, 'error', before);
 		} else {
 			if (typeof result.msg != 'undefined') {
+				if (replace_target) {
+					Obj(target).html('');
+					before = '';
+				}
 				ajaxAppend(result.msg, target, 'status', before);
 			} else {
 				alertdev('The action '

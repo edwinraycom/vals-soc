@@ -11,7 +11,7 @@ function jsonResult($result, $type, $show_always=FALSE){
 			}
 		}
 	} else {
-		$msg = (_DEBUG && $show_always ? tt(' No %1$s message available', $type): '');
+		$msg = (_DEBUG && $show_always ? tt(' No %1$s messages available', $type): '');
 	}
 	$struct = array();
 	if (($result === false) || is_nan($result)|| ($result === 'error')) {
@@ -53,7 +53,7 @@ function showDrupalMessages($category='status', $echo=FALSE){
 		}
 	} else {
 		$msgs = drupal_get_messages($category);
-		$s = $msgs[$category] ? "<br/>$category:<br/>".implode('<br/>', $msgs[$category]) : '';
+		$s = $msgs[$category] ? "<br/>".implode('<br/>', $msgs[$category]) : '';
 	}
 
 	if ($echo) echo $s;
@@ -64,5 +64,12 @@ function showError($msg='') {
 	$msg .= showDrupalMessages('error');
 	if ($msg){
 		echo "<div class='messages error'>'$msg'</div>";
+	}
+}
+
+function showSuccess($msg='') {
+	$msg .= showDrupalMessages('status');
+	if ($msg){
+		echo "<div class='messages status'>'$msg'</div>";
 	}
 }
