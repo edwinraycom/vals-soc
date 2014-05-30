@@ -70,37 +70,32 @@ function showRoleDependentAdminPage($role){
 function showAdminPage(){
 	//TODO check for the role of current user
 	echo '<h2>'.t('All the groups and persons').'</h2>';
-	if (TRUE || ! $groups->rowCount()){
-		
-		$data = array();
-		$data[] = array(1, 'Institutes', 'list', 'institute');
-		$data[] = array(1, 'Organisations', 'list', 'organisation');
-		$data[] = array(1, 'Tutors', 'list', 'supervisor');
-		$data[] = array(1, 'Mentors', 'list', 'mentor');
-		$data[] = array(1, 'Students', 'list', 'student');
-		$data[] = array(1, 'Organisation Admins', 'list', 'organisation_admin');
-		$data[] = array(1, 'Institute Admins', 'list', 'institute_admin');
-		$nr_tabs = count($data);
-		echo renderTabs($nr_tabs, null, 'admin_page-', '', $data, 0, TRUE, 
-				renderOrganisations('institute', '', 'all'));
-		$s = '';
-		for ($i=1;$i <= $nr_tabs;$i++){
-			$s .= ($i > 1)? ', ':'';
-			$s .= "'admin_page-$i'";
-		}
-		?>
-		<script type="text/javascript">
+	$data = array();
+	$data[] = array(1, 'Institutes', 'list', 'institute');
+	$data[] = array(1, 'Organisations', 'list', 'organisation');
+	$data[] = array(1, 'Tutors', 'list', 'supervisor');
+	$data[] = array(1, 'Mentors', 'list', 'mentor');
+	$data[] = array(1, 'Students', 'list', 'student');
+	$data[] = array(1, 'Organisation Admins', 'list', 'organisation_admin');
+	$data[] = array(1, 'Institute Admins', 'list', 'institute_admin');
+	$nr_tabs = count($data);
+	echo renderTabs($nr_tabs, null, 'admin_page-', '', $data, 0, TRUE, 
+			renderOrganisations('institute', '', 'all', 'admin_page-1'));
+	$s = '';
+	for ($i=1;$i <= $nr_tabs;$i++){
+		$s .= ($i > 1)? ', ':'';
+		$s .= "'admin_page-$i'";
+	}
+	?>
+	<script type="text/javascript">
         	   activatetabs('tab_', [<?php echo $s;?>]);
         </script><?php
-	} 
 }
 
 
 function showSupervisorPage(){
 	//TODO check for the role of current user
 	echo '<h2>'.t('Your student groups').'</h2>';
-// 	echo renderGroups();
-// 	echo "<hr/>";
 	//Get my groups
 	$groups = Participants::getOrganisations('group', $GLOBALS['user']->uid);
 	if (! $groups->rowCount()){

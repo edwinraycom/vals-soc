@@ -9,6 +9,10 @@
 define('_DEBUG', TRUE);
 define('_VALS_SOC_PATH', drupal_get_path('module', 'vals_soc'));
 define('_VALS_SOC_ROOT', DRUPAL_ROOT.'/'._VALS_SOC_PATH);
+
+module_load_include('inc', 'vals_soc', 'includes/vals_soc.helper');
+module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
+
 include('includes/module/vals_soc.handle_forms.inc');
 include('includes/module/vals_soc.forms.inc');
 //***********************************************************************************
@@ -149,7 +153,7 @@ function vals_soc_form_user_profile_form_alter(&$form, &$form_state) {
 function vals_soc_help($path, $arg) {
 	switch ($path) {
 		case "admin/help#soc":
-			return '<p>' . t("Laat ons semester of code blok zien") . '</p>';
+			return '<p>' . t("Show the semester of code block") . '</p>';
 			break;
 	}
 }
