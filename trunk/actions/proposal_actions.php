@@ -1,14 +1,14 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
-module_load_include('php', 'vals_soc', 'includes/classes/Project');
+module_load_include('php', 'vals_soc', 'includes/classes/Proposal');
 
 switch ($_GET['action']){
-	case 'project_page':
-		module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
-		module_load_include('php', 'vals_soc', 'includes/functions/projects');
-		initBrowseProjectLayout();
+	case 'proposal_page':
+		//module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
+		module_load_include('php', 'vals_soc', 'includes/functions/proposals');
+		initBrowseProposalLayout();
 	break;
-	case 'list_projects':
+	case 'list_proposals':
 		try{
 			$tags=null;
 			if(isset($_POST['tags'])){
@@ -35,14 +35,14 @@ switch ($_GET['action']){
 			print json_encode($jTableResult);
 		}
 	break;
-	case 'project_detail':
-		$project_id=null;
-		if(isset($_GET['project_id'])){
-			$results = Project::getInstance()->getProjectById($_GET['project_id']);
+	case 'proposal_detail':
+		$proposal_id=null;
+		if(isset($_GET['proposal_id'])){
+			$results = Project::getInstance()->getProjectById($_GET['proposal_id']);
 			
-			$projectDetail = array();
-			$projectDetail['title'] = $results->title;
-			$projectDetail['description'] = $results->description;
+			$proposalDetail = array();
+			$proposalDetail['title'] = $results->title;
+			$proposalDetail['description'] = $results->description;
 			print json_encode($results);
 		}
 		else{

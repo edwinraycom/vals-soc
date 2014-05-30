@@ -99,7 +99,6 @@ function renderOrganisations($type='', $organisations='', $organisation_head='',
 	}
 	if ($organisations && $organisations->rowCount()){
 		$key = Participants::keyField($type);
-		//$id = $organisation->$key;
 		$s = "<ul class='grouplist'>";
 		foreach($organisations as $member){
 			$id = $member->$key;
@@ -122,8 +121,8 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
         $organisation = $organisations->fetchObject();       
     }
     
-    $key = Participants::keyField($type);
-    $id = $organisation->$key;
+    $key_name = Participants::keyField($type);
+    $id = $organisation->$key_name;
     if ($organisation){
     	$delete_action = "onclick='ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id}, \"refreshTabs\", \"json\", [\"$type\", \"$target\"]);'";
     	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, target: \"$target\"}, \"$target\");'";

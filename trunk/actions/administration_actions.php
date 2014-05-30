@@ -1,9 +1,5 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
-//This file is included as part of the bootstrap process as the handle_forms file includes it which is included itself
-//automatically
-// module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
-// include(_VALS_SOC_ROOT.'/includes/vals_soc.helper.inc');
 include(_VALS_SOC_ROOT.'/includes/classes/Participants.php');
 include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
 include(_VALS_SOC_ROOT.'/includes/functions/administration.php');
@@ -75,15 +71,12 @@ switch ($_GET['action']){
     	$id = altSubValue($_POST, 'id');
     	$target = altSubValue($_POST, 'target', '');
     	$organisation = Participants::getOrganisation($type, $id);
-						    	if (Participants::isOwner($type, $id)){
-						    		echo "IK BEN DE OWNER";
-						    	} else {
-						    		echo "IK BEN NIET DE EIGENAAR";
-						    	}
+    	$is_owner = Participants::isOwner($type, $id);
     	if (! $organisation){
-    		echo tt('You have no %1$s yet registered', t($type));
+    		echo tt('The %1$s cannot be found', t($type));
     	} else {
-    		 echo sprintf('<h3>%1$s</h3>', tt('Your %1$s', t($type)));
+    		 echo $is_owner ? sprintf('<h3>%1$s</h3>', tt('Your %1$s', t($type))): 
+    		 	sprintf('<h3>%1$s</h3>', $organisation->name);
     		 echo "<div id='msg_$target'></div>";
     		 echo renderOrganisation($type, $organisation, null, $target);
     	}

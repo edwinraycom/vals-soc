@@ -72,7 +72,6 @@ function createDiv(div_name, container){
 
 function ajaxAppend(msg, container, err, before){
 	var t = createDiv(container+err, container, before);
-	alertdev('Op het moment van ajaxAppend is het '+ msg);
 	if (t) {
 		t.addClass('messages '+err);
 		t.html(msg);

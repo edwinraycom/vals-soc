@@ -108,9 +108,6 @@ class Participants {
 								"SELECT $key from $table t".
 								" WHERE t.owner_id = $group_head ")
 								->fetchCol();
-// 								"SELECT oid from soc_user_membership um".
-// 								" WHERE um.type = '$group_type' AND um.uid = $group_head ")
-// 								->fetchCol();
 					} else {
 						$group_ids = null;
 					}
@@ -335,7 +332,7 @@ class Participants {
 	
 		return
 		db_update(self::tableName($type))
-		->condition($key_columns[$type], $id)
+		->condition($key, $id)
 		->fields($organisation)
 		->execute();
 	}

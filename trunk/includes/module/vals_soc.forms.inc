@@ -660,7 +660,7 @@ function vals_soc_proposal_form($form, &$form_state, $application='', $target=''
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
 						'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
-						' {project_id: '.$project_id.', id:0}, "handleResult", "json", ["'.$target.'", "student_details"]);')//'.$target.' instead of refreshTabs
+						' {project_id: '.$project_id.', id:0}, "handleResult", "json", ["'.$target.'", "student_details", true]);')//'.$target.' instead of refreshTabs
 		);
 		$form['sumbit'] = array(
 				'#type' => 'button',
@@ -670,7 +670,7 @@ function vals_soc_proposal_form($form, &$form_state, $application='', $target=''
 				'#attributes' => array(
 						'onclick' => 'if (confirm("'.t('Are you sure you want to submit your proposal now?').'")){'.
 						'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
-						' {project_id: '.$project_id.', id:0}, "refreshTabs", "json", ["group", "'.$target.'"]);}')//'.$target.' instead of refreshTabs
+						' {project_id: '.$project_id.', id:0}, "refreshTabs", "json", ["group", "'.$target.'", true]);}')//'.$target.' instead of refreshTabs
 		);
 		$form['cancel'] = array(
 				'#type' => 'button',
