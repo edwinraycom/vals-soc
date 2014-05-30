@@ -1,8 +1,8 @@
 //var $jq = jquery.noConflict();
 //These settings are now included in a general settings file
-var debugging = true;
+//var debugging = true;
 //var console_Jquery_migrate_warnings = false;
-var baseUrl = '/vals/';
+//var baseUrl = '/vals/';
 
 var $jq = jQuery;
 
