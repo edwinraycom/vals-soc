@@ -1,26 +1,9 @@
-/*function refreshTabs_oud(json_data, args){
-	var targ = '';
-	if (arguments.length > 1 && args) {
-		var targ = (args.length > 1) ? 'msg_'+ args[1] : '';
-	}
-	if (json_data && (json_data.result !== 'error')){
-		ajaxCall('administration', 'listgroups', {}, 'admin_container');
-	} else {
-		if (typeof json_data.error != 'undefined') {
-			if ((! targ) || ! $jq('#'+targ).length){
-				targ = 'ajax_error';
-				alertdev('In refreshTabs You forgot to place an error div in the content of the tab: required msg_<target>. '+
-					'Searched actually for '+ targ);
-			}
-			ajaxError(targ, json_data.error);
-		} else {
-			alertdev('Some error occured but no message was set.');
-		}
-	}
-}*/
-
 function refreshTabs(json_data, args){
 	var targ = '';
+	if (args.length == 0){
+		alertdev('There are missing arguments to refresh the tabs');
+		return;
+	}
 	if (arguments.length > 1 && args) {
 		targ = (args.length > 1) ? 'msg_'+ args[1] : '';
 		var type = args[0];
