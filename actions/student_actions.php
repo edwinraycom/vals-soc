@@ -6,7 +6,8 @@ include('include.php');
 // module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
 // include(_VALS_SOC_ROOT.'/includes/vals_soc.helper.inc');
 
-include(_VALS_SOC_ROOT.'/includes/classes/Participants.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Users.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');//action:proposal,...
 include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');//action:proposal,...
 
@@ -15,7 +16,7 @@ switch ($_GET['action']){
 		$target = altSubValue( $_POST, 'target');
 		$project_id = altSubValue( $_POST, 'id');
 		$proposal_id = altSubValue( $_POST, 'proposalid');
-		if (! Participants::isOfType('student', $GLOBALS['user']->uid)){
+		if (! Users::isOfType('student', $GLOBALS['user']->uid)){
 			echo "Since you are an admin, you can test a bit";
 			$owner_id = 31;
 		} else {
@@ -23,7 +24,7 @@ switch ($_GET['action']){
 		}
 		$project = Project::getInstance()->getProjectById($project_id);
 		echo "<h2>".t('Solution proposal for '.$project['title'])."</h2>";
-		$student_details = Participants::getStudentDetails($owner_id);
+		$student_details = Users::getStudentDetails($owner_id);
 		$proposal = $proposal_id ? Proposal::getInstance()->getProposalById($proposal_id): null;
 		echo '<h3>'.t('Student details').'</h3>';
 		echo "<div id='student_details'>Institute: ".$student_details->name."<br/>Supervisor: ".$student_details->supervisor."</div>";
@@ -45,15 +46,15 @@ switch ($_GET['action']){
 		break;
 case 'showmembers':
 	if ($_POST['type'] == 'group'){
-		echo renderParticipants('student', '', $_POST['group_id'], $_POST['type']);
+		echo renderUsers('student', '', $_POST['group_id'], $_POST['type']);
 		//echo renderStudents($_POST['group_id']);
 	} elseif ($_POST['type'] == 'institute'){
 		$type = altSubValue($_GET, 'subtype', 'all');
 		if ($type == 'student'){
-			$students = Participants::getAllStudents($_POST['id']);
+			$students = Users::getAllStudents($_POST['id']);
 			echo renderStudents('', $students);
 		} elseif ($type == 'supervisor'){
-			$teachers = Participants::getSupervisors($_POST['id']);
+			$teachers = Users::getSupervisors($_POST['id']);
 			echo renderSupervisors('', $teachers);
 		} else {
 			echo tt('No such type %1$s', $type);
@@ -61,7 +62,7 @@ case 'showmembers':
 
 	} elseif ($_POST['type'] == 'organisation'){
 		$organisation_id = altSubValue($_POST, 'id', '');
-		echo renderParticipants('mentor', '', $organisation_id, 'organisation');
+		echo renderUsers('mentor', '', $organisation_id, 'organisation');
 	}
 	break;
 case 'show':
@@ -71,8 +72,8 @@ case 'show':
 		$type = altSubValue($_POST, 'type');
 		$id = altSubValue($_POST, 'id');
 		$target = altSubValue($_POST, 'target', '');
-		$organisation = Participants::getOrganisation($type, $id);
-		if (Participants::isOwner($type, $id)){
+		$organisation = Groups::getGroup($type, $id);
+		if (Groups::isOwner($type, $id)){
 			echo "IK BEN DE OWNER";
 		} else {
 			echo "IK BEN NIET DE EIGENAAR";
@@ -91,7 +92,7 @@ case 'show':
 		if (! isValidOrganisationType($type)) {
 		echo t('There is no such type we can delete');
 		} else {
-		$result = Participants::deleteOrganisation($type, $id);
+		$result = Groups::removeGroup($type, $id);
 		echo $result ? jsonGooResult() : jsonBadResult();
 		}
 	break; */
@@ -109,7 +110,7 @@ case 'show':
 		if (!$id){
 			$result = Proposal::insertProposal($properties, $project_id);
 		} else {
-			if (!Participants::isOwner('proposal', $id)){
+			if (!Groups::isOwner('proposal', $id)){
 				drupal_set_message(t('You are not the owner of this proposal'));
 				$result = null;
 			} else {

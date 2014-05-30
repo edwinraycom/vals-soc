@@ -12,8 +12,8 @@ switch ($_GET['action']){
 			//Return result to jTable
 			$jTableResult = array();
 			$jTableResult['Result'] = "OK";
-			$jTableResult['TotalRecordCount'] = Organisations::getInstance()->getOrganisationsRowCountBySearchCriteria($orgName);
-			$jTableResult['Records'] = Organisations::getInstance()->getOrganisationsBySearchCriteria($orgName,
+			$jTableResult['TotalRecordCount'] = Organisations::getInstance()->getGroupsRowCountBySearchCriteria($orgName);
+			$jTableResult['Records'] = Organisations::getInstance()->getGroupsBySearchCriteria($orgName,
 					 $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
 			print json_encode($jTableResult);
 		}

@@ -14,21 +14,21 @@ class Organisations {
 	 * function used to just get the organisation Id and name
 	 * Used in some drop down menus of the UI.
 	 */
-	public function getOrganisationsLite(){
+	public function getGroupsLite(){
 		return db_query("SELECT o.org_id, o.name FROM soc_organisations o;");
 	}
 	
-    public function getOrganisationss(){
+    public function getGroupss(){
     	$projects = db_select('soc_organisations')->fields('soc_organisations')->execute()->fetchAll(PDO::FETCH_ASSOC);
     	return $projects;
     }
     
-    public function getOrganisationById($id){
+    public function getGroupById($id){
     	$project = db_select('soc_organisations')->fields('soc_organisations')->condition('org_id', $id)->execute()->fetchAll(PDO::FETCH_ASSOC);
     	return $project;
     }
     
-    public function getOrganisationsRowCountBySearchCriteria($name){
+    public function getGroupsRowCountBySearchCriteria($name){
     	$projectCount = db_select('soc_organisations');
     	if(isset($name)){
     		$projectCount->condition('name', '%'.$name.'%', 'LIKE');
@@ -37,7 +37,7 @@ class Organisations {
     	return $projectCount->execute()->rowCount();
     }
     
-    public function getOrganisationsBySearchCriteria($name, $sorting, $startIndex, $pageSize){
+    public function getGroupsBySearchCriteria($name, $sorting, $startIndex, $pageSize){
     	$queryString = "SELECT o.org_id  as org_id, o.name as oname"
     			." FROM soc_organisations o";
     	 

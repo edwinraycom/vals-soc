@@ -8,7 +8,7 @@
 // module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
 // module_load_include('inc', 'vals_soc', 'includes/vals_soc.helper');
 // module_load_include('php', 'vals_soc', 'includes/functions/administration');
-// module_load_include('php', 'vals_soc', 'includes/classes/Participants');
+// module_load_include('php', 'vals_soc', 'includes/classes/Users');
 // module_load_include('inc', 'vals_soc', 'includes/module/ui/participant');
 drupal_add_css(_VALS_SOC_PATH .'/includes/module/ui/tabs/tabs.css');
 drupal_add_js (_VALS_SOC_PATH .'/includes/module/ui/tabs/activatetabs.js');
@@ -19,7 +19,8 @@ drupal_add_js (_VALS_SOC_PATH .'/includes/js/jquery-migrate-1.2.1.js');
 //print_r(get_included_files());
 //include(_VALS_SOC_ROOT.'/includes/install/vals_soc.roles.inc');
 include(_VALS_SOC_ROOT.'/includes/functions/administration.php');
-include(_VALS_SOC_ROOT.'/includes/classes/Participants.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Users.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');
 include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
 //To test we switch here the user
 //31 student stuutje, 30 tutor zelfstandig, 27 salamanca (org inst), 25 orgadmin, 1 admin

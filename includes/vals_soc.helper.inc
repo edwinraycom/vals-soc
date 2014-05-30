@@ -9,6 +9,10 @@ function get_vals_version(){
 	return $info_data['version'];
 }
 
+function tableName($type){
+	return "soc_${type}s";
+}
+
 function altSubValue($arr, $field, $default=''){
 	if ($arr && isset($arr[$field])) {
 		return $arr[$field];

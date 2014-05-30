@@ -1,12 +1,12 @@
 <?php
 /* 
- * This file shows the various lists and views on the possible participants to Semester of Code: organisations
+ * This file shows the various lists and views on the possible Users to Semester of Code: organisations
  * instititutes, mentors, supervisors, students etc
  */
  function renderGroups($supervisor_selection='', $groups=''){
     if (!$groups){
          //if we pass empty value to getGroups the current supervisor is assumed
-        $groups = Participants::getGroups($supervisor_selection);
+        $groups = Groups::getGroups($supervisor_selection);
     }
     if ($groups){
         $s = "<ul class='grouplist'>";
@@ -29,7 +29,7 @@ function renderStudents($group_selection='', $students=''){
     if (!$students){
         //if we pass empty value to getStudents the current supervisor is assumed and we 
         //get all his students
-        $students = Participants::getStudents($group_selection);
+        $students = Users::getStudents($group_selection);
     }
     if ($students->rowCount()){
         $s = "<ul class='grouplist'>";
@@ -49,7 +49,7 @@ function renderSupervisors($group_selection='', $supervisors=''){
     if (!$supervisors){
         //if we pass empty value to getSupervisors the current institute_admin is assumed and we 
         //get all his supervisors in his/her institute
-        $supervisors = Participants::getSupervisors($group_selection);
+        $supervisors = Users::getSupervisors($group_selection);
     }
     if ($supervisors->rowCount()){
         $s = "<ul class='grouplist'>";
@@ -65,17 +65,17 @@ function renderSupervisors($group_selection='', $supervisors=''){
     }
 }
     
-function renderParticipants($type='', $participants='', $group_selection='', $group_type=''){
-	//If no participants dataset is passed on, retrieve them based on the other arguments
-    if (!$participants){
-    	$participants = Participants::getParticipants($type, $group_type, $group_selection);
-        if (!($participants && $participants->rowCount())){
-        	$participants = null;
+function renderUsers($type='', $Users='', $group_selection='', $group_type=''){
+	//If no Users dataset is passed on, retrieve them based on the other arguments
+    if (!$Users){
+    	$Users = Users::getUsers($type, $group_type, $group_selection);
+        if (!($Users && $Users->rowCount())){
+        	$Users = null;
         }
     }
-    if ($participants && $participants->rowCount()){
+    if ($Users && $Users->rowCount()){
         $s = "<ul class='grouplist'>";
-        foreach($participants as $member){
+        foreach($Users as $member){
             $s .=  "<li>";
             $s .= $member->name.' : '. $member->mail;
             $s .= "</li>";
@@ -92,13 +92,13 @@ function renderParticipants($type='', $participants='', $group_selection='', $gr
 function renderOrganisations($type='', $organisations='', $organisation_head='', $target=''){
 	//If no organisations dataset is passed on, retrieve them based on the other arguments
 	if (!$organisations){
-		$organisations = Participants::getOrganisations($type, $organisation_head);
+		$organisations = Groups::getGroups($type, $organisation_head);
 		if (!($organisations && $organisations->rowCount())){
 			$organisations = null;
 		}
 	}
 	if ($organisations && $organisations->rowCount()){
-		$key = Participants::keyField($type);
+		$key = Groups::keyField($type);
 		$s = "<ul class='grouplist'>";
 		foreach($organisations as $member){
 			$id = $member->$key;
@@ -117,11 +117,11 @@ function renderOrganisations($type='', $organisations='', $organisation_head='',
 
 function renderOrganisation($type, $organisation='', $organisation_owner='', $target=''){
     if (!$organisation){
-        $organisations = Participants::getOrganisations($type, $organisation_owner);
+        $organisations = Groups::getGroups($type, $organisation_owner);
         $organisation = $organisations->fetchObject();       
     }
     
-    $key_name = Participants::keyField($type);
+    $key_name = Groups::keyField($type);
     $id = $organisation->$key_name;
     if ($organisation){
     	$delete_action = "onclick='ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id}, \"refreshTabs\", \"json\", [\"$type\", \"$target\"]);'";

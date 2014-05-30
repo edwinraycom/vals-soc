@@ -20,7 +20,7 @@ function initBrowseProposalsLayout(){
         <?php echo t('Organisations');?>:
         <select id="organisation" name="organisation">
             <option selected="selected" value="0"><?php echo t('All Organisations');?></option><?php
-			$result = Organisations::getInstance()->getOrganisationsLite();
+			$result = Organisations::getInstance()->getGroupsLite();
 			foreach ($result as $record) {
 				$selected = ($record->org_id == $orgId ? 'selected ' : '');
 				echo '<option ' .$selected.'value="'.$record->org_id.'">'.$record->name.'</option>';
@@ -29,7 +29,7 @@ function initBrowseProposalsLayout(){
         <?php echo t('Institutes');?>:
         <select id="institute" name="institute">
             <option selected="selected" value="0"><?php echo t('All Institutes');?></option><?php
-			$result = Participants::getOrganisations('institute', 'all');
+			$result = Groups::getGroups('institute', 'all');
 			foreach ($result as $record) {
 				$selected = ($record->inst_id == $inst_id ? 'selected ' : '');
 				echo '<option ' .$selected.'value="'.$record->inst_id.'">'.$record->name.'</option>';
@@ -38,7 +38,7 @@ function initBrowseProposalsLayout(){
         <?php echo t('Students');?>:
         <select id="student" name="student">
             <option selected="selected" value="0"><?php echo t('All Students');?></option><?php
-			$result = Participants::getParticipants('student', ($inst_id ? 'institute': 'all'), $inst_id);
+			$result = Users::getUsers('student', ($inst_id ? 'institute': 'all'), $inst_id);
 			foreach ($result as $record) {
 				$selected = ($record->owner_id == $student_id ? 'selected ' : '');
 				echo '<option ' .$selected.'value="'.$record->owner_id.'">'.$record->name.':'.$record->mail.'</option>';
