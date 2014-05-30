@@ -1,7 +1,5 @@
 <?php
-define('DRUPAL_ROOT', realpath(getcwd().'/../../../../..'));
-require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
-drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);//Used to be DRUPAL_BOOTSTRAP_SESSION
+include('include.php');//Includes the necessary bootstrapping and the ajax functions
 module_load_include('php', 'vals_soc', 'includes/classes/Project');
 
 switch ($_GET['action']){
