@@ -10,16 +10,16 @@ switch ($_GET['action']){
 	case 'list':
 		$type = altSubValue($_POST, 'type');
 		switch ($type){
-			case 'institute': 
-			case 'organisation':  
+			case 'institute':
+			case 'organisation':
 			case 'group': echo renderOrganisations($type, '', 'all', $_POST['target']);break;
-			case 'supervisor': 
+			case 'supervisor':
 			case 'student':
 			case 'mentor':
-			case 'organisation_admin': 
-			case 'institute_admin': 
+			case 'organisation_admin':
+			case 'institute_admin':
 			case 'administer': echo renderUsers($type, '', 'all');break;
-			default: 
+			default:
 				echo tt('No such type: %1$s', $type);
 // 				showError(tt('No such type: %1$s', $type));
 		}
@@ -34,7 +34,7 @@ switch ($_GET['action']){
 	case 'add':
 		$target = altSubValue($_POST, 'target');
 		$type = altSubValue($_POST, 'type');
-		echo 
+		echo
 		'<h2>'.
 			(($type == 'group') ? t('Add a group to your list of groups') :
 			tt('Add your %1$s', t($type))).
@@ -58,7 +58,7 @@ switch ($_GET['action']){
             } else {
             	echo tt('No such type %1$s', $type);
             }
-                
+
         } elseif ($_POST['type'] == 'organisation'){
            $organisation_id = altSubValue($_POST, 'id', '');
            echo renderUsers('mentor', '', $organisation_id, 'organisation');
@@ -76,7 +76,7 @@ switch ($_GET['action']){
     	if (! $organisation){
     		echo tt('The %1$s cannot be found', t($type));
     	} else {
-    		 echo $is_owner ? sprintf('<h3>%1$s</h3>', tt('Your %1$s', t($type))): 
+    		 echo $is_owner ? sprintf('<h3>%1$s</h3>', tt('Your %1$s', t($type))):
     		 	sprintf('<h3>%1$s</h3>', $organisation->name);
     		 echo "<div id='msg_$target'></div>";
     		 echo renderOrganisation($type, $organisation, null, $target);
@@ -97,17 +97,31 @@ switch ($_GET['action']){
         $id = altSubValue($_POST, 'id', '');
         $target = altSubValue($_POST, 'target', '');
         if (! isValidOrganisationType($type)) {
-        	echo t('There is no such type to edit');
+        	echo t('There is no such type to edit :'.$type);
         } else {
         	$obj = Groups::getGroup($type, $id);
-        	$f = drupal_get_form("vals_soc_${type}_form", $obj, $target);
-        	print drupal_render($f);
-        }        
+        	// See http://drupal.stackexchange.com/questions/98592/ajax-processed-not-added-on-a-form-inside-a-custom-callback-my-module-deliver
+        	// for additions below
+        	unset($_POST); 
+        	$form = drupal_get_form("vals_soc_${type}_form", $obj, $target);
+        	$form['#action'] = url('administer/members');
+        	// Process the submit button which uses ajax
+        	$form['submit'] = ajax_pre_render_element($form['submit']);
+        	// Build renderable array
+        	$build = array(
+        			'form' => $form,
+        			'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
+        	);
+        	// Print $form
+        	print drupal_render($build);
+        	// Print JS
+        	print drupal_get_js();
+        }
     break;
     case 'save':
         $type = altSubValue($_POST, 'type', '');
+        
         $id = altSubValue($_POST, 'id', '');
-
         //TODO do some checks here
         if(! isValidOrganisationType($type)){
         	$result = NULL;
@@ -115,14 +129,14 @@ switch ($_GET['action']){
         	echo jsonBadResult();
         	return;
         }
-        
+
         $properties = Groups::filterPost($type, $_POST);
         if (!$id){
         	$result = ($type == 'group') ? Groups::addStudentGroup($properties) :
         		Groups::addGroup($properties, $type);
         } else {
         	$result = Groups::changeGroup($type, $properties, $id);
-        }	
+        }
 
 		if ($result){
             echo json_encode(array(
@@ -132,13 +146,13 @@ switch ($_GET['action']){
             		'msg'=>
             		($id ? tt('You succesfully changed the data of your %1$s', t($type)):
             			   tt('You succesfully added your %1$s', t($type))).
-            		(_DEBUG ? showDrupalMessages(): '') 
+            		(_DEBUG ? showDrupalMessages(): '')
             		));
         } else {
         	echo jsonBadResult();
         }
 
-        
+
     break;
     default: echo "No such action: ".$_GET['action'];
 }
