@@ -387,78 +387,94 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 }
 
 function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
-    
-    $form['name'] = array(
-            "#type" => "textfield",
-			'#title' => t('What is the name of your organisation?'),
-            "#size" => 60,
-            '#required' => '1',
-             "#default_value" => populate($org, 'name'),
-            //"#description" => t("This code is different per role."),
+	$form = array(
+		'#prefix' => '<div id="vals_soc_organisation_form_wrapper">',
+		'#suffix' => '</div>',
+	);
+	$form['key'] = array(
+		'#type' => 'hidden', 
+		"#default_value" => populate($org, 'org_id'),
+	);
+	$form['tab_target'] = array(
+		'#type' => 'hidden',
+		"#default_value" => $target,
+	);
+	$form['name'] = array(
+		"#type" => "textfield",
+		'#title' => t('What is the name of your organisation?'),
+		"#size" => 60,
+		'#required' => '1',
+		"#default_value" => populate($org, 'name'),
+		//"#description" => t("This code is different per role."),
 	);
 	$form['description'] = array(
-            "#type" => "textarea",
-			'#title' => t('Describe your organisation, if you like'),
-            "#size" => 60,
-             "#default_value" => populate($org, 'description'),
-            //"#description" => t("This code is different per role."),
+		"#type" => "textarea",
+		'#title' => t('Describe your organisation, if you like'),
+		//"#size" => 20,
+		"#size" => 60,
+		//'#cols' =>5,
+		//'#rows' =>4,
+		"#default_value" => populate($org, 'description'),
+		//"#description" => t("This code is different per role."),
 	);
-    $form['url'] = array(
-            "#type" => "textfield",
-			'#title' => t('At what website can your organisation be found'),
-            "#size" => 150,
-            '#required' => '1',
-             "#default_value" => populate($org, 'url'),
-            //"#description" => t("This code is different per role."),
+	$form['url'] = array(
+		"#type" => "textfield",
+		'#title' => t('At what website can your organisation be found'),
+		"#size" => 100,
+		'#required' => '1',
+		"#default_value" => populate($org, 'url'),
+		//"#description" => t("This code is different per role."),
 	);
     $form['contact_name'] = array(
-            "#type" => "textfield",
-			'#title' => t('Who is the contact person (you?)'),
-            "#size" => 100,
-            '#required' => '1',
-             "#default_value" => populate($org, 'contact_name'),
-            //"#description" => t("This code is different per role."),
+		"#type" => "textfield",
+		'#title' => t('Who is the contact person (you?)'),
+		"#size" => 100,
+		'#required' => '1',
+		"#default_value" => populate($org, 'contact_name'),
+		//"#description" => t("This code is different per role."),
 	);
-    $form['contact_email'] = array(
-            "#type" => "textfield",
-			'#title' => t('What is the email of the contact person'),
-            "#size" => 100,
-            '#required' => '1',
-             "#default_value" => populate($org, 'contact_email'),
-            //"#description" => t("This code is different per role."),
+	$form['contact_email'] = array(
+		"#type" => "textfield",
+		'#title' => t('What is the email of the contact person'),
+		"#size" => 100,
+		'#required' => '1',
+		"#default_value" => populate($org, 'contact_email'),
+		//"#description" => t("This code is different per role."),
 	);
-	if (!$org){
-//          $form['submit'] = array(
-//              '#type' => 'submit',
-//              '#value' => t('Save'),
-//          );
-// 		$form['#submit'][] = 'vals_soc_organisation_form_submit_handler';
-//     	$form['#validate'][] = 'vals_soc_organisation_form_validate_handler';
-		unset($form['#submit']);
-		$form['sumbit'] = array(
-				'#type' => 'button',
-				'#button_type' => 'button',
-				'#value' => t('Save'),
-				//'#theme' => 'garland_button',
-				'#attributes' => array(
-						'onclick' => 'ajaxFormCall("vals-soc-organisation-form", "administration", "save",'.
-						' {type: "organisation", id:0}, "refreshTabs", "json", ["organisation", "'.$target.'"]);')//'.$target.' instead of refreshTabs
+	$form['sub'] = array(
+		'#type' => 'submit',
+		'#value' => t('Save'),
+		'#ajax' => array(
+			'callback' => 'vals_soc_organisation_form_callback',
+			'wrapper' => 'vals_soc_organisation_form_wrapper',
+		),
+	);
+	$form['#attached']['js'] = array(
+		array(
+			'type'  => 'file',
+			'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
+		),
+	);
+	return $form;
+}
+
+function vals_soc_organisation_form_callback($form, &$form_state){
+	// if there are errors, return the form to display the error messages
+	$target='';
+	if (form_get_errors()) {
+		$form_state['rebuild'] = TRUE;
+		return $form;
+	}
+	else{
+		$commands = array();
+		$commands[] = ajax_command_html('#vals_soc_organisation_form_wrapper', render($form));
+		$commands[] = array(
+			'command' => 'jsOrganisationSaveCallback',
+			'orgId' => $form_state['values']['key'],
+			'tabTarget' => $form_state['values']['tab_target'],
 		);
-		
-     } else {
-         unset($form['#submit']);
-         $form['sumbit'] = array(
-           '#type' => 'button',
-           '#button_type' => 'button',
-           '#value' => t('Save'),
-           //'#theme' => 'garland_button',module, action, data, target, type, err
-           '#attributes' => array(
-           		'onclick' => 'ajaxFormCall("vals-soc-organisation-form", "administration", "save",'.
-           		' {type: "organisation", id:'.$org->org_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
-        );
-     }
-    
-    return $form;
+		return array('#type' => 'ajax', '#commands' => $commands);
+	}
 }
 
 function vals_soc_institute_form($form, &$form_state, $institute='', $target=''){
