@@ -13,11 +13,11 @@ function initBrowseProposalsLayout(){
 	if(isset($_GET['inid'])){
 		$inst_id = $_GET['inid'];
 	}?>
-	<div class="filtering">
+	<div class="filtering" style="width: 800px;">
 	<span id="infotext" style="margin-left: 34px"></span>
     <form id="proposal_filter">
-        
-        <?php echo t('Organisations');?>:
+        <?php echo t('Select the proposals');?>:
+        <?php // echo t('Organisations');?>
         <select id="organisation" name="organisation">
             <option selected="selected" value="0"><?php echo t('All Organisations');?></option><?php
 			$result = Organisations::getInstance()->getGroupsLite();
@@ -26,7 +26,7 @@ function initBrowseProposalsLayout(){
 				echo '<option ' .$selected.'value="'.$record->org_id.'">'.$record->name.'</option>';
 			}?>
         </select>
-        <?php echo t('Institutes');?>:
+        <?php //echo t('Institutes');?>
         <select id="institute" name="institute">
             <option selected="selected" value="0"><?php echo t('All Institutes');?></option><?php
 			$result = Groups::getGroups('institute', 'all');
@@ -35,18 +35,18 @@ function initBrowseProposalsLayout(){
 				echo '<option ' .$selected.'value="'.$record->inst_id.'">'.$record->name.'</option>';
 			}?>
         </select>
-        <?php echo t('Students');?>:
+        <?php //echo t('Students');<br/>?>
         <select id="student" name="student">
             <option selected="selected" value="0"><?php echo t('All Students');?></option><?php
 			$result = Users::getUsers('student', ($inst_id ? 'institute': 'all'), $inst_id);
 			foreach ($result as $record) {
-				$selected = ($record->owner_id == $student_id ? 'selected ' : '');
-				echo '<option ' .$selected.'value="'.$record->owner_id.'">'.$record->name.':'.$record->mail.'</option>';
+				$selected = ($record->uid == $student_id ? 'selected ' : '');
+				echo '<option ' .$selected.'value="'.$record->uid.'">'.$record->name.':'.$record->mail.'</option>';
 			}?>
         </select>
     </form>
 	</div>
-	<div id="TableContainer" style="width: 600px;"></div>
+	<div id="TableContainer" style="width: 800px;"></div>
 					
 	<script type="text/javascript">
 					
@@ -61,18 +61,30 @@ function initBrowseProposalsLayout(){
 				alert("get the proposal form for proposal#"+proposalId);
 			}
 
-			function getProposalDetail(proposalId){
-				var url = baseUrl + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" + proposalId;
+			function getProposalDetail(proposal_id){
+				var url = baseUrl + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" + proposal_id;
 				$.get(url,function(data,status){
     				 generateAndPopulateModal(data);
   				});
 			}
-					
-		
+			
+			function getProjectDetail(project_id){
+				var url = baseUrl + "actions/project_actions.php?action=project_detail&project_id=" + project_id;
+				$.get(url,function(data,status){
+    				 generateAndPopulateModal(data);
+  				});
+			}		
+
+			function getProposalFormForProject(projectId){
+				Drupal.CTools.Modal.dismiss();
+				ajaxCall("student", "proposal", {id: projectId, target:'content'}, "content");
+			}
+			
 			function generateAndPopulateModal(data){
 				//TODO - work more on the formating
 				// and add other fields from DB
 				var result = jQuery.parseJSON(data);
+				/*
 				var content = "<h2>"+result[0].title+"</h2>";
 					content += result[0].description;
 					content +="<div class=\"centered\">";
@@ -80,6 +92,8 @@ function initBrowseProposalsLayout(){
 					content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 					content +="<a href=\"#\" onclick=\"getProposalFormForProposal("+result[0].pid+")\">Submit proposal for this proposal</a>";
 					content +="</div>";
+				*/
+				var content = ' hallo dit uitwerken' ;
 				Drupal.CTools.Modal.show();
 				$("#modal-title").html("&nbsp;"); // doesnt render unless theres something there!
 				$("#modal-content").html(content);
@@ -100,7 +114,7 @@ function initBrowseProposalsLayout(){
 				paging: true,
 				pageSize: 10,
 				sorting: true,
-				defaultSorting: "title ASC",
+				defaultSorting: "pid ASC",
 				actions: {
 					listAction: baseUrl + "actions/proposal_actions.php?action=list_proposals"
 				},
@@ -111,43 +125,49 @@ function initBrowseProposalsLayout(){
 						edit: false,
 						list: false
 					},
+					pid: {
+						width: "2%",
+    					title: "Project",
+						sorting: true,
+    					display: function (data) {
+							return "<a title=\"View project details\" href=\"#\" onclick=\"getProjectDetail("+data.record.pid+")\">"+
+									"<span class=\"ui-icon ui-icon-info\">view project</span></a>";
+    					},
+    					create: false,
+    					edit: false
+					},
 					owner_id: {
 						title: "Student",
-						width: "40%"
+						width: "40%",
+						display: function (data){return data.record.name;}
 					},
 					instid: {
 						title: "Institute",
 						width: "26%",
 						create: false,
-						edit: false
+						edit: false,
+						display: function (data){return data.record.i_name;}
 					},
 					oid: {
 						title: "Organisation",
-						width: "20%"
+						width: "20%",
+						display: function (data){return data.record.o_name;}
 					},
-					pid: {
-						width: "2%",
-    					title: "Project id",
-						sorting: false,
-    					display: function (data) {
-							return "<a title=\"View proposal details\" href=\"#\" onclick=\"getProposalDetail("+data.record.pid+")\">"+
-									"<span class=\"ui-icon ui-icon-info\"></span></a>";
-    					},
-    					create: false,
-    					edit: false
-					},
+					
 					solution_short : {
 						//width: "2%",
-    					title: "Proposal",
+    					title: "Proposal details",
 						sorting: false,
     					display: function (data) {
-							return "<a title=\"Propose a proposal for this idea\" href=\"#\" onclick=\"getProposalFormForProject("+data.record.pid+")\">"+
-									"<span class=\"ui-icon ui-icon-script\"></span></a>";
+							return "<a title=\"Propose a proposal for this idea\" href=\"#\" "+
+								"onclick=\"getProposalDetail("+data.record.propid+")\">"+
+									"<span class=\"ui-icon ui-icon-info\">See details</span></a>";
     					},
     					create: false,
     					edit: false
 					},
-					solution_long : {
+					/*
+						solution_long : {
 						//width: "2%",
     					title: "Detailed Description",
 						sorting: false,
@@ -158,6 +178,7 @@ function initBrowseProposalsLayout(){
     					create: false,
     					edit: false
 					}
+					*/
 					
 				},
 					
@@ -172,20 +193,20 @@ function initBrowseProposalsLayout(){
 			//Load proposal list from server on initial page load
 			loadFilteredProposals();
 			
-			$("#student").change(function(e) {
-				e.preventDefault();
-				loadFilteredProposals();
-			});
-					
 			$("#organisation").change(function(e) {
+           		e.preventDefault();
+           		loadFilteredProposals();
+        	});
+					
+			$("#institute").change(function(e) {
            		e.preventDefault();
            		loadFilteredProposals();
         	});
 
-			$("#organisation").change(function(e) {
-           		e.preventDefault();
-           		loadFilteredProposals();
-        	});
+			$("#student").change(function(e) {
+				e.preventDefault();
+				loadFilteredProposals();
+			});
 
 			$("#proposal_filter").submit(function(e){
 				e.preventDefault();
@@ -195,6 +216,7 @@ function initBrowseProposalsLayout(){
 			// define these at the window level so that they can still be called once loaded
 			window.getProposalFormForProject = getProposalFormForProject;
 			window.getProjectDetail = getProjectDetail;
+			window.getProposalDetail = getProposalDetail;
 
 		});
 	</script><?php

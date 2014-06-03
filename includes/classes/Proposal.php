@@ -34,8 +34,12 @@ class Proposal {
     	return $query->execute()->rowCount();
     }
     
-    public function getProposalsBySearchCriteria($student='', $institute='', $organisation='', $sorting='title', $startIndex=1, $pageSize=10){
-    	$query = db_select('soc_proposals', 'p')->fields('p');
+    public function getProposalsBySearchCriteria($student='', $institute='', $organisation='', $sorting='pid',
+    	$startIndex=1, $pageSize=10)
+    {
+    	
+    	$query = db_select('soc_proposals', 'p')->fields('p', array(
+    			'propid','owner_id','oid','instid','supervisor_id','pid', 'name'));
     	if($student){
     		$query->condition('owner_id', $student);
     	}
@@ -45,8 +49,30 @@ class Proposal {
     	if($organisation){
     		$query->condition('oid', $organisation);
     	}
-    	$query->orderBy($sorting, 'DESC')
-    		->range($startIndex, $pageSize);
+    	$query->join('soc_institutes', 'i', 'p.instid = %alias.inst_id');
+    	$query->join('soc_organisations', 'o', 'p.oid = %alias.org_id');
+    	$query->join('soc_projects', 'pr', 'p.pid = %alias.pid');
+    	$query->fields('i', array('name'));
+    	$query->fields('o', array('name'));
+    	$query->fields('pr', array('title'));
+    	//We expect the jtable lib to give a sorting of the form field [ASC, DESC]
+    	if ($sorting){
+    		$parts = explode(' ', $sorting);
+    		$sorting = $parts[0];
+    		$direction = (isset($parts[1])? $parts[1]: 'DESC');
+    		$query->orderBy($sorting, $direction);
+    	}
+    	$query->range($startIndex, $pageSize);
+    	/*
+SELECT p.propid AS propid, p.owner_id AS owner_id, p.oid AS oid, p.instid AS instid, p.supervisor_id AS supervisor_id, p.pid AS pid, p.name AS name, i.name AS i_name, o.name AS o_name, pr.title AS title
+FROM 
+{soc_proposals} p
+INNER JOIN {soc_institutes} i ON p.instid = i.inst_id
+INNER JOIN {soc_organisations} o ON p.oid = o.org_id
+INNER JOIN {soc_projects} pr ON p.pid = pr.pid
+ORDER BY pid ASC
+LIMIT 10 OFFSET 0
+    	 */
     	return $query->execute()->fetchAll(); 
     }
     
