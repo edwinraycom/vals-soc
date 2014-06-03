@@ -23,6 +23,7 @@ switch ($_GET['action']){
 			$jTableResult['Result'] = "OK";
 			$jTableResult['TotalRecordCount'] = Project::getInstance()->getProjectsRowCountBySearchCriteria(
 					$tags, $organisation);
+				
 			$jTableResult['Records'] = Project::getInstance()->getProjectsBySearchCriteria($tags,
 					$organisation, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
 			print json_encode($jTableResult);

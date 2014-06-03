@@ -46,7 +46,7 @@ class Project {
     	}
     	$queryString .= 	 " ORDER BY " . $sorting
     	." LIMIT " . $startIndex . "," . $pageSize . ";";
-    	
+    	die("Wat is de qs ? $queryString");
     	$result = db_query($queryString);
     	
     	$rows = array();

@@ -3192,7 +3192,6 @@ THE SOFTWARE.
             if (!this.options.sorting || this._lastSorting == '') {
                 return url;
             }
-
             return (url + (url.indexOf('?') < 0 ? '?' : '&') + 'jtSorting=' + this._lastSorting);
         }
 

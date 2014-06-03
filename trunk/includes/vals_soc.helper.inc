@@ -13,6 +13,10 @@ function tableName($type){
 	return "soc_${type}s";
 }
 
+function debugDbQuery($query){
+	die($query->__toString());
+}
+
 function altSubValue($arr, $field, $default=''){
 	if ($arr && isset($arr[$field])) {
 		return $arr[$field];

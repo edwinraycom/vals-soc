@@ -6,13 +6,17 @@ switch ($_GET['action']){
 	case 'proposal_page':
 		//module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 		module_load_include('php', 'vals_soc', 'includes/functions/proposals');
-		initBrowseProposalLayout();
+		initBrowseProposalsLayout();
 	break;
 	case 'list_proposals':
 		try{
-			$tags=null;
-			if(isset($_POST['tags'])){
-				$tags = $_POST['tags'];
+		$student=null;
+			if(isset($_POST['student'])){
+				$student = $_POST['student'];
+			}
+			$institute=null;
+			if(isset($_POST['institute'])){
+				$institute = $_POST['institute'];
 			}
 			$organisation=null;
 			if(isset($_POST['organisation'])){
@@ -21,10 +25,11 @@ switch ($_GET['action']){
 			//Return result to jTable
 			$jTableResult = array();
 			$jTableResult['Result'] = "OK";
-			$jTableResult['TotalRecordCount'] = Project::getInstance()->getProjectsRowCountBySearchCriteria(
-					$tags, $organisation);
-			$jTableResult['Records'] = Project::getInstance()->getProjectsBySearchCriteria($tags,
-					$organisation, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
+			$jTableResult['TotalRecordCount'] = Proposal::getInstance()->getProposalsRowCountBySearchCriteria(
+					$student, $institute, $organisation);
+			$jTableResult['Records'] = Proposal::getInstance()->getProposalsBySearchCriteria(
+					$student, $institute, $organisation, $_GET["jtSorting"], $_GET["jtStartIndex"],
+					$_GET["jtPageSize"]);
 			print json_encode($jTableResult);
 		}
 		catch(Exception $ex){
@@ -38,7 +43,7 @@ switch ($_GET['action']){
 	case 'proposal_detail':
 		$proposal_id=null;
 		if(isset($_GET['proposal_id'])){
-			$results = Project::getInstance()->getProjectById($_GET['proposal_id']);
+			$results = Project::getInstance()->getProposalById($_GET['proposal_id']);
 			
 			$proposalDetail = array();
 			$proposalDetail['title'] = $results->title;
