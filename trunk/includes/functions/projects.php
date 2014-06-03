@@ -30,6 +30,7 @@ function initBrowseProjectLayout($target='content'){
 	var baseUrl = "/vals/sites/all/modules/vals_soc/";
 
 	function getProposalFormForProject(projectId){
+		Drupal.CTools.Modal.dismiss();
 		ajaxCall("student", "proposal", {id: projectId,target:"<?php echo $target;?>"}, "content");
 	}
 
