@@ -1,5 +1,6 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
+module_load_include('php', 'vals_soc', 'includes/classes/Groups');
 module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 switch ($_GET['action']){
 	case 'list_organisations':
@@ -12,8 +13,8 @@ switch ($_GET['action']){
 			//Return result to jTable
 			$jTableResult = array();
 			$jTableResult['Result'] = "OK";
-			$jTableResult['TotalRecordCount'] = Organisations::getInstance()->getGroupsRowCountBySearchCriteria($orgName);
-			$jTableResult['Records'] = Organisations::getInstance()->getGroupsBySearchCriteria($orgName,
+			$jTableResult['TotalRecordCount'] = Organisations::getInstance()->getOrganisationsRowCountBySearchCriteria($orgName);
+			$jTableResult['Records'] = Organisations::getInstance()->getOrganisationsBySearchCriteria($orgName,
 					 $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
 			print json_encode($jTableResult);
 		}

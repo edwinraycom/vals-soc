@@ -1,7 +1,8 @@
 <?php
 class Proposal {
 	
-	private static $instance;
+	private static $instance; 	 	 	 	 	 	 	 	 	
+	private static $fields = array('propid', 'owner_id', 'oid', 'instid', 'supervisor_id', 'pid', 'name', 'cv', 'solution_short', 'solution_long', 'modules', 'state',);
 	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){
@@ -15,8 +16,17 @@ class Proposal {
     	return $proposals;
     }
     
-    public function getProposalById($id){
-    	$proposal = db_select('soc_proposals')->fields('soc_proposals')->condition('propid', $id)->execute()->fetchAll(PDO::FETCH_ASSOC);
+    public function getProposalById($id, $details= false){
+    	$query = db_select('soc_proposals', 'p')->fields('p', self::$fields)->condition('propid', $id);
+    	if ($details){
+    		$query->join('soc_institutes', 'i', 'p.instid = %alias.inst_id');
+    		$query->join('soc_organisations', 'o', 'p.oid = %alias.org_id');
+    		$query->join('soc_projects', 'pr', 'p.pid = %alias.pid');
+    		$query->fields('i', array('name'));
+    		$query->fields('o', array('name'));
+    		$query->fields('pr', array('title'));
+    	}
+    	$proposal = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
     	return $proposal;
     }
     

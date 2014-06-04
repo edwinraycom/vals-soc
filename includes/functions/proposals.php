@@ -20,7 +20,7 @@ function initBrowseProposalsLayout(){
         <?php // echo t('Organisations');?>
         <select id="organisation" name="organisation">
             <option selected="selected" value="0"><?php echo t('All Organisations');?></option><?php
-			$result = Organisations::getInstance()->getGroupsLite();
+			$result = Organisations::getInstance()->getOrganisationsLite();
 			foreach ($result as $record) {
 				$selected = ($record->org_id == $orgId ? 'selected ' : '');
 				echo '<option ' .$selected.'value="'.$record->org_id.'">'.$record->name.'</option>';

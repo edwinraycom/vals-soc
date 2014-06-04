@@ -1,4 +1,5 @@
 <?php
+include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');
 module_load_include('php', 'vals_soc', 'includes/classes/Project');
 module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 drupal_add_library('system','ui.widget');
@@ -17,7 +18,6 @@ drupal_add_js(_VALS_SOC_PATH .'/includes/module/ui/tabs/activatetabs.js');
 // module_load_include('inc', 'vals_soc', 'includes/vals_soc.helper');
 module_load_include('php', 'vals_soc', 'includes/functions/administration');
 module_load_include('php', 'vals_soc', 'includes/classes/Users');
-include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');
 module_load_include('inc', 'vals_soc', 'includes/module/ui/participant');
 // drupal_add_js(_VALS_SOC_PATH .'/includes/js/jtable/jquery.jtable.js');
 // drupal_add_css(_VALS_SOC_PATH . '/includes/js/jtable/jtable.css');

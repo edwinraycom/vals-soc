@@ -1,5 +1,6 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
+module_load_include('php', 'vals_soc', 'includes/classes/Groups');
 module_load_include('php', 'vals_soc', 'includes/classes/Project');
 
 switch ($_GET['action']){
