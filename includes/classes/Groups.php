@@ -135,7 +135,7 @@ class Groups {
 		}
 	
 		global $user;
-	
+	//mentor GRTDWCOCI
 		$txn = db_transaction();
 		try {
 			$uid = $user->uid;
@@ -160,7 +160,7 @@ class Groups {
 							'type'=>$subtype,
 							'code' => createRandomCode($subtype, $id),
 							'entity_id'=> $id,
-							'group_id' =>0))->execute();
+							'studentgroup_id' =>0))->execute();
 					if (!$result){
 						drupal_set_message(t('We could not add a code.'), 'error');
 					}

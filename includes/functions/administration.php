@@ -102,7 +102,7 @@ function showSupervisorPage(){
 		echo t('You have no group yet registered');
 		$add_tab = '<h2>'.t('Add your group').'</h2>';
 		$f3 = drupal_get_form('vals_soc_group_form', '', 'group_page-1');
-		$add_tab .= drupal_render($f3);
+		$add_tab = drupal_render($f3);
 		$data = array();
 		$data[] = array(1, 'Add', 'addgroup', 'studentgroup', null, "target=admin_container");
 		echo renderTabs(1, null, 'group_page-', 'studentgroup', $data, null, TRUE, $add_tab);
@@ -165,7 +165,7 @@ function showInstitutePage(){
 		echo '<h2>'.t('Add your institute').'</h2>';
 		
 		$f3 = drupal_get_form('vals_soc_institute_form', '', 'group_page-1');
-		$add_tab .= drupal_render($f3);
+		$add_tab = drupal_render($f3);
 		$data = array();
 		$data[] = array(1, 'Add', 'add', 'institute', null, "target=admin_container");
 		echo renderTabs(1, null, 'inst_page-', 'institute', $data, null, TRUE, $add_tab);
