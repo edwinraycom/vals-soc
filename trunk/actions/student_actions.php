@@ -37,7 +37,7 @@ switch ($_GET['action']){
 		$type = altSubValue($_POST, 'type');
 		echo
 		'<h2>'.
-		(($type == 'group') ? t('Add a group to your list of groups') :
+		(($type == 'studentgroup') ? t('Add a group to your list of groups') :
 				sprintf(t('Add your %1$s'), t($type))).
 				'</h2>';
 		echo "<div id='msg_$target'></div>";
@@ -45,9 +45,9 @@ switch ($_GET['action']){
 		print drupal_render($f2);
 		break;
 case 'showmembers':
-	if ($_POST['type'] == 'group'){
-		echo renderUsers('student', '', $_POST['group_id'], $_POST['type']);
-		//echo renderStudents($_POST['group_id']);
+	if ($_POST['type'] == 'studentgroup'){
+		echo renderUsers('student', '', $_POST['studentgroup_id'], $_POST['type']);
+		//echo renderStudents($_POST['studentgroup_id']);
 	} elseif ($_POST['type'] == 'institute'){
 		$type = altSubValue($_GET, 'subtype', 'all');
 		if ($type == 'student'){

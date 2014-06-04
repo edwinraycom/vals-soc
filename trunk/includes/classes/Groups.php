@@ -11,8 +11,8 @@ class Groups {
 			$members = db_query("SELECT o.* from soc_${org_type}s as o");
 		} else {
 			$key_column = self::keyField($org_type);
-			$code_key_column = ($org_type == 'group') ? 'group_id' : 'org';
-			$member_type = ($org_type == 'group') ? 'group' :(($org_type == 'organisation') ? 'mentor': 'supervisor');
+			$code_key_column = ($org_type == 'studentgroup') ? 'studentgroup_id' : 'entity_id';
+			$member_type = ($org_type == 'studentgroup') ? 'studentgroup' :(($org_type == 'organisation') ? 'mentor': 'supervisor');
 			if ($id){
 					
 				$members = db_query(
@@ -26,7 +26,7 @@ class Groups {
 				$members = db_query(
 						"SELECT o.*, c.code from ".tableName($org_type)." as o ".
 						"left join soc_user_membership as um ".
-						" on o.$key_column = um.oid ".
+						" on o.$key_column = um.group_id ".
 						"left join soc_codes as c ".
 						" on o.$key_column = c.$code_key_column AND c.type = '$member_type'".
 						"WHERE um.type = '$org_type' AND um.uid = $group_head_id ");
@@ -57,17 +57,17 @@ class Groups {
 	
 	static function keyField($type){
 		switch ($type){
-			case 'group': return 'group_id';break;
+			case 'studentgroup': return 'studentgroup_id';break;
 			case 'institute': return 'inst_id';break;
 			case 'organisation': return 'org_id';break;
 			case 'project': return 'pid';break;
-			case 'proposal': return 'propid';break;
+			case 'proposal': return 'proposal_id';break;
 			default: return '';
 		}
 	}
 	
 	static function isOwner($type, $id){
-		if (! in_array($type, array('group', 'institute', 'organisation', 'project', 'proposal'))){
+		if (! in_array($type, array('studentgroup', 'institute', 'organisation', 'project', 'proposal'))){
 			drupal_set_message(tt('You cannot be the owner of an entity called %1$s', $type));
 			return FALSE;
 		}
@@ -78,7 +78,7 @@ class Groups {
 	
 	static function hasMembers($type, $id){
 		//Assuming there is always an owner inside the group
-		return db_query("SELECT * FROM soc_user_membership WHERE type = '$type' AND oid = $id")->rowCount() > 1;
+		return db_query("SELECT * FROM soc_user_membership WHERE type = '$type' AND group_id = $id")->rowCount() > 1;
 	}
 	
 	static function removeGroup($type, $id){
@@ -100,7 +100,7 @@ class Groups {
 		->execute();
 		if ($num_deleted){
 			$num_deleted2 = db_delete("soc_user_membership")
-			->condition('oid', $id)
+			->condition('group_id', $id)
 			->condition('type', $type)
 			->execute();
 			if (!$num_deleted2){
@@ -108,10 +108,10 @@ class Groups {
 				return $num_deleted;
 			}
 				
-			$subtype = ($type == 'organisation') ? 'mentor' : (($type == 'institute') ? 'supervisor' : 'group');
+			$subtype = ($type == 'organisation') ? 'mentor' : (($type == 'institute') ? 'supervisor' : 'studentgroup');
 				
 			$num_deleted3 = db_delete("soc_codes")
-			->condition('org', $id)
+			->condition('entity_id', $id)
 			->condition('type', $subtype)
 			->execute();
 				
@@ -153,13 +153,13 @@ class Groups {
 				$result = db_insert('soc_user_membership')->fields( array(
 						'uid'=>$uid,
 						'type' => $type,
-						'oid'=>$id,
+						'group_id'=>$id,
 				))->execute();
 				if ($result){
 					$result = $result && db_insert('soc_codes')->fields( array(
 							'type'=>$subtype,
 							'code' => createRandomCode($subtype, $id),
-							'org'=> $id,
+							'entity_id'=> $id,
 							'group_id' =>0))->execute();
 					if (!$result){
 						drupal_set_message(t('We could not add a code.'), 'error');
@@ -191,17 +191,17 @@ class Groups {
 		$txn = db_transaction();
 		try {
 			$uid = $user->uid;
-			$institute = db_select('soc_user_membership')->fields('soc_user_membership', array('oid'))
+			$institute_ids = db_select('soc_user_membership')->fields('soc_user_membership', array('group_id'))
 			->condition('uid', $uid)
 			->condition('type', 'institute')
 			->execute()->fetchCol();
-			if ($institute){
-				$inst_id = $institute[0];
+			if ($institute_ids){
+				$inst_id = $institute_ids[0];
 			} else {
 				$inst_id = 0;
 			}
 	
-			$gid = db_insert('soc_groups')->fields(array(
+			$gid = db_insert('soc_studentgroups')->fields(array(
 					'name'=>$group['name'],
 					'owner_id' =>  $uid,
 					'supervisor_id' => $uid,
@@ -211,15 +211,15 @@ class Groups {
 			if ($gid){
 				$result = db_insert('soc_user_membership')->fields( array(
 						'uid'=>$uid,
-						'type' => 'group',
-						'oid'=>$gid,
+						'type' => 'studentgroup',
+						'group_id'=>$gid,
 				))->execute();
 				if ($result){
 					$result = $result && db_insert('soc_codes')->fields( array(
-							'type'=>'group',
-							'code' => createRandomCode('group', $gid),
-							'org'=> $inst_id,
-							'group_id' =>$gid))->execute();
+							'type'=>'studentgroup',
+							'code' => createRandomCode('studentgroup', $gid),
+							'entity_id'=> $inst_id,
+							'studentgroup_id' =>$gid))->execute();
 					if (!$result){
 						drupal_set_message(t('We could not add a code for this group.'), 'error');
 					}
@@ -245,7 +245,7 @@ class Groups {
 		$fields = array(
 				'institute' => array('name', 'contact_name', 'contact_email'),
 				'organisation'=> array('name', 'contact_name', 'contact_email', 'url', 'description'),
-				'group'=> array('name', 'description'),
+				'studentgroup'=> array('name', 'description'),
 		);
 		if (!$type || !isset($fields[$type])){
 			return null;

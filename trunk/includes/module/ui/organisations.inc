@@ -67,7 +67,7 @@ function initBrowseOrgsLayout(){
 				recordsLoaded: function(event, data) {
         			$(".jtable-data-row").click(function() {
             			var row_id = $(this).attr("data-record-key");
-            			var url = baseUrl + "projects/browse?oid=" + row_id;
+            			var url = baseUrl + "projects/browse?org_id=" + row_id;
 						document.location.href=url;
 			
         			});

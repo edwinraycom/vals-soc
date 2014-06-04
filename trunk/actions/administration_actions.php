@@ -12,7 +12,7 @@ switch ($_GET['action']){
 		switch ($type){
 			case 'institute':
 			case 'organisation':
-			case 'group': echo renderOrganisations($type, '', 'all', $_POST['target']);break;
+			case 'studentgroup': echo renderOrganisations($type, '', 'all', $_POST['target']);break;
 			case 'supervisor':
 			case 'student':
 			case 'mentor':
@@ -36,7 +36,7 @@ switch ($_GET['action']){
 		$type = altSubValue($_POST, 'type');
 		echo
 		'<h2>'.
-			(($type == 'group') ? t('Add a group to your list of groups') :
+			(($type == 'studentgroup') ? t('Add a group to your list of groups') :
 			tt('Add your %1$s', t($type))).
 		'</h2>';
 		echo "<div id='msg_$target'></div>";
@@ -44,9 +44,9 @@ switch ($_GET['action']){
 		print drupal_render($f2);
 	break;
     case 'showmembers':
-    	if ($_POST['type'] == 'group'){
-            echo renderUsers('student', '', $_POST['group_id'], $_POST['type']);
-            //echo renderStudents($_POST['group_id']);
+    	if ($_POST['type'] == 'studentgroup'){
+            echo renderUsers('student', '', $_POST['studentgroup_id'], $_POST['type']);
+            //echo renderStudents($_POST['studentgroup_id']);
         } elseif ($_POST['type'] == 'institute'){
             $type = altSubValue($_GET, 'subtype', 'all');
             if ($type == 'student'){
@@ -132,7 +132,7 @@ switch ($_GET['action']){
 
         $properties = Groups::filterPost($type, $_POST);
         if (!$id){
-        	$result = ($type == 'group') ? Groups::addStudentGroup($properties) :
+        	$result = ($type == 'studentgroup') ? Groups::addStudentGroup($properties) :
         		Groups::addGroup($properties, $type);
         } else {
         	$result = Groups::changeGroup($type, $properties, $id);

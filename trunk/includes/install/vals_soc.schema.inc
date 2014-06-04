@@ -19,13 +19,13 @@ function vals_soc_schema_handler() {
 							'length' => 'medium',
 							'not null' => TRUE,
 					),
-					'instid' => array(
+					'inst_id' => array(
 							'description' => 'The institute, for convenience',
 							'type' => 'int',
 							'length' => 'medium',
 							'not null' => TRUE,
 					),
-					'oid' => array(
+					'org_id' => array(
 							'description' => 'The organisation.',
 							'type' => 'int',
 							'length' => 'medium',
@@ -144,14 +144,14 @@ ADD `supervisor` MEDIUMINT NOT NULL AFTER `student`
 							'not null' => TRUE,
 							'default' => '',
 					),
-                    'org' => array(
+                    'entity_id' => array(
 							'description' => 'The organisation/institute etc.',
 							'type' => 'int',
 							'length' => 'medium',
 							'not null' => TRUE,
 							'default' => 0,
 					),
-                    'group_id' => array(
+                    'studentgroup_id' => array(
 							'description' => 'To make it easier to retrieve the group of the code a student uses to register',
 							'type' => 'int',
 							'length' => 'medium',
@@ -243,10 +243,10 @@ ADD `supervisor` MEDIUMINT NOT NULL AFTER `student`
 			),
 			'primary key' => array('org_id'),
 	);
-    $schema['soc_groups'] = array(
+    $schema['soc_studentgroups'] = array(
 			'description' => 'The students will be divided in groups, each teacher probably having one or more groups',
 			'fields' => array(
-					'group_id' => array(
+					'studentgroup_id' => array(
 							'description' => 'Group id.',
 							'type' => 'serial',
 							'length' => 'small',
@@ -278,7 +278,7 @@ ADD `supervisor` MEDIUMINT NOT NULL AFTER `student`
 							'default' => '',
 					),
 			),
-			'primary key' => array('group_id'),
+			'primary key' => array('studentgroup_id'),
 	);
     $schema['soc_user_membership'] = array(
 			'description' => 'All users are member of some organisation, either a university or some software company etc.',
@@ -302,7 +302,7 @@ ADD `supervisor` MEDIUMINT NOT NULL AFTER `student`
 							'length' => 128,
 							'not null' => TRUE,
 					),
-                    'oid' => array(
+                    'group_id' => array(
 							'description' => 'The id of the organisation/institute/group etc.',
 							'type' => 'int',
 							'length' => 'medium',

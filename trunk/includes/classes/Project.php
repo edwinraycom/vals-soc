@@ -2,6 +2,8 @@
 class Project {
 	
 	private static $instance;
+	public static $fields = array('pid', 'owner_id', 'title', 'description', 'url', 'state', 
+		'org_id', 'mentor', 'proposal_id', 'supervisor', 'selected', 'tags');
 	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){
@@ -17,7 +19,6 @@ class Project {
     
     public function getProjectById($id){
     	//todo: better to use fetch to get just one project instead of an array with one array in it
-    	//DONE
     	$project = db_select('soc_projects')->fields('soc_projects')->condition('pid', $id)->execute()->fetch(PDO::FETCH_ASSOC);
     	return $project;
     }
@@ -28,7 +29,7 @@ class Project {
     		$projectCount->condition('tags', '%'.$tags.'%', 'LIKE');
     	}
     	if(isset($organisation) && $organisation !="0"){
-    		$projectCount->condition('oid', $organisation);
+    		$projectCount->condition('org_id', $organisation);
     	}
     	$projectCount->fields('soc_projects');
     	return $projectCount->execute()->rowCount();
@@ -37,12 +38,12 @@ class Project {
     public function getProjectsBySearchCriteria($tags, $organisation, $sorting, $startIndex, $pageSize){
     	$queryString = "SELECT p.pid, p.title, o.name, p.description, p.tags"
     			." FROM soc_projects p, soc_organisations o"
-    			." WHERE p.oid = o.org_id";
+    			." WHERE p.org_id = o.org_id";
     	if(isset($tags)){
     		$queryString .=	 " AND tags LIKE '%".$tags."%'";
     	}
     	if(isset($organisation) && $organisation !="0"){
-    		$queryString .=	 " AND p.oid = ".$organisation;
+    		$queryString .=	 " AND p.org_id = ".$organisation;
     	}
     	$queryString .= 	 " ORDER BY " . $sorting
     	." LIMIT " . $startIndex . "," . $pageSize . ";";

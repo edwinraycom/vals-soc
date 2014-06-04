@@ -68,7 +68,7 @@ function doQuery2($q){
 
 function mapOrganisation($org){
 	switch ($org){
-		case 'group': return 'group';break;
+		case 'studentgroup': return 'studentgroup';break;
 		case 'institute': return 'supervisor';break;
 		case 'organisation': return 'mentor';break;
 		default: return $org;
@@ -86,7 +86,7 @@ function createRandomCode($org, $id=1 ){
 			//'institute_admin' => 7,
 			'organisation' => 7,
 			'institute' => 8,
-			'group' => 9,
+			'studentgroup' => 9,
 			'mentor' => 0
 
 	);

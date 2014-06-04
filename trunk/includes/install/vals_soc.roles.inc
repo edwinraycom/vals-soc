@@ -98,7 +98,7 @@ function create_codes(){
             $query->values(array(
                 'type' => $key,
                 'code' => $value['code'],
-                'org' => 0,
+                'entity_id' => 0,
                 ));
         }
         //Now we have added all the code records
