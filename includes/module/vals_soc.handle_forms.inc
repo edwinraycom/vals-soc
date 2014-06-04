@@ -25,9 +25,9 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
         }
         $db_and = db_and();
         $db_and->condition('code', $code_entered);
-        $db_and->condition('type', 'group');//Since we do not want a long list of groups during registration
+        $db_and->condition('type', 'studentgroup');//Since we do not want a long list of groups during registration
         //we use the institute instead and so we select not on type student, but on group
-        $db_and->condition('org', $form_state['values']['institute']);
+        $db_and->condition('entity_id', $form_state['values']['institute']);
         $valid_groups_cnt = db_select('soc_codes')->fields('soc_codes')->condition($db_and)->execute()->rowCount();
         if ($valid_groups_cnt == 0){
             form_set_error('account_key', t('This is no valid key you entered. Ask your tutor.'));
@@ -47,12 +47,12 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
     $db_and2->condition('code', $code_entered);
     if ((! in_array($requested_user_type, array('institute_admin', 'organisation_admin', 'soc', 'administrator')))&&
         $org){
-        $db_and2->condition('org', $org);
+        $db_and2->condition('entity_id', $org);
     }
     $found_codes = db_select('soc_codes')->fields('soc_codes')->condition($db_and2)->execute()->rowCount();
     $possible_code_rec = db_select('soc_codes')->fields('soc_codes')->
         condition('type', $requested_user_type)->
-        condition('org', $org)->
+        condition('entity_id', $org)->
         execute()->fetchAssoc();
         //->fetchAllAssoc('type', PDO::FETCH_ASSOC); returns [student=>[type=>student, code=><student_code>,....]
     if (!$found_codes){
@@ -111,16 +111,16 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => 'institute', 
-            'oid'=>$form_state['values']['institute']
+            'group_id'=>$form_state['values']['institute']
             ))->execute();
         
         if (($type == 'student')){
-           $group_ids = db_select('soc_codes')->fields('soc_codes', array('org', 'group_id'))->condition('code',
-           $code_entered)->condition('type', 'group')->condition('org', $form_state['values']['institute'])->execute()->fetchAssoc();
+           $studentgroup_ids = db_select('soc_codes')->fields('soc_codes', array('entity_id', 'studentgroup_id'))->condition('code',
+           $code_entered)->condition('type', 'studentgroup')->condition('entity_id', $form_state['values']['institute'])->execute()->fetchAssoc();
             db_insert('soc_user_membership')->fields( array(
                 'uid'=>$uid, 
-                'type' => 'group', 
-                'oid'=>$group_ids['group_id']
+                'type' => 'studentgroup', 
+                'group_id'=>$studentgroup_ids['studentgroup_id']
                 ))->execute();
         }
     }
@@ -129,7 +129,7 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => 'organisation', 
-            'oid'=>$form_state['values']['organisation']
+            'group_id'=>$form_state['values']['organisation']
             ))->execute();
     }
 }
@@ -158,7 +158,7 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => 'institute', 
-            'oid'=>$form_state['values']['institute']
+            'group_id'=>$form_state['values']['institute']
             ))->execute();
     }
     
@@ -167,7 +167,7 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => 'organisation', 
-            'oid'=>$form_state['values']['organisation']
+            'group_id'=>$form_state['values']['organisation']
             ))->execute();
     }
 }
@@ -189,7 +189,7 @@ function vals_soc_organisation_form_submit_handler(&$form, &$form_state)
   $txn = db_transaction();
   try {
       $uid = $user->uid;
-      $oid = db_insert('soc_organisations')->fields(array(
+      $org_id = db_insert('soc_organisations')->fields(array(
             'name'=>$form_state['values']['name'], 
             'contact_name' => $form_state['values']['contact_name'], 
             'contact_email' => $form_state['values']['contact_email'],
@@ -197,15 +197,15 @@ function vals_soc_organisation_form_submit_handler(&$form, &$form_state)
             'description' => ($form_state['values']['description'] ?: ''), 
             ))->execute();
 
-      $result = $oid && db_insert('soc_user_membership')->fields( array(
+      $result = $org_id && db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => 'organisation', 
-            'oid'=>$oid,
+            'group_id'=>$org_id,
             ))->execute();
       $result = $result && db_insert('soc_codes')->fields( array(
           'type'=>'mentor',
-          'code' => createRandomCode('mentor', $oid), 
-          'org'=> $oid))->execute();
+          'code' => createRandomCode('mentor', $org_id), 
+          'entity_id'=> $org_id))->execute();
       if ($result) {
           drupal_set_message(t('You have succesfully added your organisation to the Semester of Code.'));
       } else {
@@ -239,12 +239,12 @@ function vals_soc_institute_form_submit_handler(&$form, &$form_state)
       $result = $inst_id && db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => 'institute', 
-            'oid'=>$inst_id,
+            'group_id'=>$inst_id,
             ))->execute();
       $result = $result && db_insert('soc_codes')->fields( array(
           'type'=>'supervisor',
           'code' => createRandomCode('supervisor', $inst_id), 
-          'org'=> $inst_id))->execute();
+          'entity_id'=> $inst_id))->execute();
       if ($result) {
           drupal_set_message(t('You have succesfully added your institute to the Semester of Code.'));
       } else {
@@ -286,27 +286,27 @@ function vals_soc_group_form_submit_handler(&$form, &$form_state)
         condition('uid', $uid)->
         condition('type', 'institute')->
         execute()->fetchAssoc();
-    $inst_id = $inst['oid'];
+    $inst_id = $inst['group_id'];
     $txn = db_transaction();
     try {
         
-        $group_id = db_insert('soc_groups')->fields(array(
+        $studentgroup_id = db_insert('soc_studentgroups')->fields(array(
                 'inst_id' => $inst_id,
                 'name' => $form_state['values']['name'],
                 'description' => $form_state['values']['description'],
                 'supervisor_id' => $uid,
             ))->execute();
 
-        $result = $group_id && db_insert('soc_user_membership')->fields(array(
+        $result = $studentgroup_id && db_insert('soc_user_membership')->fields(array(
                 'uid' => $uid,
-                'type' => 'group',
-                'oid' => $group_id,
+                'type' => 'studentgroup',
+                'group_id' => $studentgroup_id,
             ))->execute();
         $result = $result && db_insert('soc_codes')->fields( array(
-	            'type'=>'group',
-	            'code' => createRandomCode('group', $group_id), 
-	            'org'=> $inst_id,
-	            'group_id' =>$group_id
+	            'type'=>'studentgroup',
+	            'code' => createRandomCode('studentgroup', $studentgroup_id), 
+	            'entity_id'=> $inst_id,
+	            'studentgroup_id' =>$studentgroup_id
             ))->execute();
         if ($result) {
             drupal_set_message(t('You have succesfully added your group to the Semester of Code.'));

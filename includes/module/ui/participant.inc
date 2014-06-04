@@ -13,8 +13,8 @@
         foreach($groups as $group){
             $s .= "<li>";
            // $member_url = "/vals/actions/group" 
-            $s .= "<a href='javascript: void(0);' onclick='ajaxCall(\"administration\", \"showmembers\", {group_id:${group['group_id']},type:\"group\"}, \"members_${group['group_id']}\");'>${group['name']}</a>: ${group['description']}";
-            $s .= "<div id='members_${group['group_id']}'></div>";
+            $s .= "<a href='javascript: void(0);' onclick='ajaxCall(\"administration\", \"showmembers\", {studentgroup_id:${group['studentgroup_id']},type:\"group\"}, \"members_${group['studentgroup_id']}\");'>${group['name']}</a>: ${group['description']}";
+            $s .= "<div id='members_${group['studentgroup_id']}'></div>";
             $s .= "</li>";
         }
         $s .= "</ul>";
@@ -83,7 +83,7 @@ function renderUsers($type='', $Users='', $group_selection='', $group_type=''){
         $s .= "</ul>";
         return $s; 
     } else {
-    	$group_type = $group_type ?: 'group';
+    	$group_type = $group_type ?: 'studentgroup';
         return $group_selection ? tt('There is no %1$s yet in this %2$s', t($type), t($group_type)) :
         	tt('You have no %1$s yet.', t($type));
     }  
@@ -109,7 +109,7 @@ function renderOrganisations($type='', $organisations='', $organisation_head='',
 		$s .= "</ul>";
 		return $s;
 	} else {
-		$type = $type ?: 'group';
+		$type = $type ?: 'studentgroup';
 		return $organisation_head ? tt('You have no %1$s yet.', t($type)):
 			tt('There is no %1$s yet.', t($type));
 	}

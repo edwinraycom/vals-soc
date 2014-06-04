@@ -1,8 +1,8 @@
 <?php
 function initBrowseProjectLayout($target='content'){
 	$orgId=0;
-	if(isset($_GET['oid'])){
-		$orgId = $_GET['oid'];
+	if(isset($_GET['organisation'])){
+		$orgId = $_GET['organisation'];
 	}
 	?>
 	<div class="filtering" id="browse_projects">
@@ -31,7 +31,7 @@ function initBrowseProjectLayout($target='content'){
 
 	function getProposalFormForProject(projectId){
 		Drupal.CTools.Modal.dismiss();
-		ajaxCall("student", "proposal", {id: projectId,target:"<?php echo $target;?>"}, "content");
+		ajaxCall("student", "proposal", {id: projectId, target:"<?php echo $target;?>"}, "content");
 	}
 
 	function getProjectDetail(projectId){

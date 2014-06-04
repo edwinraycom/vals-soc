@@ -44,7 +44,7 @@ switch ($_GET['action']){
 	case 'proposal_detail':
 		$proposal_id=null;
 		if(isset($_GET['proposal_id'])){
-			$results = Proposal::getInstance()->getProposalById($_GET['proposal_id']);
+			$results = Proposal::getInstance()->getProposalById($_GET['proposal_id'], true);
 			die(gettype($results).print_r($results,1));
 			$proposalDetail = array();
 			$proposalDetail['title'] = $results->title;

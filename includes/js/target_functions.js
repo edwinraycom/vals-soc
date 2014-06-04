@@ -5,8 +5,8 @@ function refreshTabs(json_data, args){
 		return;
 	}
 	if (arguments.length > 1 && args) {
-		targ = (args.length > 1) ? 'msg_'+ args[1] : '';
 		var type = args[0];
+		targ = (args.length > 1) ? 'msg_'+ args[1] : '';	
 	}
 	if (json_data && (json_data.result !== 'error')){
 		ajaxCall('administration', 'show', {type:type}, 'admin_container');

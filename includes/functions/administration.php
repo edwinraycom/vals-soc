@@ -97,15 +97,15 @@ function showSupervisorPage(){
 	//TODO check for the role of current user
 	echo '<h2>'.t('Your student groups').'</h2>';
 	//Get my groups
-	$groups = Groups::getGroups('group', $GLOBALS['user']->uid);
+	$groups = Groups::getGroups('studentgroup', $GLOBALS['user']->uid);
 	if (! $groups->rowCount()){
 		echo t('You have no group yet registered');
 		$add_tab = '<h2>'.t('Add your group').'</h2>';
 		$f3 = drupal_get_form('vals_soc_group_form', '', 'group_page-1');
 		$add_tab .= drupal_render($f3);
 		$data = array();
-		$data[] = array(1, 'Add', 'addgroup', 'group', null, "target=admin_container");
-		echo renderTabs(1, null, 'group_page-', 'group', $data, null, TRUE, $add_tab);
+		$data[] = array(1, 'Add', 'addgroup', 'studentgroup', null, "target=admin_container");
+		echo renderTabs(1, null, 'group_page-', 'studentgroup', $data, null, TRUE, $add_tab);
 		?>
 		<script type="text/javascript">
         	   activatetabs('tab_', ['group_page-1']);
@@ -118,34 +118,34 @@ function showSupervisorPage(){
 		$nr2 = 1;
 		$data2 = array();
 		// 		[translate, label, action, type, id, extra GET arguments]
-		$data2[] = array(1, 'All Students', 'showmembers', 'group', null);
+		$data2[] = array(1, 'All Students', 'showmembers', 'studentgroup', null);
 		$activating_tabs2 = array("'group2_page-$nr2'");
 		foreach ($groups as $group){
 			if ($nr == 1){
-				$id = $group->group_id;
+				$id = $group->studentgroup_id;
 				$my_group = $group;
 			}
 			$activating_tabs[] = "'group_page-$nr'";
-			$data[] = array(0, $group->name, 'view', 'group', $group->group_id);
+			$data[] = array(0, $group->name, 'view', 'studentgroup', $group->studentgroup_id);
 			$nr++;
 			
 			
 			$nr2++;
 			$activating_tabs2[] = "'group2_page-$nr2'";
-			$data2[] = array(0, 'Group', 'showmembers', 'group', $group->group_id);
+			$data2[] = array(0, 'Group', 'showmembers', 'studentgroup', $group->studentgroup_id);
 		}
 		
-		$data[] = array(1, 'Add', 'addgroup', 'group', null, "target=group_page-$nr");
+		$data[] = array(1, 'Add', 'addgroup', 'studentgroup', null, "target=group_page-$nr");
 		$activating_tabs[] = "'group_page-$nr'";
 		
 		echo sprintf('<h3>%1$s</h3>', t('Your groups'));
-		echo renderTabs($nr, 'Group', 'group_page-', 'group', $data, $id, TRUE, 
-			renderOrganisation('group', $my_group, null, "group_page-1"));
+		echo renderTabs($nr, 'Group', 'group_page-', 'studentgroup', $data, $id, TRUE, 
+			renderOrganisation('studentgroup', $my_group, null, "group_page-1"));
 	
 	echo "<hr>";
 	echo '<h2>'.t('All the registered students of your groups').'</h2>';
-	echo renderTabs($nr2, 'Group', 'group2_page-', 'group', $data2, $id, TRUE, 
-			renderUsers('student', '', $my_group->group_id, 'group'));
+	echo renderTabs($nr2, 'Group', 'group2_page-', 'studentgroup', $data2, $id, TRUE, 
+			renderUsers('student', '', $my_group->studentgroup_id, 'studentgroup'));
 	?>
 
 

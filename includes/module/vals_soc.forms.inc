@@ -270,7 +270,7 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
     if (in_array($role, array('supervisor', 'institute_admin', 'student'))){
         $member_inst_rec = db_select('soc_user_membership', 'mem')->fields('mem')->condition('uid', $user->uid)->
             condition('type', 'institute')->execute()->fetchAssoc();
-        $member_inst = $member_inst_rec ? $member_inst_rec['oid'] : 0;
+        $member_inst = $member_inst_rec ? $member_inst_rec['group_id'] : 0;
         $institutes = db_select('soc_institutes', 'i')->fields('i', array('inst_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
         $options_institutes = array(0 => t('Fill in later'));
         foreach ($institutes as $ins){
@@ -287,7 +287,7 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
     } elseif (in_array($role, array('organisation_admin', 'mentor'))) {
         $member_org_rec = db_select('soc_user_membership', 'mem')->fields('mem')->condition('uid', $user->uid)->
             condition('type', 'organisation')->execute()->fetchAssoc();
-        $member_org = $member_org_rec ? $member_org_rec['oid'] : 0;
+        $member_org = $member_org_rec ? $member_org_rec['group_id'] : 0;
         $organisations = db_select('soc_organisations', 'o')->fields('o', array('org_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
         $options_organisation = array(0 => t('Fill in later'));
         foreach ($organisations as $org){
@@ -598,7 +598,7 @@ function vals_soc_group_form($form, &$form_state, $group='', $target=''){
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
 					'onclick' => 'ajaxFormCall("vals-soc-group-form", "administration", "save",'.
-						' {type: "group", id:0}, "refreshTabs", "json", ["group", "'.$target.'"]);')//'.$target.' instead of refreshTabs
+						' {type: "studentgroup", id:0}, "refreshTabs", "json", ["studentgroup", "'.$target.'"]);')//'.$target.' instead of refreshTabs
 		);
 //          $form['submit'] = array(function ajaxFormCall(frm, category, action, data, target, type, err) {
 //              '#type' => 'submit',
@@ -615,7 +615,7 @@ function vals_soc_group_form($form, &$form_state, $group='', $target=''){
          		//'#theme' => 'garland_button',
          		'#attributes' => array(
          				'onclick' => 'ajaxFormCall("vals-soc-group-form", "administration", "save",'.
-         				' {type: "group", id:'.$group->group_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
+         				' {type: "studentgroup", id:'.$group->studentgroup_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
          );
      }
 
@@ -686,7 +686,7 @@ function vals_soc_proposal_form($form, &$form_state, $application='', $target=''
 				'#attributes' => array(
 						'onclick' => 'if (confirm("'.t('Are you sure you want to submit your proposal now?').'")){'.
 						'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
-						' {project_id: '.$project_id.', id:0}, "refreshTabs", "json", ["group", "'.$target.'", true]);}')//'.$target.' instead of refreshTabs
+						' {project_id: '.$project_id.', id:0}, "refreshTabs", "json", ["studentgroup", "'.$target.'", true]);}')//'.$target.' instead of refreshTabs
 		);
 		$form['cancel'] = array(
 				'#type' => 'button',
@@ -705,7 +705,7 @@ function vals_soc_proposal_form($form, &$form_state, $application='', $target=''
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
 						'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
-						' {id:'.$application->propid.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
+						' {id:'.$application->proposal_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
 		);
 		$form['sumbit'] = array(
 				'#type' => 'button',
@@ -714,7 +714,7 @@ function vals_soc_proposal_form($form, &$form_state, $application='', $target=''
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
 						'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
-						' {id:'.$application->propid.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
+						' {id:'.$application->proposal_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
 		);
 	}
 	return $form;

@@ -2,16 +2,16 @@
 
 function initBrowseProposalsLayout(){
 	$orgId=0;
-	if(isset($_GET['oid'])){
-		$orgId = $_GET['oid'];
+	if(isset($_GET['organisation'])){
+		$orgId = $_GET['organisation'];
 	}
 	$student_id=0;
-	if(isset($_GET['stid'])){
-		$student_id = $_GET['stid'];
+	if(isset($_GET['student'])){
+		$student_id = $_GET['student'];
 	}
 	$inst_id=0;
-	if(isset($_GET['inid'])){
-		$inst_id = $_GET['inid'];
+	if(isset($_GET['institute'])){
+		$inst_id = $_GET['institute'];
 	}?>
 	<div class="filtering" style="width: 800px;">
 	<span id="infotext" style="margin-left: 34px"></span>
@@ -119,7 +119,7 @@ function initBrowseProposalsLayout(){
 					listAction: baseUrl + "actions/proposal_actions.php?action=list_proposals"
 				},
 				fields: {
-					propid: {
+					proposal_id: {
 						key: true,
 						create: false,
 						edit: false,
@@ -141,14 +141,14 @@ function initBrowseProposalsLayout(){
 						width: "40%",
 						display: function (data){return data.record.name;}
 					},
-					instid: {
+					inst_id: {
 						title: "Institute",
 						width: "26%",
 						create: false,
 						edit: false,
 						display: function (data){return data.record.i_name;}
 					},
-					oid: {
+					org_id: {
 						title: "Organisation",
 						width: "20%",
 						display: function (data){return data.record.o_name;}
@@ -160,7 +160,7 @@ function initBrowseProposalsLayout(){
 						sorting: false,
     					display: function (data) {
 							return "<a title=\"Propose a proposal for this idea\" href=\"#\" "+
-								"onclick=\"getProposalDetail("+data.record.propid+")\">"+
+								"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
 									"<span class=\"ui-icon ui-icon-info\">See details</span></a>";
     					},
     					create: false,

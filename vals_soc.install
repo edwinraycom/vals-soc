@@ -10,7 +10,7 @@ function vals_soc_install(){
     drupal_install_schema('soc_institutes');
     drupal_install_schema('soc_organisations');
     drupal_install_schema('soc_user_membership');
-    drupal_install_schema('soc_groups');
+    drupal_install_schema('soc_studentgroups');
     
     create_roles();
     create_permissions();
@@ -40,7 +40,7 @@ function vals_soc_uninstall() {
   // Delete tables.
     $tables = array(
         'soc_projects',
-        'soc_groups',
+        'soc_studentgroups',
         'soc_codes',
         'soc_organisations',
         'soc_institutes',
@@ -66,13 +66,13 @@ function vals_soc_schema() {
 }
 
 /**
-* Create new database table {soc_groups}.
+* Create new database table {soc_studentgroups}.
 */
 function vals_soc_DONOTDOTHISupdate_7101() {
-  $schema['soc_groups'] = array(
+  $schema['soc_studentgroups'] = array(
 			'description' => 'The students will be divided in groups, each teacher probably having one or more groups',
 			'fields' => array(
-					'group_id' => array(
+					'studentgroup_id' => array(
 							'description' => 'Group id.',
 							'type' => 'serial',
 							'length' => 'small',
@@ -98,9 +98,9 @@ function vals_soc_DONOTDOTHISupdate_7101() {
 							'not null' => TRUE,
 					),
 			),
-			'primary key' => array('group_id'),
+			'primary key' => array('studentgroup_id'),
 	);
-  db_create_table('soc_groups', $schema['soc_groups']);
+  db_create_table('soc_studentgroups', $schema['soc_studentgroups']);
 }
 
 function vals_soc_DONOTDOTHISupdate_7102() {
@@ -116,7 +116,7 @@ function vals_soc_DONOTDOTHISupdate_7103(){
 /*
 ALTER TABLE `soc_institutes` ADD `owner_id` INT NOT NULL AFTER `inst_id`
 ALTER TABLE `soc_projects` ADD `owner_id` INT NOT NULL AFTER `pid`
-ALTER TABLE `soc_groups` ADD `owner_id` INT NOT NULL AFTER `group_id`
+ALTER TABLE `soc_studentgroups` ADD `owner_id` INT NOT NULL AFTER `studentgroup_id`
 ALTER TABLE `soc_organisations` ADD `owner_id` INT NOT NULL AFTER `org_id`
 NOt yet reflected in drupal_soc.sql
 

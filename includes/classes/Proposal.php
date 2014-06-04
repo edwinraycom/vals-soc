@@ -2,7 +2,7 @@
 class Proposal {
 	
 	private static $instance; 	 	 	 	 	 	 	 	 	
-	private static $fields = array('propid', 'owner_id', 'oid', 'instid', 'supervisor_id', 'pid', 'name', 'cv', 'solution_short', 'solution_long', 'modules', 'state',);
+	public static $fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'name', 'cv', 'solution_short', 'solution_long', 'modules', 'state',);
 	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){
@@ -17,13 +17,13 @@ class Proposal {
     }
     
     public function getProposalById($id, $details= false){
-    	$query = db_select('soc_proposals', 'p')->fields('p', self::$fields)->condition('propid', $id);
+    	$query = db_select('soc_proposals', 'p')->fields('p', self::$fields)->condition('proposal_id', $id);
     	if ($details){
-    		$query->join('soc_institutes', 'i', 'p.instid = %alias.inst_id');
-    		$query->join('soc_organisations', 'o', 'p.oid = %alias.org_id');
+    		$query->join('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
+    		$query->join('soc_organisations', 'o', 'p.org_id = %alias.org_id');
     		$query->join('soc_projects', 'pr', 'p.pid = %alias.pid');
-    		$query->fields('i', array('name'));
-    		$query->fields('o', array('name'));
+    		$query->fields('i', Institutes::$fields);
+    		$query->fields('o', Organisations::$fields);
     		$query->fields('pr', array('title'));
     	}
     	$proposal = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
@@ -36,10 +36,10 @@ class Proposal {
     		$query->condition('owner_id', $student);
     	}
     	if($institute){
-    		$query->condition('instid', $institute);
+    		$query->condition('inst_id', $institute);
     	}
     	if($organisation){
-    		$query->condition('oid', $organisation);
+    		$query->condition('org_id', $organisation);
     	}
     	return $query->execute()->rowCount();
     }
@@ -49,18 +49,18 @@ class Proposal {
     {
     	
     	$query = db_select('soc_proposals', 'p')->fields('p', array(
-    			'propid','owner_id','oid','instid','supervisor_id','pid', 'name'));
+    			'proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'name'));
     	if($student){
     		$query->condition('owner_id', $student);
     	}
     	if($institute){
-    		$query->condition('instid', $institute);
+    		$query->condition('inst_id', $institute);
     	}
     	if($organisation){
-    		$query->condition('oid', $organisation);
+    		$query->condition('org_id', $organisation);
     	}
-    	$query->join('soc_institutes', 'i', 'p.instid = %alias.inst_id');
-    	$query->join('soc_organisations', 'o', 'p.oid = %alias.org_id');
+    	$query->join('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
+    	$query->join('soc_organisations', 'o', 'p.org_id = %alias.org_id');
     	$query->join('soc_projects', 'pr', 'p.pid = %alias.pid');
     	$query->fields('i', array('name'));
     	$query->fields('o', array('name'));
@@ -74,11 +74,11 @@ class Proposal {
     	}
     	$query->range($startIndex, $pageSize);
     	/*
-SELECT p.propid AS propid, p.owner_id AS owner_id, p.oid AS oid, p.instid AS instid, p.supervisor_id AS supervisor_id, p.pid AS pid, p.name AS name, i.name AS i_name, o.name AS o_name, pr.title AS title
+SELECT p.proposal_id AS proposal_id, p.owner_id AS owner_id, p.org_id AS org_id, p.inst_id AS inst_id, p.supervisor_id AS supervisor_id, p.pid AS pid, p.name AS name, i.name AS i_name, o.name AS o_name, pr.title AS title
 FROM 
 {soc_proposals} p
-INNER JOIN {soc_institutes} i ON p.instid = i.inst_id
-INNER JOIN {soc_organisations} o ON p.oid = o.org_id
+INNER JOIN {soc_institutes} i ON p.inst_id = i.inst_id
+INNER JOIN {soc_organisations} o ON p.org_id = o.org_id
 INNER JOIN {soc_projects} pr ON p.pid = pr.pid
 ORDER BY pid ASC
 LIMIT 10 OFFSET 0
@@ -105,8 +105,8 @@ LIMIT 10 OFFSET 0
     		
     		$student_details = Users::getStudentDetails($uid);
     		$props['owner_id'] = $uid;
-    		$props['oid'] = $project['oid'];
-    		$props['instid'] = $student_details->inst_id ;
+    		$props['org_id'] = $project['org_id'];
+    		$props['inst_id'] = $student_details->inst_id ;
     		$props['supervisor_id'] = $student_details->supervisor_id ;  		
     		$props['pid'] =$project['pid'];
     		$props['state'] = 'draft' ;

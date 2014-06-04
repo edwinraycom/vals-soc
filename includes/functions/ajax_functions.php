@@ -40,7 +40,7 @@ function jsonGooResult($result=TRUE, $type='status'){
 }
 
 function isValidOrganisationType($type){
-	return in_array($type, array('organisation', 'institute', 'group'));
+	return in_array($type, array('organisation', 'institute', 'studentgroup'));
 }
 
 function showDrupalMessages($category='status', $echo=FALSE){
