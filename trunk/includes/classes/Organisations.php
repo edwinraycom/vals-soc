@@ -1,8 +1,10 @@
 <?php
-class Organisations {
+class Organisations extends Groups{
 
 	private static $instance;
-
+	public static $type = 'organisation';	
+	public static $fields = array('org_id', 'owner_id', 'name', 'contact_name', 'contact_email', 'url', 'description', 'supervisor_id');
+	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){
 			self::$instance = new self ();
@@ -14,30 +16,28 @@ class Organisations {
 	 * function used to just get the organisation Id and name
 	 * Used in some drop down menus of the UI.
 	 */
-	public function getGroupsLite(){
+	public function getOrganisationsLite(){
 		return db_query("SELECT o.org_id, o.name FROM soc_organisations o;");
 	}
 	
-    public function getGroupss(){
-    	$projects = db_select('soc_organisations')->fields('soc_organisations')->execute()->fetchAll(PDO::FETCH_ASSOC);
-    	return $projects;
+    public function getOrganisations(){
+    	return db_select('soc_organisations')->fields('soc_organisations')->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    public function getGroupById($id){
-    	$project = db_select('soc_organisations')->fields('soc_organisations')->condition('org_id', $id)->execute()->fetchAll(PDO::FETCH_ASSOC);
-    	return $project;
+    public function getOrganisationById($id){
+    	return db_select('soc_organisations')->fields('soc_organisations')->condition('org_id', $id)->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    public function getGroupsRowCountBySearchCriteria($name){
-    	$projectCount = db_select('soc_organisations');
+    public function getOrganisationsRowCountBySearchCriteria($name){
+    	$count_query = db_select('soc_organisations');
     	if(isset($name)){
-    		$projectCount->condition('name', '%'.$name.'%', 'LIKE');
+    		$count_query->condition('name', '%'.$name.'%', 'LIKE');
     	}
-    	$projectCount->fields('soc_organisations');
-    	return $projectCount->execute()->rowCount();
+    	$count_query->fields('soc_organisations');
+    	return $count_query->execute()->rowCount();
     }
     
-    public function getGroupsBySearchCriteria($name, $sorting, $startIndex, $pageSize){
+    public function getOrganisationsBySearchCriteria($name, $sorting, $startIndex, $pageSize){
     	$queryString = "SELECT o.org_id  as org_id, o.name as oname"
     			." FROM soc_organisations o";
     	 

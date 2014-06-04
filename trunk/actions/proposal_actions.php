@@ -1,5 +1,6 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
+module_load_include('php', 'vals_soc', 'includes/classes/Groups');
 module_load_include('php', 'vals_soc', 'includes/classes/Proposal');
 
 switch ($_GET['action']){
@@ -43,15 +44,15 @@ switch ($_GET['action']){
 	case 'proposal_detail':
 		$proposal_id=null;
 		if(isset($_GET['proposal_id'])){
-			$results = Project::getInstance()->getProposalById($_GET['proposal_id']);
-			
+			$results = Proposal::getInstance()->getProposalById($_GET['proposal_id']);
+			die(gettype($results).print_r($results,1));
 			$proposalDetail = array();
 			$proposalDetail['title'] = $results->title;
 			$proposalDetail['description'] = $results->description;
 			print json_encode($results);
 		}
 		else{
-			echo "No Project identifier submitted!";
+			echo json_encode(array('result' =>'error', 'error' => t('No Project identifier submitted!')));
 		}
 	break;
 	
