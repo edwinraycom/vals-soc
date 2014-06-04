@@ -279,7 +279,7 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
 
         $form['account']['institute'] = array(
                 "#type" => "select",
-                "#title" => t("Select the institute you are in $member_inst"),
+                "#title" => t("Select the institute you are in"),
                 "#options" => $options_institutes,
                 "#description" => t("(For students and tutors only)"),
                 "#default_value" => $member_inst,
@@ -302,7 +302,8 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
                 "#default_value" => $member_org,
         );
     }
-    
+    //TODO this does not seem to work. we do not want users to choose images and the time zone do we?
+//     unset($form['account']['timezone'], $form['account']['image'], $form['account']['picture']);
     $form['#submit'][] = 'vals_soc_form_user_profile_form_submit_handler';
     //$form['#validate'][] = 'vals_soc_form_user_register_form_validate_handler';
 	return $form;
