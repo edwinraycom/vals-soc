@@ -118,14 +118,15 @@ function renderOrganisations($type='', $organisations='', $organisation_head='',
 function renderOrganisation($type, $organisation='', $organisation_owner='', $target=''){
     if (!$organisation){
         $organisations = Groups::getGroups($type, $organisation_owner);
-        $organisation = $organisations->fetchObject();       
+        $organisation = $organisations->fetchObject();
     }
     
     $key_name = Groups::keyField($type);
     $id = $organisation->$key_name;
     if ($organisation){
-    	$delete_action = "onclick='ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id}, \"refreshTabs\", \"json\", [\"$type\", \"$target\"]);'";
-    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, target: \"$target\"}, \"$target\");'";
+    	$pPath=request_path();
+    	$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\"]);}'";
+    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"$target\");'";
     	$s = ''; 
     	$s .= "<input type='button' value='".t('edit')."' $edit_action/>";
     	$s .= "<input type='button' value='".t('delete')."' $delete_action/>";
