@@ -48,11 +48,18 @@ class Groups extends AbstractEntity{
 		}
 		$key = self::keyField($type);
 	
-		return
-		db_update(tableName($type))
+		$res = db_update(tableName($type))
 		->condition($key, $id)
 		->fields($organisation)
 		->execute();
+		// the returned value from db_update is how many rows where updated rather than a boolean 
+		// - however if the user submits the form without changing anything no rows are actually updated and
+		// zero is returned, which is not an error per se. so as a hack set this back to '1'
+		// until we find a better way of handling this
+		if($res==0){
+			$res=1;
+		}
+		return $res;
 	}
 
 	static function isOwner($type, $id){
