@@ -148,7 +148,12 @@ INSERT INTO role_permission (rid, permission, module) VALUES
 (12, 'vals admin register', 'vals_soc'),
 (12, 'vals browse projects', 'vals_soc'),
 (12, 'vals edit projects', 'vals_soc'),
-(14, 'vals browse projects', 'vals_soc');
+(14, 'vals browse projects', 'vals_soc'),
+(8, 'vals access dashboard', 'vals_soc'), # organisation_admin role
+(5, 'vals access dashboard', 'vals_soc'), # mentor role
+(12, 'vals access dashboard', 'vals_soc'), # institute_admin role
+(9, 'vals access dashboard', 'vals_soc'), # supervisor role
+(4, 'vals access dashboard', 'vals_soc'); # student role
 
 --
 -- Gegevens worden uitgevoerd voor tabel 'soc_codes'
@@ -273,18 +278,19 @@ INSERT INTO soc_user_membership (mem_id, uid, `type`, group_id) VALUES
 (36, 31, 'institute', 3);
 
 -- --------------------------------------------------------
-
+-- Can we keep these user/passwords the same. Records 25-32 passwords are the 
+-- same as the username i.e. -u mentor1 -p mentor1.  i dont know what 33+34 are.
 INSERT INTO users (uid, `name`, pass, mail, theme, signature, signature_format, created, access, login, `status`, timezone, `language`, picture, init, `data`) VALUES
 (0, '', '', '', '', '', NULL, 0, 0, 0, 0, NULL, '', 0, '', NULL),
 (1, 'admin', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin@raycom.com', '', '', 'filtered_html', 1394721311, 1401884149, 1401450007, 1, 'Europe/Paris', 'nl', 0, 'edwin@raycom.com', 'a:6:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";s:7:"overlay";i:0;}'),
-(25, 'orgadmin', '$S$DYWYtzyJ5vQ9ycprFQIidBsQopzehN2SeIH0FuLOeFLJowXklBOA', 'edwin+1@raycom.com', '', '', 'filtered_html', 1397205806, 1400256334, 1400160734, 1, 'Europe/Paris', 'es', 0, 'edwin+1@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
-(26, 'orgadmin2', '$S$Dzy.Xc.PKl3sDQQ3eOCGwHlgvKUc7mIWoSmIxCRpt23ZXkgXaetJ', 'edwin+2@raycom.com', '', '', 'filtered_html', 1397209973, 0, 0, 1, 'Europe/Paris', 'es', 0, 'edwin+2@raycom.com', NULL),
-(27, 'instadmin', '$S$DDxmcp7.O2PU.IwYoJnCh9RjtIoHbfME0I8qRvIvMGTJ7VEskgbW', 'edwin+3@raycom.com', '', '', 'filtered_html', 1397210143, 1400577479, 1400257398, 1, 'Europe/Paris', 'es', 0, 'edwin+3@raycom.com', 'b:0;'),
-(28, 'tutor1', '$S$DVTNls.DSTIcWxJJtwBQ0loQcqoBFLpvyBBo8BkP68X01CaJOjuD', 'edwin+4@raycom.com', '', '', 'filtered_html', 1397211191, 0, 0, 1, 'Europe/Paris', 'it', 0, 'edwin+4@raycom.com', NULL),
-(29, 'tutor2', '$S$DVZPzlQUv2lSre4/ZCPKKB1Ru6MoeNp7THcCytAtXGzEe7NwdwLm', 'edwin+5@raycom.com', '', '', 'filtered_html', 1397211502, 1400752361, 1400676920, 1, 'Europe/Paris', 'en', 0, 'edwin+5@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
-(30, 'tutor3', '$S$DnIPP8LTBFbSQpJf3qI0/Qbw1aZoANRh1y91zLEHURCStVCncznK', 'edwin+6@raycom.com', '', '', 'filtered_html', 1397211598, 1399972053, 1397224028, 1, 'Europe/Paris', 'el', 0, 'edwin+6@raycom.com', 'b:0;'),
-(31, 'student1', '$S$DFt1C.Hk4pfN4ndLzdSQch5T6oH7dOibrV22jmTSGH55QtlCdU25', 'edwin+9@raycom.com', '', '', 'filtered_html', 1397222564, 1401449439, 1401447650, 1, 'Europe/Paris', 'en', 0, 'edwin+9@raycom.com', 'b:0;'),
-(32, 'mentor1', '$S$Dq2t3M2XTxsR./.brs7wPBu6k.q4K75GoTYOS5uNvaFFtl88SJ4t', 'edwin+21@raycom.com', '', '', 'filtered_html', 1400586065, 1400586093, 1400586093, 1, 'Europe/Paris', 'en', 0, 'edwin+21@raycom.com', 'b:0;'),
+(25, 'orgadmin', '$S$DAJDFmiWBQtirjj7G3LoiVbKRFAq.w0OmtDSsJwtxwtD.R49SgQD', 'edwin+1@raycom.com', '', '', 'filtered_html', 1397205806, 1400256334, 1400160734, 1, 'Europe/Paris', 'es', 0, 'edwin+1@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
+(26, 'orgadmin2', '$S$DoXC3XUY.38zgX1JTlt8wWxQiCMa1nn8LODOg.q2afZ.2.ARkNeP', 'edwin+2@raycom.com', '', '', 'filtered_html', 1397209973, 0, 0, 1, 'Europe/Paris', 'es', 0, 'edwin+2@raycom.com', NULL),
+(27, 'instadmin', '$S$DrHCQA707HtESB3QNywD/0FQANQ9kG08woUCXW/es2Y4L.XJUwqr', 'edwin+3@raycom.com', '', '', 'filtered_html', 1397210143, 1400577479, 1400257398, 1, 'Europe/Paris', 'es', 0, 'edwin+3@raycom.com', 'b:0;'),
+(28, 'tutor1', '$S$DAbq/gKRrkbdvx2npafhp1qC0JWGmU8IqyfsYOM87B15hlpQWI5R', 'edwin+4@raycom.com', '', '', 'filtered_html', 1397211191, 0, 0, 1, 'Europe/Paris', 'it', 0, 'edwin+4@raycom.com', NULL),
+(29, 'tutor2', '$S$DNOcJw0SC/cumjvZR6hkI1DYS6RN4heRDZze1ELDECGHlX7k0r9C', 'edwin+5@raycom.com', '', '', 'filtered_html', 1397211502, 1400752361, 1400676920, 1, 'Europe/Paris', 'en', 0, 'edwin+5@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
+(30, 'tutor3', '$S$DoalMdcTqFxz/0xnJtKm01UhYTF9BFu5D/pdQd4SfR6LbcnXo6jP', 'edwin+6@raycom.com', '', '', 'filtered_html', 1397211598, 1399972053, 1397224028, 1, 'Europe/Paris', 'el', 0, 'edwin+6@raycom.com', 'b:0;'),
+(31, 'student1', '$S$DdK9pCk1Nu5Zc9p5zFrKoib6jkUxOW0eSglRP8D.NAIgQGBp0aki', 'edwin+9@raycom.com', '', '', 'filtered_html', 1397222564, 1401449439, 1401447650, 1, 'Europe/Paris', 'en', 0, 'edwin+9@raycom.com', 'b:0;'),
+(32, 'mentor1', '$S$DfyLOLz1iJpBiSHfG9xbWbQMM8hvP09C2GnQYoW7B6OEVku27fmP', 'edwin+21@raycom.com', '', '', 'filtered_html', 1400586065, 1400586093, 1400586093, 1, 'Europe/Paris', 'en', 0, 'edwin+21@raycom.com', 'b:0;'),
 (33, 'Een mentor', '$S$Dx.Czz2jirn3E1oHolsEN83i2sRsXf3ZUTo/chozkklL/LblJEhD', 'edwin+11@raycom.com', '', '', 'filtered_html', 1400753564, 0, 0, 1, 'Europe/Paris', 'en', 0, 'edwin+11@raycom.com', NULL),
 (34, 'orgadmin4', '$S$DpvQDma/EVJJUlTZhOxBTLFFnKsOgNbj5mv38Qk1nQPZNWdjmWu.', 'edwin+12@raycom.com', '', '', 'filtered_html', 1400754935, 1400765047, 1400754987, 1, 'Europe/Paris', 'nl', 0, 'edwin+12@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}');
 
