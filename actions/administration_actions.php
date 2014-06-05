@@ -1,5 +1,6 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
+include(_VALS_SOC_ROOT.'/includes/classes/AbstractEntity.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Users.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');
 include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
@@ -40,8 +41,20 @@ switch ($_GET['action']){
 			tt('Add your %1$s', t($type))).
 		'</h2>';
 		echo "<div id='msg_$target'></div>";
-		$f2 = drupal_get_form("vals_soc_${type}_form", null, $target);
-		print drupal_render($f2);
+		
+		$form = drupal_get_form("vals_soc_${type}_form", null, $target);
+		$form['#action'] = url('administer/members');
+		// Process the submit button which uses ajax
+		$form['submit'] = ajax_pre_render_element($form['submit']);
+		// Build renderable array
+		$build = array(
+			'form' => $form,
+			'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
+		);
+		// Print $form
+		print drupal_render($build);
+		// Print JS
+		print drupal_get_js();
 	break;
     case 'showmembers':
     	if ($_POST['type'] == 'studentgroup'){
@@ -102,9 +115,15 @@ switch ($_GET['action']){
         	$obj = Groups::getGroup($type, $id);
         	// See http://drupal.stackexchange.com/questions/98592/ajax-processed-not-added-on-a-form-inside-a-custom-callback-my-module-deliver
         	// for additions below
-        	unset($_POST); 
+        	$originalPath = false;
+        	if(isset($_POST['path'])){
+        		$originalPath = $_POST['path'];
+        	}
+        	unset($_POST);
         	$form = drupal_get_form("vals_soc_${type}_form", $obj, $target);
-        	$form['#action'] = url('administer/members');
+        	if($originalPath){
+        		$form['#action'] = url($originalPath);
+        	}
         	// Process the submit button which uses ajax
         	$form['submit'] = ajax_pre_render_element($form['submit']);
         	// Build renderable array
@@ -112,6 +131,7 @@ switch ($_GET['action']){
         			'form' => $form,
         			'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
         	);
+        	print "<div id='msg_$target'></div>";
         	// Print $form
         	print drupal_render($build);
         	// Print JS
