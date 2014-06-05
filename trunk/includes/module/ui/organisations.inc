@@ -1,4 +1,5 @@
 <?php
+module_load_include('php', 'vals_soc', 'includes/classes/AbstractEntity');
 module_load_include('php', 'vals_soc', 'includes/classes/Groups');
 module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 drupal_add_library('system','ui.widget');
@@ -67,7 +68,7 @@ function initBrowseOrgsLayout(){
 				recordsLoaded: function(event, data) {
         			$(".jtable-data-row").click(function() {
             			var row_id = $(this).attr("data-record-key");
-            			var url = baseUrl + "projects/browse?org_id=" + row_id;
+            			var url = baseUrl + "dashboard/projects/browse?org_id=" + row_id;
 						document.location.href=url;
 			
         			});
