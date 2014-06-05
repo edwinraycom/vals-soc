@@ -1,4 +1,5 @@
 <?php
+module_load_include('php', 'vals_soc', 'includes/classes/AbstractEntity');
 module_load_include('php', 'vals_soc', 'includes/classes/Groups');
 module_load_include('php', 'vals_soc', 'includes/classes/Project');
 module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
