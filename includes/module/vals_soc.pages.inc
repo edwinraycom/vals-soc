@@ -1,4 +1,5 @@
 <?php 
+module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.access');
 
 /**
  * Callback for the admin overview page
@@ -22,8 +23,38 @@ function vals_soc_timeline_admin_program_page() {
 function vals_soc_administer_page(){
     ob_start();
     module_load_include('inc', 'vals_soc', 'includes/module/ui/administer/blocklayout');
-    //include('admin.php');
     return ob_get_clean();
+}
+
+function vals_soc_dashboard_overview_page(){
+	$includeFile = null;
+	if(hasRole(array('administrator'))){
+		$includeFile = 'includes/module/ui/dashboard/adminlayout';
+	}
+	elseif(hasRole(array('organisation_admin'))){
+		$includeFile = 'includes/module/ui/dashboard/orgadminlayout';
+	}
+	elseif(hasRole(array('mentor'))){
+		$includeFile = 'includes/module/ui/dashboard/mentorlayout';
+	}
+	elseif(hasRole(array('institute_admin'))){ // may need to update this to separate page
+		$includeFile = 'includes/module/ui/dashboard/orgadminlayout';
+	}
+	elseif(hasRole(array('supervisor'))){  // may need to update this to separate page
+		$includeFile = 'includes/module/ui/dashboard/mentorlayout';
+	}
+	elseif(hasRole(array('student'))){
+		$includeFile = 'includes/module/ui/dashboard/studentlayout';
+	}
+	ob_start();	
+	module_load_include('inc', 'vals_soc', $includeFile);
+	return ob_get_clean();
+}
+
+function vals_soc_orgsettings_page(){
+	ob_start();
+	module_load_include('inc', 'vals_soc', 'includes/module/ui/dashboard/orgsettings');
+	return ob_get_clean();	
 }
 
 function vals_soc_browse_projects(){
