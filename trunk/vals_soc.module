@@ -18,6 +18,16 @@ include('includes/module/vals_soc.forms.inc');
 //***********************************************************************************
 // BLOCKS
 //***********************************************************************************
+
+// NOTE: template.php for the theme is used to hold the breadcrumb routines
+/*
+function vals_soc_preprocess_page(&$vars) {
+  $path = drupal_get_path_alias();
+  if ($path == 'dashboard/members') {
+    $vars['title'] = 'organisations';
+  }
+}
+*/
 /**
  * Implements Drupal hook_block_info().
  */
@@ -27,18 +37,16 @@ function vals_soc_block_info() {
 }
 
 /**
- * Does the current user have one of the roles defined in arg 2.
- * TODO - finish this off & perhaps move to another location
- * @param unknown $item
- * @param unknown $roles
+ * Function which will check ROLES, PERMISSIONS and the TIMELINE to ascertain
+ * if a menu/page is available for a given user 
+ * @param Array $access_data - the path of the page
  * @return boolean
  */
-function vals_soc_user_role_check($item, $roles = array()) {
-	global $user;
-	$check = array_intersect($roles, array_values($user->roles));
-	return empty($check) ? FALSE : TRUE;
+function vals_soc_access_check($access_data) {
+	if(!_DEBUG) return TRUE; // remove the ! not operator here to place all menu links without checks
+	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.access');
+	return page_access_check($access_data);
 }
-
 
 /**
  * We define the permissions that can be set for this module
