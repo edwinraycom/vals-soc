@@ -5,7 +5,7 @@ include('include.php');
 //automatically
 // module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
 // include(_VALS_SOC_ROOT.'/includes/vals_soc.helper.inc');
-
+include(_VALS_SOC_ROOT.'/includes/classes/AbstractEntity.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Users.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');//action:proposal,...
