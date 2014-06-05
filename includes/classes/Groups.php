@@ -1,5 +1,5 @@
 <?php
-class Groups {
+class Groups extends AbstractEntity{
 	public static function getGroups($org_type, $group_head_id='', $id='')
 	{
 		global $user;
@@ -54,18 +54,7 @@ class Groups {
 		->fields($organisation)
 		->execute();
 	}
-	
-	static function keyField($type){
-		switch ($type){
-			case 'studentgroup': return 'studentgroup_id';break;
-			case 'institute': return 'inst_id';break;
-			case 'organisation': return 'org_id';break;
-			case 'project': return 'pid';break;
-			case 'proposal': return 'proposal_id';break;
-			default: return '';
-		}
-	}
-	
+
 	static function isOwner($type, $id){
 		if (! in_array($type, array('studentgroup', 'institute', 'organisation', 'project', 'proposal'))){
 			drupal_set_message(tt('You cannot be the owner of an entity called %1$s', $type));
