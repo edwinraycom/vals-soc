@@ -1,6 +1,6 @@
 <?php
 
-class Users {
+class Users extends AbstractEntity{
 	public static function getGroups($supervisor='')
 	{
 		global $user;
@@ -68,17 +68,6 @@ class Users {
 		}
 
 		return $students;
-	}
-
-	static function keyField($type){
-		switch ($type){
-			case 'studentgroup': return 'studentgroup_id';break;
-			case 'institute': return 'inst_id';break;
-			case 'organisation': return 'org_id';break;
-			case 'project': return 'pid';break;
-			case 'proposal': return 'proposal_id';break;
-			default: return '';
-		}
 	}
 	
 	/*
