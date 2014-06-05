@@ -399,7 +399,12 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 	$form['tab_target'] = array(
 		'#type' => 'hidden',
 		"#default_value" => $target,
-	);
+	);/* 
+	//Still experimenting with using paths -possible will be removed soon.
+	$form['tRequest_path'] = array(
+		'#type' => 'hidden',
+		'#default_value' => request_path(),
+	);*/
 	$form['name'] = array(
 		"#type" => "textfield",
 		'#title' => t('What is the name of your organisation?'),
@@ -442,13 +447,20 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 		"#default_value" => populate($org, 'contact_email'),
 		//"#description" => t("This code is different per role."),
 	);
-	$form['sub'] = array(
+	$form['submit'] = array(
 		'#type' => 'submit',
 		'#value' => t('Save'),
 		'#ajax' => array(
 			'callback' => 'vals_soc_organisation_form_callback',
 			'wrapper' => 'vals_soc_organisation_form_wrapper',
 		),
+	);
+	$form['cancel'] = array(
+		'#type' => 'button',
+		'#value' => t('Cancel'),
+		'#prefix' => '&nbsp; &nbsp; &nbsp;',
+		'#attributes' => array('onClick' => 'location.href="."; return true;'),
+		'#post_render' => array('vals_soc_organisation_form_cancel'),
 	);
 	$form['#attached']['js'] = array(
 		array(
@@ -457,6 +469,16 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 		),
 	);
 	return $form;
+}
+
+/*
+ * Drupal has a nasty habit of making buttons into "submit" buttons
+ * when you dont want it to.  This function sets the cancel button
+ * back to type "button"
+ */
+function vals_soc_organisation_form_cancel($markup, $element) {
+	$markup = str_replace('type="submit', 'type="button', $markup);
+	return $markup;
 }
 
 function vals_soc_organisation_form_callback($form, &$form_state){
@@ -473,6 +495,7 @@ function vals_soc_organisation_form_callback($form, &$form_state){
 			'command' => 'jsOrganisationSaveCallback',
 			'orgId' => $form_state['values']['key'],
 			'tabTarget' => $form_state['values']['tab_target'],
+			//'requestPath' => $form_state['values']['tRequest_path'],
 		);
 		return array('#type' => 'ajax', '#commands' => $commands);
 	}
