@@ -46,14 +46,14 @@ function vals_soc_schema_handler() {
 					),
 					'solution_long' => array(
 							'description' => 'A longer description of the proposal',
-							'type' => 'varchar',
-							'size' => '1024',
+							'type' => 'text',
+							//'size' => '1024',
 							'not null' => TRUE,
 					),
 					'cv' => array(
 							'description' => 'The cv of this student',
-							'type' => 'varchar',
-							'size' => '1024',
+							'type' => 'text',
+							//'size' => '1024',
 							'not null' => TRUE,
 					),
 					'state' => array(
@@ -235,10 +235,10 @@ ADD `supervisor` MEDIUMINT NOT NULL AFTER `student`
 					),
 					'description' => array(
 							'description' => 'Description of the organisation',
-							'type' => 'varchar',
-							'length' => 1024,
+							'type' => 'text',
+							//'length' => 1024,
 							'not null' => FALSE,
-							'default' => '',
+							//'default' => '',
 					)
 			),
 			'primary key' => array('org_id'),
