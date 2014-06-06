@@ -25,10 +25,8 @@ class Groups extends AbstractEntity{
 		
 				$members = db_query(
 						"SELECT o.*, c.code from ".tableName($org_type)." as o ".
-						"left join soc_user_membership as um ".
-						" on o.$key_column = um.group_id ".
-						"left join soc_codes as c ".
-						" on o.$key_column = c.$code_key_column AND c.type = '$member_type'".
+						"left join soc_user_membership as um on o.$key_column = um.group_id ".
+						"left join soc_codes as c on o.$key_column = c.$code_key_column AND c.type = '$member_type'".
 						"WHERE um.type = '$org_type' AND um.uid = $group_head_id ");
 			}
 		}	

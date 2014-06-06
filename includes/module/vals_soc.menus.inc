@@ -45,7 +45,7 @@ function vals_soc_menu_handler(){
 			'title' => t('Proposals overview'),
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_browse_proposals',
-			'access arguments' => array('vals apply projects'), // Voor alle gebruikers (incl guests: 'use text format filtered_html'
+			'access arguments' => array('access content'),//array('vals apply projects'), // Voor alle gebruikers (incl guests: 'use text format filtered_html'
 			// uncomment the 2 lines below to restrict access to menu items based on role
 			//'access callback' => 'vals_soc_user_role_check',
 					// 			'access arguments' => array(1, array('Organisation Administrator','Student')),

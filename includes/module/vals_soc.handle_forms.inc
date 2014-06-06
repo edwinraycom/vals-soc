@@ -36,13 +36,14 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
         return;
     }
     $org = 0;
-    if (in_array($requested_user_type, array('mentor', 'institute_admin') ) && $form_state['values']['organisation']){
-        $org = $form_state['values']['organisation'];
-    }
-    if (in_array($requested_user_type, array('supervisor', 'organisation_admin')) && $form_state['values']['institute']){
-        $org = $form_state['values']['institute'];
-    }
-    $db_and2 = db_and();
+	if (in_array($current_role, array('mentor', 'organisation_admin') ) && $form_state['values']['organisation']){
+		$org = $form_state['values']['organisation'];
+	}
+	if (in_array($current_role, array('supervisor', 'institute_admin')) && $form_state['values']['institute']){
+		$org = $form_state['values']['institute'];
+	}
+	
+	$db_and2 = db_and();
     $db_and2->condition('type', $requested_user_type);
     $db_and2->condition('code', $code_entered);
     if ((! in_array($requested_user_type, array('institute_admin', 'organisation_admin', 'soc', 'administrator')))&&
@@ -134,9 +135,81 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
     }
 }
 
+function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
+	$current_role = getRole();
+	//If no  errors are encountered, just return, otherwise call form_set_error
+	if ($current_role == 'administrator'){
+		return;
+	}
+	$group_type = in_array($current_role, array('supervisor', 'institute_admin', 'student')) ? 'institute': 'organisation';
+	$my_groups = Groups::getGroups($group_type);
+	if ($my_groups->rowCount()){
+		//The user is already in an institute or organisation. Do not expect an account key or do anything with the 
+		//organisation/institute
+		form_set_error('current_pass', "Eventjes hier om te zien of hij het goed doet");
+		return;
+	}
+	if (! (isset($form_state['values']['account_key']) && $form_state['values']['account_key'])){
+		form_set_error('account_key', t('There is no key entered.'));
+		return;
+	}
+
+	$code_entered = $form_state['values']['account_key'];
+
+	//Check the student belonging to a valid group
+	if ($current_role == 'student'){
+		if (! isset($form_state['values']['institute']) || $form_state['values']['institute']  == 0){
+			form_set_error('institute', t('You should select your university or institute.'));
+		}
+		$db_and = db_and();
+		$db_and->condition('code', $code_entered);
+		$db_and->condition('type', 'studentgroup');//Since we do not want a long list of groups during registration
+		//we use the institute instead and so we select not on type student, but on group
+		$db_and->condition('entity_id', $form_state['values']['institute']);
+		$valid_groups_cnt = db_select('soc_codes')->fields('soc_codes')->condition($db_and)->execute()->rowCount();
+		if ($valid_groups_cnt == 0){
+			form_set_error('account_key', t('This is no valid key you entered. Ask your supervisor.'));
+		}
+
+		return;
+	}
+	$org = 0;
+	if (in_array($current_role, array('mentor', 'organisation_admin') ) && $form_state['values']['organisation']){
+		$org = $form_state['values']['organisation'];
+		$super = t('Organisation administrator');
+	}
+	if (in_array($current_role, array('supervisor', 'institute_admin')) && $form_state['values']['institute']){
+		$org = $form_state['values']['institute'];
+		$super = t('Institution administrator');
+	}
+	$db_and2 = db_and();
+	$db_and2->condition('type', $current_role);
+	$db_and2->condition('code', $code_entered);
+	if ((! in_array($current_role, array('institute_admin', 'organisation_admin', 'soc', 'administrator')))&&
+			$org){
+		$db_and2->condition('entity_id', $org);
+	}
+	$found_codes = db_select('soc_codes')->fields('soc_codes')->condition($db_and2)->execute()->rowCount();
+	$possible_code_rec = db_select('soc_codes')->fields('soc_codes')->
+	condition('type', $current_role)->
+	condition('entity_id', $org)->
+	execute()->fetchAssoc();
+	//->fetchAllAssoc('type', PDO::FETCH_ASSOC); returns [student=>[type=>student, code=><student_code>,....]
+	if (!$found_codes){
+		form_set_error('account_key', tt('The key you typed is not correct. Ask your %1$s.', $super).
+				(_DEBUG ? '<BR>'.t('In this phase, we just give you the code: ').$possible_code_rec['code']: ''));
+	} else {
+		return;
+	}
+
+}
 function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
-    //First get the current user
+    
+    /* As we are no longer performing the code labeled here under with 'FROM HERE', it makes no sense to perform these
+     * lines either.
+     */
     global $user;
+    //First get the current user
     $uid = $user->uid;
     $current_role = getRole();    
     
@@ -152,9 +225,13 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
         $type = $current_role;
     }
 
+    //FROM HERE
     
-    if ((($type == 'student') || ($type == 'supervisor') || ($type == 'organisation_admin')) && 
+//    We assume that the admins create their organisation/institute and all the others register with a 
+//     * certain organisation. There seems no reason to change that later
+      if ((($type == 'student') || ($type == 'supervisor') || ($type == 'organisation_admin')) && 
     		(isset($form_state['values']['institute']) && $form_state['values']['institute'])){
+    	//$already_member = (0 < Groups::getGroups('institute', $uid, ));
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => 'institute', 

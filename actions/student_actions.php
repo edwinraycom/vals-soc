@@ -5,14 +5,18 @@ include('include.php');
 //automatically
 // module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
 // include(_VALS_SOC_ROOT.'/includes/vals_soc.helper.inc');
-include(_VALS_SOC_ROOT.'/includes/classes/AbstractEntity.php');
+//include(_VALS_SOC_ROOT.'/includes/classes/AbstractEntity.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Users.php');
-include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');
+// include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');//action:proposal,...
 include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');//action:proposal,...
 
 switch ($_GET['action']){
 	case 'proposal':
+		if (!vals_soc_access_check('proposal apply')) {
+			echo errorDiv(t('You cannot apply for projects'));
+			break;
+		}
 		$target = altSubValue( $_POST, 'target');
 		$project_id = altSubValue( $_POST, 'id');
 		$proposal_id = altSubValue( $_POST, 'proposalid');
@@ -93,7 +97,7 @@ case 'show':
 		echo t('There is no such type we can delete');
 		} else {
 		$result = Groups::removeGroup($type, $id);
-		echo $result ? jsonGooResult() : jsonBadResult();
+		echo $result ? jsonGoodResult() : jsonBadResult();
 		}
 	break; */
 // 	case 'edit':

@@ -25,7 +25,7 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $id=0,
 		}
 		echo $title;
 		
-		//onclick action
+		//onclick action 
 		if (isset($data[$t][2])){
 				$action = $data[$t][2];
 				$type = isset($data[$t][3]) ? $data[$t][3] : $type;
@@ -50,6 +50,7 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $id=0,
 	}
 	
 }
+
 function showRoleDependentAdminPage($role){
 	switch ($role){
 		case 'administrator':

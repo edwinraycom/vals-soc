@@ -1,7 +1,60 @@
 <?php
+/*Expects data for every tab:
+ * [translate, label, action, type, id, extra GET arguments]
+*/
+function renderProposalTabs($count, $tab_label, $target_label, $type, $data, $id=0,
+	$render_targets=false, $active_content='', $active_tab=1){?>
+	<ol id="toc"><?php
+	$label_start = t($tab_label);
+	$title = "";
+	$un_named = 1;
+	for ($t=0; $t < $count;$t++){
+		$target = $target_label.($t + 1); ?>
+		<li><a href="#tab_<?php echo $target;?>" <?php
+		//title
+		if ($data[$t][0] == 1){
+			$link_text = t($data[$t][1]);
+			$title = "";
+		} elseif ($data[$t][0] == 0) {
+			$link_text = "$label_start $un_named";
+			$un_named++;
+			$title = " title = '".$data[$t][1]."' ";
+		} else {
+			$link_text = $data[$t][1];
+			$title = "";
+		}
+		echo $title;
+		
+		//onclick action 
+		if (isset($data[$t][2])){
+				$action = $data[$t][2];
+				$type = isset($data[$t][3]) ? $data[$t][3] : $type;
+				$id =  isset($data[$t][4]) ? $data[$t][4] : $id;
+			if (isset($data[$t][5])){
+				$action	.= "&".$data[$t][5];
+			}
+			echo "onclick=\"ajaxCall('proposal', '$action', {type:'$type', id:$id, target:'$target'}, '$target');\"";
+		}
+		
+		?>><span><?php echo $link_text;?></span></a>
+    	</li>
+	<?php
+	}?>
+	</ol><?php
+	if ($render_targets){
+		for ($i=1; $i<= $count;$i++){
+			echo "<div id='$target_label$i' class='content'>".
+				"<div id='msg_$target_label$i'></div>".
+				(($i == $active_tab) ? $active_content : '')."</div>";
+		}
+	}
+	
+}
 
 function initBrowseProposalsLayout(){
 	$orgId=0;
+	$apply_proposals = vals_soc_access_check('proposal apply') ? 1 : 0;
+	$proposal_tabs = array();
 	if(isset($_GET['organisation'])){
 		$orgId = $_GET['organisation'];
 	}
@@ -47,7 +100,6 @@ function initBrowseProposalsLayout(){
     </form>
 	</div>
 	<div id="TableContainer" style="width: 800px;"></div>
-					
 	<script type="text/javascript">
 					
 		jQuery(document).ready(function($){
@@ -62,10 +114,12 @@ function initBrowseProposalsLayout(){
 			}
 
 			function getProposalDetail(proposal_id){
+				var tabs = [{tab: 'project', label: 'Project'}, {tab: 'student', label: 'Student'}];
 				var url = baseUrl + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" + proposal_id;
 				$.get(url,function(data,status){
-    				 generateAndPopulateModal(data);
+    				 generateAndPopulateModal(data, renderProposalTabs, tabs);
   				});
+				activatetabs('tab_', ['project', 'student']);
 			}
 			
 			function getProjectDetail(project_id){
@@ -80,20 +134,62 @@ function initBrowseProposalsLayout(){
 				ajaxCall("student", "proposal", {id: projectId, target:'content'}, "content");
 			}
 			
-			function generateAndPopulateModal(data){
+			function generateAndPopulateModal3(data){
 				//TODO - work more on the formating
 				// and add other fields from DB
 				var result = jQuery.parseJSON(data);
 				/*
-				var content = "<h2>"+result[0].title+"</h2>";
-					content += result[0].description;
+				Gets:
+					Array
+					(
+					    [0] => Array
+					        (
+					            [proposal_id] => 2
+					            [owner_id] => 31
+					            [org_id] => 2
+					            [inst_id] => 3
+					            [supervisor_id] => 30
+					            [pid] => 10
+					            [name] => Edwin 2222
+					            [cv] => 
+					            [solution_short] => 
+					            [solution_long] => ja even wat hier
+					            [modules] => 
+					            [state] => draft
+					            [i_inst_id] => 3
+					            [i_owner_id] => 0
+					            [i_name] => Salamanca Universidad
+					            [contact_name] => JUan
+					            [contact_email] => juan@raycom.com
+					            [o_org_id] => 2
+					            [o_owner_id] => 26
+					            [o_name] => Acme Foundation and so on
+					            [o_contact_name] => F Smith
+					            [o_contact_email] => fsmith@acme.org
+					            [url] => http://www.acme.org
+					            [description] => blah blah blah and more bla
+					            [title] => GLSpace
+					        )
+
+					)
+					*/	
+				var content = "<h2>"+result.title+"</h2>";
+					
 					content +="<div class=\"centered\">";
-					content +="<br/><br/><a href=\"#\" onclick=\"Drupal.CTools.Modal.dismiss()\">Close</a>";
+					//content +="<br/><br/><a href=\"#\" onclick=\"Drupal.CTools.Modal.dismiss()\">Close</a>";
 					content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-					content +="<a href=\"#\" onclick=\"getProposalFormForProposal("+result[0].pid+")\">Submit proposal for this proposal</a>";
+					content += result.pr_description;
+					content += '<hr>';
+					content += '<h2>Summary Solution</h2>';
+					content += result.solution_short;
+					content += '<h2>Solution</h2>';
+					content += result.solution_long;
+					content += '<h2>Curriculum Vitae</h2>';
+					content += result.cv;
+					//content +="<a href=\"#\" onclick=\"getProposalFormForProposal("+result.pid+")\">Submit proposal for this proposal</a>";
 					content +="</div>";
-				*/
-				var content = ' hallo dit uitwerken' ;
+			
+				//var content = ' hallo dit uitwerken'+result.contact_name ;
 				Drupal.CTools.Modal.show();
 				$("#modal-title").html("&nbsp;"); // doesnt render unless theres something there!
 				$("#modal-content").html(content);
