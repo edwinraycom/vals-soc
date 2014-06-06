@@ -44,15 +44,17 @@ switch ($_GET['action']){
 	case 'proposal_detail':
 		$proposal_id=null;
 		if(isset($_GET['proposal_id'])){
+			include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
+			include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
 			$results = Proposal::getInstance()->getProposalById($_GET['proposal_id'], true);
-			die(gettype($results).print_r($results,1));
-			$proposalDetail = array();
-			$proposalDetail['title'] = $results->title;
-			$proposalDetail['description'] = $results->description;
-			print json_encode($results);
+// 			print_r($results);
+// 			$proposalDetail = array();
+// 			$proposalDetail['title'] = $results->title;
+// 			$proposalDetail['description'] = $results->description;
+			jsonGoodResult($results[0]);
 		}
 		else{
-			echo json_encode(array('result' =>'error', 'error' => t('No Project identifier submitted!')));
+			jsonBadResult(t('No Project identifier submitted!'));
 		}
 	break;
 	

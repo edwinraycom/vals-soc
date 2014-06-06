@@ -3,7 +3,7 @@ class Organisations extends Groups{
 
 	private static $instance;
 	public static $type = 'organisation';	
-	public static $fields = array('org_id', 'owner_id', 'name', 'contact_name', 'contact_email', 'url', 'description', 'supervisor_id');
+	public static $fields = array('org_id', 'owner_id', 'name', 'contact_name', 'contact_email', 'url', 'description');
 	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){

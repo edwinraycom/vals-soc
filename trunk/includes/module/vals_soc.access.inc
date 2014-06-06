@@ -16,6 +16,7 @@ function page_access_check($access_data) {
 	global $user;
 	switch ($access_data) {
 		case 'projects/browse':
+			return TRUE;
 			// any role can access projects/browse - but only after the organisations have been announced
 			if(hasPermission('vals browse projects')&& Timeline::getInstance()->isAfterOrgsAnnouncedDate()){
 				return TRUE;

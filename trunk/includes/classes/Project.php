@@ -18,8 +18,8 @@ class Project {
     }
     
     public function getProjectById($id){
-    	//todo: better to use fetch to get just one project instead of an array with one array in it
     	$project = db_select('soc_projects')->fields('soc_projects')->condition('pid', $id)->execute()->fetch(PDO::FETCH_ASSOC);
+    	//project is one asociative array
     	return $project;
     }
     

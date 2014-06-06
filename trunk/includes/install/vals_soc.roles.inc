@@ -2,7 +2,7 @@
 //The following are copied from the current database state. Can be neater to derive and put in the cache
 //or something like that
 define('_ANONYMOUS_ROLE', 1);
-define('_USER_ROLE', 2);
+define('_USER_ROLE', 2); //Identical to DRUPAL_AUTHENTICATED_RID
 
 /**
  * Function to create the custom roles needed in drupal for the summer of code programme.
@@ -188,15 +188,25 @@ function getRole(){
     }
 }
 
-function getUserRoleId($roles=''){
-    $roles = $roles ?: getRoles();
-    //Every user has exactly two roles:  authenticated user (role 2) and some other role > 2
-    //Sort associative, reversed: [10 => 0, 9 => 9, 8 => 0,....]
-    arsort($roles);
+function getUserRoleId($roles='', $uid=''){
+    $roles = $roles ?: getRoles($uid);
+    //Every authenticated user has exactly two roles:  authenticated user (role 2) and some other role > 2
+    //The roles come either from the global user property roles or via the form in an admin edit of a user.
+    //In the latter case the roles have the form: [10 => 0, 9 => 9, 8 => 0,....2 => 2]  
     foreach ($roles as $rid => $role_val){
-        if ($role_val != 0) {
+        if (($role_val !== 0) && ($rid != _USER_ROLE) && ($rid != _ANONYMOUS_ROLE)) {
+        	//echo "tevreden";
             return $rid;
+        } else {
+        	//echo "verder kijken<br>";
         }
     }
     return _USER_ROLE;
+}
+
+function getUserRoleName($roles=array(), $uid=''){
+	$role = getUserRoleId($roles, $uid);
+	$role_name = db_query("select r.name from role as r ".
+    		"where r.rid = $role")->fetchField();//->fetchAll();
+    return $role_name;
 }

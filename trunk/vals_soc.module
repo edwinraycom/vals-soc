@@ -6,15 +6,16 @@
  * NOTE: module_load_include results in a "require_once" anyway
  * The functionality that needs to be there always is included in the standard way.
  */
-define('_DEBUG', TRUE);
-define('_VALS_SOC_PATH', drupal_get_path('module', 'vals_soc'));
-define('_VALS_SOC_ROOT', DRUPAL_ROOT.'/'._VALS_SOC_PATH);
 
-module_load_include('inc', 'vals_soc', 'includes/vals_soc.helper');
-module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
+module_load_include('php', 'vals_soc', 'includes/settings/settings');
 
-include('includes/module/vals_soc.handle_forms.inc');
-include('includes/module/vals_soc.forms.inc');
+include(_VALS_SOC_ROOT.'/includes/vals_soc.helper.inc');
+include(_VALS_SOC_ROOT.'/includes/install/vals_soc.roles.inc');
+include(_VALS_SOC_ROOT.'/includes/classes/AbstractEntity.php');//necessary for forms
+include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');//necessary for forms
+include(_VALS_SOC_ROOT.'/includes/module/vals_soc.forms.inc');
+include(_VALS_SOC_ROOT.'/includes/module/vals_soc.handle_forms.inc');
+
 //***********************************************************************************
 // BLOCKS
 //***********************************************************************************

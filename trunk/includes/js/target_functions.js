@@ -68,3 +68,32 @@ function handleResult(result, args){
 		alertdev('Not a valid result');
 	}
 }
+
+//TODO: move this function to a general js file
+function generateAndPopulateModal(result, fun, arg){
+	// TODO : work more on the formatting
+	// and add other fields from DB
+	var data = jQuery.parseJSON(result);
+	if (data && data.result !== 'error'){
+		var content = '';
+		if (typeof fun == 'function'){
+			alert('hierlangs');
+			content = fun(data.result, arg);
+		} else {
+			content = data.result;
+		}
+		Drupal.CTools.Modal.show();
+		Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
+		Obj("modal-content").html(content);
+		Drupal.attachBehaviors();
+	} else {
+		console.log('Some program error occured. We could not render the result');
+		if (data){
+			Drupal.CTools.Modal.show();
+			Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
+			Obj("modal-content").html("<div class='messages error'>"+data.error+ "</div>");
+			Drupal.attachBehaviors();
+		}
+		
+	}
+}

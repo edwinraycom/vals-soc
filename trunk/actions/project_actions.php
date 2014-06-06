@@ -3,6 +3,8 @@ include('include.php');//Includes the necessary bootstrapping and the ajax funct
 module_load_include('php', 'vals_soc', 'includes/classes/AbstractEntity');
 module_load_include('php', 'vals_soc', 'includes/classes/Groups');
 module_load_include('php', 'vals_soc', 'includes/classes/Project');
+module_load_include('php', 'vals_soc', 'includes/functions/projects');
+module_load_include('php', 'vals_soc', 'includes/functions/ajax_functions');
 
 switch ($_GET['action']){
 	case 'project_page':
@@ -41,17 +43,16 @@ switch ($_GET['action']){
 	case 'project_detail':
 		$project_id=null;
 		if(isset($_GET['project_id'])){
-			$results = Project::getInstance()->getProjectById($_GET['project_id']);
-			
-			$projectDetail = array();
-			$projectDetail['title'] = $results->title;
-			$projectDetail['description'] = $results->description;
-			print json_encode($results);
+			try {
+				$project = Project::getInstance()->getProjectById($_GET['project_id']);
+				jsonGoodResult($project);
+			} catch (Exception $e){
+				jsonBadResult($e->getMessage());
+			}
 		}
 		else{
-			echo "No Project identifier submitted!";
+			jsonBadResult( t("No Project identifier submitted!"));
 		}
 	break;
-	
 	default: echo "No such action: ".$_GET['action'];
 }

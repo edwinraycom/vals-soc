@@ -41,6 +41,14 @@ function variableGetFromStruct($var, $field, $default='')
 	}
 }
 
+function errorDiv($msg){
+	return "<div class='messages error'>$msg</div>";
+}
+
+function successDiv($msg){
+	return "<div class='messages status'>$msg</div>";
+}
+
 function tt($str){
 	$args = func_get_args();
 	$args[0] = t($str);
