@@ -53,7 +53,7 @@ function renderProposalTabs($count, $tab_label, $target_label, $type, $data, $id
 
 function initBrowseProposalsLayout(){
 	$orgId=0;
-	$apply_proposals = vals_soc_access_check('proposal apply') ? 1 : 0;
+	$apply_proposals = vals_soc_access_check('dashboard/proposal/apply') ? 1 : 0;
 	$proposal_tabs = array();
 	if(isset($_GET['organisation'])){
 		$orgId = $_GET['organisation'];
