@@ -13,7 +13,7 @@ include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');//action:proposal,...
 
 switch ($_GET['action']){
 	case 'proposal':
-		if (!vals_soc_access_check('proposal apply')) {
+		if (!vals_soc_access_check('dashboard/proposal/apply')) {
 			echo errorDiv(t('You cannot apply for projects'));
 			break;
 		}

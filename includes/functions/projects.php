@@ -17,7 +17,7 @@ function initBrowseProjectLayout($target='content'){
 	if(isset($_GET['organisation'])){
 		$orgId = $_GET['organisation'];
 	}
-	$apply_projects = vals_soc_access_check('proposal apply') ? 1 : 0;
+	$apply_projects = vals_soc_access_check('dashboard/proposal/apply') ? 1 : 0;
 	?>
 	<div class="filtering" id="browse_projects">
 		<span id="infotext" style="margin-left: 34px"></span>

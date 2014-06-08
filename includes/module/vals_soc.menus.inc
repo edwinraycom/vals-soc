@@ -24,11 +24,11 @@ function vals_soc_menu_handler(){
 			'file path' => _VALS_SOC_PATH . '/includes/module/',
 	);
 	// Allows user to browse organisations registered in the system
-	$items['organisations/browse'] = getOrganisationBrowseLink();
-	$items['dashboard/organisations/browse'] = getOrganisationBrowseLink();
+	$items['organisations/browse'] = getOrganisationBrowseLink('organisations/browse');
+	$items['dashboard/organisations/browse'] = getOrganisationBrowseLink('dashboard/organisations/browse');
 	// Allows user to browse projects registered in the system
-	$items['projects/browse'] = getProjectsBrowseLink();
-	$items['dashboard/projects/browse'] = getProjectsBrowseLink();
+	$items['projects/browse'] = getProjectsBrowseLink('projects/browse');
+	$items['dashboard/projects/browse'] = getProjectsBrowseLink('dashboard/projects/browse');
 	
 //	$items['projects/apply'] = array(
 //			'title' => t('Apply for Projects'),
@@ -41,7 +41,7 @@ function vals_soc_menu_handler(){
 //			'file path' => _VALS_SOC_PATH . '/includes/module/',
 //	);
 
-	$items['proposals/browse'] = array(
+	$items['dasboard/proposals/browse'] = array(
 			'title' => t('Proposals overview'),
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_browse_proposals',
@@ -96,26 +96,26 @@ function vals_soc_menu_handler(){
 	return $items;
 }
 
-function getOrganisationBrowseLink(){
+function getOrganisationBrowseLink($path){
 	return  array(
 			'title' => 'Organisations',
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_browse_organisations',
 			'access callback' => 'vals_soc_access_check',
-			'access arguments' =>  array('organisations/browse'),
+			'access arguments' =>  array($path),
 			'description' => 'Organisations page',
 			'file' => 'vals_soc.pages.inc',
 			'file path' => _VALS_SOC_PATH . '/includes/module/',
 	);
 }
 
-function getProjectsBrowseLink(){
+function getProjectsBrowseLink($path){
 	return array(
 			'title' => 'Projects',
 			'type' => MENU_CALLBACK, // register link, but dont put it in the menu
 			'page callback' => 'vals_soc_browse_projects',
 			'access callback' => 'vals_soc_access_check',
-			'access arguments' => array('projects/browse'),
+			'access arguments' => array($path),
 			'description' => 'Projects page',
 			'file' => 'vals_soc.pages.inc',
 			'file path' => _VALS_SOC_PATH . '/includes/module/',

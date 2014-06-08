@@ -12,10 +12,15 @@ function hasPermission($permission){
 }
 
 function page_access_check($access_data) {
-	//drupal_set_message("test");
+	//drupal_set_message("test:".$access_data);
 	global $user;
 	switch ($access_data) {
+		case 'dashboard/proposal/apply':
+			// TODO add logic to determine whether to show this or not
+			return TRUE;
+			break;
 		case 'projects/browse':
+		case 'dashboard/projects/browse':
 			return TRUE;
 			// any role can access projects/browse - but only after the organisations have been announced
 			if(hasPermission('vals browse projects')&& Timeline::getInstance()->isAfterOrgsAnnouncedDate()){
@@ -35,6 +40,7 @@ function page_access_check($access_data) {
 			}
 			break;
 		case 'organisations/browse':
+		case 'dashboard/organisations/browse':
 			// any role can access organisations/browse - but only after the organisations have been announced
 			// note - reusing the browse projects permission here *maybe add another new one*
 			if(hasPermission('vals browse projects')&& Timeline::getInstance()->isAfterOrgsAnnouncedDate()){
