@@ -1,14 +1,22 @@
 function renderProject(project, apply_projects){
+	$jq.get( url('language','translate'), { words: ['Cancel','Submit proposal for this project'] }, function(result) {
+		if(result){
+			var parsed = JSON.parse(result);
+			$jq("#vals-btn-cancel").prop('value', parsed[0]);
+			$jq("#vals-btn-submit-proposal").prop('value', parsed[1]);
+		}
+		$jq('.totheright').show();
+	});
 	var content = "<h2>"+project.title+"</h2>";
 	content += project.description;
-	content +="<div class=\"totheright\">";
+	content +="<div class=\"totheright\" style=\"display:none\">";
 	//content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 	if (apply_projects){
-		content +="<br/><br/><input type='button' onclick=\"Drupal.CTools.Modal.dismiss()\" value='<?php echo t('Cancel');?>' />";
-		content +="<input type='button' onclick='getProposalFormForProject("+project.pid+") value='Submit proposal for this project'/>";
+		content +="<br/><br/><input id='vals-btn-cancel' type='button' onclick=\"Drupal.CTools.Modal.dismiss()\" value='Cancel' />";
+		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='Submit proposal for this project'/>";
 	}
 	content +="</div>";
-	return content;
+	return content; 
 }
 
 function renderStudent(data){
