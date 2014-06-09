@@ -20,6 +20,7 @@ class Timeline {
 	private $cached_coding_start_date;
 	private $cached_coding_end_date;
 	private $cached_suggested_coding_deadline;
+	private $dummy_test_date = NULL;
 	
 	private function __construct(){
 		$this->fetchDates();
@@ -125,22 +126,42 @@ class Timeline {
 		return $this->cached_suggested_coding_deadline;
 	}
 	
+	public function setDummyTestDate($dummy){
+		$this->dummy_test_date = $dummy;
+	}
 	
 	/***********************************
 	 * 		Helper methods
 	 * *********************************
 	 */
+	/**
+	 * Put this in one place, which makes it easier to test the timeline i.e. we just change now
+	 * @return DateTime
+	 */
+	public function getNow(){
+		if (!isset($this->dummy_test_date)){
+			$now = new DateTime();
+		}
+		else{
+			$now = new DateTime($this->dummy_test_date);
+		}
+		return $now;
+	}
+	
+	public function getDate($date_format){
+		$date = new DateTime($date_format);
+		return $date;
+	}
+	
 	public function isOrganisationSignupPeriod(){
-		$now = new DateTime();
-		if($this->cached_org_signup_start_date < $now && $this->cached_org_signup_end_date > $now){
+		if($this->cached_org_signup_start_date < $this->getNow() && $this->cached_org_signup_end_date > $this->getNow()){
 			return true;
 		}
 		return false;
 	}
 
 	public function isStudentsSignupPeriod(){
-		$now = new DateTime();
-		if($this->cached_student_signup_start_date < $now && $this->cached_student_signup_end_date > $now && $this->isProgramActive()){
+		if($this->cached_student_signup_start_date < $this->getNow() && $this->cached_student_signup_end_date > $this->getNow() && $this->isProgramActive()){
 			return true;
 		}
 		return false;
@@ -152,16 +173,14 @@ class Timeline {
 	 * @return boolean
 	 */
 	public function isPreCommunityBondingPeriod(){
-		$now = new DateTime();
-		if($this->cached_student_signup_end_date < $now && $this->cached_accepted_students_announced_deadline_date > $now){
+		if($this->cached_student_signup_end_date < $this->getNow() && $this->cached_accepted_students_announced_deadline_date > $this->getNow()){
 			return true;
 		}
 		return false;
 	}
 	
 	public function isCodingPeriod(){
-		$now = new DateTime();
-		if($this->cached_coding_start_date < $now && $this->cached_coding_end_date > $now){
+		if($this->cached_coding_start_date < $this->getNow() && $this->cached_coding_end_date > $this->getNow()){
 			return true;
 		}
 		return false;
@@ -173,16 +192,14 @@ class Timeline {
 	 * @return boolean
 	 */
 	public function isCommunityBondingPeriod(){
-		$now = new DateTime();
-		if($this->cached_accepted_students_announced_deadline_date < $now && $this->cached_coding_start_date > $now){
+		if($this->cached_accepted_students_announced_deadline_date < $this->getNow() && $this->cached_coding_start_date > $this->getNow()){
 			return true;
 		}
 		return false;
 	}
 	
 	public function isAfterOrgsAnnouncedDate(){
-		$now = new DateTime();
-		if($this->cached_accepted_org_announced_date < $now && $this->isProgramActive()){
+		if($this->cached_accepted_org_announced_date < $this->getNow() && $this->isProgramActive()){
 			return true;
 		}
 		return false;
@@ -197,14 +214,14 @@ class Timeline {
 	
 	
 	public function hasProgramStarted(){
-		if($this->cached_program_start_date < new DateTime()){
+		if($this->cached_program_start_date < $this->getNow()){
 			return true;
 		}
 		return false;
 	}
 	
 	public function hasProgramFinished(){
-		if($this->cached_program_end_date > new DateTime()){
+		if($this->cached_program_end_date > $this->getNow()){
 			return true;
 		}
 		return false;

@@ -108,15 +108,18 @@ function getLayout($timeline_args, $show_countdown = true){
  */
 function formatDateDiff($start, $end=null){
 	if(!($start instanceof DateTime)) {
-		$start = new DateTime($start);
+		//$start = new DateTime($start);
+		$start = Timeline::getInstance()->getDate($start);
 	}
 	 
 	if($end === null){
-		$end = new DateTime();
+		//$end = new DateTime();
+		$end = Timeline::getInstance()->getNow();
 	}
 	 
 	if(!($end instanceof DateTime)){
-		$end = new DateTime($start);
+		//$end = new DateTime($start);
+		$end = Timeline::getInstance()->getDate($start);
 	}
 	 
 	$interval = $end->diff($start);
@@ -165,7 +168,8 @@ function formatDateDiff($start, $end=null){
 function isDateLessThanADayAway($dateToCheck){
 	$dateToCheck_t = clone $dateToCheck;
 	$dateToCheck_t -> modify('-1 day');
-	if(strtotime('now') > strtotime($dateToCheck_t->format('Y-m-d H:i'))){
+	//if(strtotime('now') > strtotime($dateToCheck_t->format('Y-m-d H:i'))){
+	if(strtotime(Timeline::getInstance()->getNow()->format('Y-m-d H:i')) > strtotime($dateToCheck_t->format('Y-m-d H:i'))){
 		return true;
 	}
 	return false;
@@ -180,7 +184,7 @@ function isDateLessThanADayAway($dateToCheck){
  */
 function generateTimelineOutput(){
 	$timeline_args = array();
-	$now = new DateTime();
+	$now = Timeline::getInstance()->getNow();
 	$timeline_args['now'] = $now;
 	
 	// Is there is an active program
