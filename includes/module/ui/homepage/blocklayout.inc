@@ -1,7 +1,7 @@
 <?php
 function generateValsFrontPageLayout(){
 	module_load_include('php', 'vals_soc', 'includes/classes/Timeline');
-	//Timeline::getInstance()->setDummyTestDate("2014-02-28 20:14:15");
+	//echo '<h1>'.Timeline::getInstance()->getNow()->format('F j, Y, g:i a').'</h1>';
 	echo '<div id="vals_block_content" class="">';
 	
 	// get the intro div
