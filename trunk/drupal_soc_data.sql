@@ -234,10 +234,10 @@ INSERT INTO soc_projects (pid, owner_id, title, description, url, state, org_id,
 -- Gegevens worden uitgevoerd voor tabel 'soc_proposals'
 --
 
-INSERT INTO soc_proposals (proposal_id, owner_id, org_id, inst_id, supervisor_id, pid, `name`, cv, solution_short, solution_long, modules, state) VALUES
-(1, 31, 4, 3, 30, 20, 'Edwin', 'Uni \r\nnog meer uni', 'test', 'meer details', 'jquery|ww.jquery.org|jaja', 'draft'),
-(2, 31, 2, 3, 30, 10, 'Edwin 2222', '', '', 'ja even wat hier', '', 'draft'),
-(3, 31, 3, 3, 30, 17, 'Edwn 45', '', '', '', '', 'draft');
+INSERT INTO soc_proposals (proposal_id, owner_id, org_id, inst_id, supervisor_id, pid, cv, solution_short, solution_long, modules, state) VALUES
+(1, 31, 4, 3, 30, 20,  'Uni \r\nnog meer uni', 'test', 'meer details', 'jquery|ww.jquery.org|jaja', 'draft'),
+(2, 31, 2, 3, 30, 10, '', '', 'ja even wat hier', '', 'draft'),
+(3, 31, 3, 3, 30, 17, '', '', '', '', 'draft');
 
 -- --------------------------------------------------------
 

@@ -19,22 +19,34 @@ function vals_soc_schema_handler() {
 							'length' => 'medium',
 							'not null' => TRUE,
 					),
-					'inst_id' => array(
-							'description' => 'The institute, for convenience',
-							'type' => 'int',
-							'length' => 'medium',
-							'not null' => TRUE,
-					),
 					'org_id' => array(
 							'description' => 'The organisation.',
 							'type' => 'int',
 							'length' => 'medium',
 							'not null' => TRUE,
 					),
-					'projectid' => array(
+					'inst_id' => array(
+							'description' => 'The institute, for convenience',
+							'type' => 'int',
+							'length' => 'medium',
+							'not null' => TRUE,
+					),
+					'supervisor_id' => array(
+							'description' => 'The id of the supervisor',
+							'type' => 'int',
+							'length' => 'medium',
+							'not null' => TRUE,
+					),
+					'pid' => array(
 							'description' => 'The project id',
 							'type' => 'int',
 							'length' => 'medium',
+							'not null' => TRUE,
+					),
+					'cv' => array(
+							'description' => 'The cv of this student',
+							'type' => 'text',
+							//'size' => '1024',
 							'not null' => TRUE,
 					),
 					'solution_short' => array(
@@ -50,8 +62,8 @@ function vals_soc_schema_handler() {
 							//'size' => '1024',
 							'not null' => TRUE,
 					),
-					'cv' => array(
-							'description' => 'The cv of this student',
+					'modules' => array(
+							'description' => 'The modules used for the solution in this project',
 							'type' => 'text',
 							//'size' => '1024',
 							'not null' => TRUE,
@@ -65,7 +77,6 @@ function vals_soc_schema_handler() {
 			),
 			'primary key' => array('pid'),
 			/*
-			 * ALTER TABLE `soc_proposals` ADD `name` VARCHAR( 128 ) NULL DEFAULT NULL AFTER `pid`
 			 * ALTER TABLE `soc_proposals` ADD `modules` VARCHAR( 1024 ) NULL AFTER `solution_long` 
 			 * ALTER TABLE `soc_proposals` CHANGE `studid` `owner_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL 
 	*
