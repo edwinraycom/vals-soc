@@ -197,7 +197,7 @@ function initBrowseProposalsLayout(){
 					owner_id: {
 						title: "Student",
 						width: "30%",
-						display: function (data){return data.record.student_name;}
+						display: function (data){return data.record.name;}
 					},
 					inst_id: {
 						title: "Institute",
