@@ -1,6 +1,6 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
-include(_VALS_SOC_ROOT.'/includes/classes/AbstractEntity.php');
+// include(_VALS_SOC_ROOT.'/includes/classes/AbstractEntity.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Users.php');
 //include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');//already in vals_soc.module
 include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');

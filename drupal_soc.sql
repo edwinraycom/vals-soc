@@ -108,11 +108,10 @@ CREATE TABLE IF NOT EXISTS soc_proposals (
 DROP TABLE IF EXISTS soc_studentgroups;
 CREATE TABLE IF NOT EXISTS soc_studentgroups (
   studentgroup_id int(11) NOT NULL AUTO_INCREMENT COMMENT 'Group id.',
-  owner_id int(11) NOT NULL,
+  owner_id int(11) NOT NULL COMMENT 'The id of the teacher',
   inst_id int(11) NOT NULL COMMENT 'Institute id.',
   `name` varchar(255) NOT NULL COMMENT 'The name of the group to remind.',
   description varchar(512) DEFAULT '' COMMENT 'Some description or comment',
-  supervisor_id int(11) NOT NULL COMMENT 'The id of the teacher',
   PRIMARY KEY (studentgroup_id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='The students will be divided in groups, each teacher...' AUTO_INCREMENT=23 ;
 

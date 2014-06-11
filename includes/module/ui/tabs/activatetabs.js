@@ -142,9 +142,11 @@ function makeTabsActive(tab_name, active_tabs, initial, anchors_found) {
 	// Activates all elements for a specific id (and inactivates the others.)
 	function activate(id) {
         if (current && current === id){
-            return;
+        	return;
         }
-		if (!(id in all)) return false;
+		if (!(id in all)) {
+			return false;
+		}
 
         //set all targets and anchors (except id) on inactive (== invisible in case of targets)
 		for (var cur in all) {
@@ -171,7 +173,7 @@ function makeTabsActive(tab_name, active_tabs, initial, anchors_found) {
 			}
 		} else if (typeof item === 'string') {
             var path = [];
-			var e = document.getElementById(item);
+            var e = document.getElementById(item);
 			if (!e) {
                 if (debugging){
                     alert('Could not find the target '+ item);

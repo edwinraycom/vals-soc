@@ -28,7 +28,7 @@ function initDashboardLayout(){
           <div class="column-entry proposals">
             <h4>
               <a class="dashboard-link component-link"
-                 href="#proposals"
+                 href="dashboard/proposals/mine"
                  title="Proposals">Proposals</a>
               
             </h4>
@@ -39,7 +39,7 @@ function initDashboardLayout(){
           <div class="column-entry participants">
             <h4>
               <a class="dashboard-link component-link"
-                 href="/vals/dashboard/organisations/browse"
+                 href="dashboard/organisations/browse"
                  title="Proposals">Browse Organisations</a>
               
             </h4>
@@ -50,7 +50,7 @@ function initDashboardLayout(){
           <div class="column-entry participants">
             <h4>
               <a class="dashboard-link component-link"
-                 href="/vals/dashboard/projects/browse"
+                 href="dashboard/projects/browse"
                  title="Proposals">Browse Projects</a>
               
             </h4>

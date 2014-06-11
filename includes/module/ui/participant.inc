@@ -77,7 +77,7 @@ function renderUsers($type='', $Users='', $group_selection='', $group_type=''){
         $s = "<ul class='grouplist'>";
         foreach($Users as $member){
             $s .=  "<li>";
-            $s .= $member->name.' : '. $member->mail;
+            $s .= ($member->fullname ?: $member->name).' : '. $member->mail;
             $s .= "</li>";
         }
         $s .= "</ul>";

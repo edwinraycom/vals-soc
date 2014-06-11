@@ -11,13 +11,27 @@ function hasPermission($permission){
 	return user_access($permission);	
 }
 
-function page_access_check($access_data) {
+/*
+ * The access strings take the form: where/object/action, object/action or just action
+ */
+function page_access_check($access_string) {
 	//drupal_set_message("test:".$access_data);
 	global $user;
-	switch ($access_data) {
-		case 'dashboard/proposal/apply':
-			// TODO add logic to determine whether to show this or not
-			return TRUE;
+	switch ($access_string) {
+		case 'dashboard/proposals/browse':
+			return hasPermission('vals browse proposals');
+			break;
+		case 'dashboard/projects/apply':
+			return hasPermission('vals apply projects');
+			break;
+		case 'projects/apply':
+			// only students with 'vals apply projects' permission can apply for a project AND only during the student signup period
+			if(hasRole(array('student')) && hasPermission('vals apply projects') && Timeline::getInstance()->isStudentsSignupPeriod()){
+				return TRUE;
+			}
+			else{
+				return FALSE;
+			}
 			break;
 		case 'projects/browse':
 		case 'dashboard/projects/browse':
@@ -30,15 +44,7 @@ function page_access_check($access_data) {
 				return FALSE;
 			}
 			break;
-		case 'projects/apply':
-			// only students with 'vals apply projects' permission can apply for a project AND only during the student signup period
-			if(hasRole(array('student')) && hasPermission('vals apply projects') && Timeline::getInstance()->isStudentsSignupPeriod()){
-				return TRUE;
-			}
-			else{
-				return FALSE;
-			}
-			break;
+		
 		case 'organisations/browse':
 		case 'dashboard/organisations/browse':
 			// any role can access organisations/browse - but only after the organisations have been announced
@@ -51,6 +57,6 @@ function page_access_check($access_data) {
 			}
 			break;	
 		default:
-			return FALSE;
+			return hasPermission($access_string);
 	}
 }

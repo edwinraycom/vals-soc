@@ -143,18 +143,18 @@ function showSupervisorPage(){
 		echo renderTabs($nr, 'Group', 'group_page-', 'studentgroup', $data, $id, TRUE, 
 			renderOrganisation('studentgroup', $my_group, null, "group_page-1"));
 	
-	echo "<hr>";
-	echo '<h2>'.t('All the registered students of your groups').'</h2>';
-	echo renderTabs($nr2, 'Group', 'group2_page-', 'studentgroup', $data2, $id, TRUE, 
+		echo "<hr>";
+		echo '<h2>'.t('All the registered students of your groups').'</h2>';
+		echo renderTabs($nr2, 'Group', 'group2_page-', 'studentgroup', $data2, $id, TRUE, 
 			renderUsers('student', '', $my_group->studentgroup_id, 'studentgroup'));
-	?>
-
-
-	<script type="text/javascript">
-		activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>]);
-		activatetabs('tab_', [<?php echo implode(', ', $activating_tabs2);?>], null, true);
-	</script>
-<?php
+		?>
+	
+	
+		<script type="text/javascript">
+			activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>]);
+			activatetabs('tab_', [<?php echo implode(', ', $activating_tabs2);?>], null, true);
+		</script>
+	<?php
 	}
 }
 

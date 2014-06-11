@@ -1,7 +1,7 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
-module_load_include('php', 'vals_soc', 'includes/classes/AbstractEntity');
-module_load_include('php', 'vals_soc', 'includes/classes/Groups');
+// module_load_include('php', 'vals_soc', 'includes/classes/AbstractEntity');
+// module_load_include('php', 'vals_soc', 'includes/classes/Groups');
 module_load_include('php', 'vals_soc', 'includes/classes/Project');
 module_load_include('php', 'vals_soc', 'includes/functions/projects');
 module_load_include('php', 'vals_soc', 'includes/functions/ajax_functions');

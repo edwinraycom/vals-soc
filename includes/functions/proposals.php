@@ -52,20 +52,34 @@ function renderProposalTabs($count, $tab_label, $target_label, $type, $data, $id
 }
 
 function initBrowseProposalsLayout(){
+	
 	$orgId=0;
-	$apply_proposals = vals_soc_access_check('dashboard/proposal/apply') ? 1 : 0;
+	$apply_proposals = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
+	$browse_proposals = vals_soc_access_check('dashboard/proposals/browse') ? 1 : 0;
 	$proposal_tabs = array();
 	if(isset($_GET['organisation'])){
 		$orgId = $_GET['organisation'];
 	}
-	$student_id=0;
-	if(isset($_GET['student'])){
-		$student_id = $_GET['student'];
+	echo "Wat zijn de rechten van mij? apply $apply_proposals browse $browse_proposals";
+	if ($apply_proposals && !$browse_proposals){
+		//A student may only browse their own proposals
+		$student_id = $GLOBALS['user']->uid;
+		$student_id = 31;
+		$student = Users::getStudentDetails($student_id);
+		$inst_id = $student->inst_id;
+		$student_section_class = 'invisible';
+	} else {
+		$student_section_class = '';
+		$student_id=0;
+		if(isset($_GET['student'])){
+			$student_id = $_GET['student'];
+		}
+		$inst_id=0;
+		if(isset($_GET['institute'])){
+			$inst_id = $_GET['institute'];
+		}
 	}
-	$inst_id=0;
-	if(isset($_GET['institute'])){
-		$inst_id = $_GET['institute'];
-	}?>
+	?>
 	<div class="filtering" style="width: 800px;">
 	<span id="infotext" style="margin-left: 34px"></span>
     <form id="proposal_filter">
@@ -79,24 +93,25 @@ function initBrowseProposalsLayout(){
 				echo '<option ' .$selected.'value="'.$record->org_id.'">'.$record->name.'</option>';
 			}?>
         </select>
-        <?php //echo t('Institutes');?>
-        <select id="institute" name="institute">
-            <option selected="selected" value="0"><?php echo t('All Institutes');?></option><?php
-			$result = Groups::getGroups('institute', 'all');
-			foreach ($result as $record) {
-				$selected = ($record->inst_id == $inst_id ? 'selected ' : '');
-				echo '<option ' .$selected.'value="'.$record->inst_id.'">'.$record->name.'</option>';
-			}?>
-        </select>
-        <?php //echo t('Students');<br/>?>
-        <select id="student" name="student">
-            <option selected="selected" value="0"><?php echo t('All Students');?></option><?php
-			$result = Users::getUsers('student', ($inst_id ? 'institute': 'all'), $inst_id);
-			foreach ($result as $record) {
-				$selected = ($record->uid == $student_id ? 'selected ' : '');
-				echo '<option ' .$selected.'value="'.$record->uid.'">'.$record->name.':'.$record->mail.'</option>';
-			}?>
-        </select>
+        <span id='student_section' class='<?php echo $student_section_class;?>'>
+	        <select id="institute" name="institute">
+	            <option selected="selected" value="0"><?php echo t('All Institutes');?></option><?php
+				$result = Groups::getGroups('institute', 'all');
+				foreach ($result as $record) {
+					$selected = ($record->inst_id == $inst_id ? 'selected ' : '');
+					echo '<option ' .$selected.'value="'.$record->inst_id.'">'.$record->name.'</option>';
+				}?>
+	        </select>
+	        <?php //echo t('Students');<br/>?>
+	        <select id="student" name="student">
+	            <option selected="selected" value="0"><?php echo t('All Students');?></option><?php
+				$result = Users::getUsers('student', ($inst_id ? 'institute': 'all'), $inst_id);
+				foreach ($result as $record) {
+					$selected = ($record->uid == $student_id ? 'selected ' : '');
+					echo '<option ' .$selected.'value="'.$record->uid.'">'.$record->name.':'.$record->mail.'</option>';
+				}?>
+	        </select>
+        </span>
     </form>
 	</div>
 	<div id="TableContainer" style="width: 800px;"></div>
@@ -108,92 +123,39 @@ function initBrowseProposalsLayout(){
 			//to the path
 			var baseUrl = "/vals/sites/all/modules/vals_soc/";
 
+			/*
 			function getProposalForm(proposalId){
 				Drupal.CTools.Modal.dismiss();
 				alert("get the proposal form for proposal#"+proposalId);
 			}
+			*/
 
 			function getProposalDetail(proposal_id){
-				var tabs = [{tab: 'project', label: 'Project'}, {tab: 'student', label: 'Student'}];
+				var tabs = [{tab: 'project', label: 'Project'},
+							{tab: 'student', label: 'Student'},
+							{tab: 'cv', label: 'Cv'},
+							{tab: 'summary', label: 'Solution Summary'},
+							{tab: 'solution', label: 'Solution'},
+							{tab: 'state', label: 'State'}];
 				var url = baseUrl + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" + proposal_id;
 				$.get(url,function(data,status){
     				 generateAndPopulateModal(data, renderProposalTabs, tabs);
+    				 activatetabs('tab_', ['tab_project', 'tab_student', 'tab_cv', 'tab_summary', 'tab_solution', 
+    				      		'tab_state']);
   				});
-				activatetabs('tab_', ['project', 'student']);
+				
 			}
 			
 			function getProjectDetail(project_id){
 				var url = baseUrl + "actions/project_actions.php?action=project_detail&project_id=" + project_id;
 				$.get(url,function(data,status){
-    				 generateAndPopulateModal(data);
+    				 generateAndPopulateModal(data, renderProject, <?php echo $apply_proposals;?>);
   				});
 			}		
 
 			function getProposalFormForProject(projectId){
 				Drupal.CTools.Modal.dismiss();
 				ajaxCall("student", "proposal", {id: projectId, target:'content'}, "content");
-			}
-			
-			function generateAndPopulateModal3(data){
-				//TODO - work more on the formating
-				// and add other fields from DB
-				var result = jQuery.parseJSON(data);
-				/*
-				Gets:
-					Array
-					(
-					    [0] => Array
-					        (
-					            [proposal_id] => 2
-					            [owner_id] => 31
-					            [org_id] => 2
-					            [inst_id] => 3
-					            [supervisor_id] => 30
-					            [pid] => 10
-					            [name] => Edwin 2222
-					            [cv] => 
-					            [solution_short] => 
-					            [solution_long] => ja even wat hier
-					            [modules] => 
-					            [state] => draft
-					            [i_inst_id] => 3
-					            [i_owner_id] => 0
-					            [i_name] => Salamanca Universidad
-					            [contact_name] => JUan
-					            [contact_email] => juan@raycom.com
-					            [o_org_id] => 2
-					            [o_owner_id] => 26
-					            [o_name] => Acme Foundation and so on
-					            [o_contact_name] => F Smith
-					            [o_contact_email] => fsmith@acme.org
-					            [url] => http://www.acme.org
-					            [description] => blah blah blah and more bla
-					            [title] => GLSpace
-					        )
-
-					)
-					*/	
-				var content = "<h2>"+result.title+"</h2>";
-					
-					content +="<div class=\"centered\">";
-					//content +="<br/><br/><a href=\"#\" onclick=\"Drupal.CTools.Modal.dismiss()\">Close</a>";
-					content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-					content += result.pr_description;
-					content += '<hr>';
-					content += '<h2>Summary Solution</h2>';
-					content += result.solution_short;
-					content += '<h2>Solution</h2>';
-					content += result.solution_long;
-					content += '<h2>Curriculum Vitae</h2>';
-					content += result.cv;
-					//content +="<a href=\"#\" onclick=\"getProposalFormForProposal("+result.pid+")\">Submit proposal for this proposal</a>";
-					content +="</div>";
-			
-				//var content = ' hallo dit uitwerken'+result.contact_name ;
-				Drupal.CTools.Modal.show();
-				$("#modal-title").html("&nbsp;"); // doesnt render unless theres something there!
-				$("#modal-content").html(content);
-				Drupal.attachBehaviors();
 			}
 
 			function loadFilteredProposals(){
@@ -226,16 +188,16 @@ function initBrowseProposalsLayout(){
     					title: "Project",
 						sorting: true,
     					display: function (data) {
-							return "<a title=\"View project details\" href=\"#\" onclick=\"getProjectDetail("+data.record.pid+")\">"+
-									"<span class=\"ui-icon ui-icon-info\">view project</span></a>";
+							return "<a title=\"View project details\" href=\"javascript:void(0);\" onclick=\"getProjectDetail("+data.record.pid+");\">"+
+									"<span class=\"ui-icon ui-icon-info\"></span></a>";
     					},
     					create: false,
     					edit: false
 					},
 					owner_id: {
 						title: "Student",
-						width: "40%",
-						display: function (data){return data.record.name;}
+						width: "30%",
+						display: function (data){return data.record.student_name;}
 					},
 					inst_id: {
 						title: "Institute",
@@ -255,35 +217,16 @@ function initBrowseProposalsLayout(){
     					title: "Proposal details",
 						sorting: false,
     					display: function (data) {
-							return "<a title=\"Propose a proposal for this idea\" href=\"#\" "+
+							return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
 								"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
 									"<span class=\"ui-icon ui-icon-info\">See details</span></a>";
     					},
+        					
     					create: false,
     					edit: false
 					},
-					/*
-						solution_long : {
-						//width: "2%",
-    					title: "Detailed Description",
-						sorting: false,
-    					display: function (data) {
-							return "<a title=\"Propose a proposal for this idea\" href=\"#\" onclick=\"getProposalFormForProject("+data.record.pid+")\">"+
-									"<span class=\"ui-icon ui-icon-script\"></span></a>";
-    					},
-    					create: false,
-    					edit: false
-					}
-					*/
 					
 				},
-					
-				recordsLoaded: function(event, data) {
-					$(".jtable-data-row td:first-child").click(function() {
-						var row_id = $(this).parent().attr("data-record-key");
-						getProposalDetail(row_id);
-        			});
-    			}
 			});
 
 			//Load proposal list from server on initial page load
@@ -309,7 +252,7 @@ function initBrowseProposalsLayout(){
 				loadFilteredProposals()
 			});
 			
-			// define these at the window level so that they can still be called once loaded
+			// define these at the window level so that they can still be called once loaded in the modal
 			window.getProposalFormForProject = getProposalFormForProject;
 			window.getProjectDetail = getProjectDetail;
 			window.getProposalDetail = getProposalDetail;

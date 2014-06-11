@@ -17,7 +17,7 @@ function initBrowseProjectLayout($target='content'){
 	if(isset($_GET['organisation'])){
 		$orgId = $_GET['organisation'];
 	}
-	$apply_projects = vals_soc_access_check('dashboard/proposal/apply') ? 1 : 0;
+	$apply_projects = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 	?>
 	<div class="filtering" id="browse_projects">
 		<span id="infotext" style="margin-left: 34px"></span>
@@ -132,12 +132,14 @@ function initBrowseProjectLayout($target='content'){
 		
 		},
 		
-		recordsLoaded: function(event, data) {
+		/*
+recordsLoaded: function(event, data) {
 			$(".jtable-data-row td:first-child").click(function() {
 			var row_id = $(this).parent().attr("data-record-key");
 			getProjectDetail(row_id);
 			});
 		}
+		*/
 	});
 	
 	//Load project list from server on initial page load

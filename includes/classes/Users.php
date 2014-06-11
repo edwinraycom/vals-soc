@@ -15,7 +15,7 @@ class Users extends AbstractEntity{
 		if ($supervisor == 'all'){
 			$groups = db_select($table)->fields($table)->execute()->fetchAll(PDO::FETCH_ASSOC);
 		} else {
-			$groups = db_select($table)->fields($table)->condition('supervisor_id', $supervisor)->
+			$groups = db_select($table)->fields($table)->condition('owner_id', $supervisor)->
 			execute()->fetchAll(PDO::FETCH_ASSOC);
 		}
 
@@ -34,12 +34,17 @@ class Users extends AbstractEntity{
 	
 	public static function getStudentDetails($id){
 		return db_query(
-				"SELECT u.name as supervisor, u.mail as supervisor_mail, u.uid as supervisor_id ,g.*,i.* ".
+				"SELECT u.name as supervisor_name, u.mail as supervisor_mail, u.uid as supervisor_id ".
+				",u2.name as student_name, u2.mail as student_mail, u2.uid as student_id, ".
+				"g.*,i.name as institute_name, i.inst_id ".
 				"from soc_user_membership um ".
+				"left join users_roles as ur on $id=ur.uid ".
+				"left join role as r on r.rid=ur.rid ".
 				"left join soc_studentgroups as g on um.group_id = g.studentgroup_id ".
-				"left join users as u on u.uid = g.supervisor_id ".
+				"left join users as u on u.uid = g.owner_id ".
 				"left join soc_institutes as i on i.inst_id = g.inst_id ".
-				"WHERE um.uid = $id AND um.type = 'studentgroup'")->fetchObject();
+				"left join users as u2 on u2.uid = $id ".
+				"WHERE um.uid = $id AND um.type = 'studentgroup' AND r.name = 'student'")->fetchObject();
 	}
 	
 	public static function getStudents($group=''){
@@ -85,14 +90,16 @@ class Users extends AbstractEntity{
 
 		if ($group_id == 'all'){
 			$members = db_query(
-					'select u.* from users as u '.
+					'select u.*,n.name as fullname from users as u '.
 					'left join users_roles as ur on u.uid=ur.uid '.
 					'left join role as r on r.rid=ur.rid '.
+					'left join soc_names as n on u.uid=n.names_uid '.
 					'WHERE r.name=:role ', array(':role' => $member_type));
 		} else {
 			if ($id){
 				$members = db_query(
-						"SELECT u.* from users as u".
+						"SELECT u.*,n.name as fullname from users as u".
+						'left join soc_names as n on u.uid=n.names_uid '.
 						"WHERE u.uid = '$id'");
 
 			} else {
@@ -114,10 +121,11 @@ class Users extends AbstractEntity{
 				}
 				if ($group_ids){
 					$members = db_query(
-							"SELECT u.* from users as u left join users_roles as ur ".
-							" on u.uid = ur.uid left join role as r ".
-							" on ur.rid = r.rid left join soc_user_membership as um ".
-							" on u.uid = um.uid ".
+							"SELECT u.*,n.name as fullname from users as u ".
+							"left join users_roles as ur on u.uid = ur.uid ".
+							"left join role as r  on ur.rid = r.rid ".
+							"left join soc_user_membership as um  on u.uid = um.uid ".
+							'left join soc_names as n on u.uid=n.names_uid '.
 							"WHERE r.name = '$member_type' AND um.type = '$group_type' AND um.group_id IN (".
 							implode(',', $group_ids).")");
 				} else {

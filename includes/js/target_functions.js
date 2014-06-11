@@ -69,7 +69,6 @@ function handleResult(result, args){
 	}
 }
 
-//TODO: move this function to a general js file
 function generateAndPopulateModal(result, fun, arg){
 	// TODO : work more on the formatting
 	// and add other fields from DB
@@ -77,7 +76,6 @@ function generateAndPopulateModal(result, fun, arg){
 	if (data && data.result !== 'error'){
 		var content = '';
 		if (typeof fun == 'function'){
-			alert('hierlangs');
 			content = fun(data.result, arg);
 		} else {
 			content = data.result;
