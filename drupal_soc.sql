@@ -99,7 +99,6 @@ CREATE TABLE IF NOT EXISTS soc_proposals (
   inst_id mediumint(8) unsigned NOT NULL,
   supervisor_id mediumint(9) NOT NULL,
   pid mediumint(8) unsigned NOT NULL,
-  `name` varchar(128) DEFAULT NULL,
   cv varchar(1024) NOT NULL,
   solution_short varchar(512) NOT NULL,
   solution_long varchar(1024) NOT NULL,

@@ -2,7 +2,7 @@
 class Proposal {
 	
 	private static $instance; 	 	 	 	 	 	 	 	 	
-	public static $fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'name', 'cv', 'solution_short', 'solution_long', 'modules', 'state',);
+	public static $fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'cv', 'solution_short', 'solution_long', 'modules', 'state',);
 	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){
@@ -50,7 +50,7 @@ class Proposal {
     {
     	
     	$query = db_select('soc_proposals', 'p')->fields('p', array(
-    			'proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'name'));
+    			'proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid'));
     	if($student){
     		$query->condition('p.owner_id', $student);
     	}
