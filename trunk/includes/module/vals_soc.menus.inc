@@ -41,9 +41,9 @@ function vals_soc_menu_handler(){
 //			'file path' => _VALS_SOC_PATH . '/includes/module/',
 //	);
 
-	$items['dasboard/proposals/browse'] = array(
-			'title' => t('Proposals overview'),
-			'type' => MENU_CALLBACK,
+	$items['proposals/browse'] = array(
+			'title' => t('Proposals'),
+			'type' => MENU_NORMAL_ITEM, //MENU_CALLBACK,
 			'page callback' => 'vals_soc_browse_proposals',
 			'access arguments' => array('access content'),//array('vals apply projects'), // Voor alle gebruikers (incl guests: 'use text format filtered_html'
 			// uncomment the 2 lines below to restrict access to menu items based on role
@@ -53,6 +53,8 @@ function vals_soc_menu_handler(){
 			'file' => 'vals_soc.pages.inc',
 			'file path' => _VALS_SOC_PATH . '/includes/module/',
 	);
+
+	$items['dashboard/proposals/mine'] = getMyProposalBrowseLink('dashboard/projects/apply');
 
 	//##### PROGRAM SETTINGS PAGES #######################
 	$items['admin/config/vals_soc'] = array(
@@ -104,6 +106,19 @@ function getOrganisationBrowseLink($path){
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' =>  array($path),
 			'description' => 'Organisations page',
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module/',
+	);
+}
+
+function getMyProposalBrowseLink($path=''){
+	return  array(
+			'title' => 'My Proposals',
+			'type' => MENU_CALLBACK,
+			'page callback' => 'vals_soc_browse_proposals',
+			'access callback' => 'vals_soc_access_check',
+			'access arguments' =>  array($path),
+			'description' => 'My Proposal page',
 			'file' => 'vals_soc.pages.inc',
 			'file path' => _VALS_SOC_PATH . '/includes/module/',
 	);

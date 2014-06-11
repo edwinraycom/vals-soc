@@ -13,13 +13,13 @@ include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');//action:proposal,...
 
 switch ($_GET['action']){
 	case 'proposal':
-		if (!vals_soc_access_check('dashboard/proposal/apply')) {
+		if (!vals_soc_access_check('dashboard/projects/apply')) {
 			echo errorDiv(t('You cannot apply for projects'));
 			break;
 		}
 		$target = altSubValue( $_POST, 'target');
 		$project_id = altSubValue( $_POST, 'id');
-		$proposal_id = altSubValue( $_POST, 'proposalid');
+		$proposal_id = altSubValue( $_POST, 'proposalid', 0);
 		if (! Users::isOfType('student', $GLOBALS['user']->uid)){
 			echo "Since you are an admin, you can test a bit";
 			$owner_id = 31;
@@ -31,7 +31,8 @@ switch ($_GET['action']){
 		$student_details = Users::getStudentDetails($owner_id);
 		$proposal = $proposal_id ? Proposal::getInstance()->getProposalById($proposal_id): null;
 		echo '<h3>'.t('Student details').'</h3>';
-		echo "<div id='student_details'>Institute: ".$student_details->name."<br/>Supervisor: ".$student_details->supervisor."</div>";
+		echo "<div id='student_details'>Institute: ".$student_details->institute_name.
+		"<br/>Supervisor: ".$student_details->supervisor_name."</div>";
 		$f = drupal_get_form('vals_soc_proposal_form', $proposal, $target, $project_id);
 		print drupal_render($f);
 		break;

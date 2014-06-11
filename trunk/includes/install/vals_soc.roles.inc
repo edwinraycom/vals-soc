@@ -71,8 +71,9 @@ function create_permissions(){
 			$role_temp = new stdClass(); // create your Class
 			// Match values to the role Class.
 			$role_temp->name = $role; // Used to be $value['name'], but that is reserved for a readable string in the UI
-			//If we leave the wight out, user_role_save will take the max weight sofar
-			//$role_temp->weight = 2;//TODO: find out whether this value is important and what it should be
+			//If we leave the weight out, user_role_save will take the max weight sofar
+			//$role_temp->weight = 2;
+			//TODO: find out whether this value is important and what it should be
 			// Save the Role using Drupal's API.
 			if (user_role_save($role_temp)) {
 				$role_obj = user_role_load_by_name($role);
@@ -84,6 +85,18 @@ function create_permissions(){
 		// Grant permissions to this role
 		user_role_change_permissions($rid, $permissions);
 	}
+}
+
+/* This function can be called to add on the fly a new permission for a certain role. It should be called once only
+ * of course
+ */
+function addNewPermissions($role, $permissions){
+	if (!is_array($permissions)){
+		$permissions = array($permissions);
+	}
+	$role_obj = user_role_load_by_name($role);
+	$rid = $role_obj->rid;
+	user_role_change_permissions($rid, $permissions);
 }
 
 /**

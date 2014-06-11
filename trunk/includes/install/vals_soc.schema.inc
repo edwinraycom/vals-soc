@@ -252,16 +252,16 @@ ADD `supervisor` MEDIUMINT NOT NULL AFTER `student`
 							'length' => 'small',
 							'not null' => TRUE,
 					),
+                    'owner_id' => array(
+							'description' => 'The id of the teacher',
+							'type' => 'int',
+							'length' => 'medium',
+							'not null' => TRUE,
+					),
                     'inst_id' => array(
 							'description' => 'Institute id.',
 							'type' => 'int',
 							'length' => 'small',
-							'not null' => TRUE,
-					),
-                    'supervisor_id' => array(
-							'description' => 'The id of the teacher',
-							'type' => 'int',
-							'length' => 'medium',
 							'not null' => TRUE,
 					),
                     'name' => array(

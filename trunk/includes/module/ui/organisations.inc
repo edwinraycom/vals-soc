@@ -1,6 +1,6 @@
 <?php
-module_load_include('php', 'vals_soc', 'includes/classes/AbstractEntity');
-module_load_include('php', 'vals_soc', 'includes/classes/Groups');
+// module_load_include('php', 'vals_soc', 'includes/classes/AbstractEntity');
+// module_load_include('php', 'vals_soc', 'includes/classes/Groups');
 module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 drupal_add_library('system','ui.widget');
 drupal_add_library('system','ui.dialog');

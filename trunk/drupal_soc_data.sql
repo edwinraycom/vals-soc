@@ -241,14 +241,14 @@ INSERT INTO soc_proposals (proposal_id, owner_id, org_id, inst_id, supervisor_id
 -- Gegevens worden uitgevoerd voor tabel 'soc_studentgroups'
 --
 
-INSERT INTO soc_studentgroups (studentgroup_id, owner_id, inst_id, `name`, description, supervisor_id) VALUES
-(1, 0, 3, 'Een of andere groep met Ã©Ã©n woord erin met acute', 'NIets te zeggen', 30),
-(2, 0, 3, 'nog een groep maar nu zonder ', 'dusss', 30),
-(3, 0, 3, 'Mijn klasje', 'Wiskunde B voor autisten', 30),
-(4, 0, 3, 'Tabor', 'wis b bijles', 30),
-(5, 0, 5, 'test', 'meer van dat', 29),
-(21, 29, 5, 'meer van dat en zo', 'beschr', 29),
-(22, 29, 5, 'nog een groep', 'klajsdlkfj', 29);
+INSERT INTO soc_studentgroups (studentgroup_id, owner_id, inst_id, `name`, description) VALUES
+(1,30, 3, 'Een of andere groep met Ã©Ã©n woord erin met acute', 'NIets te zeggen'),
+(2, 30, 3, 'nog een groep maar nu zonder ', 'dusss'),
+(3, 30, 3, 'Mijn klasje', 'Wiskunde B voor autisten'),
+(4, 30, 3, 'Tabor', 'wis b bijles'),
+(5, 29, 5, 'test', 'meer van dat'),
+(21, 29, 5, 'meer van dat en zo', 'beschr'),
+(22, 29, 5, 'nog een groep', 'klajsdlkfj');
 
 -- --------------------------------------------------------
 

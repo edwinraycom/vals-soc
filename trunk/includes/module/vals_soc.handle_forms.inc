@@ -2,6 +2,11 @@
 function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state){
     $current_role = getRole();
     
+    if (isset($form_state['values']['fullname']) && (strlen($form_state['values']['fullname']) > 25)){
+    	form_set_error('fullname', tt('The name you entered is a bit too long, Please abbreviate to a max of %1d chars', 25));
+    	return;
+    }
+    
     //If no  errors are encountered, just return, otherwise call form_set_error
     if ($current_role == 'administrator'){
         return;
@@ -133,11 +138,31 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
             'group_id'=>$form_state['values']['organisation']
             ))->execute();
     }
+    
+	if (isset( $form_state['values']['fullname'])){
+    	$txn = db_transaction();
+		try {
+			$del_query = "DELETE FROM soc_names WHERE names_uid = $uid AND type= '$type'";
+			$ins_query = "INSERT INTO soc_names VALUES ($uid, '$type', '".$form_state['values']['fullname']."')";
+				
+	    	$updated1 = db_query($del_query);
+	    	$updated2 = db_query($ins_query);
+		}  catch (Exception $ex) {
+			$txn->rollback();
+			drupal_set_message(t('We could not update the profile.'). (_DEBUG?  $ex->getMessage().': '.
+					(isset($updated1)? $ins_query: $del_query): ''), 'error');
+		}//$updated2->getQueryString() only works if the syntax was correct, otherwise updated2 == NULL
+    }
 }
 
 function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 	$current_role = getRole();
+	
 	//If no  errors are encountered, just return, otherwise call form_set_error
+	if (isset($form_state['values']['fullname']) && (strlen($form_state['values']['fullname']) > 25)){
+		form_set_error('fullname', tt('The name you entered is a bit too long, Please abbreviate to a max of %1d chars', 25));
+		return;
+	}
 	if ($current_role == 'administrator'){
 		return;
 	}
@@ -145,8 +170,7 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 	$my_groups = Groups::getGroups($group_type);
 	if ($my_groups->rowCount()){
 		//The user is already in an institute or organisation. Do not expect an account key or do anything with the 
-		//organisation/institute
-		form_set_error('current_pass', "Eventjes hier om te zien of hij het goed doet");
+		//organisation/institute. So the form validates as the other Drupal tests already passed if we are here.
 		return;
 	}
 	if (! (isset($form_state['values']['account_key']) && $form_state['values']['account_key'])){
@@ -191,9 +215,9 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 	}
 	$found_codes = db_select('soc_codes')->fields('soc_codes')->condition($db_and2)->execute()->rowCount();
 	$possible_code_rec = db_select('soc_codes')->fields('soc_codes')->
-	condition('type', $current_role)->
-	condition('entity_id', $org)->
-	execute()->fetchAssoc();
+		condition('type', $current_role)->
+		condition('entity_id', $org)->
+		execute()->fetchAssoc();
 	//->fetchAllAssoc('type', PDO::FETCH_ASSOC); returns [student=>[type=>student, code=><student_code>,....]
 	if (!$found_codes){
 		form_set_error('account_key', tt('The key you typed is not correct. Ask your %1$s.', $super).
@@ -203,6 +227,7 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 	}
 
 }
+
 function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
     
     /* As we are no longer performing the code labeled here under with 'FROM HERE', it makes no sense to perform these
@@ -214,6 +239,7 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
     $current_role = getRole();    
     
     if ($current_role == 'administrator'){
+    	$is_admin = TRUE;
         $rid = getUserRoleId($form_state['values']['roles']);
         $role = db_select('role', 'r')->fields('r')->condition('rid', $rid)->execute()->fetchAssoc();
         if ($role){
@@ -222,16 +248,33 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
             throw new Exception(t('An internal program error occured.'));
         }
     } else {
+    	$is_admin = FALSE;
         $type = $current_role;
     }
 
-    //FROM HERE
-    
-//    We assume that the admins create their organisation/institute and all the others register with a 
-//     * certain organisation. There seems no reason to change that later
-      if ((($type == 'student') || ($type == 'supervisor') || ($type == 'organisation_admin')) && 
-    		(isset($form_state['values']['institute']) && $form_state['values']['institute'])){
-    	//$already_member = (0 < Groups::getGroups('institute', $uid, ));
+    if (isset( $form_state['values']['fullname'])){
+    	$txn = db_transaction();
+		try {
+			$del_query = "DELETE FROM soc_names WHERE names_uid = $uid AND type= '$type'";
+			$ins_query = "INSERT INTO soc_names VALUES ($uid, '$type', '".$form_state['values']['fullname']."')";
+				
+	    	$updated1 = db_query($del_query);
+	    	$updated2 = db_query($ins_query);
+		}  catch (Exception $ex) {
+			$txn->rollback();
+			drupal_set_message(t('We could not update the profile.'). (_DEBUG?  $ex->getMessage().': '.
+					(isset($updated1)? $ins_query: $del_query): ''), 'error');
+		}//$updated2->getQueryString() only works if the syntax was correct, otherwise updated2 == NULL
+    }
+	/*   
+	 *  We assume that the admins create their organisation/institute and all the others register with a 
+     * certain organisation. There seems no reason to change that later. If an organisation has two admins 
+	 * they can add themselves to an organisation/institute */
+     if ((isset($form_state['values']['institute']) && $form_state['values']['institute']) &&
+      		(($type == 'institute_admin') || ($is_admin && (($type == 'student') || ($type == 'supervisor'))))
+      		
+    		){
+      	db_query("DELETE FROM soc_user_membership WHERE uid = $uid AND type= 'institute'");
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => 'institute', 
@@ -239,8 +282,10 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
             ))->execute();
     }
     
+    //Mentors might want to change from organisation
     if ((($type == 'organisation_admin') || ($type == 'mentor')) && 
     		(isset($form_state['values']['organisation']) && $form_state['values']['organisation'])){
+    	db_query("DELETE FROM soc_user_membership WHERE uid = $uid AND type= 'organisation'");
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => 'organisation', 
@@ -369,9 +414,10 @@ function vals_soc_group_form_submit_handler(&$form, &$form_state)
         
         $studentgroup_id = db_insert('soc_studentgroups')->fields(array(
                 'inst_id' => $inst_id,
-                'name' => $form_state['values']['name'],
+                'owner_id' => $uid,
+        		'name' => $form_state['values']['name'],
                 'description' => $form_state['values']['description'],
-                'supervisor_id' => $uid,
+               
             ))->execute();
 
         $result = $studentgroup_id && db_insert('soc_user_membership')->fields(array(

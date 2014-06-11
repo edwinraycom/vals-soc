@@ -265,84 +265,86 @@ function vals_soc_admin_timeline_form($form, &$form_state){
 
 function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
     global $user;
-//     print_r(get_included_files());
-//     echo "JA HO HO";
+
     $role = getRole();
     //find out whether user is admin, if so: get role of the user he/she is editing
     if ($is_admin = ($role  === 'administrator')){
-    	//TODO test this!!
-//     	print_r($form);
-//     	print_r($form_state);
-//     	$user_id = $form['#user']->uid;
     	$roles = $form['#user']->roles;
-//     	echo "ff checken $user_id en ".print_r($roles, 1);
     	$role = getUserRoleName($roles);
-//     	die($role .' ff stoppen');
+    	$uid = $form['#user']->uid;
+    } else {
+    	$uid = $user->uid;
     }
+   
+    $name_rec = db_select('soc_names', 'name')->fields('name')->condition('names_uid', $uid)->
+    	condition('type', $role)->execute()->fetchAssoc();
+    $name = $name_rec ? $name_rec['name'] : $form['#user']->name;
+    $form['account']['fullname'] = array(
+    		"#type" => "textfield",
+    		"#title" => t('You can correct your name'),
+    		//"#options" => $options_institutes,
+    		"#description" => t("(If you leave this empty, we will use your account name instead)"),
+    		"#default_value" => $name,
+    );
     if (in_array($role, array('supervisor', 'institute_admin', 'student'))){
-        $member_inst_rec = db_select('soc_user_membership', 'mem')->fields('mem')->condition('uid', $user->uid)->
+        $member_inst_rec = db_select('soc_user_membership', 'mem')->fields('mem')->condition('uid', $uid)->
             condition('type', 'institute')->execute()->fetchAssoc();
         $member_inst = $member_inst_rec ? $member_inst_rec['group_id'] : 0;
-        if ($member_inst && !$is_admin){
-        	return;
-        }
-        //So we know the user is not in an institute yet
-        $institutes = db_select('soc_institutes', 'i')->fields('i', array('inst_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
-        $options_institutes = array(0 => t('Fill in later'));
-        foreach ($institutes as $ins){
-            $options_institutes[$ins['inst_id']] = $ins['name'];
-        }
        
-        $form['account']['institute'] = array(
-                "#type" => "select",
-                "#title" => t("Select the institute you are in"),
-                "#options" => $options_institutes,
-                "#description" => t("(For students and supervisors only)"),
-                "#default_value" => $member_inst,
-        );
-        if (!$is_admin){
-	        $form['account']['account_key'] = array(
-	        		"#type" => "textfield",
-	        		"#title" => t("Type the key you got from your colleague in the institute (or create one)"),
-	        		"#size" => 10,
-	        		"#description" => t("The code is for this institute only."),
+        if (! $member_inst  || $is_admin){
+	        //So we know the user is not in an institute yet
+	        $institutes = db_select('soc_institutes', 'i')->fields('i', array('inst_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
+	        $options_institutes = array(0 => t('Fill in later'));
+	        foreach ($institutes as $ins){
+	            $options_institutes[$ins['inst_id']] = $ins['name'];
+	        }
+	       
+	        $form['account']['institute'] = array(
+	                "#type" => "select",
+	                "#title" => t("Select the institute you are in"),
+	                "#options" => $options_institutes,
+	                "#description" => t("(For students and supervisors only)"),
+	                "#default_value" => $member_inst,
 	        );
+	        if (!$is_admin){
+		        $form['account']['account_key'] = array(
+		        		"#type" => "textfield",
+		        		"#title" => t("Type the key you got from your colleague in the institute (or create one)"),
+		        		"#size" => 10,
+		        		"#description" => t("The code is for this institute only."),
+		        );
+	        }
         }
     } elseif (in_array($role, array('organisation_admin', 'mentor'))) {
-        $member_org_rec = db_select('soc_user_membership', 'mem')->fields('mem')->condition('uid', $user->uid)->
+        $member_org_rec = db_select('soc_user_membership', 'mem')->fields('mem')->condition('uid', $uid)->
             condition('type', 'organisation')->execute()->fetchAssoc();
         $member_org = $member_org_rec ? $member_org_rec['group_id'] : 0;
-    	if ($member_org && !$is_admin){
-        	return;
-        }
-        
-        $organisations = db_select('soc_organisations', 'o')->fields('o', array('org_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
-        $options_organisation = array(0 => t('Fill in later'));
-        foreach ($organisations as $org){
-            $options_organisation[$org['org_id']] = $org['name'];
-        }
-
-        $form['account']['organisation'] = array(
-                "#type" => "select",
-                "#title" => t("Select the organisation you are in"),
-                "#options" => $options_organisation,
-                "#description" => t("(For organisation admins and mentors only)"),
-                "#default_value" => $member_org,
-        );
-        if (!$is_admin){
-	        $form['account']['account_key'] = array(
-	        		"#type" => "textfield",
-	        		"#title" => t("Type the key you got from your colleague in the organisation (or create one)"),
-	        		"#size" => 10,
-	        		"#description" => t("The code is for this organisation only."),
+    	if (! $member_org  || $is_admin){
+	        //So we know the user is not in an organisation yet
+	        $organisations = db_select('soc_organisations', 'o')->fields('o', array('org_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
+	        $options_organisation = array(0 => t('Fill in later'));
+	        foreach ($organisations as $org){
+	            $options_organisation[$org['org_id']] = $org['name'];
+	        }
+	
+	        $form['account']['organisation'] = array(
+	                "#type" => "select",
+	                "#title" => t("Select the organisation you are in"),
+	                "#options" => $options_organisation,
+	                "#description" => t("(For organisation admins and mentors only)"),
+	                "#default_value" => $member_org,
 	        );
-        }
+	        if (!$is_admin){
+		        $form['account']['account_key'] = array(
+		        		"#type" => "textfield",
+		        		"#title" => t("Type the key you got from your colleague in the organisation (or create one)"),
+		        		"#size" => 10,
+		        		"#description" => t("The code is for this organisation only."),
+		        );
+	        }
+    	}
     }
-    //TODO this does not seem to work. we do not want users to choose images and the time zone do we?
-   
-//     variable_set('configurable_timezones', 0);
-//     variable_set('configurable_timezones', 0);
-     unset($form['timezone'], $form['image'], $form['picture']);
+
     $form['#submit'][] = 'vals_soc_form_user_profile_form_submit_handler';
     $form['#validate'][] = 'vals_soc_form_user_profile_form_validate_handler';
 	return $form;
@@ -355,6 +357,13 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
  * @return multitype:string number NULL
  */
 function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
+	$form['account']['fullname'] = array(
+			"#type" => "textfield",
+			"#title" => t("What is your full name?"),
+			//"#options" => $options_institutes,
+			"#description" => t("(If you leave this empty, we will use your account name instead)"),
+			//"#default_value" => '',
+	);
     $institutes = db_select('soc_institutes', 'i')->fields('i', array('inst_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
     $options_institutes = array(0 => t('Fill in later'));
     foreach ($institutes as $ins){

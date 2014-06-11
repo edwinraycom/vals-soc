@@ -198,7 +198,6 @@ class Groups extends AbstractEntity{
 			$gid = db_insert('soc_studentgroups')->fields(array(
 					'name'=>$group['name'],
 					'owner_id' =>  $uid,
-					'supervisor_id' => $uid,
 					'inst_id' => $inst_id,
 					'description' => ($group['description'] ?: ''),
 			))->execute();

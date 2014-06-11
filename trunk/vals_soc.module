@@ -28,14 +28,6 @@ function vals_soc_preprocess_page(&$vars) {
     $vars['title'] = 'organisations';
   }
 }
-*/
-/**
- * Implements Drupal hook_block_info().
- */
-function vals_soc_block_info() {
-	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.block');
-	return vals_soc_block_info_handler();
-}
 
 /**
  * Function which will check ROLES, PERMISSIONS and the TIMELINE to ascertain
@@ -87,7 +79,21 @@ function vals_soc_permission() {
 		'restrict access' => FALSE,
 		//'warning' => t(''),
 	);
+	$perms['vals browse proposals'] = array(
+		'title' => t('Browsing the proposals (read only).'),
+		'description' => t('Non student users should be able to browse the proposals'),
+		'restrict access' => FALSE,
+		//'warning' => t(''),
+	);
 	return $perms;
+}
+
+/**
+ * Implements Drupal hook_block_info().
+ */
+function vals_soc_block_info() {
+	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.block');
+	return vals_soc_block_info_handler();
 }
 
 /**
@@ -144,11 +150,14 @@ function vals_soc_form_user_register_form_alter(&$form, &$form_state) {
 
 function vals_soc_form_user_profile_form_alter(&$form, &$form_state) {
 	//module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.forms');
-	return vals_soc_form_user_profile_form_alter_handler($form, $form_state);
+	$x = vals_soc_form_user_profile_form_alter_handler($form, $form_state);
+	return $x;
 }
+
 //***********************************************************************************
 // HELP
 //***********************************************************************************
+
 /**
  * Implements Drupal hook_help().
  *
@@ -167,10 +176,19 @@ function vals_soc_help($path, $arg) {
 	}
 }
 
+//***********************************************************************************
+// General for every page
+//***********************************************************************************
+
 function vals_soc_js_alter(&$javascript) {
   // Swap out jQuery to use an updated version of the library.
   //$javascript['misc/jquery.js']['data'] = drupal_get_path('module', 'jquery_update') . '/jquery.js';
 }
+
+function vals_soc_css_alter(&$css) {
+	$css = drupal_add_css(_VALS_SOC_PATH . '/includes/vals_soc.css');
+}
+
 //***********************************************************************************
 // MAIL
 //***********************************************************************************

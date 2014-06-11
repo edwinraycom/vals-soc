@@ -60,9 +60,11 @@ class Proposal {
     	if($organisation){
     		$query->condition('p.org_id', $organisation);
     	}
+    	$query->leftjoin('soc_names', 'student', 'p.owner_id = %alias.names_uid');
     	$query->leftjoin('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
     	$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
     	$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid');
+    	$query->fields('student', array('name'));
     	$query->fields('i', array('name'));
     	$query->fields('o', array('name'));
     	$query->fields('pr', array('title'));
@@ -99,7 +101,7 @@ class Proposal {
     		$props['org_id'] = $project['org_id'];
     		$props['inst_id'] = $student_details->inst_id ;
     		$props['supervisor_id'] = $student_details->supervisor_id ;  		
-    		$props['pid'] =$project['pid'];
+    		$props['pid'] = $project['pid'];
     		$props['state'] = 'draft' ;
     		$id = db_insert(tableName('proposal'))->fields($props)->execute();
     		if ($id){
