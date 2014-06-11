@@ -17,6 +17,12 @@
 */
 use drupal;
 
+CREATE TABLE IF NOT EXISTS `soc_names` (
+  `names_uid` int(11) NOT NULL,
+  `type` varchar(32) NOT NULL,
+  `name` varchar(25) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 --
 -- Tabelstructuur voor tabel 'soc_codes'
 --

@@ -38,6 +38,11 @@ TRUNCATE TABLE `users`;
 TRUNCATE TABLE `users_roles`;
 TRUNCATE TABLE `role`;
 TRUNCATE TABLE `role_permission`;
+
+INSERT INTO `soc_names` (`names_uid`, `type`, `name`) VALUES
+(28, 'supervisor', 'Julian Sas'),
+(31, 'student', 'Jantje Smit dus'),
+(38, 'student', 'Edwin Student');
 --
 -- Gegevens worden uitgevoerd voor tabel 'role'
 --
