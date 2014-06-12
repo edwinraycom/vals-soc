@@ -1,4 +1,24 @@
 <?php
+//define('PROGRAM_ACTIVE', 1);
+//
+define('PROGRAM_NOT_YET_STARTED',0);
+define('PRE_ORG_SIGNUP_PERIOD',10);
+define('ORG_SIGNUP_PERIOD',20);
+define('PRE_ORGS_ANNOUNCED_PERIOD',30);
+define('POST_ORGS_ANNOUNCED_PERIOD',40);
+define('STUDENT_SIGNUP_PERIOD',50);
+define('PRE_ORGS_REVIEW_APPLICATIONS_DEADLINE',60);
+define('PRE_PROPOSAL_MATCHED_DEADLINE',70);
+define('PRE_STUDENTS_ANNOUNCED_DEADLINE',80);
+define('PRE_BONDING_PERIOD',90);
+define('PRE_CODING_PERIOD',100);
+define('PRE_SUGGESTED_CODING_END_DATE',110);
+define('PRE_CODING_DEADLINE',120);
+define('OUT_OF_SEASON',130);
+define('PROGRAM_INACTIVE',140);
+//
+
+
 
 class StatelessTimeline {
 
@@ -159,9 +179,16 @@ class StatelessTimeline {
 		}
 		return false;
 	}
+	
+	public function isPreOrganisationSignupPeriod(){
+		if($this->cached_org_signup_start_date > $this->getNow()){
+			return true;
+		}
+		return false;
+	}
 
 	public function isAfterOrganisationSignupPeriod(){
-		if($this->cached_org_signup_end_date > $this->getNow()){
+		if($this->cached_org_signup_end_date < $this->getNow()){
 			return true;
 		}
 		return false;
@@ -204,6 +231,10 @@ class StatelessTimeline {
 			return true;
 		}
 		return false;
+	}
+	
+	public function getCommunityBondingPeriodStart(){
+		return $this->cached_accepted_students_announced_deadline_date;
 	}
 
 	public function isAfterOrgsAnnouncedDate(){
@@ -255,5 +286,79 @@ class StatelessTimeline {
 		$this->fetchDates();
 	}
 
+	public function getCurrentPeriod(){
+		$now = $this->getNow();
+		if(Timeline::getInstance()->getProgramActive()){
+			// has it started?
+			if(!Timeline::getInstance()->hasProgramStarted()){
+				return PROGRAM_NOT_YET_STARTED;
+			}
+			// its started so where are we?
+			else if(Timeline::getInstance()->getOrgsSignupStartDate() > $now){
+				// programme is running but orgs cant register yet
+				return PRE_ORG_SIGNUP_PERIOD;
+			}
+			else if(Timeline::getInstance()->isOrganisationSignupPeriod()){
+				// programme is running orgs can now register
+				return ORG_SIGNUP_PERIOD;
+			}
+			else if(Timeline::getInstance()->getStudentsSignupStartDate() > $now){
+				// before student applications start
+				// check to see if the org announced date is pending..
+				$orgs_announced_date = Timeline::getInstance()->getOrgsAnnouncedDate();
+				// accepted orgs not yet announced
+				if($orgs_announced_date > $now){
+					return PRE_ORGS_ANNOUNCED_PERIOD;
+				}
+				// accepted orgs already announced
+				else{
+					return POST_ORGS_ANNOUNCED_PERIOD;
+				}
+			}
+			else if(Timeline::getInstance()->isStudentsSignupPeriod()){
+				// student registration period
+				return STUDENT_SIGNUP_PERIOD;
+			}
+			else if(Timeline::getInstance()->isPreCommunityBondingPeriod()){
+				//before community bonding period starts and after student signup period
+				$orgs_review_student_apps_date = Timeline::getInstance()->getOrgsReviewApplicationsDate();
+				$students_matched_deadline = Timeline::getInstance()->getStudentsMatchedToMentorsDate();
+				$accepted_students_announced_date = Timeline::getInstance()->getAcceptedStudentsAnnouncedDate();
+					
+				if($orgs_review_student_apps_date > $now){
+					return PRE_ORGS_REVIEW_APPLICATIONS_DEADLINE;
+				}
+				else if($students_matched_deadline > $now){
+					return PRE_PROPOSAL_MATCHED_DEADLINE;
+				}
+				else if($accepted_students_announced_date > $now){
+					return PRE_STUDENTS_ANNOUNCED_DEADLINE;
+				}
+				else{
+					return PRE_BONDING_PERIOD;
+				}
+			}
+			else if(Timeline::getInstance()->isCommunityBondingPeriod()){
+				return PRE_CODING_PERIOD;
+			}
+			else if(Timeline::getInstance()->isCodingPeriod()){
+				$suggested_coding_end_date = Timeline::getInstance()->getSuggestedCodingDeadline();
+				$coding_end_date = Timeline::getInstance()->getCodingEndDate();
+				if($suggested_coding_end_date > $now){
+					return PRE_SUGGESTED_CODING_END_DATE;
+				}
+				else{
+					return PRE_CODING_DEADLINE;
+				}
+			}
+			else{
+				return OUT_OF_SEASON;
+			}
+		}
+		else{
+			return PROGRAM_INACTIVE;
+		}
+	}
+	
 	function __destruct(){}
 }
