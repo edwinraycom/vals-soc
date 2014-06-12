@@ -8,7 +8,7 @@ drupal_add_js(_VALS_SOC_PATH .'/includes/js/countdown/jquery.countdown.js');
 
 /**
  * Function which will setup the timeline graphic showing the timeline as
- * a chart over the year. Additionally if a particulr date is less than
+ * a chart over the year. Additionally if a particular date is less than
  * 24 hours away, it will also show a clock counting down to that time. 
  * @param unknown $timeline_args
  * @return string
@@ -174,6 +174,124 @@ function isDateLessThanADayAway($dateToCheck){
 	return false;
 }
 
+function generateTimelineOutput(){
+	$show_countdown = TRUE;
+	$timeline_args = array();
+	$now = Timeline::getInstance()->getNow();
+	$timeline_args['now'] = $now;
+	$period = Timeline::getInstance()->getCurrentPeriod();
+	switch ($period) {
+		case PROGRAM_NOT_YET_STARTED:
+			$timeline_args['deadline_one'] = t('Program starts:');
+			$timeline_args['deadline_two'] = Timeline::getInstance()->getProgramStartDate()->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = Timeline::getInstance()->getProgramStartDate();
+			break;
+		case PRE_ORG_SIGNUP_PERIOD:
+			// programme is running but orgs cant register yet
+			$timeline_args['deadline_one'] = t('Org Application opens:');
+			$timeline_args['deadline_two'] = Timeline::getInstance()->getOrgsSignupStartDate()->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = Timeline::getInstance()->getOrgsSignupStartDate();
+			break;
+		case ORG_SIGNUP_PERIOD:
+			// programme is running orgs can now register
+			$timeline_args['deadline_one'] = t('Org Application closes:');
+			$timeline_args['deadline_two'] = Timeline::getInstance()->getOrgsSignupEndDate()->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = Timeline::getInstance()->getOrgsSignupEndDate();
+			break;
+		case PRE_ORGS_ANNOUNCED_PERIOD:
+			$orgs_announced_date = Timeline::getInstance()->getOrgsAnnouncedDate();
+			$timeline_args['deadline_one'] = t('Accepted Orgs announced on::');
+			$timeline_args['deadline_two'] = $orgs_announced_date->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = $orgs_announced_date;
+			break;
+		case POST_ORGS_ANNOUNCED_PERIOD:
+			$timeline_args['deadline_one'] = t('Student Application opens:');
+			$timeline_args['deadline_two'] = Timeline::getInstance()->getStudentsSignupStartDate()->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = Timeline::getInstance()->getStudentsSignupStartDate();
+			break;
+		case STUDENT_SIGNUP_PERIOD:
+			// student registration period
+			$timeline_args['deadline_one'] = t('Student Application closes:');
+			$timeline_args['deadline_two'] = Timeline::getInstance()->getStudentsSignupEndDate()->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = Timeline::getInstance()->getStudentsSignupEndDate();
+			break;
+		case PRE_ORGS_REVIEW_APPLICATIONS_DEADLINE:
+			$orgs_review_student_apps_date = Timeline::getInstance()->getOrgsReviewApplicationsDate();
+			$timeline_args['deadline_one'] = t('Orgs review applications deadline:');
+			$timeline_args['deadline_two'] = $orgs_review_student_apps_date->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = $orgs_review_student_apps_date;
+			break;
+		case PRE_PROPOSAL_MATCHED_DEADLINE:
+			$students_matched_deadline = Timeline::getInstance()->getStudentsMatchedToMentorsDate();
+			$timeline_args['deadline_one'] = t('Proposal matched deadline:');
+			$timeline_args['deadline_two'] = $students_matched_deadline->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = $students_matched_deadline;
+			break;
+		case PRE_STUDENTS_ANNOUNCED_DEADLINE:
+			$accepted_students_announced_date = Timeline::getInstance()->getAcceptedStudentsAnnouncedDate();
+			$timeline_args['deadline_one'] = t('Accepted students announced:');
+			$timeline_args['deadline_two'] = $accepted_students_announced_date->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = $accepted_students_announced_date;
+			break;
+		case PRE_BONDING_PERIOD:
+			$accepted_students_announced_date = Timeline::getInstance()->getAcceptedStudentsAnnouncedDate();
+			$timeline_args['deadline_one'] = t('Bonding period starts:');
+			$timeline_args['deadline_two'] = $accepted_students_announced_date->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = $accepted_students_announced_date;
+			break;
+		case PRE_CODING_PERIOD:
+			$coding_period = Timeline::getInstance()->getCodingStartDate();
+			$timeline_args['deadline_one'] = t('Coding period starts:');
+			$timeline_args['deadline_two'] = $coding_period->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = $coding_period;
+			break;
+		case PRE_SUGGESTED_CODING_END_DATE:
+			$suggested_coding_end_date = Timeline::getInstance()->getSuggestedCodingDeadline();
+			$timeline_args['deadline_one'] = t('Suggested coding end:');
+			$timeline_args['deadline_two'] = $suggested_coding_end_date->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = $suggested_coding_end_date;
+			break;
+		case PRE_CODING_DEADLINE:
+			$coding_end_date = Timeline::getInstance()->getCodingEndDate();
+			$timeline_args['deadline_one'] = t('Coding deadline:');
+			$timeline_args['deadline_two'] = $coding_end_date->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = $coding_end_date;
+			break;
+		case OUT_OF_SEASON:
+			$timeline_args['deadline_one'] = t('Out of season');
+			$timeline_args['deadline_two'] = $now->format('F j, Y, g:i a') . ' '.date('T');
+			$timeline_args['countdown'] = $now;
+			break;
+		case PROGRAM_INACTIVE:
+		default:
+			$timeline_args['deadline_one'] = t('There are currently no active programmes');
+			$timeline_args['deadline_two'] = '';
+			$show_countdown = FALSE;
+			break;
+	}
+	
+	$program_dates = array(
+		array(Timeline::getInstance()->getProgramStartDate()->format('Y-m-dTH:i:s'), 
+			Timeline::getInstance()->getCodingEndDate()->format('Y-m-dTH:i:s'), t("Off season")),
+		array(Timeline::getInstance()->getOrgsSignupEndDate()->format('Y-m-dTH:i:s'),
+			Timeline::getInstance()->getOrgsSignupStartDate()->format('Y-m-dTH:i:s'), t("Organisation applications")),
+		array(Timeline::getInstance()->getStudentsSignupEndDate()->format('Y-m-dTH:i:s'),
+			Timeline::getInstance()->getStudentsSignupStartDate()->format('Y-m-dTH:i:s'), t("Student applications")),
+		array(Timeline::getInstance()->getCodingStartDate()->format('Y-m-dTH:i:s'),
+			Timeline::getInstance()->getAcceptedStudentsAnnouncedDate()->format('Y-m-dTH:i:s'), t("Community bonding")),
+		array(Timeline::getInstance()->getCodingEndDate()->format('Y-m-dTH:i:s'),
+			Timeline::getInstance()->getCodingStartDate()->format('Y-m-dTH:i:s'), t("Students coding"))
+		);
+	
+	$timeline_args['program_dates'] = $program_dates;
+	echo getLayout($timeline_args, $show_countdown);
+}
+
+
+
+
+
+
 
 /**
  * Logic to figure out where we are in the current timeline and populate an array of values
@@ -181,6 +299,7 @@ function isDateLessThanADayAway($dateToCheck){
  * 
  * Returns the generated html to render
  */
+/*
 function generateTimelineOutput(){
 	$timeline_args = array();
 	$now = Timeline::getInstance()->getNow();
@@ -304,6 +423,7 @@ function generateTimelineOutput(){
 		echo getLayout($timeline_args, false);
 	}
 }
+*/
 
 //Build!
 generateTimelineOutput();
