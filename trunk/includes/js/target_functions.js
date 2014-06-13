@@ -44,24 +44,26 @@ function refreshSingleTab(json_data, args){
 
 function handleResult(result, args){
 	var target = args[0];
-	var before = (args.length > 1 ? args[1]: '');
+	var before = (args.length > 1 ? args[1] : '');
 	var replace_target = (args.length > 2 ? args[2]: false);
 	if (result){
-		if (result.result == "html") {
-			ajaxInsert(result.html, target);
-		} else if (result.result == "error") {
+		if (result.result == "error") {
 			ajaxAppend(result.error, target, 'error', before);
 		} else {
-			if (typeof result.msg != 'undefined') {
-				if (replace_target) {
-					Obj(target).html('');
-					before = '';
-				}
-				ajaxAppend(result.msg, target, 'status', before);
+			if (is_string(result.result)) {
+				ajaxInsert(result.result, target);
 			} else {
-				alertdev('The action '
-						+ action
-						+ ' succeeded.');
+				if (typeof result.msg != 'undefined') {
+					if (replace_target) {
+						alertdev('maakt target leeg');
+						Obj(target).html('');
+						before = '';
+					}
+					alertdev('append met '+ target + ' en '+ result.msg );
+					ajaxAppend(result.msg, target, 'status', before);
+				} else {
+					alertdev('The action succeeded.');
+				}
 			}
 		}
 	} else {
@@ -84,6 +86,7 @@ function generateAndPopulateModal(result, fun, arg){
 		Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
 		Obj("modal-content").html(content);
 		Drupal.attachBehaviors();
+		return true;
 	} else {
 		console.log('Some program error occured. We could not render the result');
 		if (data){
@@ -92,6 +95,7 @@ function generateAndPopulateModal(result, fun, arg){
 			Obj("modal-content").html("<div class='messages error'>"+data.error+ "</div>");
 			Drupal.attachBehaviors();
 		}
+		return false;
 		
 	}
 }

@@ -25,16 +25,28 @@ function renderProject(project, apply_projects){
 }
 
 function renderStudent(data){
-	return data.name + 'is the name of the student. Fill this in later';
+	var s = '<ol>';
+	s += '<li>name: '+(data.student_name ? data.student_name: data.name)+ '</li>';
+	s += '<li>email: '+data.mail+ '</li>';
+	s += '<li>Institute: '+data.i_name+ '</li>';
+	s += '<li>Supervisor: '+(data.supervisor_name ? data.supervisor_name: data.supervisor_user_name)+ '</li>';
+	s += '<li>Supervisor email: '+data.supervisor_user_mail+ '</li>';	
+	s += '</ol>';
+	return s;
 }
 
 function renderProposalTabs(result, labels){
 		var s = '<ol id="toc">';
 		var count = labels.length;
 		var target = '';
+		var onclick = '';
 		for (var t=0; t < count;t++){
 			target = labels[t].tab;
-			s += '<li><a href="#tab_tab_'+ target +'" title="" ><span>'+labels[t].label+'</span></a></li>'; 
+			if (target == 'edit'){
+				onclick = "onclick=\"ajaxCall('proposal', 'proposal_edit', {proposal_id:"+
+					result.proposal_id+ ", target:'tab_edit'}, 'handleResult', 'json', ['tab_edit']);\"";
+			}
+			s += '<li><a id="tab_tab_'+ target +'" href="#tab_tab_'+ target +'" title="" '+onclick+'><span>'+labels[t].label+'</span></a></li>'; 
 
 		}
 		s += '</ol>';
@@ -56,11 +68,12 @@ function renderProposalTabs(result, labels){
 					break;
 				case 'state': s += '?';
 					break;
+				case 'edit': s += '';
+				break;
 			}
 			s += "</div>"; 
 
 		}
 		s += "</div>"; 
 		return s;
-		
 	}

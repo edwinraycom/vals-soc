@@ -380,7 +380,6 @@ function vals_soc_institute_form_submit_handler(&$form, &$form_state)
     
 }
 
-
 function vals_soc_group_form_validate_handler(&$form, &$form_state)
 {
  global $user, $language, $base_url;

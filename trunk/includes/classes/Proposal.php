@@ -1,5 +1,5 @@
 <?php
-class Proposal {
+class Proposal extends AbstractEntity{
 	
 	private static $instance; 	 	 	 	 	 	 	 	 	
 	public static $fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'cv', 'solution_short', 'solution_long', 'modules', 'state',);
@@ -19,14 +19,22 @@ class Proposal {
     public function getProposalById($id, $details= false){
     	$query = db_select('soc_proposals', 'p')->fields('p', self::$fields)->condition('p.proposal_id', $id);
     	if ($details){
+    		$query->leftjoin('users', 'u1', 'p.owner_id = %alias.uid');
+    		$query->leftjoin('users', 'supervisor_user', 'p.supervisor_id = %alias.uid');
+    		$query->leftjoin('soc_names', 'student', 'p.owner_id = %alias.names_uid');
+    		$query->leftjoin('soc_names', 'supervisor', 'p.supervisor_id = %alias.names_uid');
     		$query->leftjoin('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
     		$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
     		$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid');
+    		$query->fields('u1', array('mail', 'name'));
+    		$query->fields('supervisor_user', array('mail', 'name'));
+    		$query->fields('student', array('name'));
+    		$query->fields('supervisor', array('name'));
     		$query->fields('i', Institutes::$fields);
     		$query->fields('o', Organisations::$fields);
     		$query->fields('pr', array('title', 'description'));
     	}
-    	$proposal = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
+    	$proposal = $query->execute()->fetch(PDO::FETCH_OBJ);
     	return $proposal;
     }
     
@@ -117,6 +125,49 @@ class Proposal {
     	} catch (Exception $ex) {
     		$txn->rollback();
     		drupal_set_message(t('We could not add your proposal.'). (_DEBUG? $ex->__toString(): ''), 'error');
+    	}
+    	return FALSE;
+    }
+    
+    static function updateProposal($props, $proposal_id){
+    	if (! $props){
+    		drupal_set_message(t('Update requested with empty (filtered) data set'), 'error');
+    		return false;
+    	}
+    
+    	global $user;
+    
+    	$txn = db_transaction();
+    	try {
+    		$uid = Users::getMyId();
+    		if (!Users::isOfType('student', $uid)){
+    			drupal_set_message(t('You must be a student to submit a proposal'), 'error');
+    			return FALSE;
+    		}
+    		//$project = Project::getInstance()->getProjectById($project_id);
+    
+    		$student_details = Users::getStudentDetails($uid);
+//     		$props['owner_id'] = $uid;
+//     		$props['org_id'] = $project['org_id'];
+//     		$props['inst_id'] = $student_details->inst_id ;
+//     		$props['supervisor_id'] = $student_details->supervisor_id ;
+    		//$props['pid'] = $project['pid'];
+    		//$props['state'] = 'draft' ;
+    		$id = db_update(tableName('proposal'))->fields($props)
+    			->condition(self::keyField('proposal'), $proposal_id)->execute();
+//     		if ($id){
+//     			//TODO: notify mentor???
+//     			drupal_set_message('You have saved your proposal. Later you can edit it.');
+//     			return TRUE;
+//     		} else {
+//     			drupal_set_message(tt('We could not add your %1$s.', $type), 'error');
+//     		}
+    
+    		return TRUE;
+    
+    	} catch (Exception $ex) {
+    		$txn->rollback();
+    		drupal_set_message(t('We could not update your proposal.'). (_DEBUG? $ex->__toString(): ''), 'error');
     	}
     	return FALSE;
     }

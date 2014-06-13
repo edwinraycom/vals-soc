@@ -13,9 +13,9 @@ function renderProject($project){
 }
 
 function initBrowseProjectLayout($target='content'){
-	$orgId=0;
+	$org_id=0;
 	if(isset($_GET['organisation'])){
-		$orgId = $_GET['organisation'];
+		$org_id = $_GET['organisation'];
 	}
 	$apply_projects = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 	?>
@@ -25,10 +25,10 @@ function initBrowseProjectLayout($target='content'){
 		<?php echo t('Tags');?>: <input type="text" name="tags" id="tags" />
 		<?php echo t('Organisations');?>:
 			<select id="organisation" name="organisation">
-			<option selected="selected" value="0"><?php echo t('All Organisations');?></option><?php
+			<option <?php echo  (! $org_id) ? 'selected="selected"': ''; ?> value="0"><?php echo t('All Organisations');?></option><?php
 			$result = Organisations::getInstance()->getOrganisationsLite();
 			foreach ($result as $record) {
-				$selected = ($record->org_id == $orgId ? 'selected ' : '');
+				$selected = ($record->org_id == $org_id ? 'selected="selected" ' : '');
 				echo '<option ' .$selected.'value="'.$record->org_id.'">'.$record->name.'</option>';
 			}?>
 			</select>

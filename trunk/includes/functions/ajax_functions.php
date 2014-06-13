@@ -43,6 +43,26 @@ function jsonGoodResult($result=TRUE, $msg='', $type='status', $show_always=FALS
 	jsonResult($result, $msg, $type, $show_always);
 }
 
+function jsonBadResultJT($msg=''){
+	$result = array(
+		'Result' => 'ERROR',
+		//'Records' => $records,
+		//'TotalRecordCount' => (($cnt < 0)? count($records): $cnt),
+		'Message' => $msg		
+	);
+	echo json_encode($result);
+}
+
+function jsonGoodResultJT($records, $cnt=-1, $msg=''){
+	$result = array(
+		'Result' => 'OK',
+		'Records' => $records,
+		'TotalRecordCount' => (($cnt < 0)? count($records): $cnt),
+		'Message' => $msg		
+	);
+	echo json_encode($result);
+}
+
 function isValidOrganisationType($type){
 	return in_array($type, array('organisation', 'institute', 'studentgroup'));
 }

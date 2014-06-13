@@ -32,6 +32,12 @@ class Users extends AbstractEntity{
 		}
 	}
 	
+	public static function getMyId(){
+		global $user;
+		
+		return $user->uid;
+	}
+	
 	public static function getStudentDetails($id){
 		return db_query(
 				"SELECT u.name as supervisor_name, u.mail as supervisor_mail, u.uid as supervisor_id ".
