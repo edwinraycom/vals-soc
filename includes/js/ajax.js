@@ -70,6 +70,10 @@ function createDiv(div_name, container){
 	}
 }
 
+function is_string(arg){
+	return (typeof arg) == 'string';
+}
+
 function ajaxAppend(msg, container, err, before){
 	var t = createDiv(container+err, container, before);
 	if (t) {
@@ -118,7 +122,7 @@ function isFunction(func){
 	}
 }
 
-function ajaxCall(category, action, data, target, type, args) {
+function ajaxCall(category, action, data, target, type, extra_args) {
 	if (!type)
 		type = 'html';// possible types are html, json, xml, text, script,
 						// jsonp
@@ -136,9 +140,9 @@ function ajaxCall(category, action, data, target, type, args) {
 
 	if (target) {
 		if (isFunction(target)) {
-			if (arguments.length < 6){
-				var args = [];
-				
+			var args = [];
+			if (arguments.length >= 6){
+				args = extra_args;
 			}
 			call.success = function(msg){
 					window[target](msg, args);

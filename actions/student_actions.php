@@ -21,6 +21,7 @@ switch ($_GET['action']){
 		$project_id = altSubValue( $_POST, 'id');
 		$proposal_id = altSubValue( $_POST, 'proposalid', 0);
 		if (! Users::isOfType('student', $GLOBALS['user']->uid)){
+			//TODO this should result in an error
 			echo "Since you are an admin, you can test a bit";
 			$owner_id = 31;
 		} else {
@@ -119,19 +120,20 @@ case 'show':
 				drupal_set_message(t('You are not the owner of this proposal'));
 				$result = null;
 			} else {
-				$result = Proposal::updateProposal($properties, $id, $project_id);
+				$result = Proposal::updateProposal($properties, $id);
 			}
 		}
-	
+
 		if ($result){
 			echo json_encode(array(
 					'result'=>TRUE,
 					'id' => $id,
-					'type'=> $type,
-					'msg'=>
-					($id ? tt('You succesfully changed your proposal for %$1s', $project['title']):
-					tt('You succesfully added your proposal for %1$s', $project['title'])).
-				(_DEBUG ? showDrupalMessages(): '')
+					//'type'=> $type,
+					'msg'=> 
+						($id ? 
+							tt('You succesfully changed your proposal for %1$s', $project['title']):
+							tt('You succesfully added your proposal for %1$s', $project['title'])).
+						(_DEBUG ? showDrupalMessages() : '')
 				));
 		} else {
 			echo jsonBadResult();

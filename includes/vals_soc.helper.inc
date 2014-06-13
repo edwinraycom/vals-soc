@@ -17,6 +17,11 @@ function debugDbQuery($query){
 	die($query->__toString());
 }
 
+
+function startException($error_msg){
+	throw new Exception($error_msg);
+}
+
 function altSubValue($arr, $field, $default=''){
 	if ($arr && isset($arr[$field])) {
 		return $arr[$field];

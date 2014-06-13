@@ -13,7 +13,7 @@ abstract class AbstractEntity {
 			case 'institute': return 'inst_id';break;
 			case 'organisation': return 'org_id';break;
 			case 'project': return 'pid';break;
-			case 'proposal': return 'propid';break;
+			case 'proposal': return 'proposal_id';break;
 			default: return '';
 		}
 	}

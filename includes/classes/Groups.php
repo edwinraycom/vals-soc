@@ -66,8 +66,9 @@ class Groups extends AbstractEntity{
 			return FALSE;
 		}
 		$key_field = self::keyField($type);
-		$obj = db_query("SELECT * FROM ".tableName($type)." WHERE $key_field = $id")->fetchAssoc();
-		return $obj['owner_id'] == $GLOBALS['user']->uid;
+		$entity = db_query("SELECT * FROM ".tableName($type)." WHERE $key_field = $id")->fetchAssoc();
+		//fetchAssoc returns next record (array) or false if there is none
+		return $entity && ($entity['owner_id'] == $GLOBALS['user']->uid);
 	}
 	
 	static function hasMembers($type, $id){

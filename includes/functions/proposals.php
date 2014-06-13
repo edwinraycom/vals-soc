@@ -53,18 +53,17 @@ function renderProposalTabs($count, $tab_label, $target_label, $type, $data, $id
 
 function initBrowseProposalsLayout(){
 	
-	$orgId=0;
+	$org_id=0;
 	$apply_proposals = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 	$browse_proposals = vals_soc_access_check('dashboard/proposals/browse') ? 1 : 0;
 	$proposal_tabs = array();
 	if(isset($_GET['organisation'])){
-		$orgId = $_GET['organisation'];
+		$org_id = $_GET['organisation'];
 	}
 	echo "Wat zijn de rechten van mij? apply $apply_proposals browse $browse_proposals";
 	if ($apply_proposals && !$browse_proposals){
 		//A student may only browse their own proposals
 		$student_id = $GLOBALS['user']->uid;
-		$student_id = 31;
 		$student = Users::getStudentDetails($student_id);
 		$inst_id = $student->inst_id;
 		$student_section_class = 'invisible';
@@ -86,28 +85,30 @@ function initBrowseProposalsLayout(){
         <?php echo t('Select the proposals');?>:
         <?php // echo t('Organisations');?>
         <select id="organisation" name="organisation">
-            <option selected="selected" value="0"><?php echo t('All Organisations');?></option><?php
+        	<option <?php echo  (! $org_id) ? 'selected="selected"': ''; ?> value="0"><?php 
+	            	echo t('All Organisations');?></option><?php
 			$result = Organisations::getInstance()->getOrganisationsLite();
 			foreach ($result as $record) {
-				$selected = ($record->org_id == $orgId ? 'selected ' : '');
+				$selected = ($record->org_id == $org_id ? 'selected="selected" ' : '');
 				echo '<option ' .$selected.'value="'.$record->org_id.'">'.$record->name.'</option>';
 			}?>
         </select>
         <span id='student_section' class='<?php echo $student_section_class;?>'>
 	        <select id="institute" name="institute">
-	            <option selected="selected" value="0"><?php echo t('All Institutes');?></option><?php
+	            <option <?php echo  (! $inst_id) ? 'selected="selected"': ''; ?> value="0"><?php 
+	            	echo t('All Institutes');?></option><?php
 				$result = Groups::getGroups('institute', 'all');
 				foreach ($result as $record) {
-					$selected = ($record->inst_id == $inst_id ? 'selected ' : '');
+					$selected = ($record->inst_id == $inst_id ? 'selected="selected" ' : '');
 					echo '<option ' .$selected.'value="'.$record->inst_id.'">'.$record->name.'</option>';
 				}?>
 	        </select>
-	        <?php //echo t('Students');<br/>?>
 	        <select id="student" name="student">
-	            <option selected="selected" value="0"><?php echo t('All Students');?></option><?php
+	            <option <?php echo  (! $student_id) ? 'selected="selected"': ''; ?> value="0"><?php 
+	            	echo t('All Students');?></option><?php
 				$result = Users::getUsers('student', ($inst_id ? 'institute': 'all'), $inst_id);
 				foreach ($result as $record) {
-					$selected = ($record->uid == $student_id ? 'selected ' : '');
+					$selected = ($record->uid == $student_id ? 'selected="selected" ' : '');
 					echo '<option ' .$selected.'value="'.$record->uid.'">'.$record->name.':'.$record->mail.'</option>';
 				}?>
 	        </select>
@@ -136,12 +137,15 @@ function initBrowseProposalsLayout(){
 							{tab: 'cv', label: 'Cv'},
 							{tab: 'summary', label: 'Solution Summary'},
 							{tab: 'solution', label: 'Solution'},
-							{tab: 'state', label: 'State'}];
+							{tab: 'state', label: 'State'}
+							<?php echo $apply_proposals ? ",{tab: 'edit', label: 'Edit'}": "";?>
+							];
 				var url = baseUrl + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" + proposal_id;
 				$.get(url,function(data,status){
-    				 generateAndPopulateModal(data, renderProposalTabs, tabs);
-    				 activatetabs('tab_', ['tab_project', 'tab_student', 'tab_cv', 'tab_summary', 'tab_solution', 
-    				      		'tab_state']);
+					if (generateAndPopulateModal(data, renderProposalTabs, tabs)){    				 
+    				 	activatetabs('tab_', ['tab_project', 'tab_student', 'tab_cv', 'tab_summary', 'tab_solution', 
+    				      	'tab_state'<?php echo $apply_proposals ? ", 'tab_edit'": "";?>]);
+    				 }
   				});
 				
 			}
