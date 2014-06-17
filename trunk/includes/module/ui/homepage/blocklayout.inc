@@ -1,7 +1,14 @@
 <?php
+module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.access');
+
 function generateValsFrontPageLayout(){
 	module_load_include('php', 'vals_soc', 'includes/classes/Timeline');
-	//echo '<h1>'.Timeline::getInstance()->getNow()->format('F j, Y, g:i a').'</h1>';
+	// use this for testing the timeline
+	if(hasRole(array('administrator')) && _DEBUG){
+		ob_start();
+		module_load_include('inc', 'vals_soc', 'includes/module/ui/homepage/testfunctions');
+		echo ob_get_clean();
+	}
 	echo '<div id="vals_block_content" class="">';
 	
 	// get the intro div
