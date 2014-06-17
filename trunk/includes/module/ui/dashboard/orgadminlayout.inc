@@ -82,7 +82,7 @@ function initDashboardLayout(){
 			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
 			break;
 		case PRE_BONDING_PERIOD:
-			$timeline_args['dashboardLegend'] = t("The list of students and project is now visible to other users of the system. " .
+			$timeline_args['dashboardLegend'] = t("The list of students and projects is now visible to other users of the system. " .
 				"The Bonding period starts on the following date. ") . 
 				Timeline::getInstance()->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
 			$timeline_args['managedOrganisationsVisible'] = TRUE;
@@ -134,6 +134,7 @@ function initDashboardLayout(){
 }	
 
 function getOrgAdminLayout($timeline_args){
+	global $base_url;
 	$output ='
 		<div class="dashboard" id="main-dashboard">
 			<div class="dashboard-head">
@@ -168,7 +169,7 @@ function getOrgAdminLayout($timeline_args){
 					<div class="column-entry org_app">
 						<h4>
 							<a class="dashboard-link component-link"
-								href="/vals/dashboard/members"
+								href="'.$base_url.'/dashboard/members"
 								title="'.t("Managed organizations").'">'.t("Managed organizations").'</a>
 						</h4>
 						<p>'.t("Organizations for which you are an administrator").'</p>
