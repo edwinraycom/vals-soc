@@ -12,7 +12,7 @@ function renderProject($project){
 	return $content;
 }
 
-function initBrowseProjectLayout($target='content'){
+function initBrowseProjectLayout(){//$target='content'
 	$org_id=0;
 	if(isset($_GET['organisation'])){
 		$org_id = $_GET['organisation'];
@@ -35,43 +35,16 @@ function initBrowseProjectLayout($target='content'){
 		</form>
 	</div>
 	<div id="ProjectTableContainer" style="width: 600px;"></div>
-	
+
 <script type="text/javascript">	
 	jQuery(document).ready(function($){
 
-	//We make the ajax script path absolute as the language module might add a language code
-	//to the path
-	var baseUrl = "/vals/sites/all/modules/vals_soc/";
-
-	function getProposalFormForProject(projectId){
-		//TODO is the call to dismiss necessary?
-		Drupal.CTools.Modal.dismiss();
-		ajaxCall("student", "proposal", {id: projectId, target:"<?php echo $target;?>"}, "content");
-	}
-
-	function getProjectDetail(projectId){
-		var url = baseUrl + "actions/project_actions.php?action=project_detail&project_id=" + projectId;
-		//alert('voor het versturen ' + typeof renderProject);
-		$.get(url,function(data,status){
-			generateAndPopulateModal(data, renderProject, <?php echo $apply_projects;?>);
-		});
-	}
-		
-	function testTagInput() {
-		var filter = /^[a-z0-9+_.\s]+$/i;
-		if (filter.test($("#tags").val()) || $("#tags").val()=="") {
-			$("#tags").removeClass("error");
-			$("#infotext").removeClass("error");
-			$("#infotext").text("");
-			return true;
-		}
-		else {
-			$("#tags").addClass("error");
-			$("#infotext").addClass("error");
-			$("#infotext").text("Invalid character/s entered");
-			return false;
-		}
-	}
+	window.view_settings = {};
+	window.view_settings.apply_projects = <?php echo $apply_projects ? 1: 0;?>;
+	//window.view_settings.target_id = '<?php //echo $target;?>';
+	//var apply_projects = <?php //echo $apply_projects ? 1: 0;?>;
+	///var target_id = '<?php //echo $target;?>';//was misused in old getProposalFormForProject only
+	
 
 	//Prepare jTable
 	$("#ProjectTableContainer").jtable({
@@ -81,7 +54,7 @@ function initBrowseProjectLayout($target='content'){
 		sorting: true,
 		defaultSorting: "title ASC",
 		actions: {
-			listAction: baseUrl + "actions/project_actions.php?action=list_projects"
+			listAction: moduleUrl + "actions/project_actions.php?action=list_projects"
 		},
 		fields: {
 			pid: {								
@@ -130,16 +103,8 @@ function initBrowseProjectLayout($target='content'){
 				}<?php 
 			}?>
 		
-		},
-		
-		/*
-recordsLoaded: function(event, data) {
-			$(".jtable-data-row td:first-child").click(function() {
-			var row_id = $(this).parent().attr("data-record-key");
-			getProjectDetail(row_id);
-			});
 		}
-		*/
+		
 	});
 	
 	//Load project list from server on initial page load

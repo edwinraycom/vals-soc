@@ -204,7 +204,12 @@ function vals_soc_mail($key, &$message, $params) {
 	return vals_soc_mail_handler($key, $message, $params);
 }
 
+function vals_soc_init(){
 
+drupal_add_js (_VALS_SOC_PATH .'/includes/js/settings.js');
+
+drupal_add_js (_VALS_SOC_PATH .'/includes/js/jquery-migrate-1.2.1.js');
+}
 /**
  * Implements Drupal _hook_mail_alter()
  * 

@@ -1,7 +1,7 @@
 <?php
 /*Expects data for every tab:
  * [translate, label, action, type, id, extra GET arguments]
-*/
+
 function renderProposalTabs($count, $tab_label, $target_label, $type, $data, $id=0,
 	$render_targets=false, $active_content='', $active_tab=1){?>
 	<ol id="toc"><?php
@@ -49,19 +49,18 @@ function renderProposalTabs($count, $tab_label, $target_label, $type, $data, $id
 		}
 	}
 	
-}
+}*/
 
 function initBrowseProposalsLayout(){
-	
 	$org_id=0;
-	$apply_proposals = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
+	$apply_projects = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 	$browse_proposals = vals_soc_access_check('dashboard/proposals/browse') ? 1 : 0;
 	$proposal_tabs = array();
 	if(isset($_GET['organisation'])){
 		$org_id = $_GET['organisation'];
 	}
-	echo "Wat zijn de rechten van mij? apply $apply_proposals browse $browse_proposals";
-	if ($apply_proposals && !$browse_proposals){
+	echo "Wat zijn de rechten van mij? apply $apply_projects browse $browse_proposals";
+	if ($apply_projects && !$browse_proposals){
 		//A student may only browse their own proposals
 		$student_id = $GLOBALS['user']->uid;
 		$student = Users::getStudentDetails($student_id);
@@ -122,8 +121,12 @@ function initBrowseProposalsLayout(){
 
 			//We make the ajax script path absolute as the language module might add a language code
 			//to the path
-			var baseUrl = "/vals/sites/all/modules/vals_soc/";
-
+			//var apply_projects = <?php echo $apply_projects ? 1: 0;?>;
+			window.view_settings = {};
+			window.view_settings.apply_projects = <?php echo $apply_projects ? 1: 0;?>;
+			//window.view_settings.target_id = '<?php //echo $target;?>';
+			//var apply_projects = <?php echo $apply_projects ? 1: 0;?>;
+			///var target_id = '<?php // echo $target;?>';
 			/*
 			function getProposalForm(proposalId){
 				Drupal.CTools.Modal.dismiss();
@@ -131,36 +134,6 @@ function initBrowseProposalsLayout(){
 			}
 			*/
 
-			function getProposalDetail(proposal_id){
-				var tabs = [{tab: 'project', label: 'Project'},
-							{tab: 'student', label: 'Student'},
-							{tab: 'cv', label: 'Cv'},
-							{tab: 'summary', label: 'Solution Summary'},
-							{tab: 'solution', label: 'Solution'},
-							{tab: 'state', label: 'State'}
-							<?php echo $apply_proposals ? ",{tab: 'edit', label: 'Edit'}": "";?>
-							];
-				var url = baseUrl + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" + proposal_id;
-				$.get(url,function(data,status){
-					if (generateAndPopulateModal(data, renderProposalTabs, tabs)){    				 
-    				 	activatetabs('tab_', ['tab_project', 'tab_student', 'tab_cv', 'tab_summary', 'tab_solution', 
-    				      	'tab_state'<?php echo $apply_proposals ? ", 'tab_edit'": "";?>]);
-    				 }
-  				});
-				
-			}
-			
-			function getProjectDetail(project_id){
-				var url = baseUrl + "actions/project_actions.php?action=project_detail&project_id=" + project_id;
-				$.get(url,function(data,status){
-    				 generateAndPopulateModal(data, renderProject, <?php echo $apply_proposals;?>);
-  				});
-			}		
-
-			function getProposalFormForProject(projectId){
-				Drupal.CTools.Modal.dismiss();
-				ajaxCall("student", "proposal", {id: projectId, target:'content'}, "content");
-			}
 
 			function loadFilteredProposals(){
 				$("#TableContainer").jtable("load", {
@@ -178,7 +151,7 @@ function initBrowseProposalsLayout(){
 				sorting: true,
 				defaultSorting: "pid ASC",
 				actions: {
-					listAction: baseUrl + "actions/proposal_actions.php?action=list_proposals"
+					listAction: moduleUrl + "actions/proposal_actions.php?action=list_proposals"
 				},
 				fields: {
 					proposal_id: {
@@ -222,7 +195,7 @@ function initBrowseProposalsLayout(){
 						sorting: false,
     					display: function (data) {
 							return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
-								"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
+								"onclick=\"getProposalDetail("+data.record.proposal_id+", true)\">"+
 									"<span class=\"ui-icon ui-icon-info\">See details</span></a>";
     					},
         					
@@ -257,9 +230,9 @@ function initBrowseProposalsLayout(){
 			});
 			
 			// define these at the window level so that they can still be called once loaded in the modal
-			window.getProposalFormForProject = getProposalFormForProject;
-			window.getProjectDetail = getProjectDetail;
-			window.getProposalDetail = getProposalDetail;
+			//window.getProposalFormForProject = getProposalFormForProject;
+			//window.getProjectDetail = getProjectDetail;
+			//window.getProposalDetail = getProposalDetail;
 
 		});
 	</script><?php

@@ -35,45 +35,108 @@ function renderStudent(data){
 	return s;
 }
 
+function getProposalDetail(proposal_id, modal, msg){
+	var tabs = [{tab: 'project', label: 'Project'},
+				{tab: 'student', label: 'Student'},
+				{tab: 'cv', label: 'Cv'},
+				{tab: 'summary', label: 'Solution Summary'},
+				{tab: 'solution', label: 'Solution'},
+				{tab: 'state', label: 'State'}];
+	var content_tabs = ['tab_project', 'tab_student', 'tab_cv', 'tab_summary', 'tab_solution', 
+				      	'tab_state'];
+
+  	if (window.view_settings.apply_projects){
+  		tabs.push({tab: 'edit', label: 'Edit'});
+		content_tabs.push('tab_edit');
+	}
+	var url = moduleUrl + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" + proposal_id;
+	var do_modal = ((typeof modal != 'undefined') && modal);
+	$jq.get(url,function(data,status){
+		if ((do_modal && generateAndPopulateModal(data, renderProposalTabs, tabs)) ||
+				populateModal(data, renderProposalTabs, tabs)){
+			activatetabs('tab_', content_tabs);
+	      	if (typeof msg != 'undefined' && msg){
+	      		 ajaxAppend(msg, 'modal-content', 'status', 'toc');
+	      	}
+		 }
+		});
+	
+}		
+
+function getProposalFormForProject(projectId){
+	Drupal.CTools.Modal.dismiss();
+	ajaxCall("student", "proposal", {id: projectId, target:'content'}, "content");
+}
+
 function renderProposalTabs(result, labels){
-		var s = '<ol id="toc">';
-		var count = labels.length;
-		var target = '';
-		var onclick = '';
-		for (var t=0; t < count;t++){
-			target = labels[t].tab;
-			if (target == 'edit'){
-				onclick = "onclick=\"ajaxCall('proposal', 'proposal_edit', {proposal_id:"+
-					result.proposal_id+ ", target:'tab_edit'}, 'handleResult', 'json', ['tab_edit']);\"";
-			}
-			s += '<li><a id="tab_tab_'+ target +'" href="#tab_tab_'+ target +'" title="" '+onclick+'><span>'+labels[t].label+'</span></a></li>'; 
-
+	var s = '<ol id="toc">';
+	var count = labels.length;
+	var target = '';
+	var onclick = '';
+	for (var t=0; t < count;t++){
+		target = labels[t].tab;
+		if (target == 'edit'){
+			onclick = "onclick=\"ajaxCall('proposal', 'proposal_edit', {proposal_id:"+
+				result.proposal_id+ ", target:'tab_edit'}, 'handleResult', 'json', ['tab_edit']);\"";
 		}
-		s += '</ol>';
-		s += '<div class="tabs_container">';
-		for (var t=0; t < count;t++){
-			target = labels[t].tab;
-			s += '<div id="tab_'+ target + '" class="content">';
-			s += 	"<div id='msg_"+ target+ "'></div>";
-			switch (target){
-				case 'project': s += renderProject(result, false); 
-					break;
-				case 'student': s += renderStudent(result); 
-					break;
-				case 'cv': s += result.cv;
-					break;
-				case 'summary': s += result.solution_short;
-					break;
-				case 'solution': s += result.solution_long;
-					break;
-				case 'state': s += '?';
-					break;
-				case 'edit': s += '';
-				break;
-			}
-			s += "</div>"; 
+		s += '<li><a id="tab_tab_'+ target +'" href="#tab_tab_'+ target +'" title="" '+onclick+'><span>'+labels[t].label+'</span></a></li>'; 
 
+	}
+	s += '</ol>';
+	s += '<div class="tabs_container">';
+	for (var t=0; t < count;t++){
+		target = labels[t].tab;
+		s += '<div id="tab_'+ target + '" class="content">';
+		s += 	"<div id='msg_"+ target+ "'></div>";
+		switch (target){
+			case 'project': s += renderProject(result, false); 
+				break;
+			case 'student': s += renderStudent(result); 
+				break;
+			case 'cv': s += result.cv;
+				break;
+			case 'summary': s += result.solution_short;
+				break;
+			case 'solution': s += result.solution_long;
+				break;
+			case 'state': s += '?';
+				break;
+			case 'edit': s += '';
+			break;
 		}
 		s += "</div>"; 
-		return s;
+
 	}
+	s += "</div>"; 
+	return s;
+}
+
+//function getProposalFormForProject(projectId){
+//	//TODO is the call to dismiss necessary?
+//	Drupal.CTools.Modal.dismiss();
+//	ajaxCall("student", "proposal", {id: projectId, target: target_id}, "content");
+//}
+
+function getProjectDetail(projectId){	
+	var url = moduleUrl + "actions/project_actions.php?action=project_detail&project_id=" + projectId;
+	//TODO: currently the apply projects is passed around as global. not so elegant
+	$jq.get(url,function(data,status){
+		generateAndPopulateModal(data, renderProject, window.view_settings.apply_projects);
+	});
+}
+	
+function testTagInput() {
+	var filter = /^[a-z0-9+_.\s]+$/i;
+	if (filter.test($jq("#tags").val()) || $jq("#tags").val()=="") {
+		$jq("#tags").removeClass("error");
+		$jq("#infotext").removeClass("error");
+		$jq("#infotext").text("");
+		return true;
+	}
+	else {
+		$jq("#tags").addClass("error");
+		$jq("#infotext").addClass("error");
+		$jq("#infotext").text("Invalid character/s entered");
+		return false;
+	}
+}
