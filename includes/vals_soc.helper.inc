@@ -30,7 +30,17 @@ function altSubValue($arr, $field, $default=''){
 	}
 }
 
-//It was necessary to remove the syntax error in vals_soc_mail_handler
+function getRequestVar($field, $default='', $request='all'){
+	if ($request == 'post'){
+		return altSubValue($_POST, $field, $default);
+	} elseif ($request == 'get'){
+		return altSubValue($_GET, $field, $default);
+	} else {
+		return (($return = altSubValue($_GET, $field, $default)) && ($return != $default)) ? $return : altSubValue($_POST, $field, $default);
+	}
+}
+
+//This function was necessary to remove the syntax error in vals_soc_mail_handler
 /*
  * Gets a system variable with variable_get which is expected to be an array with
 * the field supplied as a key, if not: a default will be returned

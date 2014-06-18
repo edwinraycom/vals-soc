@@ -40,8 +40,6 @@ function initBrowseOrgsLayout(){
 				}
 			}
 		
-			var baseUrl = "/vals/";
-			var modulePath = "sites/all/modules/vals_soc/actions/";
 		    //Prepare jTable
 			$("#OrganisationTableContainer").jtable({
 				//title: "Table of organisations",
@@ -50,7 +48,7 @@ function initBrowseOrgsLayout(){
 				sorting: true,
 				defaultSorting: "oname ASC",
 				actions: {
-					listAction: baseUrl + modulePath + "organisation_actions.php?action=list_organisations"
+					listAction: moduleUrl + "organisation_actions.php?action=list_organisations"
 				},
 				fields: {
 					org_id: {

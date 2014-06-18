@@ -3,6 +3,7 @@
 //var debugging = true;
 //var console_Jquery_migrate_warnings = false;
 //var baseUrl = '/vals/';
+//var moduleUrl = baseUrl + 'sites/all/modules/vals_soc/';
 
 var $jq = jQuery;
 
@@ -11,9 +12,7 @@ function alertdev(m) {
 		alert(m);
 }
 function url(category, action) {
-	return baseUrl
-			+ "sites/all/modules/vals_soc/actions/"+category+"_actions.php?action="
-			+ action;
+	return moduleUrl + "actions/"+category+"_actions.php?action="+ action;
 }
 
 function ajaxInsert(msg, target) {
@@ -33,16 +32,26 @@ function isObject(mixed_var){
 	} 
 }
 
-function Obj(name_or_object){
+function Obj(name_or_object, return_dom){
+	
 	if (isObject(name_or_object)){
-		return name_or_object;
+		if (return_dom){
+			return isJquery(name_or_object) ? name_or_object[0] : name_or_object;
+		} else {
+			return name_or_object; //return_dom ? name_or_object[0] : ;
+		}
 	} else 
 		var obj = $jq('#'+name_or_object);
 	if (obj.length == 0){
 		return false;
 	} else {
-		return obj;
+		if (typeof return_dom == 'undefined') return_dom = false;
+		return return_dom ? obj[0] : obj;
 	}
+}
+
+function isJquery(obj){
+	return obj && (typeof obj.jquery != 'undefined') && obj.jquery;
 }
 
 function createDiv(div_name, container){
@@ -50,17 +59,17 @@ function createDiv(div_name, container){
 	if(div){
 		return div;
 	} else{
-		var obj = document.createElement('div');
-		obj.setAttribute("id", div_name);
+		var new_obj = document.createElement('div');
+		new_obj.setAttribute("id", div_name);
 		var cont_obj = Obj(container);
 		if (cont_obj) {
 			if (arguments.length > 2 && arguments[2] !== ''){
 				//Insert before an element inside container
-				//we use the normal objects
-				var first = Obj(arguments[2]);
-				cont_obj[0].insertBefore(obj, first[0]);
+				//we use the normal objects, so we ask Obj to return a dom element
+				var first_obj = Obj(arguments[2], true);
+				cont_obj[0].insertBefore(new_obj, first_obj);
 			} else {
-				cont_obj[0].appendChild(obj);
+				cont_obj[0].appendChild(new_obj);
 			}
 			return Obj(div_name);
 		} else {
@@ -75,6 +84,14 @@ function is_string(arg){
 }
 
 function ajaxAppend(msg, container, err, before){
+	if (typeof before == 'undefined') {
+		var cont_obj = Obj(container);
+		if (cont_obj){
+			before = cont_obj[0].childNodes[0];
+		} else {
+			before = '';
+		}
+	}
 	var t = createDiv(container+err, container, before);
 	if (t) {
 		t.addClass('messages '+err);
@@ -213,7 +230,7 @@ $jq(document)
 														// bjyauthorize
 						// //The user returns to the page after a long time and
 						// is logged out becauses of session expiration
-						if (confirm('U bent niet langer ingelogd. Wilt u nu inloggen?')) {
+						if (confirm('It seems you are no longer logged in. Do you want to log in now?')) {
 							window.location.replace(baseUrl + "/user/login");
 							return;
 						} else {

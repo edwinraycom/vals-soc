@@ -126,7 +126,7 @@ case 'show':
 
 		if ($result){
 			echo json_encode(array(
-					'result'=>TRUE,
+					'result'=>'OK',
 					'id' => $id,
 					//'type'=> $type,
 					'msg'=> 
@@ -141,5 +141,36 @@ case 'show':
 
 
 	break;
+	case 'submit':
+		$id = altSubValue($_POST, 'id', '');
+		$project_id = altSubValue($_POST, 'project_id', '');
+		$project = Project::getInstance()->getProjectById($project_id);
+		$properties = Proposal::filterPost($_POST);
+		$properties['state'] = 'published';
+		if (!$id){
+			$result = Proposal::insertProposal($properties, $project_id);
+		} else {
+			if (!Groups::isOwner('proposal', $id)){
+				drupal_set_message(t('You are not the owner of this proposal'));
+				$result = null;
+			} else {
+				$result = Proposal::updateProposal($properties, $id);
+			}
+		}
+		
+		if ($result){
+			//TODO: notify mentor, supervisor
+			echo json_encode(array(
+					'result'=>'OK',
+					'id' => $id,
+					'msg'=>tt('You succesfully submitted your proposal for %1$s', $project['title']).
+						(_DEBUG ? showDrupalMessages() : '')
+			));
+		} else {
+			echo jsonBadResult();
+		}
+	
+	
+		break;
 	default: echo "No such action: ".$_GET['action'];
 	}

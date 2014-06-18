@@ -53,9 +53,8 @@ switch ($_GET['action']){
 		}
 	break;
 	case 'proposal_detail':
-		$proposal_id=null;
-		if(isset($_GET['proposal_id']) && $_GET['proposal_id']){
-			$proposal_id = $_GET['proposal_id'];
+		$proposal_id = getRequestVar('proposal_id', null);
+		if ($proposal_id){
 			if (! ($browse_proposals || ($x = Groups::isOwner('proposal', $proposal_id)) )){
 				jsonBadResult(t('You can only see your own proposals!'). " want $browse_proposals en $x myid".Users::getMyId());
 			} else {
@@ -64,14 +63,13 @@ switch ($_GET['action']){
 				$proposal = Proposal::getInstance()->getProposalById($proposal_id, true);
 				jsonGoodResult($proposal);
 			}
-		} else{
+		} else {
 			jsonBadResult(t('No proposal identifier submitted!'));
 		}
 	break;
 	case 'proposal_edit':
-		$proposal_id=null;
-		if(isset($_POST['proposal_id']) && $_POST['proposal_id']){
-			$proposal_id = $_POST['proposal_id'];
+		$proposal_id = getRequestVar('proposal_id', 'post', null);
+		if($proposal_id){
 			if (! ($browse_proposals|| Groups::isOwner('proposal', $proposal_id) )){
 				jsonBadResult(t('You can only see your own proposals!'));
 			} else {
@@ -81,9 +79,8 @@ switch ($_GET['action']){
 				$proposal = Proposal::getInstance()->getProposalById($proposal_id, true);
 				
 				$f = drupal_get_form('vals_soc_proposal_form', $proposal, $target);
-				
 				if ($f){
-					jsonGoodResult(drupal_render($f));
+					jsonGoodResult(drupal_render($f, $proposal, $target));
 				} else {
 					jsonBadResult();
 				}

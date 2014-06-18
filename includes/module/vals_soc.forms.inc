@@ -713,29 +713,36 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 	$form['solution_short'] = array(
 			"#type" => "textarea",
 			'#title' => t('Give a summary of your solution'),
-			"#size" => 1024,
+			'#cols' => 50,//"#size" => 1024,
 			"#default_value" => populate($proposal, 'solution_short')
 			//"#description" => t("This code is different per role."),
 	);
 	$form['solution_long'] = array(
-			"#type" => "textarea",
+			'#type'=>'text_format',
+			'#format'=> 'filtered_html',// 'full_html',
+			'#base_type' => 'textarea',
+			
+			
+			
+			//"#type" => "textarea",
 			'#title' => t('Give a more detailed description of your solution'),
-			"#size" => 1024,
+			'#cols' => 50,
+			//"#size" => 750,
 			"#default_value" => populate($proposal, 'solution_long')
 			//"#description" => t("This code is different per role."),
 	);
 	$form['modules'] = array(
 			"#type" => "textarea",
 			'#title' => t('Which extra modules and libraries will you use, if any?'),
-			"#size" => 1024,
+			'#cols' => 50,//"#size" => 1024,
 			"#default_value" => populate($proposal, 'modules'),
 			"#description" => t("Write the name of the library, it's url and its purpose, divided by bars ('|')"),
 	);
 	$form['cv'] = array(
 			"#type" => "textarea",
 			'#title' => t('Describe your Curriculum Vitae'),
-			"#size" => 1024,
-			"#default_value" => populate($proposal, 'description'),
+			'#cols' => 50,//"#size" => 1024,
+			"#default_value" => populate($proposal, 'cv'),
 			"#description" => t("You might want to discuss with your supervisor which courses you should put on your cv."),
 	);	 
 	//If we never need a stand alone form and only use ajax, remove the commented code
@@ -747,14 +754,38 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
 					'onclick' => 'if (confirm("'.t('Do you want to leave the proposal for now?').'")){'.
-						'Drupal.CTools.Modal.dismiss();}'
-// 						'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
+						(($target != 'content') ? 'Drupal.CTools.Modal.dismiss();}':
+ 						'ajaxCall("project", "project_page", "", "content");}')
 // 						' {project_id: '.$project_id.', id:0}, "refreshTabs", "json", ["studentgroup", "'.$target.'", true]);}'
 					//'onclick' => 'ajaxCall("proposal", "proposal_detail", {proposal_id: '.$proposal->proposal_id.'}, "content", "html", ["'.$target.'"]);')
 		)
 	);
-	if (!$proposal){
-		unset($form['#submit']);
+	$proposal_id = ((!$proposal) ? 0 : $proposal->proposal_id);
+	unset($form['#submit']);
+// 	if (!$proposal){
+// 		unset($form['#submit']);
+// 		$form['save'] = array(
+// 				'#type' => 'button',
+// 				'#button_type' => 'button',
+// 				'#value' => t('Save draft'),
+// 				//'#theme' => 'garland_button',
+// 				'#attributes' => array(
+// 						'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
+// 						' {project_id: '.$project_id.', id:0}, "handleResult", "json", ["'.$target.'", "student_details", true]);')//'.$target.' instead of refreshTabs
+// 		);
+// 		$form['sumbit'] = array(
+// 				'#type' => 'button',
+// 				'#button_type' => 'button',
+// 				'#value' => t('Submit proposal'),
+// 				//'#theme' => 'garland_button',
+// 				'#attributes' => array(
+// 						'onclick' => 'if (confirm("'.t('Are you sure you want to submit your proposal now?').'")){'.
+// 						'ajaxFormCall("vals-soc-proposal-form", "student", "submit",'.
+// 						' {project_id: '.$project_id.', id:0}, "refreshTabs", "json", ["studentgroup", "'.$target.'", true]);}')//'.$target.' instead of refreshTabs
+// 		);
+		
+// 	} else {
+		
 		$form['save'] = array(
 				'#type' => 'button',
 				'#button_type' => 'button',
@@ -762,8 +793,8 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
 						'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
-						' {project_id: '.$project_id.', id:0}, "handleResult", "json", ["'.$target.'", "student_details", true]);')//'.$target.' instead of refreshTabs
-		);
+						' {id:'.$proposal_id .', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSaveResult", "json", ["'.$target.'"]);')
+		);//
 		$form['sumbit'] = array(
 				'#type' => 'button',
 				'#button_type' => 'button',
@@ -771,30 +802,9 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 				//'#theme' => 'garland_button',
 				'#attributes' => array(
 						'onclick' => 'if (confirm("'.t('Are you sure you want to submit your proposal now?').'")){'.
-						'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
-						' {project_id: '.$project_id.', id:0}, "refreshTabs", "json", ["studentgroup", "'.$target.'", true]);}')//'.$target.' instead of refreshTabs
+						'ajaxFormCall("vals-soc-proposal-form", "student", "submit",'.
+						' {id:'.$proposal_id.', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSubmitResult", "json", ["'.$target.'"]);}')
 		);
-		
-	} else {
-		unset($form['#submit']);
-		$form['save'] = array(
-				'#type' => 'button',
-				'#button_type' => 'button',
-				'#value' => t('Save draft'),
-				//'#theme' => 'garland_button',
-				'#attributes' => array(
-						'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
-						' {id:'.$proposal->proposal_id.',  target: "'.$target.'" }, "handleResult", "json", ["'.$target.'", "", true]);')
-		);
-		$form['sumbit'] = array(
-				'#type' => 'button',
-				'#button_type' => 'button',
-				'#value' => t('Submit proposal'),
-				//'#theme' => 'garland_button',
-				'#attributes' => array(
-						'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
-						' {id:'.$proposal->proposal_id.',  target: "'.$target.'" }, "handleResult", "json", ["'.$target.'", "", true"]);')
-		);
-	}
+// 	}
 	return $form;
 }

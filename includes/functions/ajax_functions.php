@@ -1,8 +1,8 @@
 <?php
 function jsonResult($result, $msg='', $type='', $show_always=FALSE){
 	if (!$msg){
-		//Get the messages set by drupal_set_messages
-		$msgs = drupal_get_messages($type);
+		//Get the messages set by drupal_set_messages, but if we pass deliberately null on, we expect no messages
+		$msgs = is_null($msg) ? '' : drupal_get_messages($type);
 		if ($msgs){
 			if ($type){
 				$msg = implode('<br/>', $msgs[$type]);
@@ -46,8 +46,6 @@ function jsonGoodResult($result=TRUE, $msg='', $type='status', $show_always=FALS
 function jsonBadResultJT($msg=''){
 	$result = array(
 		'Result' => 'ERROR',
-		//'Records' => $records,
-		//'TotalRecordCount' => (($cnt < 0)? count($records): $cnt),
 		'Message' => $msg		
 	);
 	echo json_encode($result);
