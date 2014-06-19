@@ -2,6 +2,8 @@
 drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/module/ui/dashboard/css/dashboard.css');
 
 function initDashboardLayout(){
+	$f = drupal_get_form('vals_soc_proposal_form', null, '', 3);
+	print drupal_render($f);
 	echo '
 		<div class="dashboard" id="main-dashboard">
   <div class="dashboard-head">

@@ -195,7 +195,7 @@ function initBrowseProposalsLayout(){
 						sorting: false,
     					display: function (data) {
 							return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
-								"onclick=\"getProposalDetail("+data.record.proposal_id+", true)\">"+
+								"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
 									"<span class=\"ui-icon ui-icon-info\">See details</span></a>";
     					},
         					

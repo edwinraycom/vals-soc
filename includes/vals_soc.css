@@ -10,6 +10,13 @@ html{
 	display: none;
 }
 
+div.ctools-modal-content .form-item.form-type-textarea label {
+    float: none;
+    width: auto;
+    
+}
+
+
 /*************************************************
 	CSS for the projects views
 *************************************************/	

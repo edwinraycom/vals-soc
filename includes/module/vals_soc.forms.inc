@@ -718,13 +718,13 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			//"#description" => t("This code is different per role."),
 	);
 	$form['solution_long'] = array(
-			'#type'=>'text_format',
-			'#format'=> 'filtered_html',// 'full_html',
-			'#base_type' => 'textarea',
+// 			'#type'=>'text_format',
+// 			'#format'=> 'filtered_html',// 'full_html',
+// 			'#base_type' => 'textarea',
 			
 			
 			
-			//"#type" => "textarea",
+			"#type" => "textarea",
 			'#title' => t('Give a more detailed description of your solution'),
 			'#cols' => 50,
 			//"#size" => 750,
