@@ -115,7 +115,7 @@ class Proposal extends AbstractEntity{
     		if ($id){
     			//TODO: notify mentor???
     			drupal_set_message('You have saved your proposal. Later you can edit it.');
-    			return TRUE;
+    			return $id;
     		} else {
     			drupal_set_message(tt('We could not add your %1$s.', $type), 'error');
     		}

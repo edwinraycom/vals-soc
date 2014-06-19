@@ -32,8 +32,11 @@ function isObject(mixed_var){
 	} 
 }
 
-function Obj(name_or_object, return_dom){
-	
+function isArray(mixed_var){ 	
+	return (mixed_var instanceof Array) && (typeof( mixed_var ) == 'object'); 
+}
+
+function Obj(name_or_object, return_dom){	
 	if (isObject(name_or_object)){
 		if (return_dom){
 			return isJquery(name_or_object) ? name_or_object[0] : name_or_object;
@@ -43,6 +46,7 @@ function Obj(name_or_object, return_dom){
 	} else 
 		var obj = $jq('#'+name_or_object);
 	if (obj.length == 0){
+		//alertdev('Could not find the target '+ name_or_object);
 		return false;
 	} else {
 		if (typeof return_dom == 'undefined') return_dom = false;
@@ -159,7 +163,10 @@ function ajaxCall(category, action, data, target, type, extra_args) {
 		if (isFunction(target)) {
 			var args = [];
 			if (arguments.length >= 6){
-				args = extra_args;
+				if (isArray(extra_args))
+					args = extra_args;
+				else
+					args = [extra_args];
 			}
 			call.success = function(msg){
 					window[target](msg, args);
@@ -200,6 +207,7 @@ function ajaxCall(category, action, data, target, type, extra_args) {
 }
 
 function ajaxFormCall(frm, category, action, data, target, type, args) {
+	CKupdate();
 	var call_args = $jq('#' + frm).serialize();
 	if (data) {
 		if (data instanceof Object) {
@@ -313,3 +321,15 @@ jQuery.extend({
 		return result;
 	}
 });
+
+/*
+ * Used for ckeditor: the hidden textarea fields will be filled with the actual code just before sending
+ * the ajax. We make the developer responsible for calling this function before sending the form
+ */
+function CKupdate(){
+	if (CKEDITOR && ! jQuery.isEmptyObject(CKEDITOR.instances)){
+		for (instance in CKEDITOR.instances){
+	        CKEDITOR.instances[instance].updateElement();
+	    }
+	}
+}

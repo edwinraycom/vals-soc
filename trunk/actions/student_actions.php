@@ -114,7 +114,7 @@ case 'show':
 		$project = Project::getInstance()->getProjectById($project_id);
 		$properties = Proposal::filterPost($_POST);
 		if (!$id){
-			$result = Proposal::insertProposal($properties, $project_id);
+			$id = $result = Proposal::insertProposal($properties, $project_id);
 		} else {
 			if (!Groups::isOwner('proposal', $id)){
 				drupal_set_message(t('You are not the owner of this proposal'));

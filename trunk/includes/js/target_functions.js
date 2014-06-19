@@ -42,6 +42,25 @@ function refreshSingleTab(json_data, args){
 	}
 }
 
+function formResult(data, args){
+	var target = args[0];
+	Obj(target).html(data);
+	CKEDITOR.replaceAll();
+}
+
+function jsonFormResult(data, args){
+	
+	var target = args[0];
+	if (data.result == "error") {
+		ajaxAppend(data.error, target, 'error');
+	} else {
+		Obj(target).html(data.result);
+	}
+	//replace all the textareas with rte instances
+	CKEDITOR.replaceAll();
+}
+
+
 function handleResult(result, args){
 	var target = args[0];
 	var before = (args.length > 1 ? args[1] : '');
@@ -89,7 +108,7 @@ function handleSaveResult(result, args){
 			ajaxAppend(result.error, target, 'error', 'vals-soc-proposal-form');
 		} else {
 			if (result.result == "OK") {
-				getProposalDetail(result.id, false, result.msg);
+				getProposalDetail(result.id, target, result.msg);
 			} else {
 				alertdev('The action did not result in error but also not in OK. succeeded??');
 			}
