@@ -4,6 +4,8 @@ drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/module/ui/dash
 function initDashboardLayout(){
 	$f = drupal_get_form('vals_soc_proposal_form', null, '', 3);
 	print drupal_render($f);
+	
+	global $base_url;
 	echo '
 		<div class="dashboard" id="main-dashboard">
   <div class="dashboard-head">
@@ -16,6 +18,16 @@ function initDashboardLayout(){
   <div class="block block-dashboard">
     <div class="column first">
         
+			<div class="column-entry lookup_profile">
+            <h4>
+              <a class="" href="'.$base_url.'/admin/config/vals_soc" title="Lookup profile">ADMIN</a>
+              
+            </h4>
+            <p>Lookup profile of mentor or student from various program.</p>
+            
+          </div>
+			
+			
           <div class="column-entry lookup_profile">
             <h4>
               <a class="" href="https://vals-melange2.appspot.com/gsoc/admin/lookup/google/gsoc2014" title="Lookup profile">Lookup profile</a>
@@ -131,7 +143,7 @@ function initDashboardLayout(){
         
           <div class="column-entry manage_organizations">
             <h4>
-              <a class="dashboard-link" href="#manage_organizations" title="Manage organizations">Manage organizations</a>
+              <a class="dashboard-link" href="'.$base_url.'/dashboard/members" title="Manage organizations">Manage organizations</a>
               
             </h4>
             <p>Manage organizations from active program. You can 
@@ -194,38 +206,15 @@ various organizations</p>
         
           <div class="column-entry program_settings">
             <h4>
-              <a class="dashboard-link" href="#program_settings" title="Program settings">Program settings</a>
+              <a class="dashboard-link" href="'.$base_url.'/dashboard/program_settings" title="Program settings">Program settings</a>
               
             </h4>
             <p>Edit program settings and timeline</p>
             
               <div>
-                
-                  
-                    <a href="https://vals-melange2.appspot.com/gsoc/program/edit/google/gsoc2014" title="Edit program settings">Edit program settings</a>
-                  
+                    <a href="'.$base_url.'/dashboard/program_settings/timeline" title="Edit timeline">Edit timeline</a>
                   |
-                
-                  
-                    <a href="https://vals-melange2.appspot.com/gsoc/timeline/google/gsoc2014" title="Edit timeline">Edit timeline</a>
-                  
-                  |
-                
-                  
-                    <a href="https://vals-melange2.appspot.com/gsoc/program/messages/edit/google/gsoc2014" title="Edit messages">Edit messages</a>
-                  
-                  |
-                
-                  
-                    <a href="https://vals-melange2.appspot.com/gsoc/documents/google/gsoc2014" title="List of documents">List of documents</a>
-                  
-                  |
-                
-                  
-                    <a href="https://vals-melange2.appspot.com/gsoc/program/create/google" title="Create a program">Create a program</a>
-                  
-                  
-                
+                    <a href="'.$base_url.'/dashboard/program_settings/messages" title="Edit messages">Edit messages</a>
               </div>
             
           </div>

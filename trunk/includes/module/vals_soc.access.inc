@@ -12,7 +12,14 @@ function hasPermission($permission){
 }
 
 /*
- * The access strings take the form: where/object/action, object/action or just action
+ * The access strings take the form of relative path being requested a la
+ * 'dashboard/organisations/browse' where the actual url was
+ * http://localhost/vals/dashboard/organisations/browse. 
+ * (although in some cases there is no real url eg 'dashboard/projects/apply')
+ * The default case will also check the permission...
+ * 		hasPermission($access_string);
+ * so you can also pass the permission a la
+ * 	   'vals browse proposals'
  */
 function page_access_check($access_string) {
 	//drupal_set_message("test:".$access_data);
@@ -21,7 +28,7 @@ function page_access_check($access_string) {
 		case 'dashboard/proposals/browse':
 			return hasPermission('vals browse proposals');
 			break;
-		case 'dashboard/projects/apply':
+		case 'dashboard/projects/apply': // this actual url path does not exist
 			return hasPermission('vals apply projects');
 			break;
 		case 'projects/apply':
