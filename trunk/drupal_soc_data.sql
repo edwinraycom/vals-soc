@@ -28,11 +28,11 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 use drupal;
 
 TRUNCATE TABLE `soc_codes`;
--- TRUNCATE TABLE `soc_studentgroups`;
+TRUNCATE TABLE `soc_studentgroups`;
 TRUNCATE TABLE `soc_institutes`;
 TRUNCATE TABLE `soc_organisations`;
 TRUNCATE TABLE `soc_projects`;
--- TRUNCATE TABLE `soc_proposals`;
+TRUNCATE TABLE `soc_proposals`;
 TRUNCATE TABLE `soc_user_membership`;
 TRUNCATE TABLE `users`;
 TRUNCATE TABLE `users_roles`;
@@ -313,4 +313,24 @@ INSERT INTO users_roles (uid, rid) VALUES
 (30, 9),
 (33, 9),
 (27, 12);
+
+-- -------------------------------------------------------------
+DELETE from variable where name like 'vals_timeline%';
+INSERT INTO `variable` VALUES 
+('vals_timeline_accepted_org_announced_date','s:16:\"2014-03-26 00:00\";'),
+('vals_timeline_accepted_students_announced_deadline_date','s:16:\"2014-05-12 00:00\";'),
+('vals_timeline_coding_end_date','s:16:\"2014-11-28 00:00\";'),
+('vals_timeline_coding_start_date','s:16:\"2014-09-01 00:00\";'),
+('vals_timeline_community_bonding_end_date','N;'),
+('vals_timeline_community_bonding_start_date','N;'),
+('vals_timeline_org_app_end_date','s:16:\"2014-03-24 00:00\";'),
+('vals_timeline_org_app_start_date','s:16:\"2014-03-03 00:00\";'),
+('vals_timeline_org_review_student_applications_date','s:16:\"2014-04-28 00:00\";'),
+('vals_timeline_program_active','i:1;'),
+('vals_timeline_program_end_date','s:16:\"2015-01-01 00:00\";'),
+('vals_timeline_program_start_date','s:16:\"2014-03-01 00:59\";'),
+('vals_timeline_students_matched_to_mentors_deadline_date','s:16:\"2014-05-05 00:00\";'),
+('vals_timeline_student_signup_end_date','s:16:\"2014-04-21 00:00\";'),
+('vals_timeline_student_signup_start_date','s:16:\"2014-04-07 00:00\";'),
+('vals_timeline_suggested_coding_deadline','s:16:\"2014-11-21 00:00\";');
 -- The end
