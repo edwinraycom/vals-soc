@@ -736,7 +736,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#title' => t('Which extra modules and libraries will you use, if any?'),
 			'#cols' => 50,//"#size" => 1024,
 			"#default_value" => populate($proposal, 'modules'),
-			"#description" => t("Write the name of the library, it's url and its purpose, divided by bars ('|')"),
+			"#description" => t("Write the name of the library, it's url and its purpose."),
 	);
 	$form['cv'] = array(
 			"#type" => "textarea",
@@ -756,55 +756,28 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 					'onclick' => 'if (confirm("'.t('Do you want to leave the proposal for now?').'")){'.
 						(($target != 'content') ? 'Drupal.CTools.Modal.dismiss();}':
  						'ajaxCall("project", "project_page", "", "content");}')
-// 						' {project_id: '.$project_id.', id:0}, "refreshTabs", "json", ["studentgroup", "'.$target.'", true]);}'
-					//'onclick' => 'ajaxCall("proposal", "proposal_detail", {proposal_id: '.$proposal->proposal_id.'}, "content", "html", ["'.$target.'"]);')
 		)
 	);
 	$proposal_id = ((!$proposal) ? 0 : $proposal->proposal_id);
-	unset($form['#submit']);
-// 	if (!$proposal){
-// 		unset($form['#submit']);
-// 		$form['save'] = array(
-// 				'#type' => 'button',
-// 				'#button_type' => 'button',
-// 				'#value' => t('Save draft'),
-// 				//'#theme' => 'garland_button',
-// 				'#attributes' => array(
-// 						'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
-// 						' {project_id: '.$project_id.', id:0}, "handleResult", "json", ["'.$target.'", "student_details", true]);')//'.$target.' instead of refreshTabs
-// 		);
-// 		$form['sumbit'] = array(
-// 				'#type' => 'button',
-// 				'#button_type' => 'button',
-// 				'#value' => t('Submit proposal'),
-// 				//'#theme' => 'garland_button',
-// 				'#attributes' => array(
-// 						'onclick' => 'if (confirm("'.t('Are you sure you want to submit your proposal now?').'")){'.
-// 						'ajaxFormCall("vals-soc-proposal-form", "student", "submit",'.
-// 						' {project_id: '.$project_id.', id:0}, "refreshTabs", "json", ["studentgroup", "'.$target.'", true]);}')//'.$target.' instead of refreshTabs
-// 		);
-		
-// 	} else {
-		
-		$form['save'] = array(
-				'#type' => 'button',
-				'#button_type' => 'button',
-				'#value' => t('Save draft'),
-				//'#theme' => 'garland_button',
-				'#attributes' => array(
-						'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
-						' {id:'.$proposal_id .', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSaveResult", "json", ["'.$target.'"]);')
-		);//
-		$form['sumbit'] = array(
-				'#type' => 'button',
-				'#button_type' => 'button',
-				'#value' => t('Submit proposal'),
-				//'#theme' => 'garland_button',
-				'#attributes' => array(
-						'onclick' => 'if (confirm("'.t('Are you sure you want to submit your proposal now?').'")){'.
-						'ajaxFormCall("vals-soc-proposal-form", "student", "submit",'.
-						' {id:'.$proposal_id.', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSubmitResult", "json", ["'.$target.'"]);}')
-		);
-// 	}
+	unset($form['#submit']);		
+	$form['save'] = array(
+			'#type' => 'button',
+			'#button_type' => 'button',
+			'#value' => t('Save draft'),
+			//'#theme' => 'garland_button',
+			'#attributes' => array(
+					'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
+					' {id:'.$proposal_id .', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSaveResult", "json", ["'.$target.'"]);')
+	);//
+	$form['sumbit'] = array(
+			'#type' => 'button',
+			'#button_type' => 'button',
+			'#value' => t('Submit proposal'),
+			//'#theme' => 'garland_button',
+			'#attributes' => array(
+					'onclick' => 'if (confirm("'.t('Are you sure you want to submit your proposal now?').'")){'.
+					'ajaxFormCall("vals-soc-proposal-form", "student", "submit",'.
+					' {id:'.$proposal_id.', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSubmitResult", "json", ["'.$target.'"]);}')
+	);
 	return $form;
 }

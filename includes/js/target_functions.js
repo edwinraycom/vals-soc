@@ -90,6 +90,39 @@ function handleResult(result, args){
 	}
 }
 
+function handleDeleteResult(result, args){
+	if (result){
+		if (result.result == "error") {
+			ajaxAppend(result.error, result.target, 'error', result.before);
+		} else {
+			if (is_string(result.result)) {
+				ajaxInsert(result.result, result.target);
+			} else {
+				if (typeof result.msg != 'undefined') {
+					if (result.replace_target) {
+						alertdev('maakt target leeg '+ result.target);
+						Obj(result.target).html('');
+						before = '';
+					}
+					alertdev('append met '+ target + ' en '+ result.msg );
+					ajaxAppend(result.msg, result.target, 'status', result.before);
+				} else {
+					alertdev('The action succeeded.');
+				}
+			}
+			alert('haalt nu de row weg');
+			var row = $jq("tr[data-record='"+result.id+"']");
+			if (row){
+				row.remove();
+			} else {
+				alertdev('hij kon de row met data-record = '+result.id+ ' niet vinden');
+			}
+		}
+	} else {
+		alertdev('Not a valid result');
+	}
+}
+
 function handleSaveResult(result, args){
 	var args_valid = false;
 	if (arguments.length > 1 && args && (args.length > 0)) {
@@ -185,32 +218,3 @@ function generateAndPopulateModal(result, fun, arg){
 	Drupal.attachBehaviors();
 	return return_result;
 }
-
-/*function generateAndPopulateModalOld(result, fun, arg){
-	// TODO : work more on the formatting
-	// and add other fields from DB
-	var data = jQuery.parseJSON(result);
-	if (data && data.result !== 'error'){
-		var content = '';
-		if (typeof fun == 'function'){
-			content = fun(data.result, arg);
-		} else {
-			content = data.result;
-		}
-		Drupal.CTools.Modal.show();
-		Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
-		Obj("modal-content").html(content);
-		Drupal.attachBehaviors();
-		return true;
-	} else {
-		console.log('Some program error occured. We could not render the result');
-		if (data){
-			Drupal.CTools.Modal.show();
-			Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
-			Obj("modal-content").html("<div class='messages error'>"+data.error+ "</div>");
-			Drupal.attachBehaviors();
-		}
-		return false;
-		
-	};
-}*/

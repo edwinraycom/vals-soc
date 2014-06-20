@@ -1,5 +1,5 @@
 <?php
-function jsonResult($result, $msg='', $type='', $show_always=FALSE){
+function jsonResult($result, $msg='', $type='', $args=array(), $show_always=FALSE){
 	if (!$msg){
 		//Get the messages set by drupal_set_messages, but if we pass deliberately null on, we expect no messages
 		$msgs = is_null($msg) ? '' : drupal_get_messages($type);
@@ -16,14 +16,14 @@ function jsonResult($result, $msg='', $type='', $show_always=FALSE){
 			$msg = (_DEBUG && $show_always ? tt(' No %1$s messages available', $type): '');
 		}
 	}
-	$struct = array();
+	$struct = $args;
 	if ( ($result === 'error') || ($result === false) || is_null($result)) {
 		$struct['result'] = 'error';
 		$struct['error'] = $msg;
 		
 	} else {
 		
-		if ($result == 'html'){
+		if ($result === 'html'){
 			$struct['result'] = 'html';
 			$struct['html'] = $result;
 		} else {
@@ -35,12 +35,12 @@ function jsonResult($result, $msg='', $type='', $show_always=FALSE){
 	echo json_encode($struct);
 }
 
-function jsonBadResult($msg='', $type='error', $show_always=TRUE){
-	jsonResult('error', $msg, $type, $show_always);
+function jsonBadResult($msg='', $type='error', $args=array(), $show_always=TRUE){
+	jsonResult('error', $msg, $type, $args, $show_always);
 }
 
-function jsonGoodResult($result=TRUE, $msg='', $type='status', $show_always=FALSE){
-	jsonResult($result, $msg, $type, $show_always);
+function jsonGoodResult($result=TRUE, $msg='', $type='status', $args=array(), $show_always=FALSE){
+	jsonResult($result, $msg, $type, $args, $show_always);
 }
 
 function jsonBadResultJT($msg=''){
