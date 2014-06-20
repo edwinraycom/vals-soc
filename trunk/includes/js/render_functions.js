@@ -42,59 +42,55 @@ function getProposalDetail(proposal_id, target, msg){
 				{tab: 'cv', label: 'Cv'},
 				{tab: 'summary', label: 'Solution Summary'},
 				{tab: 'solution', label: 'Solution'},
-				{tab: 'state', label: 'State'}];
+				{tab: 'modules', label: 'Modules and Libraries'}];
 	var content_tabs = ['tab_project', 'tab_student', 'tab_cv', 'tab_summary', 'tab_solution', 
-				      	'tab_state'];
-
+				      	'tab_modules'];
+	var url = moduleUrl + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" +
+		proposal_id;
+	
   	if (window.view_settings.apply_projects){
   		tabs.push({tab: 'edit', label: 'Edit'});
 		content_tabs.push('tab_edit');
+		tabs.push({tab: 'delete', label: 'Delete'});
+		content_tabs.push('tab_delete');
 	}
-	var url = moduleUrl + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" + proposal_id;
+  	
 	if ((typeof target == 'undefined')) {
 		target = 'modal';
 	}
-	$jq.get(url,function(data,status){
-		
+	//Get the details and render with renderProposalTabs
+	$jq.get(url, function (data,status){
 		if (data.result == 'error'){
 			alert('Could not retrieve well the saved data');
 			return;
 		}
 		var msg_container = 'modal-content';
-		//var msg_before = 'toc';
-		
+		var tabs_present = false;
 		switch (target){
-		
-			case 'modal': generateAndPopulateModal(data, renderProposalTabs, tabs);break;
+			case 'modal': tabs_present = generateAndPopulateModal(data, renderProposalTabs, tabs);break;
 			case 'content' :
 				var data2 = jQuery.parseJSON(data);
-				console.log(data2.result);
-				var content = renderProposalTabs(data2.result, tabs, 'content');
-				msg_container = 'content';
-				//msg_before = 'vals-soc-proposal-form';
-				Obj('content').html(content);			
+				if (data2.result == 'error' ){
+					ajaxAppend(result.error, 'content', 'error');
+				} else {
+					var content = renderProposalTabs(data2.result, tabs, 'content');
+					msg_container = 'content';
+					Obj('content').html(content);
+					tabs_present = true;
+				}
 			break ;
-			default: populateModal(data, renderProposalTabs, tabs);
+			default: tabs_present = populateModal(data, renderProposalTabs, tabs);
 		}
-		activatetabs('tab_', content_tabs);
-      	if (typeof msg != 'undefined' && msg){
+		if (tabs_present){
+			activatetabs('tab_', content_tabs);
+		}
+		if (typeof msg != 'undefined' && msg){
       		 ajaxAppend(msg, msg_container, 'status', 'toc');
       	};
 		
 		});
 	
 }		
-
-function getProposalFormForProject(projectId){
-	Drupal.CTools.Modal.dismiss();
-	//With formResult it will turn all textareas in rte fields and with handleResult, it just copies the
-	//form and places everything in the target content
-	//possible forms: ajaxCall(module, action, data, handleResult, json, args)
-	// ajaxCall(module, action, data, target, html)
-	//Note that formResult and jsonFormResult store the call in the target and convert the textareas
-	ajaxCall("student", "proposal", {id: projectId, target:'content'}, "formResult", 'html', 'content');
-	//ajaxCall("student", "proposal", {id: projectId, target:'content'}, 'content');
-}
 
 function renderProposalTabs(result, labels, container){
 	var s = '<ol id="toc">';
@@ -107,34 +103,47 @@ function renderProposalTabs(result, labels, container){
 	for (var t=0; t < count;t++){
 		target = labels[t].tab;
 		if (target == 'edit'){
-			onclick = "onclick=\"ajaxCall('proposal', 'proposal_edit', {proposal_id:"+
-				result.proposal_id+ ", target:'"+container+"'}, 'jsonFormResult', 'json', ['"+container+"']);\"";
+			onclick = "\" onclick=\"ajaxCall('proposal', 'proposal_edit', {proposal_id:"+
+				result.proposal_id+ ", target:'"+container+"'}, 'jsonFormResult', 'json', ['"+
+				container+"']);\"";
 		} else {
-			onclick = '';
+			onclick = '" ';
 		}
-		s += '<li><a id="tab_tab_'+ target +'" href="#tab_tab_'+ target +'" title="" '+onclick+'><span>'+labels[t].label+'</span></a></li>'; 
+		if (target == 'delete'){
+			class_str = ' class="right"';
+		} else {
+			class_str = '';
+		}
+		s += '<li'+ class_str+'><a id="tab_tab_'+ target +'" href="#tab_tab_'+ target + onclick+
+			'><span>'+labels[t].label+'</span></a></li>'; 
 
 	}
 	s += '</ol>';
 	s += '<div class="tabs_container">';
+	var ney = 'Nothing entered yet';
 	for (var t=0; t < count;t++){
 		target = labels[t].tab;
 		s += '<div id="tab_'+ target + '" class="content">';
 		s += 	"<div id='msg_"+ target+ "'></div>";
+		
 		switch (target){
 			case 'project': s += renderProject(result, false); 
 				break;
 			case 'student': s += renderStudent(result); 
 				break;
-			case 'cv': s += result.cv;
+			case 'cv': s += (result.cv ? result.cv : ney);
 				break;
-			case 'summary': s += result.solution_short;
+			case 'summary': s += (result.solution_short ? result.solution_short : ney);
 				break;
-			case 'solution': s += result.solution_long;
+			case 'solution': s += (result.solution_long ? result.solution_long : ney);
 				break;
-			case 'state': s += '?';
+			case 'modules': s += (result.modules ? result.modules : ney);
 				break;
-			case 'edit': s += '';
+			case 'edit': s += 'Wait please';
+			break;
+			case 'delete': s += 'Are you sure you want to delete this proposal?<br>'+
+				'<input type="button" value="Yes" onclick="ajaxCall(\'proposal\', \'proposal_delete\', '+
+				'{proposal_id:'+result.proposal_id+', target: \''+ container+ '\' }, \'handleDeleteResult\', \'json\', \'content\');"/>';
 			break;
 		}
 		s += "</div>"; 
@@ -144,11 +153,17 @@ function renderProposalTabs(result, labels, container){
 	return s;
 }
 
-//function getProposalFormForProject(projectId){
-//	//TODO is the call to dismiss necessary?
-//	Drupal.CTools.Modal.dismiss();
-//	ajaxCall("student", "proposal", {id: projectId, target: target_id}, "content");
-//}
+
+function getProposalFormForProject(projectId){
+	Drupal.CTools.Modal.dismiss();
+	//With formResult it will turn all textareas in rte fields and with handleResult, it just copies the
+	//form and places everything in the target content
+	//possible forms: ajaxCall(module, action, data, handleResult, json, args)
+	// ajaxCall(module, action, data, target, html)
+	//Note that formResult and jsonFormResult store the call in the target and convert the textareas
+	ajaxCall("student", "proposal", {id: projectId, target:'content'}, "formResult", 'html', 'content');
+	//ajaxCall("student", "proposal", {id: projectId, target:'content'}, 'content');
+}
 
 function getProjectDetail(projectId){	
 	var url = moduleUrl + "actions/project_actions.php?action=project_detail&project_id=" + projectId;

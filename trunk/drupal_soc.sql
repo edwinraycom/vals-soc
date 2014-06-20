@@ -14,8 +14,16 @@
 * 		-student, -supervisor, + proposal_id (rationale: project table coupd be joined with proposals and if no result, there was no supervisor and/or student either)
 * soc_studentgroups ->soc_studentgroups
 * soc_proposal: oid ->org_id
+* 
+* 20-6-14:
+* 
+ALTER TABLE `soc_proposals` CHANGE `cv` `cv` MEDIUMTEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+CHANGE `solution_short` `solution_short` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+CHANGE `solution_long` `solution_long` MEDIUMTEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+CHANGE `modules` `modules` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL 
 */
 use drupal;
+
 
 CREATE TABLE IF NOT EXISTS `soc_names` (
   `names_uid` int(11) NOT NULL,

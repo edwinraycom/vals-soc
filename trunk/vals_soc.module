@@ -181,9 +181,9 @@ function vals_soc_help($path, $arg) {
 //***********************************************************************************
 
 function vals_soc_js_alter(&$javascript) {
-$ckeditor_path = drupal_get_path('module', 'ckeditor');
-//$javascript = drupal_add_js($ckeditor_path. '/includes/ckeditor.utils.js');
-$javascript = drupal_add_js($ckeditor_path. '/ckeditor/ckeditor.js');
+	$ckeditor_path = drupal_get_path('module', 'ckeditor');
+	//$javascript = drupal_add_js($ckeditor_path. '/includes/ckeditor.utils.js');
+	$javascript = drupal_add_js($ckeditor_path. '/ckeditor/ckeditor.js');
 
   // Swap out jQuery to use an updated version of the library.
   //$javascript['misc/jquery.js']['data'] = drupal_get_path('module', 'jquery_update') . '/jquery.js';
@@ -209,10 +209,8 @@ function vals_soc_mail($key, &$message, $params) {
 }
 
 function vals_soc_init(){
-
-drupal_add_js (_VALS_SOC_PATH .'/includes/js/settings.js');
-
-drupal_add_js (_VALS_SOC_PATH .'/includes/js/jquery-migrate-1.2.1.js');
+	drupal_add_js (_VALS_SOC_PATH .'/includes/js/settings.js');
+	drupal_add_js (_VALS_SOC_PATH .'/includes/js/jquery-migrate-1.2.1.js');
 }
 /**
  * Implements Drupal _hook_mail_alter()

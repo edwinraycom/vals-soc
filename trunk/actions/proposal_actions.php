@@ -1,6 +1,9 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
-module_load_include('php', 'vals_soc', 'includes/classes/Groups');
+//This file is included as part of the bootstrap process as the handle_forms file includes it which is included itself
+//automatically
+// module_load_include('inc', 'vals_soc', 'includes/classes/AbstractEntity');
+
 module_load_include('php', 'vals_soc', 'includes/classes/Proposal');
 module_load_include('php', 'vals_soc', 'includes/classes/Users');
 
@@ -56,7 +59,8 @@ switch ($_GET['action']){
 		$proposal_id = getRequestVar('proposal_id', null);
 		if ($proposal_id){
 			if (! ($browse_proposals || ($x = Groups::isOwner('proposal', $proposal_id)) )){
-				jsonBadResult(t('You can only see your own proposals!'). " want $browse_proposals en $x myid".Users::getMyId());
+				//TODO  de want weghalen later (remove 'want....)
+				jsonBadResult(t('You can only see your own proposals!'). " want $browse_proposals en myid".Users::getMyId());
 			} else {
 				include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
 				include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
@@ -107,23 +111,36 @@ switch ($_GET['action']){
 	break;
 	case 'proposal_delete':
 		$is_admin = !$is_student && (Users::isOfType('admin'));
-		$proposal_id=null;
-		if(isset($_POST['proposal_id']) && $_POST['proposal_id']){
-			$proposal_id = $_POST['proposal_id'];
+		$proposal_id = getRequestVar('proposal_id', 'post', null);
+		$target = getRequestVar('target', 'post', 'content');
+		if($proposal_id){
+			$is_modal = ($target !== 'content');
+			//this is the case where the result is bad and we show an error msg
+			$container =  $is_modal ? 'modal-content' : 'content';
+			$before = 'toc' ;
+			$args = array('id' => $proposal_id, 'before'=> $before, 'target'=> $container, 'replace_target'=> true);
+			$proposal_nr = Proposal::getInstance()->getProposalById($proposal_id);
+// 			print_r($proposal_nr);
+// 			echo gettype($proposal_nr); echo "en ook ".get_class($proposal_nr);die();
+			if (!$proposal_nr){
+				jsonBadResult(t('This proposal was already deleted!'), 'error', $args);
+				return;
+			}
 			if (! ($is_admin || Groups::isOwner('proposal', $proposal_id) )){
-				jsonBadResult(t('You can only see your own proposals!'));
+				jsonBadResult(t('You can only delete your own proposals!'), 'error', $args);
 			} else {
 				$num_deleted = db_delete(tableName('proposal'))
-					->condition(AnstractEntity::keyField('proposal'), $proposal_id)
+					->condition(AbstractEntity::keyField('proposal'), $proposal_id)
 					->execute();
 				if ($num_deleted){
-					jsonGoodResult('OK', t("You have removed this proposal"));
+					$args['before'] = '';
+					jsonGoodResult(TRUE, t("You have removed this proposal"), 'status', $args);
 				} else {
-					jsonBadResult(t('We could not remove your proposal'));
+					jsonBadResult(t('We could not remove your proposal'), 'error', $args);
 				}
 			}
 		} else{
-			jsonBadResult(t('No proposal identifier submitted!'));
+			jsonBadResult(t('No proposal identifier submitted!'), 'error', $args);
 		}
 	break;
 	
