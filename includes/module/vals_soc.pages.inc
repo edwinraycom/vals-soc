@@ -1,23 +1,15 @@
 <?php 
 module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.access');
 
-/**
- * Callback for the admin overview page
- * @return string
- */
-function vals_soc_timeline_admin_overview_page() {
-	return '<p><a href="./vals_soc/program_settings">'.t('Program settings').'</a></p>';
-}
 
 /**
  * Callback for the Program settings page
  * @return string
  */
-function vals_soc_timeline_admin_program_page() {
-    $version = get_vals_version();
-	$txt = '<a href="./program_settings/timeline">'.t('Edit Timeline').'</a></p>';
-	$txt .= '<a href="./program_settings/messages">'.t('Edit Messages').'</a></p>';
-	return $txt;
+function vals_soc_admin_program_settings_page() {
+    ob_start();
+    module_load_include('inc', 'vals_soc', 'includes/module/ui/administer/program_settings');
+    return ob_get_clean();
 }
 
 function vals_soc_administer_page(){
