@@ -12,8 +12,9 @@ function populate($obj, $prop, $default=''){
  * @param unknown $form_state
  */
 function vals_soc_admin_messages_form($form, $form_state){
+	$complete_this_section = t('Complete this section');
 	$accepted_orgs_prev_input = variable_get('vals_accepted_organisations_message',
-			array('value'=>'Complete this section', 'format' => 'full_html'));
+		array('value'=>$complete_this_section, 'format' => 'full_html'));
 	$form['vals_accepted_organisations_message'] = array(
 		'#type' => 'text_format',
 		'#base_type' => 'textarea',
@@ -21,9 +22,8 @@ function vals_soc_admin_messages_form($form, $form_state){
 		'#default_value' => $accepted_orgs_prev_input['value'],
 		'#suffix' => '<p></p>',
 	);
-	
 	$rejected_orgs_prev_input = variable_get('vals_rejected_organisations_message',
-			array('value'=>'Complete this section', 'format' => 'full_html'));
+		array('value'=>$complete_this_section, 'format' => 'full_html'));
 	$form['vals_rejected_organisations_message'] = array(
 		'#type' => 'text_format',
 		'#base_type' => 'textarea',
@@ -31,9 +31,8 @@ function vals_soc_admin_messages_form($form, $form_state){
 		'#default_value' => $rejected_orgs_prev_input['value'],
 		'#suffix' => '<p></p>',
 	);
-	
 	$mentor_welcome_prev_input = variable_get('vals_mentor_welcome_message',
-			array('value'=>'Complete this section', 'format' => 'full_html'));
+		array('value'=>$complete_this_section, 'format' => 'full_html'));
 	$form['vals_mentor_welcome_message'] = array(
 		'#type' => 'text_format',
 		'#base_type' => 'textarea',
@@ -41,9 +40,8 @@ function vals_soc_admin_messages_form($form, $form_state){
 		'#default_value' => $mentor_welcome_prev_input['value'],
 		'#suffix' => '<p></p>',
 	);
-	
 	$student_welcome_prev_input = variable_get('vals_student_welcome_message',
-			array('value'=>'Complete this section', 'format' => 'full_html'));
+			array('value'=>$complete_this_section, 'format' => 'full_html'));
 	$form['vals_student_welcome_message'] = array(
 		'#type' => 'text_format',
 		'#base_type' => 'textarea',
@@ -51,9 +49,8 @@ function vals_soc_admin_messages_form($form, $form_state){
 		'#default_value' => $student_welcome_prev_input['value'],
 		'#suffix' => '<p></p>',
 	);
-	
 	$accepted_students_prev_input = variable_get('vals_accepted_students_message',
-			array('value'=>'Complete this section', 'format' => 'full_html'));
+			array('value'=>$complete_this_section, 'format' => 'full_html'));
 	$form['vals_accepted_students_message'] = array(
 		'#type' => 'text_format',
 		'#base_type' => 'textarea',
@@ -61,9 +58,8 @@ function vals_soc_admin_messages_form($form, $form_state){
 		'#default_value' => $accepted_students_prev_input['value'],
 		'#suffix' => '<p></p>',
 	);
-	
 	$rejected_students_prev_input = variable_get('vals_rejected_students_message',
-			array('value'=>'Complete this section', 'format' => 'full_html'));
+		array('value'=>$complete_this_section, 'format' => 'full_html'));
 	$form['vals_rejected_students_message'] = array(
 		'#type' => 'text_format',
 		'#base_type' => 'textarea',
@@ -71,7 +67,6 @@ function vals_soc_admin_messages_form($form, $form_state){
 		'#default_value' => $rejected_students_prev_input['value'],
 		'#suffix' => '<p></p>',
 	);
-	
 	$form['vals_messages_test_email'] = array(
 		'#type' => 'textfield',
 		'#title' => t('Test email address'),
@@ -80,7 +75,8 @@ function vals_soc_admin_messages_form($form, $form_state){
 		'#maxlength' => 128,
 		'#required' => FALSE,
 		'#prefix' => '',
-		'#suffix' => '<div>' .t('Email address to which test messages must be sent. If provided, a test email is sent for each of the messages on this page to the given address').'.</div>',		
+		'#suffix' => '<div>' .t('Email address to which test messages must be sent. If provided, a '.
+			'test email is sent for each of the messages on this page to the given address').'.</div>',		
 	);
 	$form['vals_messages_test_cron_email'] = array(
 			'#type' => 'checkbox',
@@ -88,8 +84,6 @@ function vals_soc_admin_messages_form($form, $form_state){
 			'#tree' => TRUE,
 			'#default_value' => 0,
 	);
-	
-	
 	$form['#validate'][] = 'vals_soc_admin_messages_form_validate';
 	$form['#submit'][] = 'vals_soc_admin_messages_form_submit';
 	return system_settings_form($form);
@@ -110,7 +104,6 @@ function vals_soc_admin_messages_form_validate($form, $form_state) {
 			form_set_error('vals_messages_test_email', t('Please Enter a valid email address or leave blank'));
 		}
 	}
-	
 }
 
 /**
@@ -131,9 +124,7 @@ function vals_soc_admin_messages_form_submit($form, $form_state) {
 		module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
 		vals_soc_cron_email_test_setup();
 	}
-	
 }
-
 
 /**
  * Form to edit the timeline
@@ -142,121 +133,117 @@ function vals_soc_admin_messages_form_submit($form, $form_state) {
  */
 function vals_soc_admin_timeline_form($form, &$form_state){
 	$form['vals_timeline_program_active'] = array(
-			'#type' => 'checkbox',
-			'#title' => t('Enable program'),
-			'#default_value' => variable_get('vals_timeline_program_active', 0),
+		'#type' => 'checkbox',
+		'#title' => t('Enable program'),
+		'#default_value' => variable_get('vals_timeline_program_active', 0),
 	);
 	
 	$form['vals_timeline_program_start_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Program start date'),
-			'#default_value' => variable_get('vals_timeline_program_start_date', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Program start date'),
+		'#default_value' => variable_get('vals_timeline_program_start_date', ''),
 	);
 	
 	$form['vals_timeline_program_end_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Program end date'),
-			'#default_value' => variable_get('vals_timeline_program_end_date', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Program end date'),
+		'#default_value' => variable_get('vals_timeline_program_end_date', ''),
 	);
 	
 	$form['vals_timeline_org_app_start_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Organisation signup start date'),
-			'#default_value' => variable_get('vals_timeline_org_app_start_date', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Organisation signup start date'),
+		'#default_value' => variable_get('vals_timeline_org_app_start_date', ''),
 	);
 
 	$form['vals_timeline_org_app_end_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Organisation signup end date'),
-			'#default_value' => variable_get('vals_timeline_org_app_end_date', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Organisation signup end date'),
+		'#default_value' => variable_get('vals_timeline_org_app_end_date', ''),
 	);
 	
 	$form['vals_timeline_accepted_org_announced_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Accepted organisations announced deadline'),
-			'#default_value' => variable_get('vals_timeline_accepted_org_announced_date', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Accepted organisations announced deadline'),
+		'#default_value' => variable_get('vals_timeline_accepted_org_announced_date', ''),
 	);
 	
 	$form['vals_timeline_student_signup_start_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Student signup start date'),
-			'#default_value' => variable_get('vals_timeline_student_signup_start_date', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Student signup start date'),
+		'#default_value' => variable_get('vals_timeline_student_signup_start_date', ''),
 	);
 	
 	$form['vals_timeline_student_signup_end_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Student signup end date'),
-			'#default_value' => variable_get('vals_timeline_student_signup_end_date', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Student signup end date'),
+		'#default_value' => variable_get('vals_timeline_student_signup_end_date', ''),
 	);
 
 	$form['vals_timeline_org_review_student_applications_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Organisations review student applications deadline'),
-			'#default_value' => variable_get('vals_timeline_org_review_student_applications_date', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Organisations review student applications deadline'),
+		'#default_value' => variable_get('vals_timeline_org_review_student_applications_date', ''),
 	);
 	
 	$form['vals_timeline_students_matched_to_mentors_deadline_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Students matched to mentors deadline'),
-			'#default_value' => variable_get('vals_timeline_students_matched_to_mentors_deadline_date', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Students matched to mentors deadline'),
+		'#default_value' => variable_get('vals_timeline_students_matched_to_mentors_deadline_date', ''),
 	);
 	
 	$form['vals_timeline_accepted_students_announced_deadline_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Accepted students announced deadline'),
-			'#default_value' => variable_get('vals_timeline_accepted_students_announced_deadline_date', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Accepted students announced deadline'),
+		'#default_value' => variable_get('vals_timeline_accepted_students_announced_deadline_date', ''),
 	);
-/*
-	$form['vals_timeline_students_start_submit_forms_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Students start submitting their forms'),
-			'#default_value' => variable_get('vals_timeline_students_start_submit_forms_date', ''),
+	/*$form['vals_timeline_students_start_submit_forms_date'] = array(
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Students start submitting their forms'),
+		'#default_value' => variable_get('vals_timeline_students_start_submit_forms_date', ''),
 	);
-	
 	$form['vals_timeline_community_bonding_start_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Community bonding period start date'),
-			'#default_value' => variable_get('vals_timeline_community_bonding_start_date', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Community bonding period start date'),
+		'#default_value' => variable_get('vals_timeline_community_bonding_start_date', ''),
 	);
-
 	$form['vals_timeline_community_bonding_end_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Community bonding period end date'),
-			'#default_value' => variable_get('vals_timeline_community_bonding_end_date', ''),
-	);
-*/	
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Community bonding period end date'),
+		'#default_value' => variable_get('vals_timeline_community_bonding_end_date', ''),
+	);*/
 	$form['vals_timeline_coding_start_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Coding start date'),
-			'#default_value' => variable_get('vals_timeline_coding_start_date', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Coding start date'),
+		'#default_value' => variable_get('vals_timeline_coding_start_date', ''),
 	);
 
 	$form['vals_timeline_coding_end_date'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Coding end date'),
-			'#default_value' => variable_get('vals_timeline_coding_end_date', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Coding end date'),
+		'#default_value' => variable_get('vals_timeline_coding_end_date', ''),
 	);
 	
 	$form['vals_timeline_suggested_coding_deadline'] = array(
-			'#type' => 'date_popup',
-			'#date_format' => 'Y-m-d H:i',
-			'#title' => t('Suggested coding deadline'),
-			'#default_value' => variable_get('vals_timeline_suggested_coding_deadline', ''),
+		'#type' => 'date_popup',
+		'#date_format' => 'Y-m-d H:i',
+		'#title' => t('Suggested coding deadline'),
+		'#default_value' => variable_get('vals_timeline_suggested_coding_deadline', ''),
 	);
 	
 	return system_settings_form($form);
@@ -437,7 +424,7 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 
 function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 	$form = array(
-		'#prefix' => '<div id="vals_soc_organisation_form_wrapper">',
+		'#prefix' => '<div id="vals_soc_entity_form_wrapper">',
 		'#suffix' => '</div>',
 	);
 	$form['key'] = array(
@@ -447,8 +434,12 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 	$form['tab_target'] = array(
 		'#type' => 'hidden',
 		"#default_value" => $target,
-	);/* 
-	//Still experimenting with using paths -possible will be removed soon.
+	);
+	$form['entity_type'] = array(
+		'#type' => 'hidden',
+		"#default_value" => 'organisation',
+	); 
+	/*Still experimenting with using paths -possible will be removed soon.
 	$form['tRequest_path'] = array(
 		'#type' => 'hidden',
 		'#default_value' => request_path(),
@@ -459,17 +450,15 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 		"#size" => 60,
 		'#required' => '1',
 		"#default_value" => populate($org, 'name'),
-		//"#description" => t("This code is different per role."),
 	);
 	$form['description'] = array(
 		"#type" => "textarea",
 		'#title' => t('Describe your organisation, if you like'),
-		//"#size" => 20,
 		"#size" => 60,
+		//"#size" => 20,
 		//'#cols' =>5,
 		//'#rows' =>4,
 		"#default_value" => populate($org, 'description'),
-		//"#description" => t("This code is different per role."),
 	);
 	$form['url'] = array(
 		"#type" => "textfield",
@@ -477,15 +466,13 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 		"#size" => 100,
 		'#required' => '1',
 		"#default_value" => populate($org, 'url'),
-		//"#description" => t("This code is different per role."),
 	);
-    $form['contact_name'] = array(
+	$form['contact_name'] = array(
 		"#type" => "textfield",
 		'#title' => t('Who is the contact person (you?)'),
 		"#size" => 100,
 		'#required' => '1',
 		"#default_value" => populate($org, 'contact_name'),
-		//"#description" => t("This code is different per role."),
 	);
 	$form['contact_email'] = array(
 		"#type" => "textfield",
@@ -493,22 +480,83 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 		"#size" => 100,
 		'#required' => '1',
 		"#default_value" => populate($org, 'contact_email'),
-		//"#description" => t("This code is different per role."),
 	);
 	$form['submit'] = array(
 		'#type' => 'submit',
 		'#value' => t('Save'),
 		'#ajax' => array(
-			'callback' => 'vals_soc_organisation_form_callback',
-			'wrapper' => 'vals_soc_organisation_form_wrapper',
+			'callback' => 'vals_soc_entity_form_callback',
+			'wrapper' => 'vals_soc_entity_form_wrapper',
 		),
 	);
 	$form['cancel'] = array(
 		'#type' => 'button',
 		'#value' => t('Cancel'),
 		'#prefix' => '&nbsp; &nbsp; &nbsp;',
-		'#attributes' => array('onClick' => 'location.href="."; return true;'),
-		'#post_render' => array('vals_soc_organisation_form_cancel'),
+		'#attributes' => array('onClick' => 'location.reload(); return true;'),
+		'#post_render' => array('vals_soc_entity_form_cancel'),
+	);
+	$form['#attached']['js'] = array(
+		array(
+			'type'  => 'file',
+			'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
+		),
+	);
+	return $form;
+}
+
+function vals_soc_institute_form($form, &$form_state, $institute='', $target=''){
+	$form = array(
+		'#prefix' => '<div id="vals_soc_entity_form_wrapper">',
+		'#suffix' => '</div>',
+	);
+	$form['name'] = array(
+		"#type" => "textfield",
+		'#title' => t('What is the name of your institute?'),
+		"#size" => 60,
+		"#default_value" => populate($institute, 'name'),
+		'#required' => '1'
+ 	);
+	$form['key'] = array(
+		'#type' => 'hidden',
+		"#default_value" => populate($institute, 'inst_id'),
+	);
+	$form['tab_target'] = array(
+		'#type' => 'hidden',
+		"#default_value" => $target,
+	);
+	$form['entity_type'] = array(
+		'#type' => 'hidden',
+		"#default_value" => 'institute',
+	);
+	$form['contact_name'] = array(
+		"#type" => "textfield",
+		'#title' => t('Who is the contact person (you?)'),
+		"#size" => 100,
+		"#default_value" => populate($institute, 'contact_name'),
+		'#required' => '1'
+ 	);
+	$form['contact_email'] = array(
+		"#type" => "textfield",
+		'#title' => t('What is the email of the contact person'),
+		"#size" => 100,
+		"#default_value" => populate($institute, 'contact_email'),
+		'#required' => '1'
+	);
+	$form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Save'),
+		'#ajax' => array(
+			'callback' => 'vals_soc_entity_form_callback',
+			'wrapper' => 'vals_soc_entity_form_wrapper',
+		),
+	);
+	$form['cancel'] = array(
+		'#type' => 'button',
+		'#value' => t('Cancel'),
+		'#prefix' => '&nbsp; &nbsp; &nbsp;',
+		'#attributes' => array('onClick' => 'location.reload(); return true;'),
+		'#post_render' => array('vals_soc_entity_form_cancel'),
 	);
 	$form['#attached']['js'] = array(
 		array(
@@ -520,16 +568,16 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 }
 
 /*
- * Drupal has a nasty habit of making buttons into "submit" buttons
- * when you dont want it to.  This function sets the cancel button
- * back to type "button"
- */
-function vals_soc_organisation_form_cancel($markup, $element) {
+* Drupal has a nasty habit of making buttons into "submit" buttons
+* when you dont want it to.  This function sets the cancel button
+* back to type "button"
+*/
+function vals_soc_entity_form_cancel($markup, $element) {
 	$markup = str_replace('type="submit', 'type="button', $markup);
 	return $markup;
 }
 
-function vals_soc_organisation_form_callback($form, &$form_state){
+function vals_soc_entity_form_callback($form, &$form_state){
 	// if there are errors, return the form to display the error messages
 	$target='';
 	if (form_get_errors()) {
@@ -538,109 +586,22 @@ function vals_soc_organisation_form_callback($form, &$form_state){
 	}
 	else{
 		$commands = array();
-		$commands[] = ajax_command_html('#vals_soc_organisation_form_wrapper', render($form));
+		$commands[] = ajax_command_html('#vals_soc_entity_form_wrapper', render($form));
 		$commands[] = array(
-			'command' => 'jsOrganisationSaveCallback',
-			'orgId' => $form_state['values']['key'],
+			'command' => 'jsEntitySaveCallback',
+			'key' => $form_state['values']['key'],
 			'tabTarget' => $form_state['values']['tab_target'],
-			//'requestPath' => $form_state['values']['tRequest_path'],
+			'entityType' => $form_state['values']['entity_type'],
 		);
 		return array('#type' => 'ajax', '#commands' => $commands);
 	}
 }
 
-function vals_soc_institute_form($form, &$form_state, $institute='', $target=''){
-    
-     $form['name'] = array(
-             "#type" => "textfield",
- 			'#title' => t('What is the name of your institute?'),
-             "#size" => 60,
-             "#default_value" => populate($institute, 'name')
-             //"#description" => t("This code is different per role."),
- 	);
-//  	$form['description'] = array(
-//              "#type" => "textarea",
-//  			'#title' => t('Describe your institute, if you like'),
-//              "#size" => 60,
-//              "#default_value" => populate($institute, 'description')
-//              //"#description" => t("This code is different per role."),
-//  	);
-//      $form['url'] = array(
-//              "#type" => "textfield",
-//  			'#title' => t('At what website can your institute be found').$form['id'],
-//              "#size" => 120,
-//              "#default_value" => populate($institute, 'url')
-//              //"#description" => t("This code is different per role."),
-//  	);
-     $form['contact_name'] = array(
-             "#type" => "textfield",
- 			'#title' => t('Who is the contact person (you?)'),
-             "#size" => 100,
-             "#default_value" => populate($institute, 'contact_name')
-             //"#description" => t("This code is different per role."),
- 	);
-     $form['contact_email'] = array(
-             "#type" => "textfield",
- 			'#title' => t('What is the email of the contact person'),
-             "#size" => 100,
-             "#default_value" => populate($institute, 'contact_email')
-             //"#description" => t("This code is different per role."),
- 	);
-     if (!$institute){
-     	//          $form['submit'] = array(
-     	//              '#type' => 'submit',
-     	//              '#value' => t('Save'),
-     	//          );
-     	// 		$form['#submit'][] = 'vals_soc_organisation_form_submit_handler';
-     	//     	$form['#validate'][] = 'vals_soc_organisation_form_validate_handler';
-     	unset($form['#submit']);
-     	$form['sumbit'] = array(
-     			'#type' => 'button',
-     			'#button_type' => 'button',
-     			'#value' => t('Save'),
-     			//'#theme' => 'garland_button',
-     			'#attributes' => array(
-     					'onclick' => 'ajaxFormCall("vals-soc-institute-form", "administration", "save",'.
-     					' {type: "institute", id:0}, "refreshTabs", "json", ["institute", "'.$target.'"]);')//'.$target.' instead of refreshTabs
-     	);
-     
-     } else {
-     	unset($form['#submit']);
-     	$form['sumbit'] = array(
-     			'#type' => 'button',
-     			'#button_type' => 'button',
-     			'#value' => t('Save'),
-     			//'#theme' => 'garland_button',module, action, data, target, type, err
-     			'#attributes' => array(
-     					'onclick' => 'ajaxFormCall("vals-soc-institute-form", "administration", "save",'.
-     					' {type: "institute", id:'.$institute->inst_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
-     	);
-     } 
-/*      
-     
-     
-     
-     if (!$institute){
-         $form['submit'] = array(
-             '#type' => 'submit',
-             '#value' => t('Save'),
-         );
-         $form['#submit'][] = 'vals_soc_institute_form_submit_handler';
-         $form['#validate'][] = 'vals_soc_institute_form_validate_handler';
-     } else {
-         unset($form['#submit']);
-         $form['sumbit'] = array(
-           '#type' => 'button',
-           '#button_type' => 'button',
-           '#value' => t('Save'),
-           //'#theme' => 'garland_button',
-           '#attributes' => array(
-               'onclick' => 'ajaxFormCall("vals-soc-institute-form", "administration", "save", {type: "institute", id: '.
-                  $institute->inst_id.' }, "'.$target.'", "json");')
-         );
-     } */
-    return $form;
-}
+
+
+
+
+
 
 function vals_soc_group_form($form, &$form_state, $group='', $target=''){ 
     $form['name'] = array(

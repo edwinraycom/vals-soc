@@ -1,32 +1,33 @@
 (function($, Drupal){
-	Drupal.ajax.prototype.commands.jsOrganisationSaveCallback = function(ajax, response, status){
-		var orgId = response.orgId;
+	Drupal.ajax.prototype.commands.jsEntitySaveCallback = function(ajax, response, status){
+		var key = response.key;
 		var tabTarget = response.tabTarget;
-		if(orgId==''){
-			ajaxFormCall("vals-soc-organisation-form", 
-					"administration",
-					"save",
-					{
-						type: "organisation", 
-						id: 0
-					},
-					"refreshTabs", 
-					"json", 
-					["organisation", tabTarget]
+		var entityType = response.entityType;
+		if(key==''){
+			ajaxFormCall("vals-soc-" + entityType + "-form", 
+				"administration", 
+				"save",
+				{
+					type: entityType, 
+					id:0
+				}, 
+				"refreshTabs",
+				"json",
+				[entityType, tabTarget]
 			);
 		}
 		else{
-			ajaxFormCall("vals-soc-organisation-form",
-					"administration", 
-					"save",
-					{
-						type: "organisation", 
-						id: orgId,
-						target: tabTarget 
-					}, 
-					"refreshSingleTab", 
-					"json", 
-					[tabTarget]
+			ajaxFormCall("vals-soc-" + entityType + "-form",
+				"administration",
+				"save",
+				{
+					type: entityType,
+					id: key,
+					target: tabTarget 
+				},
+				"refreshSingleTab",
+				"json",
+				[tabTarget]
 			);
 		}
 	};
