@@ -156,7 +156,7 @@ function getMentorLayout($timeline_args){
 					<div class="column-entry adminning_organizations">
 						<h4>
 							<a class="dashboard-link component-link"
-							href="#"
+							href="'.$base_url.'/dashboard/members"
 							title="'.t("My organisations").'">'.t("My organisations").'</a>
 						</h4>
 						<p>'.t("List of organisations which I participate in").'</p>

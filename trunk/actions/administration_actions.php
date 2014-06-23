@@ -29,8 +29,24 @@ switch ($_GET['action']){
 	case 'addgroup':
 		$target = altSubValue( $_GET, 'target');
 		echo '<h2>'.t('Add a group to your list of groups').'</h2>';
-		$f2 = drupal_get_form('vals_soc_group_form', null, $target);
-		print drupal_render($f2);
+		//$f2 = drupal_get_form('vals_soc_studentgroup_form', null, $target);
+		//print drupal_render($f2);
+
+		$form = drupal_get_form('vals_soc_studentgroup_form', null, $target);
+		$form['#action'] = url('administer/members');
+		// Process the submit button which uses ajax
+		$form['submit'] = ajax_pre_render_element($form['submit']);
+		// Build renderable array
+		$build = array(
+				'form' => $form,
+				'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
+		);
+		// Print $form
+		$form_to_print = drupal_render($build);
+		// Print JS
+		$form_to_print .= drupal_get_js();
+		echo $form_to_print;
+
 	break;
 	case 'add':
 		$target = altSubValue($_POST, 'target');
@@ -39,9 +55,9 @@ switch ($_GET['action']){
 		'<h2>'.
 			(($type == 'studentgroup') ? t('Add a group to your list of groups') :
 			tt('Add your %1$s', t($type))).
-		'</h2>';
+		'</h2>'; // when is this ever called for a student group? - there is a separate addgroup task above.
 		echo "<div id='msg_$target'></div>";
-		
+
 		$form = drupal_get_form("vals_soc_${type}_form", null, $target);
 		$form['#action'] = url('administer/members');
 		// Process the submit button which uses ajax
@@ -140,7 +156,7 @@ switch ($_GET['action']){
     break;
     case 'save':
         $type = altSubValue($_POST, 'type', '');
-        
+
         $id = altSubValue($_POST, 'id', '');
         //TODO do some checks here
         if(! isValidOrganisationType($type)){
