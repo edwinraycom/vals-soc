@@ -567,6 +567,142 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='')
 	return $form;
 }
 
+function vals_soc_studentgroup_form($form, &$form_state, $group='', $target=''){
+	$form = array(
+		'#prefix' => '<div id="vals_soc_entity_form_wrapper">',
+		'#suffix' => '</div>',
+	);
+	$form['key'] = array(
+		'#type' => 'hidden',
+		"#default_value" => populate($group, 'studentgroup_id'),
+	);
+	$form['tab_target'] = array(
+		'#type' => 'hidden',
+		"#default_value" => $target,
+	);
+	$form['entity_type'] = array(
+		'#type' => 'hidden',
+		"#default_value" => 'studentgroup',
+	);
+	$form['name'] = array(
+		"#type" => "textfield",
+		'#title' => t('Give a name to remember your student group'),
+		"#size" => 60,
+		'#required' => '1',
+		"#default_value" => populate($group, 'name')
+	);
+	$form['description'] = array(
+		"#type" => "textarea",
+		'#title' => t('Some additional note to describe the group'),
+		"#size" => 1024,
+		"#default_value" => populate($group, 'description')
+	);
+	$form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Save'),
+		'#ajax' => array(
+			'callback' => 'vals_soc_entity_form_callback',
+			'wrapper' => 'vals_soc_entity_form_wrapper',
+		),
+	);
+	$form['cancel'] = array(
+		'#type' => 'button',
+		'#value' => t('Cancel'),
+		'#prefix' => '&nbsp; &nbsp; &nbsp;',
+		'#attributes' => array('onClick' => 'location.reload(); return true;'),
+		'#post_render' => array('vals_soc_entity_form_cancel'),
+	);
+	$form['#attached']['js'] = array(
+		array(
+			'type'  => 'file',
+			'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
+		),
+	);
+	return $form;
+}
+
+
+function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $project_id=''){
+	$project_id = $proposal ? $proposal->pid : $project_id;
+	if (! $project_id){
+		drupal_set_message(showError(t('The project id has not been passed on well. Cannot continue. Please inform the system administrator')),
+			'error');
+		return FALSE;
+	}
+// 	$form['name'] = array(
+//		"#type" => "textfield",
+//		'#title' => t('Give your full name'),
+//		"#size" => 60,
+//		'#required' => '1',
+//		"#default_value" => populate($proposal, 'name'),
+//		"#description" => t("For easy communication, it is nice to have your name next to your email address"),
+// 	);
+	$form['solution_short'] = array(
+		"#type" => "textarea",
+		'#title' => t('Give a summary of your solution'),
+		'#cols' => 50,//"#size" => 1024,
+		"#default_value" => populate($proposal, 'solution_short')
+	);
+	$form['solution_long'] = array(
+		"#type" => "textarea",
+		'#title' => t('Give a more detailed description of your solution'),
+		'#cols' => 50,
+		//"#size" => 750,
+		"#default_value" => populate($proposal, 'solution_long')
+	);
+	$form['modules'] = array(
+		"#type" => "textarea",
+		'#title' => t('Which extra modules and libraries will you use, if any?'),
+		'#cols' => 50,//"#size" => 1024,
+		"#default_value" => populate($proposal, 'modules'),
+		"#description" => t("Write the name of the library, it's url and its purpose."),
+		
+	);
+	$form['cv'] = array(
+		"#type" => "textarea",
+		'#title' => t('Describe your Curriculum Vitae'),
+		'#cols' => 50,//"#size" => 1024,
+		"#default_value" => populate($proposal, 'cv'),
+		"#description" => t("You might want to discuss with your supervisor which courses you should put on your cv."),
+	);
+	//If we never need a stand alone form and only use ajax, remove the commented code
+	//and get common code outside
+	$form['cancel'] = array(
+			'#type' => 'button',
+			'#button_type' => 'button',
+			'#value' => t('Cancel'),
+			//'#theme' => 'garland_button',
+			'#attributes' => array(
+					'onclick' => 'if (confirm("'.t('Do you want to leave the proposal for now?').'")){'.
+						(($target != 'content') ? 'Drupal.CTools.Modal.dismiss();}':
+ 						'ajaxCall("project", "project_page", "", "content");}')
+		)
+	);
+	$proposal_id = ((!$proposal) ? 0 : $proposal->proposal_id);
+	unset($form['#submit']);		
+	$form['save'] = array(
+			'#type' => 'button',
+			'#button_type' => 'button',
+			'#value' => t('Save draft'),
+			//'#theme' => 'garland_button',
+			'#attributes' => array(
+					'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
+					' {id:'.$proposal_id .', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSaveResult", "json", ["'.$target.'"]);')
+	);
+	$form['sumbit'] = array(
+			'#type' => 'button',
+			'#button_type' => 'button',
+			'#value' => t('Submit proposal'),
+			//'#theme' => 'garland_button',
+			'#attributes' => array(
+					'onclick' => 'if (confirm("'.t('Are you sure you want to submit your proposal now?').'")){'.
+					'ajaxFormCall("vals-soc-proposal-form", "student", "submit",'.
+					' {id:'.$proposal_id.', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSubmitResult", "json", ["'.$target.'"]);}')
+	);
+
+	return $form;	
+}
+
 /*
 * Drupal has a nasty habit of making buttons into "submit" buttons
 * when you dont want it to.  This function sets the cancel button
@@ -595,150 +731,4 @@ function vals_soc_entity_form_callback($form, &$form_state){
 		);
 		return array('#type' => 'ajax', '#commands' => $commands);
 	}
-}
-
-
-
-
-
-
-
-function vals_soc_group_form($form, &$form_state, $group='', $target=''){ 
-    $form['name'] = array(
-            "#type" => "textfield",
-			'#title' => t('Give a name to remember your student group'),
-            "#size" => 60,
-            '#required' => '1',
-            "#default_value" => populate($group, 'name')
-            //"#description" => t("This code is different per role."),
-	);
-	$form['description'] = array(
-            "#type" => "textarea",
-			'#title' => t('Some additional note to describe the group'),
-            "#size" => 1024,
-            "#default_value" => populate($group, 'description')
-            //"#description" => t("This code is different per role."),
-	);
-  	
-	//If we never need a stand alone form and only use ajax, remove the commented code 
-	//and get common code outside
-	if (!$group){
-		unset($form['#submit']);
-		$form['sumbit'] = array(
-				'#type' => 'button',
-				'#button_type' => 'button',
-				'#value' => t('Save'),
-				//'#theme' => 'garland_button',
-				'#attributes' => array(
-					'onclick' => 'ajaxFormCall("vals-soc-group-form", "administration", "save",'.
-						' {type: "studentgroup", id:0}, "refreshTabs", "json", ["studentgroup", "'.$target.'"]);')//'.$target.' instead of refreshTabs
-		);
-//          $form['submit'] = array(function ajaxFormCall(frm, category, action, data, target, type, err) {
-//              '#type' => 'submit',
-//              '#value' => 'Save',
-//          );
-//          $form['#submit'][] = 'vals_soc_group_form_submit_handler';
-//          $form['#validate'][] = 'vals_soc_group_form_validate_handler';
-     } else {
-         unset($form['#submit']);
-         $form['sumbit'] = array(
-         		'#type' => 'button',
-         		'#button_type' => 'button',
-         		'#value' => t('Save'),
-         		//'#theme' => 'garland_button',
-         		'#attributes' => array(
-         				'onclick' => 'ajaxFormCall("vals-soc-group-form", "administration", "save",'.
-         				' {type: "studentgroup", id:'.$group->studentgroup_id.',  target: "'.$target.'" }, "refreshSingleTab", "json", ["'.$target.'"]);')
-         );
-     }
-
-    return $form;
-}
-
-
-function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $project_id=''){
-	$project_id = $proposal ? $proposal->pid : $project_id;
-	if (! $project_id){
-		drupal_set_message(showError(t('The project id has not been passed on well. Cannot continue. Please inform the system administrator')),
-			'error');
-		return FALSE;
-	}
-// 	$form['name'] = array(
-// 			"#type" => "textfield",
-// 			'#title' => t('Give your full name'),
-// 			"#size" => 60,
-// 			'#required' => '1',
-// 			"#default_value" => populate($proposal, 'name'),
-// 			"#description" => t("For easy communication, it is nice to have your name next to your email address"),
-// 	);
-	$form['solution_short'] = array(
-			"#type" => "textarea",
-			'#title' => t('Give a summary of your solution'),
-			'#cols' => 50,//"#size" => 1024,
-			"#default_value" => populate($proposal, 'solution_short')
-			//"#description" => t("This code is different per role."),
-	);
-	$form['solution_long'] = array(
-// 			'#type'=>'text_format',
-// 			'#format'=> 'filtered_html',// 'full_html',
-// 			'#base_type' => 'textarea',
-			
-			
-			
-			"#type" => "textarea",
-			'#title' => t('Give a more detailed description of your solution'),
-			'#cols' => 50,
-			//"#size" => 750,
-			"#default_value" => populate($proposal, 'solution_long')
-			//"#description" => t("This code is different per role."),
-	);
-	$form['modules'] = array(
-			"#type" => "textarea",
-			'#title' => t('Which extra modules and libraries will you use, if any?'),
-			'#cols' => 50,//"#size" => 1024,
-			"#default_value" => populate($proposal, 'modules'),
-			"#description" => t("Write the name of the library, it's url and its purpose."),
-	);
-	$form['cv'] = array(
-			"#type" => "textarea",
-			'#title' => t('Describe your Curriculum Vitae'),
-			'#cols' => 50,//"#size" => 1024,
-			"#default_value" => populate($proposal, 'cv'),
-			"#description" => t("You might want to discuss with your supervisor which courses you should put on your cv."),
-	);	 
-	//If we never need a stand alone form and only use ajax, remove the commented code
-	//and get common code outside
-	$form['cancel'] = array(
-			'#type' => 'button',
-			'#button_type' => 'button',
-			'#value' => t('Cancel'),
-			//'#theme' => 'garland_button',
-			'#attributes' => array(
-					'onclick' => 'if (confirm("'.t('Do you want to leave the proposal for now?').'")){'.
-						(($target != 'content') ? 'Drupal.CTools.Modal.dismiss();}':
- 						'ajaxCall("project", "project_page", "", "content");}')
-		)
-	);
-	$proposal_id = ((!$proposal) ? 0 : $proposal->proposal_id);
-	unset($form['#submit']);		
-	$form['save'] = array(
-			'#type' => 'button',
-			'#button_type' => 'button',
-			'#value' => t('Save draft'),
-			//'#theme' => 'garland_button',
-			'#attributes' => array(
-					'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
-					' {id:'.$proposal_id .', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSaveResult", "json", ["'.$target.'"]);')
-	);//
-	$form['sumbit'] = array(
-			'#type' => 'button',
-			'#button_type' => 'button',
-			'#value' => t('Submit proposal'),
-			//'#theme' => 'garland_button',
-			'#attributes' => array(
-					'onclick' => 'if (confirm("'.t('Are you sure you want to submit your proposal now?').'")){'.
-					'ajaxFormCall("vals-soc-proposal-form", "student", "submit",'.
-					' {id:'.$proposal_id.', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSubmitResult", "json", ["'.$target.'"]);}')
-	);
-	return $form;
 }

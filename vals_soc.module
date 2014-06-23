@@ -126,9 +126,9 @@ function vals_soc_forms() {
     'callback' => 'vals_soc_organisation_form',
     'callback arguments' => array('vals_soc_organisation_form'),
   );
-  $forms['vals_soc_group_form']= array(
-    'callback' => 'vals_soc_group_form',
-    'callback arguments' => array('vals_soc_group_form'),
+  $forms['vals_soc_studentgroup_form']= array(
+    'callback' => 'vals_soc_studentgroup_form',
+    'callback arguments' => array('vals_soc_studentgroup_form'),
   );
   $forms['vals_soc_institute_form']= array(
     'callback' => 'vals_soc_institute_form',
