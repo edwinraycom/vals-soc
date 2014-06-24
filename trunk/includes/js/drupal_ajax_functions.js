@@ -3,7 +3,9 @@
 		var key = response.key;
 		var tabTarget = response.tabTarget;
 		var entityType = response.entityType;
+		//var target_fun = 'refreshSingleTab';
 		if(key==''){
+			key = 0;
 			ajaxFormCall("vals-soc-" + entityType + "-form", 
 				"administration", 
 				"save",
@@ -15,8 +17,7 @@
 				"json",
 				[entityType, tabTarget]
 			);
-		}
-		else{
+		} else {
 			ajaxFormCall("vals-soc-" + entityType + "-form",
 				"administration",
 				"save",

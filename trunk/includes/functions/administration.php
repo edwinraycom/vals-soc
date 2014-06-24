@@ -68,6 +68,107 @@ function showRoleDependentAdminPage($role){
 	}
 }
 
+function showProjectPage(){
+	//TODO check for the role of current user
+	
+	$role = getRole();
+	//Get my groups
+	$my_organisations = Groups::getGroups('organisation');
+	//print_r($my_organisations); die('dit later weer weg');
+	if (!$my_organisations->rowCount()){
+		//There are no organisations yet for this user
+		if ($role == 'organisation_admin') {
+			echo t('You have no organisation yet.').'<br/>';
+			echo "<a href='/administer/members'>".t('Please go to the organisation register page')."</a>";
+			die();
+		} else {
+			echo t('You are not connected to any organisation yet.').'<br/>';
+			echo "<a href='/user'>".t('Please go to the register page')."</a>";
+			die();
+		}
+	} else {
+		echo '<h2>'.t('Your projects').'</h2>';
+	}
+	//TODO weg print_r($my_organisations->fetchCol());die();
+	$projects = Project::getProjectsByUser($role, $GLOBALS['user']->uid, $my_organisations->fetchCol());
+	if (! $projects){
+		echo t('You have no project yet registered');
+		echo '<h2>'.t('Add your project').'</h2>';
+		/*
+			$f3 = drupal_get_form('vals_soc_project_form', '', 'group_page-1');
+		$add_tab .= drupal_render($f3);
+		*/
+	
+		$form = drupal_get_form('vals_soc_project_form', '', 'project_page-1');
+		$form['#action'] = url('dashboard/projects/administer');
+		// Process the submit button which uses ajax
+		$form['submit'] = ajax_pre_render_element($form['submit']);
+		// Build renderable array
+		$build = array(
+				'form' => $form,
+				'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
+		);
+		// Print $form
+		$add_tab = drupal_render($build);
+		// Print JS
+		$add_tab .= drupal_get_js();
+	
+		$data = array();
+		$data[] = array(1, 'Add', 'addproject', 'project', null, "target=admin_container");
+		echo renderTabs(1, null, 'project_page-', 'project', $data, null, TRUE, $add_tab);
+		?>
+			<script type="text/javascript">
+	        	   activatetabs('tab_', ['project_page-1']);
+	        </script><?php
+	} else {
+		$nr = 1;
+		$data = array();
+		$activating_tabs = array();
+
+		$nr2 = 1;
+		$data2 = array();
+		// 		[translate, label, action, type, id, extra GET arguments]
+		$data2[] = array(1, 'All Projects', 'list', 'project', null);
+		$activating_tabs2 = array("'project2_page-$nr2'");
+		foreach ($projects as $project){
+			if ($nr == 1){
+				$id = $project->pid;
+				$my_project = $project;
+			}
+			$activating_tabs[] = "'project_page-$nr'";
+			$data[] = array(0, $project->name, 'view', 'project', $project->pid);
+			$nr++;
+
+
+			$nr2++;
+			$activating_tabs2[] = "'project2_page-$nr2'";
+			$data2[] = array(0, 'Project', 'list', 'project', $project->pid);
+		}
+
+		$data[] = array(1, 'Add', 'addproject', 'project', null, "target=project_page-$nr");
+		$activating_tabs[] = "'project_page-$nr'";
+
+		echo sprintf('<h3>%1$s</h3>', t('Your projects'));
+		echo renderTabs($nr, 'Project', 'project_page-', 'project', $data, $id, TRUE,
+			renderOrganisation('project', $my_project, null, "project_page-1"));
+
+		echo "<hr>";
+		echo '<h2>'.t('All the projects of your organisations').'</h2>';
+		echo renderTabs($nr2, 'Organisation', 'project2_page-', 'project', $data2, $id, TRUE,
+			renderProjects('', $projects));
+		?>
+
+
+		<script type="text/javascript">
+			activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>]);
+			activatetabs('tab_', [<?php echo implode(', ', $activating_tabs2);?>], null, true);
+		</script>
+	<?php
+	}
+	
+}
+
+
 function showAdminPage(){
 	//TODO check for the role of current user
 	echo '<h2>'.t('All the groups and persons').'</h2>';
@@ -293,7 +394,7 @@ function showOrganisationPage(){
 				renderOrganisation('organisation', $my_organisation, null, "organisation_page-1"));
 	    echo "<hr>";
 
-	    echo '<h2>'.t('The registered mentors of your organisation').'</h2>';
+	    echo '<h2>'.t('The registered mentors of your organisations').'</h2>';
 	    echo renderTabs($nr2, 'Org', 'mentor_page-', 'organisation', $data2, null, TRUE,
 	    		renderUsers('mentor', '', '', 'organisation'));
 	    ?>

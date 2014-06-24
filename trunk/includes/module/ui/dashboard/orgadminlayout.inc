@@ -170,7 +170,7 @@ function getOrgAdminLayout($timeline_args){
 						<h4>
 							<a class="dashboard-link component-link"
 								href="'.$base_url.'/dashboard/members"
-								title="'.t("Managed organizations").'">'.t("Managed organizations").'</a>
+								title="'.t("Managed organisations").'">'.t("Managed organisations").'</a>
 						</h4>
 						<p>'.t("Organizations for which you are an administrator").'</p>
 					</div>
@@ -181,7 +181,7 @@ function getOrgAdminLayout($timeline_args){
 					<div class="column-entry org_app manage_project_ideas">
 						<h4>
 							<a class="dashboard-link component-link"
-								href="#"
+								href="'.$base_url.'/dashboard/projects/administer"
 								title="'.t("Manage project ideas").'">'.t("Manage project ideas").'</a>
 						</h4>
 						<p>'.t("Allows you to add and amend project ideas for students.").'</p>

@@ -13,6 +13,7 @@ switch ($_GET['action']){
 		switch ($type){
 			case 'institute':
 			case 'organisation':
+			case 'project':
 			case 'studentgroup': echo renderOrganisations($type, '', 'all', $_POST['target']);break;
 			case 'supervisor':
 			case 'student':

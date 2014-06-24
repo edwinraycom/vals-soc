@@ -8,8 +8,8 @@ function getTimelineTester(){
 		<div>
 		<h1 id="dateNow">'.Timeline::getInstance()->getNow()->format('F j, Y, g:i a').'</h1>
 			<script>
-			jQuery(document).ready(function($){
-				$( "#datepicker" ).datepicker({
+			jQuery(document).ready(function(){
+				$jq( "#datepicker" ).datepicker({
 					dateFormat: "yy-mm-dd",
 					defaultDate: "'.Timeline::getInstance()->getNow()->format('Y-m-d').'",
 					onClose: function(dateText, inst){
@@ -17,7 +17,7 @@ function getTimelineTester(){
 							function(result) {
 								if(result){
 									console.log(result);
-									$("#dateNow").html(result);
+									$jq("#dateNow").html(result);
 								}
 						});
 					}

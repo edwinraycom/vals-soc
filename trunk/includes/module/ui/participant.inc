@@ -24,6 +24,28 @@
     }
 }
 
+function renderProjects($organisation_selection='', $projects=''){
+	if (!$projects){
+		//if we pass empty value to getGroups the current supervisor is assumed
+		$projects = Groups::getGroups($organisation_selection);
+	}
+	if ($projects){
+		$s = "<ul class='projectlist'>";
+		foreach($projects as $project){
+			$project = objectToArray($project);
+			$s .= "<li>";
+			// $member_url = "/vals/actions/project"
+			$s .= "<a href='javascript: void(0);' onclick='ajaxCall(\"administration\", \"view\", {pid:${project['pid']},type:\"project\"}, \"show_${project['pid']}\");'>${project['name']}</a>";
+			$s .= "<div id='show_${project['pid']}'></div>";
+			$s .= "</li>";
+		}
+		$s .= "</ul>";
+		return $s;
+	} else {
+		return t('You have no projects yet');
+	}
+}
+
 function renderStudents($group_selection='', $students=''){
 
     if (!$students){

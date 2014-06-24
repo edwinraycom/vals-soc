@@ -23,6 +23,7 @@ function vals_soc_menu_handler(){
 	$items['dashboard/members'] = getMembersLink();
 	$items['dashboard/organisations/browse'] = getOrganisationBrowseLink('dashboard/organisations/browse');
 	$items['dashboard/projects/browse'] = getProjectsBrowseLink('dashboard/projects/browse');
+	$items['dashboard/projects/administer'] = getProjectsAdministerLink('dashboard/projects/administer');
 	$items['dashboard/proposals/mine'] = getMyProposalBrowseLink('dashboard/projects/apply');
 	
 	//########################## TOP LEVEL LINKS ##############################
@@ -141,6 +142,18 @@ function getMembersLink(){
 			'page callback' => 'vals_soc_administer_page',
 			'access arguments' => array('vals admin register'), // This needs to be revisited
 			'description' => t('Administer page'),
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module/',
+	);
+}
+
+function getProjectsAdministerLink(){
+	return array(
+			'title' => t('Administer'),
+			'type' => MENU_CALLBACK,
+			'page callback' => 'vals_soc_administer_projects_page',
+			'access arguments' => array('vals admin register'), // This needs to be revisited
+			'description' => t('Administer page for projects'),
 			'file' => 'vals_soc.pages.inc',
 			'file path' => _VALS_SOC_PATH . '/includes/module/',
 	);
