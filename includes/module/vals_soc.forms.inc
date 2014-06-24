@@ -621,6 +621,93 @@ function vals_soc_studentgroup_form($form, &$form_state, $group='', $target=''){
 	return $form;
 }
 
+function vals_soc_project_form($form, &$form_state, $project='', $target=''){
+	$form = array(
+			'#prefix' => '<div id="vals_soc_entity_form_wrapper">',
+			'#suffix' => '</div>',
+	);
+	
+	$form['key'] = array(
+			'#type' => 'hidden',
+			"#default_value" => populate($project, 'studentgroup_id'),
+	);
+	$form['tab_target'] = array(
+			'#type' => 'hidden',
+			"#default_value" => $target,
+	);
+	$form['entity_type'] = array(
+			'#type' => 'hidden',
+			"#default_value" => 'project',
+	);
+	
+	$my_organisations = Groups::getGroups('organisation');
+	$nr = $my_organisations->rowCount();
+	if ($nr < 2){
+		$form['org_id'] = array(
+				'#type' => 'hidden',
+				"#default_value" => ($nr ? $my_organisations->fetchCol(): 0),
+		);
+	} else {
+		$form['org_id'] = array(
+			"#type" => "select",
+			'#title' => t('For which organisation will this project be?'),
+			"#options" => $my_organisations->fetchAll(),
+			'#required' => '1',
+			"#default_value" => populate($project, 'org_id')
+		);
+	}
+
+	
+	$form['name'] = array(
+			"#type" => "textfield",
+			'#title' => t('Give a name to the project'),
+			"#size" => 60,
+			'#required' => '1',
+			"#default_value" => populate($project, 'name')
+	);
+	$form['description'] = array(
+			"#type" => "textarea",
+			'#title' => t('Describe the project'),
+			//"#size" => 1024,
+			"#default_value" => populate($project, 'description')
+	);
+	$form['url'] = array(
+			"#type" => "textfield",
+			'#title' => t('The url of this project'),
+			"#size" => 60,
+			'#required' => '1',
+			"#default_value" => populate($project, 'url')
+	);
+	$form['tags'] = array(
+			"#type" => "textfield",
+			'#title' => t('Some tags to facilitate searching (php,...)'),
+			"#size" => 60,
+			'#required' => '1',
+			"#default_value" => populate($project, 'tags')
+	);
+	$form['submit'] = array(
+			'#type' => 'submit',
+			'#value' => t('Save'),
+			'#ajax' => array(
+					'callback' => 'vals_soc_entity_form_callback',
+					'wrapper' => 'vals_soc_entity_form_wrapper',
+			),
+	);
+	$form['cancel'] = array(
+			'#type' => 'button',
+			'#value' => t('Cancel'),
+			'#prefix' => '&nbsp; &nbsp; &nbsp;',
+			'#attributes' => array('onClick' => 'location.reload(); return true;'),
+			'#post_render' => array('vals_soc_entity_form_cancel'),
+	);
+	$form['#attached']['js'] = array(
+			array(
+					'type'  => 'file',
+					'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
+			),
+	);
+	return $form;
+}
 
 function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $project_id=''){
 	$project_id = $proposal ? $proposal->pid : $project_id;

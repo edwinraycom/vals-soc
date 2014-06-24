@@ -18,6 +18,12 @@ function vals_soc_administer_page(){
     return ob_get_clean();
 }
 
+function vals_soc_administer_projects_page(){
+	ob_start();
+	module_load_include('inc', 'vals_soc', 'includes/module/ui/administer/project');
+	return ob_get_clean();
+}
+
 function vals_soc_dashboard_overview_page(){
 	$includeFile = null;
 	if(hasRole(array('administrator'))){

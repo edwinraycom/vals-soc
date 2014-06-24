@@ -13,9 +13,11 @@ html{
 div.ctools-modal-content .form-item.form-type-textarea label {
     float: none;
     width: auto;
-    
 }
 
+input[type=button]  {
+	  background-color: lightblue;
+}
 
 /*************************************************
 	CSS for the projects views

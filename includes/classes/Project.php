@@ -55,4 +55,44 @@ class Project {
     	}
     	return $rows;
     }
+    
+    public static function getProjectsByUser($user_type, $user_id='', $organisations='')
+    {
+    	global $user;
+   
+    	$org_admin_or_mentor = $user->uid;
+    	$user_id = $user_id ?: $org_admin_or_mentor;
+    	$my_role = getRole();
+    	//todo: find out whether current user is institute_admin
+     
+    	$table = tableName('project');
+    	if ($user_type == 'organisation_admin') {
+    		if ($my_role != 'organisation_admin'){
+    			drupal_set_message(t('You are not allowed to perform this action'), 'error');
+    			return array();
+    		} else {
+    			$my_orgs = $organisations ?: db_query("SELECT o.org_id from $table as o ".
+    					"LEFT JOIN soc_User_membership as um on o.org_id = um.group_id ".
+    					" WHERE um.uid = $user_id AND um.type = 'organisation'")->fetchCol();
+    			if ($my_orgs){
+    				
+	    			$my_projects = 
+	    				db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",
+	    					array(':orgs' => $my_orgs))->fetchAll();
+    			} else {
+    				drupal_set_message(t('You have no organisation yet'), 'error');
+    				return array();
+    			}
+    		}
+    	} else {
+    		if (($my_role != 'organisation_admin') && ($user_id != $org_admin_or_mentor)){
+    			drupal_set_message(t('You are not allowed to perform this action'), 'error');
+    			return array();
+    		}
+    		$my_projects =
+    			db_query("SELECT p.* from $table as p WHERE p.mentor = $user_id")->fetchAll();
+    	}
+    	
+    	return $my_projects;
+	}
 }
