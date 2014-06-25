@@ -1,19 +1,4 @@
 <?php
-function renderProject($project){
-	$content = "<h2>".$project['title']."</h2>";
-	$content .= '<p>'.$project['description']. '</p>';
-	if ( $project['url']){
-		$content .= '<p>'.tt('More information can be found at %1$s', "<a href='${project['url']}'> ${project['url']}</a>"). '</p>';
-	}
-	$content .="<div class=\"totheright\">";
-	if ('student' == getRole()){
-		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
-			")\" value='Submit proposal for this project'/>";
-	}
-	$content .="</div>";
-	return $content;
-}
-
 function initBrowseProjectLayout(){//$target='content'
 	$org_id=0;
 	if(isset($_GET['organisation'])){

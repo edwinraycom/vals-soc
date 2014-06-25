@@ -120,6 +120,39 @@ function renderProjects($organisation_selection='', $projects='', $target=''){
 	}
 }
 
+function renderProject($project='', $target=''){
+	if (!$project){
+		return t('I cannot show this project. It seems empty');
+	}
+	if (is_object($project)){
+		$project = objectToArray($project);
+	} else {
+		//return 'het Is GEEN object dus array';
+	}
+	$key_name = Groups::keyField('project');
+	$id = $project[$key_name];
+	$content = "<h2>".$project['title']."</h2>";
+	$content .= '<p>'.$project['description']. '</p>';
+	if ( $project['url']){
+		$content .= '<p>'.tt('More information can be found at %1$s', "<a href='${project['url']}'> ${project['url']}</a>"). '</p>';
+	}
+	$role = getRole();
+	$content .="<div class=\"totheright\">";
+	if ('student' == getRole()){
+		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
+		")\" value='Submit proposal for this project'/>";
+	}
+	if (Groups::isOwner('project', $id)){
+		$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\"]);}'";
+		$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"project\", id: $id, path: \"$pPath\", target: \"$target\"}, \"$target\");'";
+	
+		$content .= "<input type='button' value='".t('edit')."' $edit_action/>";
+		$content .= "<input type='button' value='".t('delete')."' $delete_action/>";
+	}
+	$content .="</div>";
+	return $content;
+}
+
 function renderOrganisations($type='', $organisations='', $organisation_head='', $target=''){
 	//If no organisations dataset is passed on, retrieve them based on the other arguments
 	if (!$organisations){

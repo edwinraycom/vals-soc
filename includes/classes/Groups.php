@@ -122,6 +122,33 @@ class Groups extends AbstractEntity{
 		return $num_deleted2;
 	}
 	
+	static function addProject($props){
+		if (! $props){
+			drupal_set_message(t('Insert requested with empty (filtered) data set'), 'error');
+			return false;
+		}
+	
+		global $user;
+		//mentor GRTDWCOCI
+		$txn = db_transaction();
+		try {
+			$uid = $user->uid;
+			$props['owner_id'] = $uid;
+			$result = FALSE;
+			$id = db_insert(tableName($type))->fields($props)->execute();
+			if ($id){
+				$result = $id;
+			} else {
+				drupal_set_message(tt('We could not add your %1$s.', $type), 'error');
+			}
+	
+		} catch (Exception $ex) {
+			$txn->rollback();
+			drupal_set_message(t('We could not add your project. '). (_DEBUG? $ex->__toString(): ''), 'error');
+		}
+		return $result;
+	}
+	
 	
 	static function addGroup($props, $type){
 		if (! $props){
@@ -141,7 +168,12 @@ class Groups extends AbstractEntity{
 				$subtype = 'mentor';
 			} else if ($type == 'institute'){
 				$subtype = 'supervisor';
+			} 
+			/*
+			 * else if ($type == 'project'){
+				if (!isset($props['mentor']))
 			}
+			 */
 			$id = db_insert(tableName($type))->fields($props)->execute();
 			if ($id){
 				//Make current user creating this organisation, member
@@ -170,7 +202,7 @@ class Groups extends AbstractEntity{
 	
 		} catch (Exception $ex) {
 			$txn->rollback();
-			drupal_set_message(t('We could not add your group.'). (_DEBUG? $ex->__toString(): ''), 'error');
+			drupal_set_message(t('We could not add your group. '). (_DEBUG? $ex->__toString(): ''), 'error');
 		}
 		return FALSE;
 	}
@@ -240,6 +272,7 @@ class Groups extends AbstractEntity{
 				'institute' => array('name', 'contact_name', 'contact_email'),
 				'organisation'=> array('name', 'contact_name', 'contact_email', 'url', 'description'),
 				'studentgroup'=> array('name', 'description'),
+				'project' => array('org_id', 'title', 'description', 'url', 'tags')
 		);
 		if (!$type || !isset($fields[$type])){
 			return null;
