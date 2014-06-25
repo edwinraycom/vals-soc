@@ -108,14 +108,14 @@ switch ($_GET['action']){
     	$is_project = ($type == 'project');
     	$organisation = $is_project ? Project::getInstance()->getProjectById($id, TRUE) : 
     		Groups::getGroup($type, $id);
-    	$is_owner = Groups::isOwner($type, $id);
     	if (! $organisation){
     		echo tt('The %1$s cannot be found', t($type));
     	} else {
+    		//$is_owner = Groups::isOwner($type, $id);
 //     		 echo $is_owner ? sprintf('<h3>%1$s</h3>', tt('Your %1$s', t($type))):
 //     		 	sprintf('<h3>%1$s</h3>', ($is_project ? $organisation['title'] : $organisation->name));
     		 echo "<div id='msg_$target'></div>";
-    		 echo $is_project ? renderProject($organisation) : renderOrganisation($type, $organisation, null, $target);
+    		 echo $is_project ? renderProject($organisation, $target) : renderOrganisation($type, $organisation, null, $target);
     	}
     break;
     case 'delete':
@@ -132,7 +132,7 @@ switch ($_GET['action']){
         $type = altSubValue($_POST, 'type', '');
         $id = altSubValue($_POST, 'id', '');
         $target = altSubValue($_POST, 'target', '');
-        if (! isValidOrganisationType($type) && ($type !== 'project')) {
+        if (! isValidOrganisationType($type) ) {//&& ($type !== 'project') for convenience we have made a project an organisationtype as well //TODO: make this better
         	echo t('There is no such type to edit :'.$type);
         } else {
         	$obj = Groups::getGroup($type, $id);
@@ -163,10 +163,10 @@ switch ($_GET['action']){
     break;
     case 'save':
         $type = altSubValue($_POST, 'type', '');
-
         $id = altSubValue($_POST, 'id', '');
+        die(jsonBadResult("Als eerste $type en $id "));
         //TODO do some checks here
-        if(! isValidOrganisationType($type)){
+        if(! isValidOrganisationType($type) ){//&& ($type !== 'project')
         	$result = NULL;
         	drupal_set_message(tt('This is not a valid type: %s', $type), 'error');
         	echo jsonBadResult();
@@ -176,7 +176,7 @@ switch ($_GET['action']){
         $properties = Groups::filterPost($type, $_POST);
         if (!$id){
         	$result = ($type == 'studentgroup') ? Groups::addStudentGroup($properties) :
-        		Groups::addGroup($properties, $type);
+        		($type == 'project' ? Groups::addProject($properties) : Groups::addGroup($properties, $type));
         } else {
         	$result = Groups::changeGroup($type, $properties, $id);
         }

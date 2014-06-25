@@ -629,7 +629,7 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 	
 	$form['key'] = array(
 			'#type' => 'hidden',
-			"#default_value" => populate($project, 'studentgroup_id'),
+			"#default_value" => populate($project, 'pid'),
 	);
 	$form['tab_target'] = array(
 			'#type' => 'hidden',
@@ -658,12 +658,12 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 	}
 
 	
-	$form['name'] = array(
+	$form['title'] = array(
 			"#type" => "textfield",
 			'#title' => t('Give a name to the project'),
 			"#size" => 60,
 			'#required' => '1',
-			"#default_value" => populate($project, 'name')
+			"#default_value" => populate($project, 'title')
 	);
 	$form['description'] = array(
 			"#type" => "textarea",
