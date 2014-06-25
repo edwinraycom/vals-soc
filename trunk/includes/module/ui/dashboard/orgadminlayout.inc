@@ -226,7 +226,7 @@ function getOrgAdminLayout($timeline_args){
 					<div class="column-entry proposals_submitted">
 						<h4>
 							<a class="dashboard-link component-link"
-								href="#"
+								href="'.$base_url.'/dashboard/projects/administer?state=active"
 								title="'.t("Projects for my organisations").'">'.t("Projects for my organisations").'</a>
 						</h4>
 						<p>'.t("List of projects being developed for my organisations").'</p>

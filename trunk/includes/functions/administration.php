@@ -1,13 +1,14 @@
 <?php
 /*Expects data for every tab:
  * [translate, label, action, type, id, extra GET arguments]
+ * translate can be: 0=label with sequence nr, 1=translate the text, 2=use the name etc as label (untranslated)
  */
 function renderTabs($count, $tab_label, $target_label, $type, $data, $id=0,
 	$render_targets=false, $active_content='', $active_tab=1){?>
 	<ol id="toc"><?php
 	$label_start = t($tab_label);
 	$title = "";
-	$un_named = 1;
+	$label_nr = 1;
 	for ($t=0; $t < $count;$t++){
 		$target = $target_label.($t + 1); ?>
 		<li><a href="#tab_<?php echo $target;?>" <?php
@@ -16,8 +17,8 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $id=0,
 			$link_text = t($data[$t][1]);
 			$title = "";
 		} elseif ($data[$t][0] == 0) {
-			$link_text = "$label_start $un_named";
-			$un_named++;
+			$link_text = "$label_start $label_nr";
+			$label_nr++;
 			$title = " title = '".$data[$t][1]."' ";
 		} else {
 			$link_text = $data[$t][1];
@@ -124,48 +125,48 @@ function showProjectPage(){
 		$nr = 1;
 		$data = array();
 		$activating_tabs = array();
-
-		$nr2 = 1;
-		$data2 = array();
-		// 		[translate, label, action, type, id, extra GET arguments]
-		$data2[] = array(1, 'All Projects', 'list', 'project', null);
-		$activating_tabs2 = array("'project2_page-$nr2'");
+		
 		foreach ($projects as $project){
 			if ($nr == 1){
 				$id = $project->pid;
 				$my_project = $project;
 			}
 			$activating_tabs[] = "'project_page-$nr'";
-			$data[] = array(0, $project->name, 'view', 'project', $project->pid);
+			$data[] = array(0, $project->title, 'view', 'project', $project->pid);
 			$nr++;
-
-
-			$nr2++;
-			$activating_tabs2[] = "'project2_page-$nr2'";
-			$data2[] = array(0, 'Project', 'list', 'project', $project->pid);
 		}
 
-		$data[] = array(1, 'Add', 'addproject', 'project', null, "target=project_page-$nr");
+		$data[] = array(1, 'Add', 'add', 'project', 0, "target=project_page-$nr");
 		$activating_tabs[] = "'project_page-$nr'";
 
+		$nr2 = 1;
+		$data2 = array();
+		// 		[translate, label, action, type, id, extra GET arguments]
+		$data2[] = array(1, 'All Projects', 'list', 'project', null);
+		$activating_tabs2 = array("'project2_page-$nr2'");
+		if ($my_organisations->rowCount() > 1){
+			foreach ($my_organisations as $organisation){
+				$nr2++;
+				$activating_tabs2[] = "'project2_page-$nr2'";
+				$data2[] = array(2, $organisation->title, 'list', 'project', $organisation->org_id);
+			}
+		}
 		echo sprintf('<h3>%1$s</h3>', t('Your projects'));
 		echo renderTabs($nr, 'Project', 'project_page-', 'project', $data, $id, TRUE,
 			renderOrganisation('project', $my_project, null, "project_page-1"));
 
 		echo "<hr>";
-		echo '<h2>'.t('All the projects of your organisations').'</h2>';
-		echo renderTabs($nr2, 'Organisation', 'project2_page-', 'project', $data2, $id, TRUE,
+		
+		echo '<h2>'.t('All your projects').'</h2>';
+		echo renderTabs($nr2, 'Organisation', 'project2_page-', 'organisation', $data2, null, TRUE,
 			renderProjects('', $projects));
 		?>
-
-
 		<script type="text/javascript">
 			activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>]);
 			activatetabs('tab_', [<?php echo implode(', ', $activating_tabs2);?>], null, true);
 		</script>
 	<?php
 	}
-	
 }
 
 
@@ -370,7 +371,7 @@ function showOrganisationPage(){
 		$nr2 = 1;
 		$data2 = array();
 // 		[translate, label, action, type, id, extra GET arguments]
-		$data2[] = array(1, 'All your Mentors', 'showmembers', 'organisation', null, 'subtype=mentor');
+		$data2[] = array(1, 'All your Mentors', 'showmembers', 'organisation', 0, 'subtype=mentor');
 		$tabs2 = array("'mentor_page-$nr2'");
 		foreach ($organisations as $org){
 			$nr++;
@@ -389,7 +390,7 @@ function showOrganisationPage(){
 		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=organisation_page-$nr");
 		$tabs[] = "'organisation_page-$nr'";
 
-		echo sprintf('<h3>%1$s</h3>', t('Your organisations'));
+		echo sprintf('<h3>%1$s</h3>', t('Organisations you are involved in'));
 		echo renderTabs($nr, 'Org', 'organisation_page-', 'organisation', $data, $id, TRUE,
 				renderOrganisation('organisation', $my_organisation, null, "organisation_page-1"));
 	    echo "<hr>";
