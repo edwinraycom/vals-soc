@@ -83,7 +83,7 @@ class Users extends AbstractEntity{
 	
 	/*
 	 * Get Users of type member_type out of the organisation structure of type group_type, based on:
-	 * a) group_id == all => get all students, tutors etc.
+	 * a) group_id == all => just get all students, tutors etc.
 	 * b) id is set => retrieve Users with that id (should be just one)
 	 * c) group id is set or can be derived from current user => get Users from that group
 	 */
@@ -107,9 +107,7 @@ class Users extends AbstractEntity{
 						"SELECT u.*,n.name as fullname from users as u".
 						'left join soc_names as n on u.uid=n.names_uid '.
 						"WHERE u.uid = '$id'");
-
 			} else {
-				
 				if ($group_id && $group_type){
 					$group_ids = array($group_id);
 				} else {
@@ -125,7 +123,9 @@ class Users extends AbstractEntity{
 						$group_ids = null;
 					}
 				}
+				
 				if ($group_ids){
+					//So we know which groups and of which type membertype should be member
 					$members = db_query(
 							"SELECT u.*,n.name as fullname from users as u ".
 							"left join users_roles as ur on u.uid = ur.uid ".
@@ -134,6 +134,7 @@ class Users extends AbstractEntity{
 							'left join soc_names as n on u.uid=n.names_uid '.
 							"WHERE r.name = '$member_type' AND um.type = '$group_type' AND um.group_id IN (".
 							implode(',', $group_ids).")");
+					
 				} else {
 					return NULL;
 				}

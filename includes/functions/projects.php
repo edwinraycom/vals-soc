@@ -1,5 +1,4 @@
 <?php
-//TODO this function may go 
 function renderProject($project){
 	$content = "<h2>".$project['title']."</h2>";
 	$content .= '<p>'.$project['description']. '</p>';
@@ -7,7 +6,10 @@ function renderProject($project){
 		$content .= '<p>'.tt('More information can be found at %1$s', "<a href='${project['url']}'> ${project['url']}</a>"). '</p>';
 	}
 	$content .="<div class=\"totheright\">";
-	$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].")\" value='Submit proposal for this project'/>";
+	if ('student' == getRole()){
+		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
+			")\" value='Submit proposal for this project'/>";
+	}
 	$content .="</div>";
 	return $content;
 }

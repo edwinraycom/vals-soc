@@ -3,48 +3,6 @@
  * This file shows the various lists and views on the possible Users to Semester of Code: organisations
  * instititutes, mentors, supervisors, students etc
  */
- function renderGroups($supervisor_selection='', $groups=''){
-    if (!$groups){
-         //if we pass empty value to getGroups the current supervisor is assumed
-        $groups = Groups::getGroups($supervisor_selection);
-    }
-    if ($groups){
-        $s = "<ul class='grouplist'>";
-        foreach($groups as $group){
-            $s .= "<li>";
-           // $member_url = "/vals/actions/group" 
-            $s .= "<a href='javascript: void(0);' onclick='ajaxCall(\"administration\", \"showmembers\", {studentgroup_id:${group['studentgroup_id']},type:\"group\"}, \"members_${group['studentgroup_id']}\");'>${group['name']}</a>: ${group['description']}";
-            $s .= "<div id='members_${group['studentgroup_id']}'></div>";
-            $s .= "</li>";
-        }
-        $s .= "</ul>";
-        return $s;
-    } else {
-        return t('You have no groups yet');
-    }
-}
-
-function renderProjects($organisation_selection='', $projects=''){
-	if (!$projects){
-		//if we pass empty value to getGroups the current supervisor is assumed
-		$projects = Groups::getGroups($organisation_selection);
-	}
-	if ($projects){
-		$s = "<ul class='projectlist'>";
-		foreach($projects as $project){
-			$project = objectToArray($project);
-			$s .= "<li>";
-			// $member_url = "/vals/actions/project"
-			$s .= "<a href='javascript: void(0);' onclick='ajaxCall(\"administration\", \"view\", {pid:${project['pid']},type:\"project\"}, \"show_${project['pid']}\");'>${project['name']}</a>";
-			$s .= "<div id='show_${project['pid']}'></div>";
-			$s .= "</li>";
-		}
-		$s .= "</ul>";
-		return $s;
-	} else {
-		return t('You have no projects yet');
-	}
-}
 
 function renderStudents($group_selection='', $students=''){
 
@@ -87,17 +45,17 @@ function renderSupervisors($group_selection='', $supervisors=''){
     }
 }
     
-function renderUsers($type='', $Users='', $group_selection='', $group_type=''){
+function renderUsers($type='', $users='', $group_selection='', $group_type=''){
 	//If no Users dataset is passed on, retrieve them based on the other arguments
-    if (!$Users){
-    	$Users = Users::getUsers($type, $group_type, $group_selection);
-        if (!($Users && $Users->rowCount())){
-        	$Users = null;
+    if (!$users){
+    	$users = Users::getUsers($type, $group_type, $group_selection);
+        if (!($users && $users->rowCount())){
+        	$users = null;
         }
     }
-    if ($Users && $Users->rowCount()){
+    if ($users && $users->rowCount()){
         $s = "<ul class='grouplist'>";
-        foreach($Users as $member){
+        foreach($users as $member){
             $s .=  "<li>";
             $s .= ($member->fullname ?: $member->name).' : '. $member->mail;
             $s .= "</li>";
@@ -109,6 +67,57 @@ function renderUsers($type='', $Users='', $group_selection='', $group_type=''){
         return $group_selection ? tt('There is no %1$s yet in this %2$s', t($type), t($group_type)) :
         	tt('You have no %1$s yet.', t($type));
     }  
+}
+
+function renderGroups($supervisor_selection='', $groups=''){
+	if (!$groups){
+		//if we pass empty value to getGroups the current supervisor is assumed
+		$groups = Groups::getGroups($supervisor_selection);
+	}
+	if ($groups){
+		$s = "<ul class='grouplist'>";
+		foreach($groups as $group){
+			$s .= "<li>";
+			// $member_url = "/vals/actions/group"
+			$s .= "<a href='javascript: void(0);' onclick='ajaxCall(\"administration\", \"showmembers\", {studentgroup_id:${group['studentgroup_id']},type:\"group\"}, \"members_${group['studentgroup_id']}\");'>${group['name']}</a>: ${group['description']}";
+			$s .= "<div id='members_${group['studentgroup_id']}'></div>";
+			$s .= "</li>";
+		}
+		$s .= "</ul>";
+		return $s;
+	} else {
+		return t('You have no groups yet');
+	}
+}
+
+function renderProjects($organisation_selection='', $projects='', $target=''){
+	if (!$projects){
+		//if we pass empty value to getGroups the current supervisor is assumed
+		$projects = Groups::getGroups($organisation_selection);
+	}
+	$target_set = ! empty($target);
+	if ($projects){
+		$s = "<ul class='projectlist'>";
+		foreach($projects as $project){
+			$project = objectToArray($project);
+			$s .= "<li>";
+			// $member_url = "/vals/actions/project"
+			if (!$target_set) {
+				$target = "show_${project['pid']}";
+			}
+			$s .= "<a href='javascript: void(0);' onclick='".
+			//($target_set ? "" : "\$jq(\"#$target\").toggle();").
+			"ajaxCall(\"administration\", \"view\", {id:${project['pid']},type:\"project\", target:\"$target\"}, \"$target\");'>${project['title']}</a>";
+			if (! $target_set) {
+				$s .= "<div id='$target' ></div>";
+			}
+			$s .= "</li>";
+		}
+		$s .= "</ul>";
+		return $s;
+	} else {
+		return t('You have no projects yet');
+	}
 }
 
 function renderOrganisations($type='', $organisations='', $organisation_head='', $target=''){
@@ -149,7 +158,8 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
     	$pPath=request_path();
     	$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\"]);}'";
     	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"$target\");'";
-    	$s = ''; 
+    	$s = '';
+    	//$s .= 
     	$s .= "<input type='button' value='".t('edit')."' $edit_action/>";
     	$s .= "<input type='button' value='".t('delete')."' $delete_action/>";
         $s .= "<ul class='grouplist'>";

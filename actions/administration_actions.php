@@ -2,8 +2,9 @@
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
 // include(_VALS_SOC_ROOT.'/includes/classes/AbstractEntity.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Users.php');
-//include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');//already in vals_soc.module
+include(_VALS_SOC_ROOT.'/includes/classes/Project.php');
 include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
+include(_VALS_SOC_ROOT.'/includes/functions/projects.php');
 include(_VALS_SOC_ROOT.'/includes/functions/administration.php');
 
 //return result depending on action parameter
@@ -101,15 +102,20 @@ switch ($_GET['action']){
     	$type = altSubValue($_POST, 'type');
     	$id = altSubValue($_POST, 'id');
     	$target = altSubValue($_POST, 'target', '');
-    	$organisation = Groups::getGroup($type, $id);
+    	if (! ($id && $type && $target)){
+    		die(t('There are missing arguments. Please inform the administrator of this mistake.'));
+    	}
+    	$is_project = ($type == 'project');
+    	$organisation = $is_project ? Project::getInstance()->getProjectById($id, TRUE) : 
+    		Groups::getGroup($type, $id);
     	$is_owner = Groups::isOwner($type, $id);
     	if (! $organisation){
     		echo tt('The %1$s cannot be found', t($type));
     	} else {
-    		 echo $is_owner ? sprintf('<h3>%1$s</h3>', tt('Your %1$s', t($type))):
-    		 	sprintf('<h3>%1$s</h3>', $organisation->name);
+//     		 echo $is_owner ? sprintf('<h3>%1$s</h3>', tt('Your %1$s', t($type))):
+//     		 	sprintf('<h3>%1$s</h3>', ($is_project ? $organisation['title'] : $organisation->name));
     		 echo "<div id='msg_$target'></div>";
-    		 echo renderOrganisation($type, $organisation, null, $target);
+    		 echo $is_project ? renderProject($organisation) : renderOrganisation($type, $organisation, null, $target);
     	}
     break;
     case 'delete':
@@ -126,7 +132,7 @@ switch ($_GET['action']){
         $type = altSubValue($_POST, 'type', '');
         $id = altSubValue($_POST, 'id', '');
         $target = altSubValue($_POST, 'target', '');
-        if (! isValidOrganisationType($type)) {
+        if (! isValidOrganisationType($type) && ($type !== 'project')) {
         	echo t('There is no such type to edit :'.$type);
         } else {
         	$obj = Groups::getGroup($type, $id);

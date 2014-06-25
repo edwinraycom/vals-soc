@@ -1,9 +1,9 @@
 <?php
-class Project {
+class Project extends AbstractEntity{
 	
 	private static $instance;
 	public static $fields = array('pid', 'owner_id', 'title', 'description', 'url', 'state', 
-		'org_id', 'mentor', 'proposal_id', 'supervisor', 'selected', 'tags');
+		'org_id', 'mentor', 'proposal_id', 'selected', 'tags');
 	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){
@@ -17,9 +17,19 @@ class Project {
     	return $projects;
     }
     
-    public function getProjectById($id){
-    	$project = db_select('soc_projects')->fields('soc_projects')->condition('pid', $id)->execute()->fetch(PDO::FETCH_ASSOC);
+    public function getProjectById($id, $details= false){
+    	$query = db_select('soc_projects', 'p')->fields('p', self::$fields)->condition('pid', $id);
+    	if ($details){
+    		$query->leftjoin('soc_names', 'owner', 'p.owner_id = %alias.names_uid');
+    		$query->leftjoin('soc_names', 'mentor', 'p.mentor = %alias.names_uid');
+    		$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
+
+    		$query->fields('owner', array('name'));
+    		$query->fields('mentor', array('name'));
+    		$query->fields('o', array('name'));
+    	}
     	//project is one asociative array
+    	$project = $query->execute()->fetch(PDO::FETCH_ASSOC);
     	return $project;
     }
     
