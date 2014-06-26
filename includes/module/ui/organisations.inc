@@ -48,7 +48,7 @@ function initBrowseOrgsLayout(){
 				sorting: true,
 				defaultSorting: "oname ASC",
 				actions: {
-					listAction: moduleUrl + "/actions/organisation_actions.php?action=list_organisations"
+					listAction: moduleUrl + "actions/organisation_actions.php?action=list_organisations"
 				},
 				fields: {
 					org_id: {
