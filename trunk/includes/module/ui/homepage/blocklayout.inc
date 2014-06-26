@@ -1,5 +1,6 @@
 <?php
 module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.access');
+drupal_add_library('system','ui.datepicker');
 
 function generateValsFrontPageLayout(){
 	module_load_include('php', 'vals_soc', 'includes/classes/Timeline');

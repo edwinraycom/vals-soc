@@ -129,6 +129,8 @@ switch ($_GET['action']){
     	}
     break;
     case 'edit':
+    	//echo "<form action='"
+    	//just a tryout
         $type = altSubValue($_POST, 'type', '');
         $id = altSubValue($_POST, 'id', '');
         $target = altSubValue($_POST, 'target', '');
@@ -157,8 +159,34 @@ switch ($_GET['action']){
         	print "<div id='msg_$target'></div>";
         	// Print $form
         	print drupal_render($build);
+        	
+        	/* if ($form['#attached']['js']){
+        		foreach ($form['#attached']['js'] as $incl){
+        			if ($incl['type'] == 'file'){
+        				echo single_getJs(_VALS_SOC_URL.'/'.$incl['data']);
+        			}
+        		}
+        	} */
         	// Print JS
-        	print drupal_get_js();
+        	print drupal_get_js();?>
+        	<script type='text/javascript'>
+        	jQuery.fn.preventSubmission = function() {
+            	alert('voert deze wel uit');
+        		  $jq(this).submit(function(e){
+        		    var $form = $(this);
+
+        		    //if ($form.data('submitted') === true) {
+        		      // Previously submitted - don't submit again
+        		      e.preventDefault();
+        		    	alert('VANuit form '+ $form.id + ' er is geklikt op '+e.id);
+        		  });
+
+        		  // Keep chainability
+        		  return this;
+        		};
+        		$jq('#vals-soc-institute-form').preventSubmission();
+        	</script><?php
+        	
         }
     break;
     case 'save':

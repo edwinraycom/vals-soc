@@ -209,8 +209,10 @@ function vals_soc_mail($key, &$message, $params) {
 }
 
 function vals_soc_init(){
-	drupal_add_js (_VALS_SOC_PATH .'/includes/js/settings.js');
-	drupal_add_js (_VALS_SOC_PATH .'/includes/js/jquery-migrate-1.2.1.js');
+// we make sure the settings are included first and the migrate as the very last. The latter should be the last one, I thought
+//So we can remove everywhere the settings.js
+	drupal_add_js (_VALS_SOC_PATH .'/includes/js/settings.js', array('weight'=> -1));
+	drupal_add_js (_VALS_SOC_PATH .'/includes/js/jquery-migrate-1.2.1.js', array('weight'=> 3));
 }
 /**
  * Implements Drupal _hook_mail_alter()

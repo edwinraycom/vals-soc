@@ -544,7 +544,8 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='')
 		'#required' => '1'
 	);
 	$form['submit'] = array(
-		'#type' => 'submit',
+		'#type' => 'button',
+		//'#attributes' => array('onclick'=> '$jq(this).preventDefault();alert("HOERA");'),
 		'#value' => t('Save'),
 		'#ajax' => array(
 			'callback' => 'vals_soc_entity_form_callback',

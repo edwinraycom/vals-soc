@@ -11,11 +11,11 @@ drupal_add_library('system','ui.icon');
 drupal_add_css(_VALS_SOC_PATH .'/includes/module/ui/tabs/tabs.css');
 drupal_add_js (_VALS_SOC_PATH .'/includes/module/ui/tabs/activatetabs.js');
 //end TODO
-drupal_add_js(_VALS_SOC_PATH .'/includes/js/settings.js');
+// drupal_add_js(_VALS_SOC_PATH .'/includes/js/settings.js');
 drupal_add_js(_VALS_SOC_PATH .'/includes/js/ajax.js');
 drupal_add_js(_VALS_SOC_PATH .'/includes/js/target_functions.js');
 drupal_add_js(_VALS_SOC_PATH .'/includes/js/render_functions.js');
-drupal_add_js(_VALS_SOC_PATH .'/includes/js/jquery-migrate-1.2.1.js');
+// drupal_add_js(_VALS_SOC_PATH .'/includes/js/jquery-migrate-1.2.1.js');
 drupal_add_js(_VALS_SOC_PATH .'/includes/js/jtable/jquery.jtable.js');
 drupal_add_css(_VALS_SOC_PATH . '/includes/js/jtable/jtable.css');
 ctools_include('modal');
