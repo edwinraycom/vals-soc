@@ -56,6 +56,10 @@ function variableGetFromStruct($var, $field, $default='')
 	}
 }
 
+function single_getJs($src){
+	return "<script type='text/javascript' src='$src'></script>";
+}
+
 function errorDiv($msg){
 	return "<div class='messages error'>$msg</div>";
 }

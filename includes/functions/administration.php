@@ -80,11 +80,11 @@ function showProjectPage(){
 		//There are no organisations yet for this user
 		if ($role == 'organisation_admin') {
 			echo t('You have no organisation yet.').'<br/>';
-			echo "<a href='".DRUPAL_ROOT. "/administer/members'>".t('Please go to the organisation register page')."</a>";
+			echo "<a href='"._VALS_SOC_URL. "/dashboard/members'>".t('Please go to the organisation register page')."</a>";
 			
 		} else {
 			echo t('You are not connected to any organisation yet.').'<br/>';
-			echo "<a href='".DRUPAL_ROOT. "/user'>".t('Please go to the register page')."</a>";
+			echo "<a href='"._VALS_SOC_URL. "/user'>".t('Please go to the register page')."</a>";
 			
 		}
 	} else {
@@ -353,7 +353,9 @@ function showOrganisationPage(){
 		// Print $form
 		$add_tab = drupal_render($build);
 		// Print JS
-		$add_tab .= drupal_get_js();
+		$target_fun_src = _VALS_SOC_URL.drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js';
+		$add_tab .= "<script type='text/javascript' src='$target_fun_src' ></script>";
+		//$add_tab .= drupal_get_js();
 
 		$data = array();
 		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=admin_container");

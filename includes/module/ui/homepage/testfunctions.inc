@@ -1,7 +1,7 @@
 <?php
 drupal_add_library('system','ui.datepicker');
 drupal_add_js(_VALS_SOC_PATH .'/includes/js/ajax.js');
-drupal_add_js(_VALS_SOC_PATH .'/includes/js/settings.js');
+
 
 function getTimelineTester(){
 	echo '
