@@ -169,30 +169,13 @@ switch ($_GET['action']){
         	} */
         	// Print JS
         	print drupal_get_js();?>
-        	<script type='text/javascript'>
-        	jQuery.fn.preventSubmission = function() {
-            	alert('voert deze wel uit');
-        		  $jq(this).submit(function(e){
-        		    var $form = $(this);
-
-        		    //if ($form.data('submitted') === true) {
-        		      // Previously submitted - don't submit again
-        		      e.preventDefault();
-        		    	alert('VANuit form '+ $form.id + ' er is geklikt op '+e.id);
-        		  });
-
-        		  // Keep chainability
-        		  return this;
-        		};
-        		$jq('#vals-soc-institute-form').preventSubmission();
-        	</script><?php
+        <?php
         	
         }
     break;
     case 'save':
         $type = altSubValue($_POST, 'type', '');
         $id = altSubValue($_POST, 'id', '');
-        die(jsonBadResult("Als eerste $type en $id "));
         //TODO do some checks here
         if(! isValidOrganisationType($type) ){//&& ($type !== 'project')
         	$result = NULL;

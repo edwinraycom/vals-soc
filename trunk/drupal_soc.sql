@@ -22,7 +22,7 @@ CHANGE `solution_short` `solution_short` TEXT CHARACTER SET utf8 COLLATE utf8_ge
 CHANGE `solution_long` `solution_long` MEDIUMTEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
 CHANGE `modules` `modules` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL 
 
-25-6-14
+-- 25-6-14
 ALTER TABLE `soc_projects` CHANGE `url` `url` VARCHAR( 1024 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '''''',
 CHANGE `mentor` `mentor` MEDIUMINT( 9 ) NOT NULL DEFAULT '0',
 CHANGE `proposal_id` `proposal_id` MEDIUMINT( 9 ) NOT NULL DEFAULT '0',

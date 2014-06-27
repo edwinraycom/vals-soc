@@ -6,6 +6,14 @@ function populate($obj, $prop, $default=''){
 	return ($obj && isset($obj->$prop)) ? $obj->$prop : $default;
 }
 
+function entityCall($type, $obj, $target){
+	$key = AbstractEntity::keyField($type);
+	$id = $obj && $obj->$key ? $obj->$key : 0;
+	$call = "ajaxFormCall('vals-soc-$type-form', 'administration', 'save', {type: '$type',id: $id},".
+		"'refreshTabs','json',['$type', '$target']);";
+	return $call;
+}
+
 /**
  * Form to edit the programme email messages
  * @param unknown $form
@@ -427,18 +435,18 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 		'#prefix' => '<div id="vals_soc_entity_form_wrapper">',
 		'#suffix' => '</div>',
 	);
-	$form['key'] = array(
-		'#type' => 'hidden', 
-		"#default_value" => populate($org, 'org_id'),
-	);
-	$form['tab_target'] = array(
-		'#type' => 'hidden',
-		"#default_value" => $target,
-	);
-	$form['entity_type'] = array(
-		'#type' => 'hidden',
-		"#default_value" => 'organisation',
-	); 
+// 	$form['key'] = array(
+// 		'#type' => 'hidden', 
+// 		"#default_value" => populate($org, 'org_id'),
+// 	);
+// 	$form['tab_target'] = array(
+// 		'#type' => 'hidden',
+// 		"#default_value" => $target,
+// 	);
+// 	$form['entity_type'] = array(
+// 		'#type' => 'hidden',
+// 		"#default_value" => 'organisation',
+// 	); 
 	/*Still experimenting with using paths -possible will be removed soon.
 	$form['tRequest_path'] = array(
 		'#type' => 'hidden',
@@ -482,26 +490,33 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 		"#default_value" => populate($org, 'contact_email'),
 	);
 	$form['submit'] = array(
-		'#type' => 'submit',
-		'#value' => t('Save'),
-		'#ajax' => array(
-			'callback' => 'vals_soc_entity_form_callback',
-			'wrapper' => 'vals_soc_entity_form_wrapper',
-		),
+			'#type' => 'submit',
+			'#attributes' => array('onclick'=> entityCall('organisation', $organisation, $target)),
+			'#value' => t('Save'),
+			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
+// 	$form['submit'] = array(
+// 		'#type' => 'submit',
+// 		'#value' => t('Save'),
+// 		'#ajax' => array(
+// 			'callback' => 'vals_soc_entity_form_callback',
+// 			'wrapper' => 'vals_soc_entity_form_wrapper',
+// 		),
+// 		'#post_render' => array('vals_soc_fix_submit_button'),
+// 	);
 	$form['cancel'] = array(
 		'#type' => 'button',
 		'#value' => t('Cancel'),
 		'#prefix' => '&nbsp; &nbsp; &nbsp;',
 		'#attributes' => array('onClick' => 'location.reload(); return true;'),
-		'#post_render' => array('vals_soc_entity_form_cancel'),
+		'#post_render' => array('vals_soc_fix_submit_button'),
 	);
-	$form['#attached']['js'] = array(
-		array(
-			'type'  => 'file',
-			'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
-		),
-	);
+// 	$form['#attached']['js'] = array(
+// 		array(
+// 			'type'  => 'file',
+// 			'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
+// 		),
+// 	);
 	return $form;
 }
 
@@ -517,18 +532,18 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='')
 		"#default_value" => populate($institute, 'name'),
 		'#required' => '1'
  	);
-	$form['key'] = array(
-		'#type' => 'hidden',
-		"#default_value" => populate($institute, 'inst_id'),
-	);
-	$form['tab_target'] = array(
-		'#type' => 'hidden',
-		"#default_value" => $target,
-	);
-	$form['entity_type'] = array(
-		'#type' => 'hidden',
-		"#default_value" => 'institute',
-	);
+// 	$form['key'] = array(
+// 		'#type' => 'hidden',
+// 		"#default_value" => populate($institute, 'inst_id'),
+// 	);
+// 	$form['tab_target'] = array(
+// 		'#type' => 'hidden',
+// 		"#default_value" => $target,
+// 	);
+// 	$form['entity_type'] = array(
+// 		'#type' => 'hidden',
+// 		"#default_value" => 'institute',
+// 	);
 	$form['contact_name'] = array(
 		"#type" => "textfield",
 		'#title' => t('Who is the contact person (you?)'),
@@ -543,28 +558,26 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='')
 		"#default_value" => populate($institute, 'contact_email'),
 		'#required' => '1'
 	);
+
 	$form['submit'] = array(
-		'#type' => 'button',
-		//'#attributes' => array('onclick'=> '$jq(this).preventDefault();alert("HOERA");'),
+		'#type' => 'submit',
+		'#attributes' => array('onclick'=> entityCall('institute', $institute, $target)),
 		'#value' => t('Save'),
-		'#ajax' => array(
-			'callback' => 'vals_soc_entity_form_callback',
-			'wrapper' => 'vals_soc_entity_form_wrapper',
-		),
+		'#post_render' => array('vals_soc_fix_submit_button'),
 	);
 	$form['cancel'] = array(
 		'#type' => 'button',
 		'#value' => t('Cancel'),
 		'#prefix' => '&nbsp; &nbsp; &nbsp;',
 		'#attributes' => array('onClick' => 'location.reload(); return true;'),
-		'#post_render' => array('vals_soc_entity_form_cancel'),
+		'#post_render' => array('vals_soc_fix_submit_button'),
 	);
-	$form['#attached']['js'] = array(
-		array(
-			'type'  => 'file',
-			'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
-		),
-	);
+// 	$form['#attached']['js'] = array(
+// 		array(
+// 			'type'  => 'file',
+// 			'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
+// 		),
+// 	);
 	return $form;
 }
 
@@ -598,27 +611,34 @@ function vals_soc_studentgroup_form($form, &$form_state, $group='', $target=''){
 		"#size" => 1024,
 		"#default_value" => populate($group, 'description')
 	);
+// 	$form['submit'] = array(
+// 		'#type' => 'submit',
+// 		'#value' => t('Save'),
+// 		'#ajax' => array(
+// 			'callback' => 'vals_soc_entity_form_callback',
+// 			'wrapper' => 'vals_soc_entity_form_wrapper',
+// 		),
+// 		'#post_render' => array('vals_soc_fix_submit_button'),
+// 	);
 	$form['submit'] = array(
-		'#type' => 'submit',
-		'#value' => t('Save'),
-		'#ajax' => array(
-			'callback' => 'vals_soc_entity_form_callback',
-			'wrapper' => 'vals_soc_entity_form_wrapper',
-		),
+			'#type' => 'submit',
+			'#attributes' => array('onclick'=> entityCall('studentgroup', $group, $target)),
+			'#value' => t('Save'),
+			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
 	$form['cancel'] = array(
 		'#type' => 'button',
 		'#value' => t('Cancel'),
 		'#prefix' => '&nbsp; &nbsp; &nbsp;',
 		'#attributes' => array('onClick' => 'location.reload(); return true;'),
-		'#post_render' => array('vals_soc_entity_form_cancel'),
+		'#post_render' => array('vals_soc_fix_submit_button'),
 	);
-	$form['#attached']['js'] = array(
-		array(
-			'type'  => 'file',
-			'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
-		),
-	);
+// 	$form['#attached']['js'] = array(
+// 		array(
+// 			'type'  => 'file',
+// 			'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
+// 		),
+// 	);
 	return $form;
 }
 
@@ -686,27 +706,34 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 			'#required' => '1',
 			"#default_value" => populate($project, 'tags')
 	);
+// 	$form['submit'] = array(
+// 			'#type' => 'submit',
+// 			'#value' => t('Save'),
+// 			'#ajax' => array(
+// 					'callback' => 'vals_soc_entity_form_callback',
+// 					'wrapper' => 'vals_soc_entity_form_wrapper',
+// 			),
+// 			'#post_render' => array('vals_soc_fix_submit_button'),
+// 	);
 	$form['submit'] = array(
 			'#type' => 'submit',
+			'#attributes' => array('onclick'=> entityCall('studentgroup', $group, $target)),
 			'#value' => t('Save'),
-			'#ajax' => array(
-					'callback' => 'vals_soc_entity_form_callback',
-					'wrapper' => 'vals_soc_entity_form_wrapper',
-			),
+			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
 	$form['cancel'] = array(
 			'#type' => 'button',
 			'#value' => t('Cancel'),
 			'#prefix' => '&nbsp; &nbsp; &nbsp;',
 			'#attributes' => array('onClick' => 'location.reload(); return true;'),
-			'#post_render' => array('vals_soc_entity_form_cancel'),
+			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
-	$form['#attached']['js'] = array(
-			array(
-					'type'  => 'file',
-					'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
-			),
-	);
+// 	$form['#attached']['js'] = array(
+// 			array(
+// 					'type'  => 'file',
+// 					'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
+// 			),
+// 	);
 	return $form;
 }
 
@@ -763,7 +790,8 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#attributes' => array(
 					'onclick' => 'if (confirm("'.t('Do you want to leave the proposal for now?').'")){'.
 						(($target != 'content') ? 'Drupal.CTools.Modal.dismiss();}':
- 						'ajaxCall("project", "project_page", "", "content");}')
+ 						'ajaxCall("project", "project_page", "", "content");}'),
+			'#post_render' => array('vals_soc_fix_submit_button'),
 		)
 	);
 	$proposal_id = ((!$proposal) ? 0 : $proposal->proposal_id);
@@ -776,6 +804,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#attributes' => array(
 					'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
 					' {id:'.$proposal_id .', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSaveResult", "json", ["'.$target.'"]);')
+			,'#post_render' => array('vals_soc_fix_submit_button')
 	);
 	$form['sumbit'] = array(
 			'#type' => 'button',
@@ -786,6 +815,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 					'onclick' => 'if (confirm("'.t('Are you sure you want to submit your proposal now?').'")){'.
 					'ajaxFormCall("vals-soc-proposal-form", "student", "submit",'.
 					' {id:'.$proposal_id.', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSubmitResult", "json", ["'.$target.'"]);}')
+			,'#post_render' => array('vals_soc_fix_submit_button')
 	);
 
 	return $form;	
@@ -796,7 +826,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 * when you dont want it to.  This function sets the cancel button
 * back to type "button"
 */
-function vals_soc_entity_form_cancel($markup, $element) {
+function vals_soc_fix_submit_button($markup, $element) {
 	$markup = str_replace('type="submit', 'type="button', $markup);
 	return $markup;
 }
