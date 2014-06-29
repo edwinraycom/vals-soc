@@ -491,7 +491,7 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 	);
 	$form['submit'] = array(
 			'#type' => 'submit',
-			'#attributes' => array('onclick'=> entityCall('organisation', $organisation, $target)),
+			'#attributes' => array('onclick'=> entityCall('organisation', $org, $target)),
 			'#value' => t('Save'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
@@ -846,6 +846,167 @@ function vals_soc_entity_form_callback($form, &$form_state){
 			'key' => $form_state['values']['key'],
 			'tabTarget' => $form_state['values']['tab_target'],
 			'entityType' => $form_state['values']['entity_type'],
+		);
+		return array('#type' => 'ajax', '#commands' => $commands);
+	}
+}
+
+//Note: this is the form for the NEW timeline per program
+//rather than the older one above
+function vals_soc_program_timeline_form($form, &$form_state, $timeline='', $target=''){
+	if(!isset($target)){
+		$target='content';
+	}
+	drupal_add_js (_VALS_SOC_PATH .'/includes/js/ajax.js');
+	$form = array(
+			'#prefix' => '<div id="vals_soc_entity_form_wrapper">',
+			'#suffix' => '</div>',
+	);
+	$form['key'] = array(
+			'#type' => 'hidden',
+			"#default_value" => populate($timeline, 'timeline_id'),
+	);
+	$form['tab_target'] = array(
+			'#type' => 'hidden',
+			"#default_value" => $target,
+	);
+	$form['entity_type'] = array(
+			'#type' => 'hidden',
+			"#default_value" => 'program-timeline',
+	);
+	$form['program_active'] = array(
+			'#type' => 'checkbox',
+			'#title' => t('Enable program'),
+			'#default_value' => populate($timeline, 'program_active'),
+	);
+	$form['program_start_date'] = array(
+			'#type' => 'date_popup',
+			'#date_format' => 'Y-m-d H:i',
+			'#title' => t('Program start date'),
+			'#default_value' => populate($timeline, 'program_start_date'),
+	);
+
+	$form['org_app_start_date'] = array(
+			'#type' => 'date_popup',
+			'#date_format' => 'Y-m-d H:i',
+			'#title' => t('Organisation signup start date'),
+			'#default_value' => populate($timeline, 'org_app_start_date'),
+	);
+
+	$form['org_app_end_date'] = array(
+			'#type' => 'date_popup',
+			'#date_format' => 'Y-m-d H:i',
+			'#title' => t('Organisation signup end date'),
+			'#default_value' => populate($timeline, 'org_app_end_date'),
+	);
+
+	$form['accepted_org_announced_date'] = array(
+			'#type' => 'date_popup',
+			'#date_format' => 'Y-m-d H:i',
+			'#title' => t('Accepted organisations announced deadline'),
+			'#default_value' => populate($timeline, 'accepted_org_announced_date'),
+	);
+
+	$form['student_signup_start_date'] = array(
+			'#type' => 'date_popup',
+			'#date_format' => 'Y-m-d H:i',
+			'#title' => t('Student signup start date'),
+			'#default_value' => populate($timeline, 'student_signup_start_date'),
+	);
+
+	$form['student_signup_end_date'] = array(
+			'#type' => 'date_popup',
+			'#date_format' => 'Y-m-d H:i',
+			'#title' => t('Student signup end date'),
+			'#default_value' => populate($timeline, 'student_signup_end_date'),
+	);
+
+	$form['org_review_student_applications_date'] = array(
+			'#type' => 'date_popup',
+			'#date_format' => 'Y-m-d H:i',
+			'#title' => t('Organisations review student applications deadline'),
+			'#default_value' => populate($timeline, 'org_review_student_applications_date'),
+	);
+
+	$form['students_matched_to_mentors_deadline_date'] = array(
+			'#type' => 'date_popup',
+			'#date_format' => 'Y-m-d H:i',
+			'#title' => t('Students matched to mentors deadline'),
+			'#default_value' => populate($timeline, 'students_matched_to_mentors_deadline_date'),
+	);
+
+	$form['accepted_students_announced_deadline_date'] = array(
+			'#type' => 'date_popup',
+			'#date_format' => 'Y-m-d H:i',
+			'#title' => t('Accepted students announced deadline'),
+			'#default_value' => populate($timeline, 'accepted_students_announced_deadline_date'),
+	);
+
+	$form['coding_start_date'] = array(
+			'#type' => 'date_popup',
+			'#date_format' => 'Y-m-d H:i',
+			'#title' => t('Coding start date'),
+			'#default_value' => populate($timeline, 'coding_start_date'),
+	);
+
+	$form['suggested_coding_deaadline_date'] = array(
+			'#type' => 'date_popup',
+			'#date_format' => 'Y-m-d H:i',
+			'#title' => t('Suggested coding deadline'),
+			'#default_value' => populate($timeline, 'suggested_coding_deaadline_date'),
+	);
+
+	$form['coding_end_date'] = array(
+			'#type' => 'date_popup',
+			'#date_format' => 'Y-m-d H:i',
+			'#title' => t('Coding end date'),
+			'#default_value' => populate($timeline, 'coding_end_date'),
+	);
+
+	$form['program_end_date'] = array(
+			'#type' => 'date_popup',
+			'#date_format' => 'Y-m-d H:i',
+			'#title' => t('Program end date'),
+			'#default_value' => populate($timeline, 'program_end_date'),
+	);
+	$form['submit'] = array(
+			'#type' => 'submit',
+			'#value' => t('Save'),
+			'#id' => 'vals_soc_timeline_edit_submit_me',
+			'#ajax' => array(
+					'callback' => 'vals_soc_timeline_form_callback',
+					'wrapper' => 'vals_soc_entity_form_wrapper',
+			),
+	);
+	$form['cancel'] = array(
+			'#type' => 'button',
+			'#value' => t('Cancel'),
+			'#prefix' => '&nbsp; &nbsp; &nbsp;',
+			'#attributes' => array('onClick' => 'location.reload(); return true;'),
+			'#post_render' => array('vals_soc_entity_form_cancel'),
+	);
+	$form['#attached']['js'] = array(
+			array(
+					'type'  => 'file',
+					'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
+			),
+	);
+	return $form;
+}
+
+function vals_soc_timeline_form_callback($form, &$form_state){
+	if (form_get_errors()) {
+		$form_state['rebuild'] = TRUE;
+		return $form;
+	}
+	else{
+		$commands = array();
+		$commands[] = ajax_command_html('#vals_soc_entity_form_wrapper', render($form));
+		$commands[] = array(
+				'command' => 'timelineSaveCallback',
+				'key' => $form_state['values']['key'],
+				'tabTarget' => $form_state['values']['tab_target'],
+				'entityType' => $form_state['values']['entity_type'],
 		);
 		return array('#type' => 'ajax', '#commands' => $commands);
 	}

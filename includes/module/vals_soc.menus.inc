@@ -25,6 +25,7 @@ function vals_soc_menu_handler(){
 	$items['dashboard/projects/browse'] = getProjectsBrowseLink('dashboard/projects/browse');
 	$items['dashboard/projects/administer'] = getProjectsAdministerLink('dashboard/projects/administer');
 	$items['dashboard/proposals/mine'] = getMyProposalBrowseLink('dashboard/projects/apply');
+	$items['dashboard/timeline/edit'] = getTimelineEditLink('access content'); //TODO - update this
 	
 	//########################## TOP LEVEL LINKS ##############################
 	// These are usually used when we want unauthenticated users to view something not via the dashboard  
@@ -169,6 +170,32 @@ function getProposalsBrowseLink(){
 			//'access callback' => 'vals_soc_user_role_check',
 			// 			'access arguments' => array(1, array('Organisation Administrator','Student')),
 			'description' => 'Proposal page',
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module/',
+	);
+}
+
+/*
+function getTimelineEditLink($path){
+	return array(
+			'title' => t('Edit Timeline'),
+			'type' =>  MENU_CALLBACK,
+			'page callback' => 'drupal_get_form',
+			'page arguments' => array('vals_soc_program_timeline_form'),
+			'access arguments' => array($path),
+			'description' => t('Edit the timeline and other settings.'),
+			'file' => 'vals_soc.forms.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module/',
+	);
+}
+*/
+function getTimelineEditLink($path){
+	return array(
+			'title' => t('Edit Timeline'),
+			'type' => MENU_CALLBACK,
+			'page callback' => 'vals_soc_program_timeline_page',
+			'access arguments' => array('vals admin register'), // This needs to be revisited
+			'description' => t('Edit the timeline and other settings.'),
 			'file' => 'vals_soc.pages.inc',
 			'file path' => _VALS_SOC_PATH . '/includes/module/',
 	);

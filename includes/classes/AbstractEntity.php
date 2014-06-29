@@ -14,8 +14,19 @@ abstract class AbstractEntity {
 			case 'organisation': return 'org_id';break;
 			case 'project': return 'pid';break;
 			case 'proposal': return 'proposal_id';break;
+			case 'timeline': return 'timeline_id';break;
 			default: return '';
 		}
 	}
 	
+	static function filterPostLite($fieldz){
+		$input = array();
+		foreach ($fieldz as $prop){
+			if (isset($_POST[$prop])){
+				$input[$prop] = $_POST[$prop];
+			}
+		}
+		return $input;
+	}
+
 }

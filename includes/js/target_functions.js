@@ -1,4 +1,5 @@
 function refreshTabs(json_data, args){
+	var parent_type='administration';
 	var targ = '';
 	if (args.length == 0){
 		alertdev('There are missing arguments to refresh the tabs');
@@ -6,10 +7,13 @@ function refreshTabs(json_data, args){
 	}
 	if (arguments.length > 1 && args) {
 		var type = args[0];
-		targ = (args.length > 1) ? 'msg_'+ args[1] : '';	
+		targ = (args.length > 1) ? 'msg_'+ args[1] : '';
+	}
+	if(args.length > 2){
+		parent_type = args[2];
 	}
 	if (json_data && (json_data.result !== 'error')){
-		ajaxCall('administration', 'show', {type:type}, 'admin_container');
+		ajaxCall(parent_type, 'show', {type:type}, 'admin_container');
 	} else {
 		if (typeof json_data.error != 'undefined') {
 			if ((! targ) || ! $jq('#'+targ).length){
@@ -24,6 +28,7 @@ function refreshTabs(json_data, args){
 }
 
 function refreshSingleTab(json_data, args){
+	var parent_type='administration';
 	var target = '';
 	if (arguments.length > 1 && args && (args.length > 0)) {
 		target = args[0];
@@ -31,11 +36,14 @@ function refreshSingleTab(json_data, args){
 	if (! target){
 		alertdev('No target supplied in target function');
 	}
+	if(args.length > 1){
+		parent_type = args[1];
+	}
 	//Get the id and the type
 	var id = json_data.id;
 	var type = json_data.type;
 	if (json_data && (json_data.result !== 'error')){
-		ajaxCall('administration', 'view', {id:id,type:type,target:target}, target);
+		ajaxCall(parent_type, 'view', {id:id,type:type,target:target}, target);
 	} else {
 		ajaxError('msg_'+target, json_data.error);
 		//$jq('#error_'+target).html(json_data.error);
@@ -49,7 +57,7 @@ function formResult(data, args){
 }
 
 function jsonFormResult(data, args){
-	
+
 	var target = args[0];
 	if (data.result == "error") {
 		ajaxAppend(data.error, target, 'error');
@@ -131,7 +139,7 @@ function handleSaveResult(result, args){
 	} else {
 		alertdev('No target supplied in target function');
 	}
-	
+
 	if (!args_valid){
 		alertdev('Something wrong with the arguments to handleSaveResult');
 		return false;
@@ -149,7 +157,7 @@ function handleSaveResult(result, args){
 	} else {
 		alertdev('Not a valid result');
 	}
-	
+
 }
 
 function handleSubmitResult(result, args){
@@ -160,7 +168,7 @@ function handleSubmitResult(result, args){
 	} else {
 		alertdev('No target supplied in target function');
 	}
-	
+
 	if (!args_valid){
 		alertdev('Something wrong with the arguments to handleSubmitResult');
 		return false;
@@ -181,7 +189,7 @@ function handleSubmitResult(result, args){
 	} else {
 		alertdev('Not a valid result');
 	}
-	
+
 }
 
 function populateModal(result, fun, arg){
@@ -195,7 +203,7 @@ function populateModal(result, fun, arg){
 		} else {
 			content = data.result;
 		}
-		
+
 		Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
 		Obj("modal-content").html(content);
 		return true;
@@ -206,7 +214,7 @@ function populateModal(result, fun, arg){
 			Obj("modal-content").html("<div class='messages error'>"+data.error+ "</div>");
 		}
 		return false;
-		
+
 	};
 }
 
