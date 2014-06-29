@@ -19,31 +19,32 @@ function ajaxInsert(msg, target) {
 	var tar = $jq('#' + target);
 	if (tar.length) {
 		tar.html(msg);
+		Drupal.attachBehaviors();
 	} else {
 		alertdev('Could not find target ' + target);
 	}
 }
 
-function isObject(mixed_var){ 	
-	if (mixed_var instanceof Array) { 
-		return false; 
-	} else { 
-		return (mixed_var !== null) && (typeof( mixed_var ) == 'object'); 
-	} 
+function isObject(mixed_var){
+	if (mixed_var instanceof Array) {
+		return false;
+	} else {
+		return (mixed_var !== null) && (typeof( mixed_var ) == 'object');
+	}
 }
 
-function isArray(mixed_var){ 	
-	return (mixed_var instanceof Array) && (typeof( mixed_var ) == 'object'); 
+function isArray(mixed_var){
+	return (mixed_var instanceof Array) && (typeof( mixed_var ) == 'object');
 }
 
-function Obj(name_or_object, return_dom){	
+function Obj(name_or_object, return_dom){
 	if (isObject(name_or_object)){
 		if (return_dom){
 			return isJquery(name_or_object) ? name_or_object[0] : name_or_object;
 		} else {
 			return name_or_object; //return_dom ? name_or_object[0] : ;
 		}
-	} else 
+	} else
 		var obj = $jq('#'+name_or_object);
 	if (obj.length == 0){
 		//alertdev('Could not find the target '+ name_or_object);
@@ -106,8 +107,8 @@ function ajaxAppend(msg, container, err, before){
 
 function ajaxError(targ, msg) {
 	if (msg){
-		var err_target = Obj(targ);//$jq('#'+targ);	
-	
+		var err_target = Obj(targ);//$jq('#'+targ);
+
 		if (err_target.length){
 			err_target.html(msg);
 			err_target.addClass('messages error');
@@ -119,8 +120,8 @@ function ajaxError(targ, msg) {
 
 function ajaxMessage(targ, msg) {
 	if (msg){
-		var err_target = $jq('#'+targ);	
-	
+		var err_target = $jq('#'+targ);
+
 		if (err_target.length){
 			err_target.html(msg);
 			err_target.addClass('messages status');
@@ -170,7 +171,7 @@ function ajaxCall(category, action, data, target, type, extra_args) {
 			}
 			call.success = function(msg){
 					window[target](msg, args);
-				};		
+				};
 		} else {
 			call.success = function(msg) {
 				if (type == 'json') {
@@ -201,8 +202,8 @@ function ajaxCall(category, action, data, target, type, extra_args) {
 				.log('AjaxCall failed with some error.Redirected to its fail function with: '
 						+ errorThrown);
 	};
-		
-	
+
+
 	return $jq.ajax(call);
 }
 
@@ -295,7 +296,7 @@ function inspect(arg){
 			for (b in arg[a]){
 				if (typeof (arg[a][b]) == 'object'){
 					alert('het is een object '+ b);
-					
+
 				} else
 				alert('laat zien '+ b + arg[a][b]);
 			}
@@ -303,8 +304,8 @@ function inspect(arg){
 		alert('laat zien '+ a + arg[a]);
 	}
 }
-/* Returns a js object to process. Note that the json has been parsed by Jquery as the input comes in the 
- * success function. I do the request with post as this seems slightly faster than get (1.38 s vs 1.7 s)*/ 
+/* Returns a js object to process. Note that the json has been parsed by Jquery as the input comes in the
+ * success function. I do the request with post as this seems slightly faster than get (1.38 s vs 1.7 s)*/
 jQuery.extend({
 	getJsonObject : function(category, action, data_obj) {
 		var result = null;
