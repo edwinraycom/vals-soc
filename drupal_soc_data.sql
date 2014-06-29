@@ -297,7 +297,8 @@ INSERT INTO users (uid, `name`, pass, mail, theme, signature, signature_format, 
 (31, 'student1', '$S$DdK9pCk1Nu5Zc9p5zFrKoib6jkUxOW0eSglRP8D.NAIgQGBp0aki', 'edwin+9@raycom.com', '', '', 'filtered_html', 1397222564, 1401449439, 1401447650, 1, 'Europe/Paris', 'en', 0, 'edwin+9@raycom.com', 'b:0;'),
 (32, 'mentor1', '$S$DfyLOLz1iJpBiSHfG9xbWbQMM8hvP09C2GnQYoW7B6OEVku27fmP', 'edwin+21@raycom.com', '', '', 'filtered_html', 1400586065, 1400586093, 1400586093, 1, 'Europe/Paris', 'en', 0, 'edwin+21@raycom.com', 'b:0;'),
 (33, 'Een mentor', '$S$Dx.Czz2jirn3E1oHolsEN83i2sRsXf3ZUTo/chozkklL/LblJEhD', 'edwin+11@raycom.com', '', '', 'filtered_html', 1400753564, 0, 0, 1, 'Europe/Paris', 'en', 0, 'edwin+11@raycom.com', NULL),
-(34, 'orgadmin4', '$S$DpvQDma/EVJJUlTZhOxBTLFFnKsOgNbj5mv38Qk1nQPZNWdjmWu.', 'edwin+12@raycom.com', '', '', 'filtered_html', 1400754935, 1400765047, 1400754987, 1, 'Europe/Paris', 'nl', 0, 'edwin+12@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}');
+(34, 'orgadmin4', '$S$DpvQDma/EVJJUlTZhOxBTLFFnKsOgNbj5mv38Qk1nQPZNWdjmWu.', 'edwin+12@raycom.com', '', '', 'filtered_html', 1400754935, 1400765047, 1400754987, 1, 'Europe/Paris', 'nl', 0, 'edwin+12@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
+(35, 'instadmin2', '$S$DrHCQA707HtESB3QNywD/0FQANQ9kG08woUCXW/es2Y4L.XJUwqr', 'edwin+99@raycom.com', '', '', 'filtered_html', 1397210143, 1400577479, 1400257398, 1, 'Europe/Paris', 'es', 0, 'edwin+99@raycom.com', 'b:0;');
 
 -- --------------------------------------------------------
 
@@ -312,7 +313,8 @@ INSERT INTO users_roles (uid, rid) VALUES
 (29, 9),
 (30, 9),
 (33, 9),
-(27, 12);
+(27, 12),
+(35, 12);
 
 -- -------------------------------------------------------------
 DELETE from variable where name like 'vals_timeline%';

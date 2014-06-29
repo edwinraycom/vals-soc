@@ -146,3 +146,24 @@ CREATE TABLE IF NOT EXISTS soc_user_membership (
   group_id int(11) NOT NULL COMMENT 'The id of the organisation/institute/group etc.',
   PRIMARY KEY (mem_id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='All users are member of some organisation, either a...' AUTO_INCREMENT=37 ;
+
+DROP TABLE IF EXISTS soc_timelines;
+CREATE TABLE `soc_timelines` (
+  `timeline_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `owner_id` int(10) unsigned NOT NULL,
+  `program_active` tinyint(1) DEFAULT NULL,
+  `program_start_date` datetime DEFAULT NULL,
+  `org_app_start_date` datetime DEFAULT NULL,
+  `org_app_end_date` datetime DEFAULT NULL,
+  `accepted_org_announced_date` datetime DEFAULT NULL,
+  `student_signup_start_date` datetime DEFAULT NULL,
+  `student_signup_end_date` datetime DEFAULT NULL,
+  `org_review_student_applications_date` datetime DEFAULT NULL,
+  `students_matched_to_mentors_deadline_date` datetime DEFAULT NULL,
+  `accepted_students_announced_deadline_date` datetime DEFAULT NULL,
+  `coding_start_date` datetime DEFAULT NULL,
+  `suggested_coding_deaadline_date` datetime DEFAULT NULL,
+  `coding_end_date` datetime DEFAULT NULL,
+  `program_end_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`timeline_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
