@@ -140,13 +140,13 @@ class Proposal extends AbstractEntity{
     	$txn = db_transaction();
     	try {
     		$uid = Users::getMyId();
-    		if (!Users::isOfType('student', $uid)){
+    		if (!Users::isOfType('student', $uid) && !Users::isAdmin()){
     			drupal_set_message(t('You must be a student to submit a proposal'), 'error');
     			return FALSE;
     		}
     		//$project = Project::getInstance()->getProjectById($project_id);
     
-    		$student_details = Users::getStudentDetails($uid);
+//    		$student_details = Users::getStudentDetails($uid);
 //     		$props['owner_id'] = $uid;
 //     		$props['org_id'] = $project['org_id'];
 //     		$props['inst_id'] = $student_details->inst_id ;

@@ -150,7 +150,7 @@ switch ($_GET['action']){
         		$form['#action'] = url($originalPath);
         	}
         	// Process the submit button which uses ajax
-        	$form['submit'] = ajax_pre_render_element($form['submit']);
+        	//$form['submit'] = ajax_pre_render_element($form['submit']);
         	// Build renderable array
         	$build = array(
         			'form' => $form,
@@ -158,7 +158,7 @@ switch ($_GET['action']){
         	);
         	print "<div id='msg_$target'></div>";
         	// Print $form
-        	print drupal_render($build);
+        	print drupal_render($form);//$build
         	
         	/* if ($form['#attached']['js']){
         		foreach ($form['#attached']['js'] as $incl){
@@ -168,8 +168,8 @@ switch ($_GET['action']){
         		}
         	} */
         	// Print JS
-        	print drupal_get_js();?>
-        <?php
+//        	print drupal_get_js();?>
+        <?php 
         	
         }
     break;

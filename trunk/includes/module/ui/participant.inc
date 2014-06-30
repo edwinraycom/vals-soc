@@ -144,7 +144,7 @@ function renderProject($project='', $target=''){
 	}
 	if (Groups::isOwner('project', $id)){
 		$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\"]);}'";
-		$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"project\", id: $id, path: \"$pPath\", target: \"$target\"}, \"$target\");'";
+		$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"project\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
 	
 		$content .= "<input type='button' value='".t('edit')."' $edit_action/>";
 		$content .= "<input type='button' value='".t('delete')."' $delete_action/>";
@@ -184,13 +184,21 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
         $organisations = Groups::getGroups($type, $organisation_owner);
         $organisation = $organisations->fetchObject();
     }
-    
+    /*
+     * function formResult(data, args){
+	var target = args[0];
+	Obj(target).html(data);
+	CKEDITOR.replaceAll();
+}
+
+function jsonFormResult(dat
+     */
     $key_name = Groups::keyField($type);
     $id = $organisation->$key_name;
     if ($organisation){
     	$pPath=request_path();
     	$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\"]);}'";
-    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"$target\");'";
+    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
     	$s = '';
     	//$s .= 
     	$s .= "<input type='button' value='".t('edit')."' $edit_action/>";
