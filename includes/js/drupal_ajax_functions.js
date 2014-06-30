@@ -35,7 +35,7 @@
 				},
 				"refreshSingleTab",
 				"json",
-				[tabTarget]
+				[entityType, tabTarget]
 			);
 		}
 	};

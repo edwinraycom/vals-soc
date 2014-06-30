@@ -25,7 +25,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- Summary changes:
 -- all values ' group' are replaced by 'studentgroup'
 
-use drupal;
+use vpsdb;
 
 TRUNCATE TABLE `soc_codes`;
 TRUNCATE TABLE `soc_studentgroups`;
