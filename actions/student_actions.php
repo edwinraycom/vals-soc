@@ -67,8 +67,6 @@ switch ($_GET['action']){
 		} else {
 			echo jsonBadResult();
 		}
-
-
 	break;
 	case 'submit':
 		$id = altSubValue($_POST, 'id', '');
@@ -79,8 +77,8 @@ switch ($_GET['action']){
 		if (!$id){
 			$result = Proposal::insertProposal($properties, $project_id);
 		} else {
-			if (!Groups::isOwner('proposal', $id)){
-				drupal_set_message(t('You are not the owner of this proposal'));
+			if (!Groups::isOwner('proposal', $id)&& !Users::isAdmin()){
+				drupal_set_message(t('You are not the owner of this proposal'), 'error');
 				$result = null;
 			} else {
 				$result = Proposal::updateProposal($properties, $id);

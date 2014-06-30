@@ -7,7 +7,7 @@ function initBrowseProposalsLayout(){
 	if(isset($_GET['organisation'])){
 		$org_id = $_GET['organisation'];
 	}
-	echo "Wat zijn de rechten van mij? apply $apply_projects browse $browse_proposals";
+//	echo "Wat zijn de rechten van mij? apply $apply_projects browse $browse_proposals";
 	if ($apply_projects && !$browse_proposals){
 		//A student may only browse their own proposals
 		$student_id = $GLOBALS['user']->uid;
@@ -86,7 +86,7 @@ function initBrowseProposalsLayout(){
 			function loadFilteredProposals(){
 				$("#TableContainer").jtable("load", {
         			student: $("#student").val(),
-            		organisation: $("#organisation").val(),
+                                organisation: $("#organisation").val(),
         			institute: $("#institute").val()
         		});
 			}

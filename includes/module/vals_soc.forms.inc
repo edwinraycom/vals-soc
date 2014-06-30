@@ -791,9 +791,8 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#attributes' => array(
 					'onclick' => 'if (confirm("'.t('Do you want to leave the proposal for now?').'")){'.
 						(($target != 'content') ? 'Drupal.CTools.Modal.dismiss();}':
- 						'ajaxCall("project", "project_page", "", "content");}'),
+ 						'ajaxCall("project", "project_page", "", "content");}')),
 			'#post_render' => array('vals_soc_fix_submit_button'),
-		)
 	);
 	$proposal_id = ((!$proposal) ? 0 : $proposal->proposal_id);
 	unset($form['#submit']);		

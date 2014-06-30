@@ -54,8 +54,11 @@ function refreshSingleTab(json_data, args){
 
 function formResult(data, args){
 	var target = args[0];
-	Obj(target).html(data);
-	CKEDITOR.replaceAll();
+	if (Obj(target).html(data)){
+            // Handler for .ready() called.
+            //alert('deze wordt aangeroepen');
+            CKEDITOR.replaceAll();
+        }
 }
 
 function jsonFormResult(data, args){
@@ -64,10 +67,14 @@ function jsonFormResult(data, args){
 	if (data.result == "error") {
 		ajaxAppend(data.error, target, 'error');
 	} else {
-		Obj(target).html(data.result);
+            if (Obj(target).html(data.result)){
+            // Handler for .ready() called.
+            //alert('deze wordt aangeroepen');
+            CKEDITOR.replaceAll();
+            }
 	}
-	//replace all the textareas with rte instances
-	CKEDITOR.replaceAll();
+        //alert('heoz it het');
+        
 }
 
 
