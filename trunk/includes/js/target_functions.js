@@ -30,11 +30,14 @@ function refreshTabs(json_data, args){
 function refreshSingleTab(json_data, args){
 	var parent_type='administration';
 	var target = '';
-	if (arguments.length > 1 && args && (args.length > 0)) {
-		target = args[0];
+        var type = '';
+	if (arguments.length > 1 && args && (args.length > 1)) {
+                type = args[0];
+		target = args[1];
 	}
 	if (! target){
 		alertdev('No target supplied in target function');
+                return false;
 	}
 	if(args.length > 1){
 		parent_type = args[1];
@@ -46,7 +49,6 @@ function refreshSingleTab(json_data, args){
 		ajaxCall(parent_type, 'view', {id:id,type:type,target:target}, target);
 	} else {
 		ajaxError('msg_'+target, json_data.error);
-		//$jq('#error_'+target).html(json_data.error);
 	}
 }
 

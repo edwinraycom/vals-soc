@@ -8,9 +8,10 @@ function populate($obj, $prop, $default=''){
 
 function entityCall($type, $obj, $target){
 	$key = AbstractEntity::keyField($type);
-	$id = $obj && $obj->$key ? $obj->$key : 0;
+        $id = $obj && $obj->$key ? $obj->$key : 0;
+        $post_function = $id ? 'refreshSingleTab' : 'refreshTabs';
 	$call = "ajaxFormCall('vals-soc-$type-form', 'administration', 'save', {type: '$type',id: $id},".
-		"'refreshTabs','json',['$type', '$target']);";
+		"'$post_function','json',['$type', '$target']);";
 	return $call;
 }
 
