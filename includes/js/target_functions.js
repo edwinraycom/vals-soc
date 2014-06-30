@@ -39,7 +39,7 @@ function refreshSingleTab(json_data, args){
 		alertdev('No target supplied in target function');
                 return false;
 	}
-	if(args.length > 1){
+	if(args.length > 2){//In some cases we might want to jump from administration_actions to timeline_actions for example
 		parent_type = args[1];
 	}
 	//Get the id and the type

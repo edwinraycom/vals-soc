@@ -43,8 +43,7 @@
 	Drupal.ajax.prototype.commands.timelineSaveCallback = function(ajax, response, status){
 		var key = response.key;
 		var tabTarget = response.tabTarget;
-		var entityType = response.entityType;
-		//var target_fun = 'refreshSingleTab';
+		var entityType = response.entityType;;
 		if(key==''){
 			key = 0;
 			ajaxFormCall("vals-soc-" + entityType + "-form", 
@@ -69,7 +68,7 @@
 				},
 				"refreshSingleTab",
 				"json",
-				[tabTarget, "timeline"]
+				[entityType, tabTarget, "timeline"]
 			);
 		}
 	};
