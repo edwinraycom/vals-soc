@@ -16,16 +16,6 @@ function initDashboardLayout(){
   <div class="block block-dashboard">
     <div class="column first">
         
-			<div class="column-entry lookup_profile">
-            <h4>
-              <a class="" href="'.$base_url.'/admin/config/vals_soc" title="Lookup profile">ADMIN</a>
-              
-            </h4>
-            <p>Lookup profile of mentor or student from various program.</p>
-            
-          </div>
-			
-			
           <div class="column-entry lookup_profile">
             <h4>
               <a class="" href="https://vals-melange2.appspot.com/gsoc/admin/lookup/google/gsoc2014" title="Lookup profile">Lookup profile</a>
