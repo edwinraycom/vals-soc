@@ -12,9 +12,16 @@ var warnedAbout = {};
 
 // List of warnings already given; public read only
 jQuery.migrateWarnings = [];
-
-// Set to true to prevent console output; migrateWarnings still maintained
-jQuery.migrateMute = console_Jquery_migrate_warnings_silent;
+try{
+	// HACK - to set the value to true if the 'console_Jquery_migrate_warnings_silent'
+	// isn't found ie on the demo server
+	// Set to true to prevent console output; migrateWarnings still maintained
+	jQuery.migrateMute = console_Jquery_migrate_warnings_silent;
+}
+catch(err) {}
+finally {
+	jQuery.migrateMute = true;
+}
 // Show a message on the console so devs know we're active
 if ( !jQuery.migrateMute && window.console && window.console.log ) {
 	window.console.log("JQMIGRATE: Logging is active");
