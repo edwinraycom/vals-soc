@@ -123,15 +123,16 @@ function vals_soc_admin_messages_form_validate($form, $form_state) {
 function vals_soc_admin_messages_form_submit($form, $form_state) {
 	// fire off our test email handler
 	if (!empty($form_state['values']['vals_messages_test_email'])){
-		drupal_set_message(t('Sending test emails to ').  $form_state['values']['vals_messages_test_email'] ."");
 		module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
-		vals_soc_handle_test_emails($form_state['values']['vals_messages_test_email']);
-	}
-	// A test here to email via queues and cron
-	if ($form_state['values']['vals_messages_test_cron_email']==1){
-		drupal_set_message(t('cron email test started'));
-		module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
-		vals_soc_cron_email_test_setup();
+		// A test here to email via queues and cron
+		if ($form_state['values']['vals_messages_test_cron_email']==1){
+			drupal_set_message(t('Sending queued test emails to ').  $form_state['values']['vals_messages_test_email'] ."");
+			vals_soc_handle_cron_test_emails($form_state['values']['vals_messages_test_email']);
+		}
+		else{
+			drupal_set_message(t('Sending NON queued test emails to ').  $form_state['values']['vals_messages_test_email'] ."");
+			vals_soc_handle_test_emails($form_state['values']['vals_messages_test_email']);
+		}
 	}
 }
 
