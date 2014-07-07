@@ -99,12 +99,22 @@ function vals_soc_handle_test_emails($to){
  */
 
 // populate our queue with email recipients - Normally we'd get these from the DB
-function vals_soc_cron_email_test_setup(){
-	drupal_set_message(t('vals_soc_cron_email_test_setup called'));
-	//$items = array("Hello", "World"); // Put everything in a queue for processing.
+function vals_soc_handle_cron_test_emails($to){
+	drupal_set_message(t('vals_soc_handle_cron_test_emails called'));
 	$items = array();
-	$items[0] = array('to' => 'ps3com40@gmail.com', 'bar' => 'foo',);
-	$items[1] = array('to' => 'ps3comps3com@googlemail.com', 'bar' => 'foo',);
+	//$items[0] = array('to' => 'p.sharples@bolton.ac.uk', 'bar' => 'foo',);
+	//$items[1] = array('to' => 'ps3comps3com@googlemail.com', 'bar' => 'foo',);
+
+	//$items[0] = array('to' => 'p.sharples@bolton.ac.uk', 'message_type' => 'vals_soc_email_accepted_organisation',);
+	///$items[1] = array('to' => $to, 'message_type' => 'vals_soc_email_accepted_organisation',);";
+
+	$items[0] = array('to' => $to, 'message_type' => 'vals_soc_email_accepted_organisation');
+	$items[1] = array('to' => $to, 'message_type' => 'vals_soc_email_rejected_organisation');
+	$items[2] = array('to' => $to, 'message_type' => 'vals_soc_email_mentor_welcome');
+	$items[3] = array('to' => $to, 'message_type' => 'vals_soc_email_student_welcome');
+	$items[4] = array('to' => $to, 'message_type' => 'vals_soc_accepted_students');
+	$items[5] = array('to' => $to, 'message_type' => 'vals_soc_rejected_students');
+	
 	
 	$queue = DrupalQueue::get('vals_soc_cron_email');
 	foreach($items as $item) {
@@ -117,11 +127,10 @@ function vals_soc_cron_email_test_setup(){
 // 'vals_soc_cron_email' queue
 function vals_soc_cron_email_handler($item){
 	drupal_set_message('TEST: vals_soc_cron_email_handler called with:'.$item['to']);
-	//drupal_mail('vals_soc', 'vals_soc_email_accepted_organisation', $item['to'], language_default());
 	$mail_results='';
-	$message = drupal_mail('vals_soc', 'vals_soc_email_accepted_organisation', $item['to'], language_default());
+	$message = drupal_mail('vals_soc', $item['message_type'], $item['to'], language_default());
 	if (!empty($message['result'])) {
-		$mail_results .= t('accepted organisation mail sent').'<br/>';
+		$mail_results .= $item['message_type'] . ' sent!!.' .'<br/>';
 	}
 	drupal_set_message($mail_results);
 }

@@ -49,7 +49,7 @@ function getRequestVar($field, $default='', $request='all'){
 function variableGetFromStruct($var, $field, $default='')
 {
 	$arr = variable_get($var);
-	if ($arr && issset($arr[$field])){
+	if ($arr && isset($arr[$field])){
 		return $arr[$field];
 	} else {
 		return $default;

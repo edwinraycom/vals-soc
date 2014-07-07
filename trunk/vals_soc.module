@@ -106,6 +106,12 @@ function vals_soc_block_view($delta = '') {
 	return vals_soc_block_view_handler($delta);
 }
 
+
+function vals_soc_cron(){
+	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.cron');
+	return vals_soc_cron_handler();
+}
+
 /*
  * Implements Drupal hook_cron_queue_info().
  */
