@@ -1,30 +1,82 @@
 Some notes taken which entail a list of todos
 
-1 If two times a proposal accepted: The student has the final say: if he chooses one, the acceptance of one of the proposals as 
-a project, automatically rejects the other proposals and the stakeholders are informed
+1 If two proposals are accepted, the student has the final say. 
+	- If he chooses one of the proposals as a project, then the system automatically 
+		rejects the other proposals and the stakeholders are informed.
 
-2. Show the nr of active proposals being added per project
-3. NO ranking of proposals: just acceptable and absolutely rejected 
-4. Submit is visible only if supervisor has approved
+2. Show the number of active proposals being added per project idea - 
+	- (Is this just for mentor or other users?)
+
+3. NO ranking of proposals: 
+	just acceptable and absolutely rejected?
+		- Some are accepted first time
+		- Some are rejected first time
+		- Some are pending and are going through revision with both
+			mentor and supervisor help. (feedback)
+
+4. Submit is visible only if supervisor has approved 
+	(Is this submit - the final accepted project proposal?)
+
 5. Soc admin has overview of duplicates
+	(or overall admin. Still not sure we need the Soc admin.)
+
 6. Strip the CV from the proposal
-7. No document uploading: we offer html boxes and if wanted using iframes and images loading from other websites, 
-can be inserted into the document
+
+7. No document uploading: 
+	- we offer html boxes and if wanted using iframes and images loading from other websites, 
+		can be inserted into the document.  (For example Scotts demo proposal from GSOC contained urls to images etc)
+
 8. An orgadmin can move project from mentor1 to mentor2
+	- Yes, we will have to do this in the final period of student signup (18. below)
+
 9 Modal window or not, choose a way. Now both are used which causes the user to move from one to the other
+
 10. Supervisors can select favourite project ideas for which they think they are the right supervisor to choose or which fit
-their target group
+		their target group 
+		- (ALSO unmatched supervisors at the end of the proposal/matching period (18. below) 
+			may be asked to supervise a student who does not yet have a supervisor)
+
 11 A student can select a supervisor in a dropdown box per proposal. There will be one responsible supervisor per student
+
 12. A group is not attached to a teacher. An institute admin can own a group and organise the cohort of students in that way
 So a group of students is not linked to a supervisor.
+
 13 Org admins and inst admins are just a plus sort of mentor, supervisor resp.
-14. A mentor can choose which proposals he is definitely not going to accept, so that students receive an early notice of that
-we can not force mentors to do so, but encourage them to (to help the students find an alternative project when there is still time 
-enough.
-15 The mentor can see with the list of proposals the nr of other acceptable project proposals per student. What did we say about
-project preferences of students? Would they rank it? How to prevent that a student with 3 accepted proposals gets rejected for all 
-three of them for mercy reasons with the other students?
+
+14. A mentor can choose which proposals he is definitely not going to accept.
+	- This is so that students receive an early notice of rejection
+	- We can not force mentors to do so, but we encourage them to act promptly
+	- This is to help the student find an alternative project when there is still time 
+
+15 The mentor can see in the list of proposals, the number of other acceptable project proposals per student. 
+	What did we say about project preferences of students? 
+	Would they rank it? - No ranking as I recall 
+	How to prevent that a student with 3 accepted proposals gets rejected for all 
+	three of them for mercy reasons with the other students?
+		- Not sure other than the student and mentor are URGED to either accept
+			or reject as soon as possible, giving the student the chance to apply for another. 
+			Obviously we would hope that the mentor would try to guide the student to amend his/her 
+			proposal rather than simply reject it if, the mentor can see that the student has no other proposals
+			(Worst case scenario is that the student falls through the gap and has to go through 18. below) 
+	
 16. Make Project form simpler: perhaps 2 or 3 fields and a rest field
 
 The requirements as written by Juan are in https://docs.google.com/a/raycom.com/document/d/16rFYZLAMrfCwBB--rw6pK08EZpRP_hIeD4SO2Ziwluc/edit#
 
+Additional - notes taken from Paul in Cyprus
+------------
+17. Late project submissions by mentors
+	- Scotts idea here was to allow mentors to create/add additional project ideas after the Org applications have closed.
+	- The difference here is that the new projects are hidden by default 
+	- Proposals now need a date i.e. before or after the org app closes
+	- There is a new timeline event half way through the student application period where additional project ideas are announced/ become visible.
+		(Oct 24th in Scotts timeline.)
+		
+18. Deduplication and decision period (week ending Nov 28th)
+		How to match students, mentors, supervisors which have failed to make a 3 way connection by this time
+		- What exactly?: (ensure that no one falls through the gaps) 
+			Duplicate proposals not resolved,
+			Students have project but no supervisor assigned
+			Reassign one student with second chance project (student must have already written a proposal though)
+			 
+		- How - some sort of skype/irc or whatever where the stakeholders discuss and resolve any outstanding issues.
