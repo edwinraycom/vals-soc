@@ -294,6 +294,43 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
     }
 }
 
+/**
+ * A validation routine for the admin messages form which checks that if
+ * an email address was entered, it is parsed and checked to try to ascertain
+ * if it is valid or not.
+ * @param unknown $form
+ * @param unknown $form_state
+ */
+function vals_soc_admin_messages_form_validate($form, $form_state) {
+	if (!empty($form_state['values']['vals_messages_test_email'])){
+		$mail = $form_state['values']['vals_messages_test_email'];
+		if (!valid_email_address($mail)) {
+			form_set_error('vals_messages_test_email', t('Please Enter a valid email address or leave blank'));
+		}
+	}
+}
+
+/**
+ * Function to call the test email function on form submission
+ * @param unknown $form
+ * @param unknown $form_state
+ */
+function vals_soc_admin_messages_form_submit($form, $form_state) {
+	// fire off our test email handler
+	if (!empty($form_state['values']['vals_messages_test_email'])){
+		module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
+		// A test here to email via queues and cron
+		if ($form_state['values']['vals_messages_test_cron_email']==1){
+			drupal_set_message(t('Sending queued test emails to ').  $form_state['values']['vals_messages_test_email'] ."");
+			vals_soc_handle_cron_test_emails($form_state['values']['vals_messages_test_email']);
+		}
+		else{
+			drupal_set_message(t('Sending NON queued test emails to ').  $form_state['values']['vals_messages_test_email'] ."");
+			vals_soc_handle_test_emails($form_state['values']['vals_messages_test_email']);
+		}
+	}
+}
+
 function vals_soc_organisation_form_validate_handler(&$form, &$form_state)
 {
      $current_role = getRole();
