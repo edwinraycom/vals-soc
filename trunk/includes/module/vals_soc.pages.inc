@@ -12,12 +12,6 @@ function vals_soc_admin_program_settings_page() {
     return ob_get_clean();
 }
 
-function vals_soc_program_timeline_page(){
-	ob_start();
-	module_load_include('inc', 'vals_soc', 'includes/module/ui/administer/program_timeline');
-	return ob_get_clean();
-}
-
 function vals_soc_administer_page(){
     ob_start();
     module_load_include('inc', 'vals_soc', 'includes/module/ui/administer/blocklayout');
