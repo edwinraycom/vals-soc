@@ -24,6 +24,7 @@ enough.
 15 The mentor can see with the list of proposals the nr of other acceptable project proposals per student. What did we say about
 project preferences of students? Would they rank it? How to prevent that a student with 3 accepted proposals gets rejected for all 
 three of them for mercy reasons with the other students?
+16. Make Project form simpler: perhaps 2 or 3 fields and a rest field
 
 The requirements as written by Juan are in https://docs.google.com/a/raycom.com/document/d/16rFYZLAMrfCwBB--rw6pK08EZpRP_hIeD4SO2Ziwluc/edit#
 
