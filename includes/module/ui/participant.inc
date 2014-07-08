@@ -4,6 +4,35 @@
  * instititutes, mentors, supervisors, students etc
  */
 
+/**
+ * Replaces the unordered list used show a member record
+ * @param unknown $record - array of key => values (form)
+ * @param string $member_type - used to show what type of entity is supposed to be used by the generated CODE
+ * @return string - a bunch of HTML
+ */
+function formatMemberRecordNice($record, $member_type='Users'){
+	$output='';
+	$output .= '<br/><br/>';
+	$output .= '<dl class="view_record">';
+	foreach($record as $key => $val){
+		if (substr_compare($key, '_id', -strlen('_id'))!= 0){
+			$output .=  '<dt>';
+			$output .=  ucfirst(str_replace('_', ' ', $key));
+			$output .=  '</dt>';
+			$output .=  '<span class="ui-icon ui-icon-arrowreturn-1-e"></span>';
+			$output .=  '<dd>';
+			$output .=  $val;
+			if ($key=='code'){
+				$output .= '<br/>';
+				$output .= '<i>' . t('Use this code to invite your '. $member_type). '</i>';
+			}
+			$output .=  '</dd>';
+		}
+	}
+	$output .=  '</dl>';
+	return $output;
+}
+
 function renderStudents($group_selection='', $students=''){
 
     if (!$students){
@@ -200,17 +229,9 @@ function jsonFormResult(dat
     	$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\"]);}'";
     	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
     	$s = '';
-    	//$s .= 
     	$s .= "<input type='button' value='".t('edit')."' $edit_action/>";
     	$s .= "<input type='button' value='".t('delete')."' $delete_action/>";
-        $s .= "<ul class='grouplist'>";
-        foreach($organisation as $key => $val){
-            
-            $s .=  "<li>";
-            $s .=  $key.' : '. $val;
-            $s .=  "</li>";
-        }
-        $s .=  "</ul>";
+        $s .= formatMemberRecordNice($organisation, t('Supervisors'));
         return $s;
     } else {
         return tt('You have no %1$s registered yet', $type);

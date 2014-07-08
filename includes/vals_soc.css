@@ -237,3 +237,17 @@ input[type=button]  {
 	display: block;
 	width: 100%;
 }
+
+
+/*************************************************
+	CSS for displaying a record
+*************************************************/
+.view_record dt {
+	background-color: #f0f0f0;
+	font-weight: bold;
+	margin-top: 8px;
+}
+
+.view_record dd {
+	margin-top: 0px;
+}
