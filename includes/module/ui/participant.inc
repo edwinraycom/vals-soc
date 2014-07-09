@@ -213,15 +213,6 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
         $organisations = Groups::getGroups($type, $organisation_owner);
         $organisation = $organisations->fetchObject();
     }
-    /*
-     * function formResult(data, args){
-	var target = args[0];
-	Obj(target).html(data);
-	CKEDITOR.replaceAll();
-}
-
-function jsonFormResult(dat
-     */
     $key_name = Groups::keyField($type);
     $id = $organisation->$key_name;
     if ($organisation){
@@ -244,7 +235,6 @@ function jsonFormResult(dat
     		break;
     		default: $sub_type_user = 'users';
     	}
-    	echo $type;
         $s .= formatMemberRecordNice($organisation, t($sub_type_user));
         return $s;
     } else {
