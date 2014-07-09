@@ -222,7 +222,7 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
     $name = $name_rec ? $name_rec['name'] : $form['#user']->name;
     $form['account']['fullname'] = array(
     		"#type" => "textfield",
-    		"#title" => t('You can correct your name'),
+    		"#title" => t('You can add your full name here'),
     		//"#options" => $options_institutes,
     		"#description" => t("(If you leave this empty, we will use your account name instead)"),
     		"#default_value" => $name,
@@ -232,7 +232,7 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
             condition('type', 'institute')->execute()->fetchAssoc();
         $member_inst = $member_inst_rec ? $member_inst_rec['group_id'] : 0;
        
-        if (! $member_inst  || $is_admin){
+        if ((! $member_inst)  || $is_admin){
 	        //So we know the user is not in an institute yet
 	        $institutes = db_select('soc_institutes', 'i')->fields('i', array('inst_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
 	        $options_institutes = array(0 => t('Fill in later'));
@@ -244,23 +244,25 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
 	                "#type" => "select",
 	                "#title" => t("Select the institute you are in"),
 	                "#options" => $options_institutes,
-	                "#description" => t("(For students and supervisors only)"),
+	                "#description" => t("(For students and supervisors or institute administrators only)"),
 	                "#default_value" => $member_inst,
 	        );
 	        if (!$is_admin){
 		        $form['account']['account_key'] = array(
 		        		"#type" => "textfield",
-		        		"#title" => t("Type the key you got from your colleague in the institute (or create one)"),
+		        		"#title" => t("Type the key you got from your colleague in the institute "),
 		        		"#size" => 10,
 		        		"#description" => t("The code is for this institute only."),
 		        );
 	        }
         }
+        //(or leave the institute option as 'Fill in later' and enter your own institute)
+        //(or leave the organisation option as 'Fill in later' and enter your own organisation)
     } elseif (in_array($role, array('organisation_admin', 'mentor'))) {
         $member_org_rec = db_select('soc_user_membership', 'mem')->fields('mem')->condition('uid', $uid)->
             condition('type', 'organisation')->execute()->fetchAssoc();
         $member_org = $member_org_rec ? $member_org_rec['group_id'] : 0;
-    	if (! $member_org  || $is_admin){
+    	if ((! $member_org)  || $is_admin){
 	        //So we know the user is not in an organisation yet
 	        $organisations = db_select('soc_organisations', 'o')->fields('o', array('org_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
 	        $options_organisation = array(0 => t('Fill in later'));
@@ -274,11 +276,14 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
 	                "#options" => $options_organisation,
 	                "#description" => t("(For organisation admins and mentors only)"),
 	                "#default_value" => $member_org,
+	        		"#attributes"=> array('onchange'=>"if (this.value != 0){jQuery('#account_key_wrap').removeClass('invisible')}")
 	        );
 	        if (!$is_admin){
 		        $form['account']['account_key'] = array(
+		        		'#prefix' => '<div  id="account_key_wrap" class="invisible">',
+		        		'#suffix' => '</div>',
 		        		"#type" => "textfield",
-		        		"#title" => t("Type the key you got from your colleague in the organisation (or create one)"),
+		        		"#title" => t("Type the key you got from your colleague in the organisation "),
 		        		"#size" => 10,
 		        		"#description" => t("The code is for this organisation only."),
 		        );

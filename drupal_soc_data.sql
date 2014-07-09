@@ -25,7 +25,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- Summary changes:
 -- all values ' group' are replaced by 'studentgroup'
 
-use vpsdb;
+use vals_vps;
 
 TRUNCATE TABLE `soc_codes`;
 TRUNCATE TABLE `soc_studentgroups`;
@@ -288,17 +288,17 @@ INSERT INTO soc_user_membership (mem_id, uid, `type`, group_id) VALUES
 INSERT INTO users (uid, `name`, pass, mail, theme, signature, signature_format, created, access, login, `status`, timezone, `language`, picture, init, `data`) VALUES
 (0, '', '', '', '', '', NULL, 0, 0, 0, 0, NULL, '', 0, '', NULL),
 (1, 'admin', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin@raycom.com', '', '', 'filtered_html', 1394721311, 1401884149, 1401450007, 1, 'Europe/Paris', 'nl', 0, 'edwin@raycom.com', 'a:6:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";s:7:"overlay";i:0;}'),
-(25, 'orgadmin', '$S$DAJDFmiWBQtirjj7G3LoiVbKRFAq.w0OmtDSsJwtxwtD.R49SgQD', 'edwin+1@raycom.com', '', '', 'filtered_html', 1397205806, 1400256334, 1400160734, 1, 'Europe/Paris', 'es', 0, 'edwin+1@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
-(26, 'orgadmin2', '$S$DoXC3XUY.38zgX1JTlt8wWxQiCMa1nn8LODOg.q2afZ.2.ARkNeP', 'edwin+2@raycom.com', '', '', 'filtered_html', 1397209973, 0, 0, 1, 'Europe/Paris', 'es', 0, 'edwin+2@raycom.com', NULL),
-(27, 'instadmin', '$S$DrHCQA707HtESB3QNywD/0FQANQ9kG08woUCXW/es2Y4L.XJUwqr', 'edwin+3@raycom.com', '', '', 'filtered_html', 1397210143, 1400577479, 1400257398, 1, 'Europe/Paris', 'es', 0, 'edwin+3@raycom.com', 'b:0;'),
-(28, 'tutor1', '$S$DAbq/gKRrkbdvx2npafhp1qC0JWGmU8IqyfsYOM87B15hlpQWI5R', 'edwin+4@raycom.com', '', '', 'filtered_html', 1397211191, 0, 0, 1, 'Europe/Paris', 'it', 0, 'edwin+4@raycom.com', NULL),
-(29, 'tutor2', '$S$DNOcJw0SC/cumjvZR6hkI1DYS6RN4heRDZze1ELDECGHlX7k0r9C', 'edwin+5@raycom.com', '', '', 'filtered_html', 1397211502, 1400752361, 1400676920, 1, 'Europe/Paris', 'en', 0, 'edwin+5@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
-(30, 'tutor3', '$S$DoalMdcTqFxz/0xnJtKm01UhYTF9BFu5D/pdQd4SfR6LbcnXo6jP', 'edwin+6@raycom.com', '', '', 'filtered_html', 1397211598, 1399972053, 1397224028, 1, 'Europe/Paris', 'el', 0, 'edwin+6@raycom.com', 'b:0;'),
-(31, 'student1', '$S$DdK9pCk1Nu5Zc9p5zFrKoib6jkUxOW0eSglRP8D.NAIgQGBp0aki', 'edwin+9@raycom.com', '', '', 'filtered_html', 1397222564, 1401449439, 1401447650, 1, 'Europe/Paris', 'en', 0, 'edwin+9@raycom.com', 'b:0;'),
-(32, 'mentor1', '$S$DfyLOLz1iJpBiSHfG9xbWbQMM8hvP09C2GnQYoW7B6OEVku27fmP', 'edwin+21@raycom.com', '', '', 'filtered_html', 1400586065, 1400586093, 1400586093, 1, 'Europe/Paris', 'en', 0, 'edwin+21@raycom.com', 'b:0;'),
-(33, 'Een mentor', '$S$Dx.Czz2jirn3E1oHolsEN83i2sRsXf3ZUTo/chozkklL/LblJEhD', 'edwin+11@raycom.com', '', '', 'filtered_html', 1400753564, 0, 0, 1, 'Europe/Paris', 'en', 0, 'edwin+11@raycom.com', NULL),
-(34, 'orgadmin4', '$S$DpvQDma/EVJJUlTZhOxBTLFFnKsOgNbj5mv38Qk1nQPZNWdjmWu.', 'edwin+12@raycom.com', '', '', 'filtered_html', 1400754935, 1400765047, 1400754987, 1, 'Europe/Paris', 'nl', 0, 'edwin+12@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
-(35, 'instadmin2', '$S$DrHCQA707HtESB3QNywD/0FQANQ9kG08woUCXW/es2Y4L.XJUwqr', 'edwin+99@raycom.com', '', '', 'filtered_html', 1397210143, 1400577479, 1400257398, 1, 'Europe/Paris', 'es', 0, 'edwin+99@raycom.com', 'b:0;');
+(25, 'orgadmin', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+1@raycom.com', '', '', 'filtered_html', 1397205806, 1400256334, 1400160734, 1, 'Europe/Paris', 'es', 0, 'edwin+1@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
+(26, 'orgadmin2', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+2@raycom.com', '', '', 'filtered_html', 1397209973, 0, 0, 1, 'Europe/Paris', 'es', 0, 'edwin+2@raycom.com', NULL),
+(27, 'instadmin', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+3@raycom.com', '', '', 'filtered_html', 1397210143, 1400577479, 1400257398, 1, 'Europe/Paris', 'es', 0, 'edwin+3@raycom.com', 'b:0;'),
+(28, 'tutor1', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+4@raycom.com', '', '', 'filtered_html', 1397211191, 0, 0, 1, 'Europe/Paris', 'it', 0, 'edwin+4@raycom.com', NULL),
+(29, 'tutor2', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+5@raycom.com', '', '', 'filtered_html', 1397211502, 1400752361, 1400676920, 1, 'Europe/Paris', 'en', 0, 'edwin+5@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
+(30, 'tutor3', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+6@raycom.com', '', '', 'filtered_html', 1397211598, 1399972053, 1397224028, 1, 'Europe/Paris', 'el', 0, 'edwin+6@raycom.com', 'b:0;'),
+(31, 'student1', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+9@raycom.com', '', '', 'filtered_html', 1397222564, 1401449439, 1401447650, 1, 'Europe/Paris', 'en', 0, 'edwin+9@raycom.com', 'b:0;'),
+(32, 'mentor1', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+21@raycom.com', '', '', 'filtered_html', 1400586065, 1400586093, 1400586093, 1, 'Europe/Paris', 'en', 0, 'edwin+21@raycom.com', 'b:0;'),
+(33, 'Een mentor', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+11@raycom.com', '', '', 'filtered_html', 1400753564, 0, 0, 1, 'Europe/Paris', 'en', 0, 'edwin+11@raycom.com', NULL),
+(34, 'orgadmin4', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+12@raycom.com', '', '', 'filtered_html', 1400754935, 1400765047, 1400754987, 1, 'Europe/Paris', 'nl', 0, 'edwin+12@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
+(35, 'instadmin2', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+99@raycom.com', '', '', 'filtered_html', 1397210143, 1400577479, 1400257398, 1, 'Europe/Paris', 'es', 0, 'edwin+99@raycom.com', 'b:0;');
 
 -- --------------------------------------------------------
 
