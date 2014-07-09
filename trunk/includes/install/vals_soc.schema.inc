@@ -1,4 +1,6 @@
 <?php 
+/* For the moment being we work with the sql scripts in the code. So when the module is installed it will call this function
+ * to know about the db schema's to use for the db
 
 function vals_soc_schema_handler() {
 	// NOTE: {variable} needs to be created before all other tables, as
@@ -80,7 +82,7 @@ function vals_soc_schema_handler() {
 			 * ALTER TABLE `soc_proposals` ADD `modules` VARCHAR( 1024 ) NULL AFTER `solution_long` 
 			 * ALTER TABLE `soc_proposals` CHANGE `studid` `owner_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL 
 	*
-	*/
+	* /
 	);
 
 	$schema['soc_projects'] = array(
@@ -129,7 +131,7 @@ ADD `student` MEDIUMINT NOT NULL AFTER `mentor` ,
 ADD `supervisor` MEDIUMINT NOT NULL AFTER `student`
          * ALTER TABLE `soc_projects` ADD `url` VARCHAR( 1024 ) NOT NULL AFTER `description` 
          * 
-         */
+         * /
 	);
 	$schema['soc_codes'] = array(
 			'description' => 'Create some random codes so that not just anybody can register.',
@@ -325,3 +327,4 @@ ADD `supervisor` MEDIUMINT NOT NULL AFTER `student`
 
 	return $schema;
 }
+*/

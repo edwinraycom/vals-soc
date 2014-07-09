@@ -28,7 +28,7 @@ CHANGE `mentor` `mentor` MEDIUMINT( 9 ) NOT NULL DEFAULT '0',
 CHANGE `proposal_id` `proposal_id` MEDIUMINT( 9 ) NOT NULL DEFAULT '0',
 CHANGE `tags` `tags` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT ''''''
 */
-use drupal;
+use vals_vps;
 
 
 CREATE TABLE IF NOT EXISTS `soc_names` (

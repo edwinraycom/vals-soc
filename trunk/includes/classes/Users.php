@@ -21,9 +21,11 @@ class Users extends AbstractEntity{
 
 		return $groups;
 	}
-        public static function isAdmin(){
-            return self::isOfType('administrator');
-        }
+    public static function isAdmin()
+    {
+        return self::isOfType('administrator');
+    }
+    
 	public static function isOfType($type, $uid=''){
 		global $user;
 		

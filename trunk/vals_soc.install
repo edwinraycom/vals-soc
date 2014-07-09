@@ -61,8 +61,9 @@ function vals_soc_uninstall() {
  * @return multitype:string NULL
  */
 function vals_soc_schema() {
-	module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.schema');
-	return vals_soc_schema_handler();
+//TODO: uncomment the function in the schema and revise the tables. During an install this function will be called
+	//module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.schema');
+	//return vals_soc_schema_handler();
 }
 
 /**
