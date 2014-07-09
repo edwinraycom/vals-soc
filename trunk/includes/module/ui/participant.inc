@@ -10,11 +10,52 @@
  * @param string $member_type - used to show what type of entity is supposed to be used by the generated CODE
  * @return string - a bunch of HTML
  */
-function formatMemberRecordNice($record, $member_type='Users'){
+function formatMemberRecordNice($record, $type){
+	$member_type='';
+	switch ($type){
+		case 'organisation': // organisations invite mentors
+			$member_type = 'mentors';
+			break;
+		case 'institute': // institutes invite supervisors
+			$member_type = 'supervisors';
+			break;
+		case 'studentgroup': // studentgroups invite students
+			$member_type = 'students';
+			break;
+		default: $member_type = 'users';
+	}
+	
 	$output='';
 	$output .= '<br/><br/>';
 	$output .= '<dl class="view_record">';
+	// check to see if there is an 'owner_id field'
+	if(isset($record->owner_id)){
+		$owner_details='';
+		if(Users::getMyId() == $record->owner_id ){
+			// owner is me
+			$owner_details= t('You');
+		}
+		else{
+			// else owner someone else, get their details
+			$user = Users::getParticipantBasicSubset($record->owner_id);
+			if (isset($user->fullname)){
+				$owner_details= $user->fullname . ' (' . $user->mail . ')';
+			}
+			else{
+				$owner_details= $user->name . ' (' . $user->mail . ')';
+			}
+		}
+		$output .=  '<dt>';
+		$output .=  t('Owner');
+		$output .=  '</dt>';
+		$output .=  '<span class="ui-icon ui-icon-arrowreturn-1-e"></span>';
+		$output .=  '<dd>';
+		$output .=  $owner_details;
+		$output .=  '</dd>';
+	}
+	// just loop through the rest of the fields
 	foreach($record as $key => $val){
+		// don't show any field ending with '_id'
 		if (substr_compare($key, '_id', -strlen('_id'))!= 0){
 			$output .=  '<dt>';
 			$output .=  ucfirst(str_replace('_', ' ', $key));
@@ -24,7 +65,7 @@ function formatMemberRecordNice($record, $member_type='Users'){
 			$output .=  $val;
 			if ($key=='code'){
 				$output .= '<br/>';
-				$output .= '<i>' . t('Use this code to invite your '. $member_type). '</i>';
+				$output .= '<i>' . t('Use this code to invite your '. $member_type . ' to participate'). '</i>';
 			}
 			$output .=  '</dd>';
 		}
@@ -223,19 +264,7 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
     	$s .= "<input type='button' value='".t('edit')."' $edit_action/>";
     	$s .= "<input type='button' value='".t('delete')."' $delete_action/>";
     	$sub_type_user = '';
-    	switch ($type){
-    		case 'organisation':
-    			$sub_type_user = 'mentors';
-    		break;
-    		case 'institute':
-    			$sub_type_user = 'supervisors';
-    		break;
-    		case 'studentgroup':
-    			$sub_type_user = 'students';
-    		break;
-    		default: $sub_type_user = 'users';
-    	}
-        $s .= formatMemberRecordNice($organisation, t($sub_type_user));
+        $s .= formatMemberRecordNice($organisation, $type);
         return $s;
     } else {
         return tt('You have no %1$s registered yet', $type);
