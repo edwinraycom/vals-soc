@@ -108,7 +108,7 @@ class Users extends AbstractEntity{
 		} else {
 			if ($id){
 				$members = db_query(
-						"SELECT u.*,n.name as fullname from users as u".
+						"SELECT u.*,n.name as fullname from users as u ".
 						'left join soc_names as n on u.uid=n.names_uid '.
 						"WHERE u.uid = '$id'");
 			} else {
@@ -150,9 +150,20 @@ class Users extends AbstractEntity{
 	}
 
 	public static function getParticipant($id=''){
-		return $this->getUsers('', '', '', $id)->fetchObject();
+		return Users::getUsers('', '', '', $id)->fetchObject();
 	}
 
+	public static function getParticipantBasicSubset($id){
+		if(isset($id)){
+		return db_query(
+				"SELECT u.name, u.mail,n.name as fullname from users as u ".
+				'left join soc_names as n on u.uid=n.names_uid '.
+				"WHERE u.uid = '$id'")->fetchObject();
+		}
+		else{
+			t('No identifier specified');
+		}
+	}
 	
 	
 	public static function getAllStudents($institute='')
