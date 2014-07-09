@@ -87,52 +87,52 @@
 }
 /* icons entry */
 .column-entry.lookup_profile {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/lookup.png");
+  background-image: url("../images/lookup.png");
 }
 .column-entry.allocate_slots,
 .column-entry.slots_allocation {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/allocate.png");
+  background-image: url("../images/allocate.png");
 }
 .column-entry.slots_transfer {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/transfer.png");
+  background-image: url("../images/transfer.png");
 }
 .column-entry.duplicates {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/duplicates.png");
+  background-image: url("../images/duplicates.png");
 }
 .column-entry.manage_proposals,
 .column-entry.proposals,
 .column-entry.proposals_submitted {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/proposals.png");
+  background-image: url("../images/proposals.png");
 }
 .column-entry.accept_proposals,
 .column-entry.manage_projects,
 .column-entry.mentoring_projects {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/accept_proposals.png");
+  background-image: url("../images/accept_proposals.png");
 }
 .column-entry.withdraw_projects {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/withdraw.png");
+  background-image: url("../images/withdraw.png");
 }
 .column-entry.reminder_emails {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/mail.png");
+  background-image: url("../images/mail.png");
 }
 .column-entry.edit_program,
 .column-entry.program_settings {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/settings.png");
+  background-image: url("../images/settings.png");
 }
 .column-entry.edit_timeline {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/date.png");
+  background-image: url("../images/date.png");
 }
 .column-entry.adminning_organizations,
 .column-entry.manage_organizations,
 .column-entry.participants,
 .column-entry.students {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/users.png");
+  background-image: url("../images/users.png");
 }
 .column-entry.participant_locations {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/marker.png");
+  background-image: url("../images/marker.png");
 }
 .column-entry.report_statistic {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/report.png");
+  background-image: url("../images/report.png");
 }
 .column-entry.documents,
 .column-entry.evaluations,
@@ -140,43 +140,43 @@
 .column-entry.org_app,
 .column-entry.student_evaluations,
 .column-entry.todo {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/todo.png");
+  background-image: url("../images/todo.png");
 }
 .column-entry.evaluation_group {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/grade.png");
+  background-image: url("../images/grade.png");
 }
 .column-entry.create_evaluation_group,
 .column-entry.create_mentor_evaluation,
 .column-entry.create_student_evaluation {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/create.png");
+  background-image: url("../images/create.png");
 }
 .column-entry.edit_evaluation_group,
 .column-entry.edit_mentor_evaluation,
 .column-entry.edit_student_evaluation {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/edit.png");
+  background-image: url("../images/edit.png");
 }
 .column-entry.projects,
 .column-entry.view_evaluation_group,
 .column-entry.view_mentor_evaluation,
 .column-entry.view_student_evaluation {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/view.png");
+  background-image: url("../images/view.png");
 }
 .column-entry.org_admin_requests,
 .column-entry.requests {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/requests.png");
+  background-image: url("../images/requests.png");
 }
 .column-entry.shipment_tracking,
 .column-entry.shipment_infos {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/shipment_tracking.png");
+  background-image: url("../images/shipment_tracking.png");
 }
 .column-entry.create_shipment_info {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/proposals.png");
+  background-image: url("../images/proposals.png");
 }
 .column-entry.edit_shipment_infos {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/edit.png");
+  background-image: url("../images/edit.png");
 }
 .column-entry.sync_data {
-  background-image: url("/vals/sites/all/modules/vals_soc/includes/module/ui/dashboard/images/sync_data.png");
+  background-image: url("../images/sync_data.png");
 }
 .column-entry .notificon {
   /* notify icon */
