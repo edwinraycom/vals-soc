@@ -231,7 +231,21 @@ function jsonFormResult(dat
     	$s = '';
     	$s .= "<input type='button' value='".t('edit')."' $edit_action/>";
     	$s .= "<input type='button' value='".t('delete')."' $delete_action/>";
-        $s .= formatMemberRecordNice($organisation, t('Supervisors'));
+    	$sub_type_user = '';
+    	switch ($type){
+    		case 'organisation':
+    			$sub_type_user = 'mentors';
+    		break;
+    		case 'institute':
+    			$sub_type_user = 'supervisors';
+    		break;
+    		case 'studentgroup':
+    			$sub_type_user = 'students';
+    		break;
+    		default: $sub_type_user = 'users';
+    	}
+    	echo $type;
+        $s .= formatMemberRecordNice($organisation, t($sub_type_user));
         return $s;
     } else {
         return tt('You have no %1$s registered yet', $type);
