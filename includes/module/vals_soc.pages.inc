@@ -36,7 +36,7 @@ function vals_soc_dashboard_overview_page(){
 		$includeFile = 'includes/module/ui/dashboard/mentorlayout';
 	}
 	elseif(hasRole(array('institute_admin'))){ // may need to update this to separate page
-		$includeFile = 'includes/module/ui/dashboard/orgadminlayout';
+		$includeFile = 'includes/module/ui/dashboard/instadminlayout';
 	}
 	elseif(hasRole(array('supervisor'))){  // may need to update this to separate page
 		$includeFile = 'includes/module/ui/dashboard/mentorlayout';
