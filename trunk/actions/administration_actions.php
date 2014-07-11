@@ -44,9 +44,9 @@ switch ($_GET['action']){
 				'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
 		);
 		// Print $form
-		$form_to_print = drupal_render($build);
+		$form_to_print = drupal_render($form);//used to be build
 		// Print JS
-		$form_to_print .= drupal_get_js();
+		//$form_to_print .= drupal_get_js();
 		echo $form_to_print;
 
 	break;
@@ -96,7 +96,8 @@ switch ($_GET['action']){
         }
      break;
     case 'show':
-    	showRoleDependentAdminPage(getRole());
+    	$action = altSubValue($_POST, 'action', 'administer');
+    	showRoleDependentAdminPage(getRole(), $action);
     break;
     case 'view':
     	$type = altSubValue($_POST, 'type');

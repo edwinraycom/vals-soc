@@ -1,5 +1,5 @@
 <?php
-include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');
+include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after administration.php which does the same
 
 function showProjectPage(){
 	//TODO check for the role of current user
@@ -154,8 +154,8 @@ function renderProject($project='', $target=''){
 		")\" value='Submit proposal for this project'/>";
 	}
 	if (Groups::isOwner('project', $id)){
-		$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"project\", \"delete\", {type: \"project\", id: $id}, \"refreshTabs\", \"project\", \"json\", [\"$type\", \"$target\"]);}'";
-		$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"project\", id: $id, target: \"$target\"}, \"formResult\", \"project\", \"html\", \"$target\");'";
+		$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"project\", \"delete\", {type: \"project\", id: $id}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"project\"]);}'";
+		$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"project\", id: $id, target: \"$target\"}, \"formResult\", \"html\", [\"$target\", \"project\"]);'";
 		//$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"project\", id: $id, target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
 	
 		$content .= "<input type='button' value='".t('edit')."' $edit_action/>";

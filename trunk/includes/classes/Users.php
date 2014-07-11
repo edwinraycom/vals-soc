@@ -6,7 +6,7 @@ class Users extends AbstractEntity{
 		global $user;
 
 		$supervisor = $supervisor ?: $user->uid;
-		if (! self::isOfType('supervisor', $supervisor)){
+		if (! self::isSuperVisor()){
 			drupal_set_message(t('You cannot view this data'), 'error');
 			return array();
 		}
@@ -24,6 +24,35 @@ class Users extends AbstractEntity{
     public static function isAdmin()
     {
         return self::isOfType('administrator');
+    }
+    
+    public static function isInstituteAdmin()
+    {
+    	return self::isOfType('institute_admin');
+    }   
+
+    public static function isOrganisationAdmin()
+    {
+    	return self::isOfType('organisation_admin');
+    }
+    
+    public static function isSuperVisor()
+    {
+    	global $user;
+    	return in_array('institute_admin', $user->roles) || 
+    		in_array('supervisor', $user->roles);
+    }
+	
+    public static function isStudent()
+    {
+    	return self::isOfType('student');
+    }
+    
+    public static function isMentor()
+    {
+    	global $user;
+    	return in_array('mentor', $user->roles) ||
+    	in_array('organisation_admin', $user->roles);
     }
     
 	public static function isOfType($type, $uid=''){
@@ -62,7 +91,7 @@ class Users extends AbstractEntity{
 
 		$supervisor = $user->uid;
 		//todo: find out whether current user is supervisor
-		if (! self::isOfType('supervisor', $supervisor)){
+		if (! self::isSuperVisor()){
 			drupal_set_message(t('You cannot view this data'), 'error');
 			return array();
 		} 

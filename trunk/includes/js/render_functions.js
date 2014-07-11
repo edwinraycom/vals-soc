@@ -147,7 +147,7 @@ function renderProposalTabs(result, labels, container){
 			break;
 			case 'delete': s += 'Are you sure you want to delete this proposal?<br>'+
 				'<input type="button" value="Yes" onclick="ajaxCall(\'proposal\', \'proposal_delete\', '+
-				'{proposal_id:'+result.proposal_id+', target: \''+ container+ '\' }, \'handleDeleteResult\', \'json\', \'content\');"/>';
+				'{proposal_id:'+result.proposal_id+', target: \''+ container+ '\' }, \'handleDeleteResult\', \'json\', [\'content\', \'proposal\']);"/>';
 			break;
 		}
 		s += "</div>"; 
@@ -162,11 +162,11 @@ function getProposalFormForProject(projectId){
 	Drupal.CTools.Modal.dismiss();
 	//With formResult it will turn all textareas in rte fields and with handleResult, it just copies the
 	//form and places everything in the target content
-	//possible forms: ajaxCall(module, action, data, handleResult, json, args)
-	// ajaxCall(module, action, data, target, html)
+	//possible formats: 
+	//   ajaxCall(module, action, data, handleResult, json, args)
+	//   ajaxCall(module, action, data, target, html)
 	//Note that formResult and jsonFormResult store the call in the target and convert the textareas
-	ajaxCall("student", "proposal", {id: projectId, target:'content'}, "formResult", 'student', 'html', 'content');
-	//ajaxCall("student", "proposal", {id: projectId, target:'content'}, 'content');
+	ajaxCall("student", "proposal", {id: projectId, target:'content'}, "formResult", 'html', 'content');
 }
 
 function getProjectDetail(projectId){	

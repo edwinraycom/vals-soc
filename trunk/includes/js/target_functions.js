@@ -1,5 +1,8 @@
-function refreshTabs(handler, json_data, args){
+function refreshTabs(json_data, args){
 	var targ = '';
+	var type = '';
+	var handler = '';
+	var container = '';
 	if (args.length == 0){
 		alertdev('There are missing arguments to refresh the tabs');
 		return;
@@ -7,15 +10,26 @@ function refreshTabs(handler, json_data, args){
 	if (arguments.length > 1 && args) {
 		var type = args[0];
 		targ = (args.length > 1) ? 'msg_'+ args[1] : '';
+		handler = (args.length > 2) ? args[2] : '';
+		container = (args.length > 3) ? args[3] : 'admin_container';
 	}
+	if (! handler){
+		alertdev('No handler supplied in target function');
+        return false;
+	}
+	
+	if ((! targ) || ! $jq('#'+targ).length){
+		targ = 'ajax_msg';
+		alertdev('You forgot to place an error div in the content of the tab: required msg_<target> '+
+			'or it could not be found. Searched actually for '+ targ);
+	}
+	
 	if (json_data && (json_data.result !== 'error')){
-		ajaxCall(handler, 'show', {type:type}, 'admin_container');
+		ajaxMessage(targ, json_data.msg);
+		ajaxCall(handler, 'show', {type:type, action:json_data.action}, container);
 	} else {
 		if (typeof json_data.error != 'undefined') {
-			if ((! targ) || ! $jq('#'+targ).length){
-				targ = 'ajax_error';
-				alertdev('You forgot to place an error div in the content of the tab: required msg_<target>. Searched actually for '+ targ);
-			}
+			
 			ajaxError(targ, json_data.error);
 		} else {
 			alertdev('Some error occured but no message was set.');
@@ -23,29 +37,33 @@ function refreshTabs(handler, json_data, args){
 	}
 }
 
-function refreshSingleTab(handler, json_data, args){
+function refreshSingleTab(json_data, args){
 	var target = '';
-        var type = '';
-	if (arguments.length > 1 && args && (args.length > 1)) {
-                type = args[0];
+    var type = '';
+    var handler = '';
+	if (arguments.length > 1 && args && (args.length > 2)) {
+        type = args[0];
 		target = args[1];
+		handler = args[2];
 	}
-	if (! target){
-		alertdev('No target supplied in target function');
-                return false;
+	if (! handler){
+		alertdev('No handler supplied in target function');
+        return false;
 	}
 	//Get the id and the type
 	var id = json_data.id;
 	var type = json_data.type;
 	if (json_data && (json_data.result !== 'error')){
-		ajaxCall(handler, 'view', {id:id,type:type,target:target}, target);
+		
+		ajaxCall(handler, 'view', {id:id,type:type,target:target}, 'handleContentAndMessage', 'html', [target, 'msg_'+target, 
+		                                                                                       json_data.msg]);
 	} else {
 		ajaxError('msg_'+target, json_data.error);
 	}
 }
 
 //function formResult(data, args){
-function formResult(handler,data, args){
+function formResult(data, args){
 	var target = args[0];
 	//todo: we want jquery to wait for the dom to be ready until ckeditor call
     if (Obj(target).html(data)){
@@ -67,6 +85,17 @@ function jsonFormResult(data, args){
 
 function transform_into_rte(){
 	CKEDITOR.replaceAll();
+}
+
+function handleContentAndMessage(result, args){
+	var content_target = args[0];
+	ajaxInsert(result, content_target);
+	if (args.length > 1){
+		var msg_target = args[1];
+		var msg_content= args[2];
+		ajaxMessage(msg_target, msg_content);
+	}
+	
 }
 
 function handleResult(result, args){

@@ -147,12 +147,37 @@ function getInstAdminLayout($timeline_args){
 				<!-- column one -->
 				<div class="column first">
 	';
- 	if($timeline_args['connectionsVisible']){
+	if($timeline_args['managedOrganisationsVisible']){
+		$output .='
+					<div class="column-entry org_app">
+						<h4>
+							<a class="dashboard-link component-link"
+								href="'.$base_url.'/dashboard/institute/administer"
+								title="'.t("My institution").'">'.t("My institution").'</a>
+						</h4>
+						<p>'.t("Institution for which you are an administrator").'</p>
+					</div>
+		';
+	}
+	if($timeline_args['organisationMembersVisible']){
+		$output .='
+		<div class="column-entry participants">
+		<h4>
+		<a class="dashboard-link component-link"
+		href="'.$base_url.'/dashboard/institute/members"
+		title="'.t("Members of my institution").'">'.t("Members of my institution").'</a>
+		</h4>
+		<p>'.t("Lists of your institution members").'</p>
+		</div>
+		';
+	}
+	
+	if($timeline_args['connectionsVisible']){
 		$output .='
 					<div class="column-entry connections_dashboard">
 						<h4>
 							<a class="dashboard-link"
-							href="#"
+							href="'.$base_url.'/dashboard/institute/group/administer"
 							title="'.t("Groups").'">'.t("Groups").'</a>
 						</h4>
 						<p>'.t("Create groups of students to manage codes and the initial supervisor-student relation.").'</p>
@@ -164,47 +189,22 @@ function getInstAdminLayout($timeline_args){
 		';
 	}
 	
-	if($timeline_args['managedOrganisationsVisible']){
-		$output .='
-					<div class="column-entry org_app">
-						<h4>
-							<a class="dashboard-link component-link"
-								href="'.$base_url.'/dashboard/members"
-								title="'.t("Managed institutions").'">'.t("Managed institutions").'</a>
-						</h4>
-						<p>'.t("Institutions for which you are an administrator").'</p>
-					</div>
-		';
-	}
-	if($timeline_args['manageProjectIdeasVisible']){
-		$output .='
-					<div class="column-entry org_app manage_project_ideas">
-						<h4>
-							<a class="dashboard-link component-link"
-								href="'.$base_url.'/dashboard/projects/browse"
-								title="'.t("Review project ideas").'">'.t("Review project ideas").'</a>
-						</h4>
-						<p>'.t("Allows you to add comments to project ideas and to filter accidental entries.").'</p>
-					</div>
-		';
-	}
-	
 	$output .='	
 				</div>
 				<!-- column two -->
 				<div class="column">
 	';
 
-	if($timeline_args['organisationMembersVisible']){
+	if($timeline_args['manageProjectIdeasVisible']){
 		$output .='
-					<div class="column-entry participants">
-						<h4>
-							<a class="dashboard-link component-link"
-							href="#"
-							title="'.t("Members of my institutions").'">'.t("Members of my institutions").'</a>
-						</h4>
-						<p>'.t("List of your institution members").'</p>
-					</div>
+		<div class="column-entry org_app manage_project_ideas">
+		<h4>
+		<a class="dashboard-link component-link"
+		href="'.$base_url.'/dashboard/projects/browse"
+		title="'.t("Review project ideas").'">'.t("Review project ideas").'</a>
+		</h4>
+		<p>'.t("Allows you to add comments to project ideas and to filter accidental entries.").'</p>
+		</div>
 		';
 	}
 	

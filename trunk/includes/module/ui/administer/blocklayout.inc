@@ -15,9 +15,10 @@ include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
 //To test we switch here the user
 //31 student stuutje, 30 tutor zelfstandig, 27 salamanca (org inst), 25 orgadmin, 1 admin
 //$GLOBALS['user'] = user_load(30,  TRUE);
-$role = getRole();?>
-<div id='ajax_error'></div>
+$role = getRole();
+$action = isset($action) ? $action : 'administer';?>
+<div id='ajax_msg'></div>
 
 <div id='admin_container' class='tabs_container'>
-	<?php showRoleDependentAdminPage($role);?>
+	<?php showRoleDependentAdminPage($role, $action);?>
 </div>

@@ -11,7 +11,7 @@ function entityCall($type, $obj, $target, $action_handler='administration'){
         $id = $obj && $obj->$key ? $obj->$key : 0;
         $post_function = $id ? 'refreshSingleTab' : 'refreshTabs';
 	$call = "ajaxFormCall('vals-soc-$type-form', '$action_handler', 'save', {type: '$type',id: $id},".
-		"'$post_function', '$action_handler','json',['$type', '$target']);";
+		"'$post_function','json',['$type', '$target', '$action_handler']);";
 	return $call;
 }
 

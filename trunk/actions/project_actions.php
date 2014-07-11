@@ -9,7 +9,6 @@ module_load_include('php', 'vals_soc', 'includes/functions/ajax_functions');
 switch ($_GET['action']){
 	case 'project_page':
 		module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
-		module_load_include('php', 'vals_soc', 'includes/functions/projects');
 		initBrowseProjectLayout();
 	break;
 	case 'list_projects':
