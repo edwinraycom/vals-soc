@@ -1,6 +1,6 @@
 <?php
 /*Expects data for every tab:
- * [translate, label, action, type, id, extra GET arguments]
+ * [translate, label, action, type, id, extra GET arguments, render with rich text area, render tab to the right]
 * translate can be: 0=label with sequence nr, 1=translate the text, 2=use the name etc as label (untranslated)
 */
 function renderTabs($count, $tab_label, $target_label, $type, $data, $id=0,
@@ -10,8 +10,21 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $id=0,
 	$title = "";
 	$label_nr = 1;
 	for ($t=0; $t < $count;$t++){
-		$target = $target_label.($t + 1); ?>
-		<li><a href="#tab_<?php echo $target;?>" <?php
+		$target = $target_label.($t + 1);
+		$tab_class = '';
+		$delete_tab = false;
+		$pre = "";
+		$post= "";
+		if (isset($data[$t][7]) && $data[$t][7]){
+			$tab_class =  ' class="right"';
+			if ($data[$t][7] == 'delete'){
+				$delete_tab = true;
+				$pre = "if (confirm('".tt('Are you sure you want to delete this %1$s', t($type))."')){";
+				$post= "} else {Obj('$target').html('". t(' You canceled the request')."')}";
+			}
+		}
+		?>
+		<li<?php echo $tab_class;?>><a href="#tab_<?php echo $target;?>" <?php
 		//title
 		if ($data[$t][0] == 1){
 			$link_text = t($data[$t][1]);
@@ -34,7 +47,14 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $id=0,
 			if (isset($data[$t][5])){
 				$action	.= "&".$data[$t][5];
 			}
-			echo "onclick=\"ajaxCall('$parent_type', '$action', {type:'$type', id:$id, target:'$target'}, '$target');\"";
+			$call_target = "'$target'";
+			echo "onclick=\"${pre}ajaxCall('$parent_type', '$action', {type:'$type', id:$id, target:'$target'},";
+			if (isset($data[$t][6]) && $data[$t][6]){
+				$call_target = " 'formResult', 'html', '$target'";
+			} elseif ($delete_tab){
+				$call_target = " 'handleDeleteResult', 'json', 'admin_container'";
+			}
+			echo " $call_target);$post\"";
 		}
 
 		?>><span><?php echo $link_text;?></span></a>

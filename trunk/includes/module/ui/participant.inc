@@ -81,7 +81,7 @@ function renderStudents($group_selection='', $students=''){
         //get all his students
         $students = Users::getStudents($group_selection);
     }
-    if ($students->rowCount()){
+    if ($students && $students->rowCount()){
         $s = "<ul class='grouplist'>";
         foreach($students as $student){
             $s .= "<li>";
@@ -249,7 +249,7 @@ function renderOrganisations($type='', $organisations='', $organisation_head='',
 	}
 }
 
-function renderOrganisation($type, $organisation='', $organisation_owner='', $target=''){
+function renderOrganisation($type, $organisation='', $organisation_owner='', $target='', $show_buttons=true){
     if (!$organisation){
         $organisations = Groups::getGroups($type, $organisation_owner);
         $organisation = $organisations->fetchObject();
@@ -257,13 +257,16 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
     $key_name = Groups::keyField($type);
     $id = $organisation->$key_name;
     if ($organisation){
-    	$pPath=request_path();
-    	$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\"]);}'";
-    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
     	$s = '';
-    	$s .= "<input type='button' value='".t('edit')."' $edit_action/>";
-    	$s .= "<input type='button' value='".t('delete')."' $delete_action/>";
-    	$sub_type_user = '';
+    	if ($show_buttons){
+	    	$pPath=request_path();
+	    	$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\"]);}'";
+	    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
+	    	
+	    	$s .= "<input type='button' value='".t('edit')."' $edit_action/>";
+	    	$s .= "<input type='button' value='".t('delete')."' $delete_action/>";
+	    	$sub_type_user = '';
+    	}
         $s .= formatMemberRecordNice($organisation, $type);
         return $s;
     } else {

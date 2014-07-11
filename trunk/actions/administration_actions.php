@@ -102,6 +102,7 @@ switch ($_GET['action']){
     	$type = altSubValue($_POST, 'type');
     	$id = altSubValue($_POST, 'id');
     	$target = altSubValue($_POST, 'target', '');
+    	$buttons = altSubValue($_GET, 'buttons', true);
     	if (! ($id && $type && $target)){
     		die(t('There are missing arguments. Please inform the administrator of this mistake.'));
     	}
@@ -115,17 +116,18 @@ switch ($_GET['action']){
 //     		 echo $is_owner ? sprintf('<h3>%1$s</h3>', tt('Your %1$s', t($type))):
 //     		 	sprintf('<h3>%1$s</h3>', ($is_project ? $organisation['title'] : $organisation->name));
     		 echo "<div id='msg_$target'></div>";
-    		 echo $is_project ? renderProject($organisation, $target) : renderOrganisation($type, $organisation, null, $target);
+    		 echo $is_project ? renderProject($organisation, $target) : renderOrganisation($type, $organisation, null, $target, $buttons);
     	}
     break;
     case 'delete':
     	$type = altSubValue($_POST, 'type', '');
     	$id = altSubValue($_POST, 'id', '');
+    	$target = altSubValue($_POST, 'target', '');
     	if (! isValidOrganisationType($type)) {
     		echo t('There is no such type we can delete');
     	} else {
     		$result = Groups::removeGroup($type, $id);
-    		echo $result ? jsonGoodResult() : jsonBadResult();
+    		echo $result ? jsonGoodResult() : jsonBadResult('', 'error', array('target'=>$target));
     	}
     break;
     case 'edit':

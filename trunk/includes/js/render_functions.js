@@ -39,12 +39,16 @@ function renderStudent(data){
 function getProposalDetail(proposal_id, target, msg){
 	var tabs = [{tab: 'project', label: 'Project'},
 				{tab: 'student', label: 'Student'},
-				{tab: 'cv', label: 'Cv'},
+				//{tab: 'cv', label: 'Cv'},
 				{tab: 'summary', label: 'Solution Summary'},
 				{tab: 'solution', label: 'Solution'},
-				{tab: 'modules', label: 'Modules and Libraries'}];
-	var content_tabs = ['tab_project', 'tab_student', 'tab_cv', 'tab_summary', 'tab_solution', 
-				      	'tab_modules'];
+				//{tab: 'modules', label: 'Modules and Libraries'}
+			];
+	var content_tabs = ['tab_project', 'tab_student', 
+	                    //'tab_cv'
+	                    , 'tab_summary', 'tab_solution'
+				      	//,'tab_modules'
+	                    ];
 	var url = moduleUrl + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" +
 		proposal_id;
 	

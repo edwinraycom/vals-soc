@@ -42,12 +42,11 @@ function Obj(name_or_object, return_dom){
 		if (return_dom){
 			return isJquery(name_or_object) ? name_or_object[0] : name_or_object;
 		} else {
-			return name_or_object; //return_dom ? name_or_object[0] : ;
+			return name_or_object;
 		}
 	} else
 		var obj = $jq('#'+name_or_object);
 	if (obj.length == 0){
-		//alertdev('Could not find the target '+ name_or_object);
 		return false;
 	} else {
 		if (typeof return_dom == 'undefined') return_dom = false;
@@ -66,19 +65,19 @@ function createDiv(div_name, container){
 	} else{
 		var new_obj = document.createElement('div');
 		new_obj.setAttribute("id", div_name);
-		var cont_obj = Obj(container);
+		var cont_obj = Obj(container, true);
 		if (cont_obj) {
 			if (arguments.length > 2 && arguments[2] !== ''){
 				//Insert before an element inside container
 				//we use the normal objects, so we ask Obj to return a dom element
 				var first_obj = Obj(arguments[2], true);
-				cont_obj[0].insertBefore(new_obj, first_obj);
+				cont_obj.insertBefore(new_obj, first_obj);
 			} else {
-				cont_obj[0].appendChild(new_obj);
+				cont_obj.appendChild(new_obj);
 			}
 			return Obj(div_name);
 		} else {
-			alertDev('Could not find parent object '+ container);
+			alertdev('Could not find parent object '+ container);
 			return null;
 		}
 	}
@@ -89,15 +88,21 @@ function is_string(arg){
 }
 
 function ajaxAppend(msg, container, err, before){
+	var t = '';
 	if (typeof before == 'undefined') {
 		var cont_obj = Obj(container);
 		if (cont_obj){
 			before = cont_obj[0].childNodes[0];
 		} else {
 			before = '';
+			alertdev('Could not append message to container '+ container+ '. It could not be found.');
+			return false;
 		}
+		t = createDiv(container+err, cont_obj[0], before);
+	} else {
+		t = createDiv(container+err, container, before);
 	}
-	var t = createDiv(container+err, container, before);
+
 	if (t) {
 		t.addClass('messages '+err);
 		t.html(msg);
@@ -198,9 +203,7 @@ function ajaxCall(category, action, data, target, type, extra_args) {
 	}
 
 	call.fail = function(jqXHR, textStatus, errorThrown) {
-		console
-				.log('AjaxCall failed with some error.Redirected to its fail function with: '
-						+ errorThrown);
+		console.log('AjaxCall failed with some error.Redirected to its fail function with: '+ errorThrown);
 	};
 
 
