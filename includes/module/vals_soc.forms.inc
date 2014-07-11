@@ -246,9 +246,12 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
 	                "#options" => $options_institutes,
 	                "#description" => t("(For students and supervisors or institute administrators only)"),
 	                "#default_value" => $member_inst,
+	        		"#attributes"=> array('onchange'=>"if (this.value != 0){makeVisible('account_key_wrap')} else {makeInvisible('account_key_wrap');}")
 	        );
 	        if (!$is_admin){
 		        $form['account']['account_key'] = array(
+		        		'#prefix' => '<div  id="account_key_wrap" class="invisible">',
+		        		'#suffix' => '</div>',
 		        		"#type" => "textfield",
 		        		"#title" => t("Type the key you got from your colleague in the institute "),
 		        		"#size" => 10,
@@ -276,7 +279,7 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
 	                "#options" => $options_organisation,
 	                "#description" => t("(For organisation admins and mentors only)"),
 	                "#default_value" => $member_org,
-	        		"#attributes"=> array('onchange'=>"if (this.value != 0){jQuery('#account_key_wrap').removeClass('invisible')}")
+	        		"#attributes"=> array('onchange'=>"if (this.value != 0){makeVisible('account_key_wrap')} else {makeInvisible('account_key_wrap');}")
 	        );
 	        if (!$is_admin){
 		        $form['account']['account_key'] = array(

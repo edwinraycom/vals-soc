@@ -54,29 +54,27 @@ function refreshSingleTab(json_data, args){
 
 function formResult(data, args){
 	var target = args[0];
-	if (Obj(target).html(data)){
-            // Handler for .ready() called.
-            //alert('deze wordt aangeroepen');
-            CKEDITOR.replaceAll();
-        }
+	//todo: we want jquery to wait for the dom to be ready until ckeditor call
+    if (Obj(target).html(data)){
+    	CKEDITOR.replaceAll();
+    }
 }
 
 function jsonFormResult(data, args){
-
 	var target = args[0];
 	if (data.result == "error") {
 		ajaxAppend(data.error, target, 'error');
 	} else {
-            if (Obj(target).html(data.result)){
-            // Handler for .ready() called.
-            //alert('deze wordt aangeroepen');
-            CKEDITOR.replaceAll();
-            }
-	}
-        //alert('heoz it het');
-        
+		//todo: we want jquery to wait for the dom to be ready until ckeditor call
+        if (Obj(target).html(data.result)){
+        	CKEDITOR.replaceAll();
+        }
+	}     
 }
 
+function transform_into_rte(){
+	CKEDITOR.replaceAll();
+}
 
 function handleResult(result, args){
 	var target = args[0];
@@ -121,13 +119,12 @@ function handleDeleteResult(result, args){
 						Obj(result.target).html('');
 						before = '';
 					}
-					alertdev('append met '+ target + ' en '+ result.msg );
+					alertdev('append met '+ result.target + ' en '+ result.msg );
 					ajaxAppend(result.msg, result.target, 'status', result.before);
 				} else {
 					alertdev('The action succeeded.');
 				}
 			}
-			alert('haalt nu de row weg');
 			var row = $jq("tr[data-record='"+result.id+"']");
 			if (row){
 				row.remove();
