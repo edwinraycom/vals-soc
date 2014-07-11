@@ -1,5 +1,5 @@
 <?php
-include(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');
+include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');
 function showRoleDependentAdminPage($role){
 	switch ($role){
 		case 'administrator':
@@ -16,106 +16,6 @@ function showRoleDependentAdminPage($role){
 			break;
 	}
 }
-
-function showProjectPage(){
-	//TODO check for the role of current user
-	
-	$role = getRole();
-	//Get my groups
-	$my_organisations = Groups::getGroups('organisation');
-	//print_r($my_organisations); die('dit later weer weg');
-	if (!$my_organisations->rowCount()){
-		//There are no organisations yet for this user
-		if ($role == 'organisation_admin') {
-			echo t('You have no organisation yet.').'<br/>';
-			echo "<a href='"._VALS_SOC_URL. "/dashboard/members'>".t('Please go to the organisation register page')."</a>";
-			
-		} else {
-			echo t('You are not connected to any organisation yet.').'<br/>';
-			echo "<a href='"._VALS_SOC_URL. "/user'>".t('Please go to the register page')."</a>";
-			
-		}
-	} else {
-		echo '<h2>'.t('Your projects').'</h2>';
-		//TODO weg print_r($my_organisations->fetchCol());die();
-		$projects = Project::getProjectsByUser($role, $GLOBALS['user']->uid, $my_organisations->fetchCol());
-		if (! $projects){
-			echo t('You have no project yet registered');
-			echo '<h2>'.t('Add your project').'</h2>';
-			/*
-				$f3 = drupal_get_form('vals_soc_project_form', '', 'group_page-1');
-			$add_tab .= drupal_render($f3);
-			*/
-		
-			$form = drupal_get_form('vals_soc_project_form', '', 'project_page-1');
-			$form['#action'] = url('dashboard/projects/administer');
-			// Process the submit button which uses ajax
-			$form['submit'] = ajax_pre_render_element($form['submit']);
-			// Build renderable array
-			$build = array(
-					'form' => $form,
-					'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
-			);
-			// Print $form
-			$add_tab = drupal_render($build);
-			// Print JS
-			$add_tab .= drupal_get_js();
-		
-			$data = array();
-			$data[] = array(1, 'Add', 'addproject', 'project', null, "target=admin_container");
-			echo renderTabs(1, null, 'project_page-', 'project', $data, null, TRUE, $add_tab);
-			?>
-				<script type="text/javascript">
-		        	   activatetabs('tab_', ['project_page-1']);
-		        </script><?php
-		} else {
-			$nr = 1;
-			$data = array();
-			$activating_tabs = array();
-			
-			foreach ($projects as $project){
-				if ($nr == 1){
-					$id = $project->pid;
-					$my_project = $project;
-				}
-				$activating_tabs[] = "'project_page-$nr'";
-				$data[] = array(0, $project->title, 'view', 'project', $project->pid);
-				$nr++;
-			}
-	
-			$data[] = array(1, 'Add', 'add', 'project', 0, "target=project_page-$nr");
-			$activating_tabs[] = "'project_page-$nr'";
-	
-			$nr2 = 1;
-			$data2 = array();
-			// 		[translate, label, action, type, id, extra GET arguments]
-			$data2[] = array(1, 'All Projects', 'list', 'project', null);
-			$activating_tabs2 = array("'project2_page-$nr2'");
-			if ($my_organisations->rowCount() > 1){
-				foreach ($my_organisations as $organisation){
-					$nr2++;
-					$activating_tabs2[] = "'project2_page-$nr2'";
-					$data2[] = array(2, $organisation->title, 'list', 'project', $organisation->org_id);
-				}
-			}
-			echo renderTabs($nr, 'Project', 'project_page-', 'project', $data, $id, TRUE,
-				renderProject($my_project, "project_page-1"));
-	
-			echo "<hr>";
-			
-			echo '<h2>'.t('All your projects').'</h2>';
-			echo renderTabs($nr2, 'Organisation', 'project2_page-', 'organisation', $data2, null, TRUE,
-				renderProjects('', $projects));
-			?>
-			<script type="text/javascript">
-				activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>]);
-				activatetabs('tab_', [<?php echo implode(', ', $activating_tabs2);?>], null, true);
-			</script>
-		<?php
-		}
-	}
-}
-
 
 function showAdminPage(){
 	//TODO check for the role of current user

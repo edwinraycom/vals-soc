@@ -6,12 +6,12 @@ function populate($obj, $prop, $default=''){
 	return ($obj && isset($obj->$prop)) ? $obj->$prop : $default;
 }
 
-function entityCall($type, $obj, $target){
+function entityCall($type, $obj, $target, $action_handler='administration'){
 	$key = AbstractEntity::keyField($type);
         $id = $obj && $obj->$key ? $obj->$key : 0;
         $post_function = $id ? 'refreshSingleTab' : 'refreshTabs';
-	$call = "ajaxFormCall('vals-soc-$type-form', 'administration', 'save', {type: '$type',id: $id},".
-		"'$post_function','json',['$type', '$target']);";
+	$call = "ajaxFormCall('vals-soc-$type-form', '$action_handler', 'save', {type: '$type',id: $id},".
+		"'$post_function', '$action_handler','json',['$type', '$target']);";
 	return $call;
 }
 
@@ -486,18 +486,6 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='')
 		"#default_value" => populate($institute, 'name'),
 		'#required' => '1'
  	);
-// 	$form['key'] = array(
-// 		'#type' => 'hidden',
-// 		"#default_value" => populate($institute, 'inst_id'),
-// 	);
-// 	$form['tab_target'] = array(
-// 		'#type' => 'hidden',
-// 		"#default_value" => $target,
-// 	);
-// 	$form['entity_type'] = array(
-// 		'#type' => 'hidden',
-// 		"#default_value" => 'institute',
-// 	);
 	$form['contact_name'] = array(
 		"#type" => "textfield",
 		'#title' => t('Who is the contact person (you?)'),
@@ -512,7 +500,6 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='')
 		"#default_value" => populate($institute, 'contact_email'),
 		'#required' => '1'
 	);
-
 	$form['submit'] = array(
 		'#type' => 'submit',
 		'#attributes' => array('onclick'=> entityCall('institute', $institute, $target)),
@@ -526,12 +513,6 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='')
 		'#attributes' => array('onClick' => 'location.reload(); return true;'),
 		'#post_render' => array('vals_soc_fix_submit_button'),
 	);
-// 	$form['#attached']['js'] = array(
-// 		array(
-// 			'type'  => 'file',
-// 			'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
-// 		),
-// 	);
 	return $form;
 }
 
@@ -601,38 +582,31 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 			'#prefix' => '<div id="vals_soc_entity_form_wrapper">',
 			'#suffix' => '</div>',
 	);
-	
-	$form['key'] = array(
-			'#type' => 'hidden',
-			"#default_value" => populate($project, 'pid'),
-	);
-	$form['tab_target'] = array(
-			'#type' => 'hidden',
-			"#default_value" => $target,
-	);
-	$form['entity_type'] = array(
-			'#type' => 'hidden',
-			"#default_value" => 'project',
-	);
-	
 	$my_organisations = Groups::getGroups('organisation');
-	$nr = $my_organisations->rowCount();
-	if ($nr < 2){
+	$number_of_organisations = $my_organisations->rowCount();
+		
+	// now turn results into array
+	$organisations = objectToArray($my_organisations);
+	$select_values = array(); // to store the result
+	//loop around setting the name/value parts to be values in the drop down select box
+	foreach($organisations as $organisation){
+		$select_values[$organisation['org_id']] = $organisation['name'];
+	}
+	
+	if ($number_of_organisations < 2){
 		$form['org_id'] = array(
 				'#type' => 'hidden',
-				"#default_value" => ($nr ? $my_organisations->fetchCol(): 0),
+				"#default_value" => ($number_of_organisations ? $my_organisations->fetchCol(): 0),
 		);
 	} else {
 		$form['org_id'] = array(
 			"#type" => "select",
 			'#title' => t('For which organisation will this project be?'),
-			"#options" => $my_organisations->fetchAll(),
+			"#options" => $select_values,
 			'#required' => '1',
 			"#default_value" => populate($project, 'org_id')
 		);
-	}
-
-	
+	};
 	$form['title'] = array(
 			"#type" => "textfield",
 			'#title' => t('Give a name to the project'),
@@ -660,18 +634,9 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 			'#required' => '1',
 			"#default_value" => populate($project, 'tags')
 	);
-// 	$form['submit'] = array(
-// 			'#type' => 'submit',
-// 			'#value' => t('Save'),
-// 			'#ajax' => array(
-// 					'callback' => 'vals_soc_entity_form_callback',
-// 					'wrapper' => 'vals_soc_entity_form_wrapper',
-// 			),
-// 			'#post_render' => array('vals_soc_fix_submit_button'),
-// 	);
 	$form['submit'] = array(
 			'#type' => 'submit',
-			'#attributes' => array('onclick'=> entityCall('studentgroup', $group, $target)),
+			'#attributes' => array('onclick'=> entityCall('project', $project, $target, 'project')),
 			'#value' => t('Save'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
@@ -682,12 +647,6 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 			'#attributes' => array('onClick' => 'location.reload(); return true;'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
-// 	$form['#attached']['js'] = array(
-// 			array(
-// 					'type'  => 'file',
-// 					'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
-// 			),
-// 	);
 	return $form;
 }
 

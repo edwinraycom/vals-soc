@@ -14,7 +14,6 @@ abstract class AbstractEntity {
 			case 'organisation': return 'org_id';break;
 			case 'project': return 'pid';break;
 			case 'proposal': return 'proposal_id';break;
-			case 'timeline': return 'timeline_id';break;
 			default: return '';
 		}
 	}

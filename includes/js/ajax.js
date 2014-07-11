@@ -149,7 +149,7 @@ function isFunction(func){
 	}
 }
 
-function ajaxCall(category, action, data, target, type, extra_args) {
+function ajaxCall(category, action, data, target, handler, type, extra_args) {
 	if (!type)
 		type = 'html';// possible types are html, json, xml, text, script,
 						// jsonp
@@ -160,11 +160,9 @@ function ajaxCall(category, action, data, target, type, extra_args) {
 		dataType : type
 	};
 	// Handling a successfull call which can be a programmed returned error too.
-	// As
-	// long as the returned val is corresponding with dataType and in time.
+	// As long as the returned val is corresponding with dataType and in time.
 	// If the success function is not speicifed, a target is necessary to show
 	// the result
-
 	if (target) {
 		if (isFunction(target)) {
 			var args = [];
@@ -175,7 +173,7 @@ function ajaxCall(category, action, data, target, type, extra_args) {
 					args = [extra_args];
 			}
 			call.success = function(msg){
-					window[target](msg, args);
+					window[target](handler, msg, args);
 				};
 		} else {
 			call.success = function(msg) {
@@ -203,14 +201,16 @@ function ajaxCall(category, action, data, target, type, extra_args) {
 	}
 
 	call.fail = function(jqXHR, textStatus, errorThrown) {
-		console.log('AjaxCall failed with some error.Redirected to its fail function with: '+ errorThrown);
+		console
+				.log('AjaxCall failed with some error.Redirected to its fail function with: '
+						+ errorThrown);
 	};
 
 
 	return $jq.ajax(call);
 }
 
-function ajaxFormCall(frm, category, action, data, target, type, args) {
+function ajaxFormCall(frm, category, action, data, target, handler, type, args) {
 	CKupdate();
 	var call_args = $jq('#' + frm).serialize();
 	if (data) {
@@ -224,7 +224,7 @@ function ajaxFormCall(frm, category, action, data, target, type, args) {
 			call_args = call_args.concat('&' + data);
 		}
 	}
-	return ajaxCall(category, action, call_args, target, type, args);
+	return ajaxCall(category, action, call_args, target, handler, type, args);
 
 }
 
@@ -255,7 +255,7 @@ $jq(document)
 					} else if (exception === 'abort') {
 						alertdev('Ajax request aborted.');
 					} else {
-						alertdev('Uncaught Error. Probaly Server execution aborted by die, exit or Fatal error.\n'
+						alertdev('Uncaught Error. Probably Server execution aborted by die, exit or Fatal error.\n'
 								+ jqxhr.responseText);
 					}
 					if (!(debugging && confirm("Do you want to open a window with some extra info?")))

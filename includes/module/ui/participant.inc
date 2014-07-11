@@ -160,69 +160,6 @@ function renderGroups($supervisor_selection='', $groups=''){
 	}
 }
 
-function renderProjects($organisation_selection='', $projects='', $target=''){
-	if (!$projects){
-		//if we pass empty value to getGroups the current supervisor is assumed
-		$projects = Groups::getGroups($organisation_selection);
-	}
-	$target_set = ! empty($target);
-	if ($projects){
-		$s = "<ul class='projectlist'>";
-		foreach($projects as $project){
-			$project = objectToArray($project);
-			$s .= "<li>";
-			// $member_url = "/vals/actions/project"
-			if (!$target_set) {
-				$target = "show_${project['pid']}";
-			}
-			$s .= "<a href='javascript: void(0);' onclick='".
-			//($target_set ? "" : "\$jq(\"#$target\").toggle();").
-			"ajaxCall(\"administration\", \"view\", {id:${project['pid']},type:\"project\", target:\"$target\"}, \"$target\");'>${project['title']}</a>";
-			if (! $target_set) {
-				$s .= "<div id='$target' ></div>";
-			}
-			$s .= "</li>";
-		}
-		$s .= "</ul>";
-		return $s;
-	} else {
-		return t('You have no projects yet');
-	}
-}
-
-function renderProject($project='', $target=''){
-	if (!$project){
-		return t('I cannot show this project. It seems empty');
-	}
-	if (is_object($project)){
-		$project = objectToArray($project);
-	} else {
-		//return 'het Is GEEN object dus array';
-	}
-	$key_name = Groups::keyField('project');
-	$id = $project[$key_name];
-	$content = "<h2>".$project['title']."</h2>";
-	$content .= '<p>'.$project['description']. '</p>';
-	if ( $project['url']){
-		$content .= '<p>'.tt('More information can be found at %1$s', "<a href='${project['url']}'> ${project['url']}</a>"). '</p>';
-	}
-	$role = getRole();
-	$content .="<div class=\"totheright\">";
-	if ('student' == getRole()){
-		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
-		")\" value='Submit proposal for this project'/>";
-	}
-	if (Groups::isOwner('project', $id)){
-		$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\"]);}'";
-		$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"project\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
-	
-		$content .= "<input type='button' value='".t('edit')."' $edit_action/>";
-		$content .= "<input type='button' value='".t('delete')."' $delete_action/>";
-	}
-	$content .="</div>";
-	return $content;
-}
-
 function renderOrganisations($type='', $organisations='', $organisation_head='', $target=''){
 	//If no organisations dataset is passed on, retrieve them based on the other arguments
 	if (!$organisations){
@@ -260,8 +197,9 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
     	$s = '';
     	if ($show_buttons){
 	    	$pPath=request_path();
-	    	$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\"]);}'";
-	    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
+	    	$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"administration\", \"json\", [\"$type\", \"$target\"]);}'";
+	    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"$type\", \"html\", \"$target\");'";
+	    	//$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
 	    	
 	    	$s .= "<input type='button' value='".t('edit')."' $edit_action/>";
 	    	$s .= "<input type='button' value='".t('delete')."' $delete_action/>";

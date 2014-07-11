@@ -1,5 +1,4 @@
-function refreshTabs(json_data, args){
-	var parent_type='administration';
+function refreshTabs(handler, json_data, args){
 	var targ = '';
 	if (args.length == 0){
 		alertdev('There are missing arguments to refresh the tabs');
@@ -9,11 +8,8 @@ function refreshTabs(json_data, args){
 		var type = args[0];
 		targ = (args.length > 1) ? 'msg_'+ args[1] : '';
 	}
-	if(args.length > 2){
-		parent_type = args[2];
-	}
 	if (json_data && (json_data.result !== 'error')){
-		ajaxCall(parent_type, 'show', {type:type}, 'admin_container');
+		ajaxCall(handler, 'show', {type:type}, 'admin_container');
 	} else {
 		if (typeof json_data.error != 'undefined') {
 			if ((! targ) || ! $jq('#'+targ).length){
@@ -27,8 +23,7 @@ function refreshTabs(json_data, args){
 	}
 }
 
-function refreshSingleTab(json_data, args){
-	var parent_type='administration';
+function refreshSingleTab(handler, json_data, args){
 	var target = '';
         var type = '';
 	if (arguments.length > 1 && args && (args.length > 1)) {
@@ -39,20 +34,18 @@ function refreshSingleTab(json_data, args){
 		alertdev('No target supplied in target function');
                 return false;
 	}
-	if(args.length > 2){//In some cases we might want to jump from administration_actions to timeline_actions for example
-		parent_type = args[1];
-	}
 	//Get the id and the type
 	var id = json_data.id;
 	var type = json_data.type;
 	if (json_data && (json_data.result !== 'error')){
-		ajaxCall(parent_type, 'view', {id:id,type:type,target:target}, target);
+		ajaxCall(handler, 'view', {id:id,type:type,target:target}, target);
 	} else {
 		ajaxError('msg_'+target, json_data.error);
 	}
 }
 
-function formResult(data, args){
+//function formResult(data, args){
+function formResult(handler,data, args){
 	var target = args[0];
 	//todo: we want jquery to wait for the dom to be ready until ckeditor call
     if (Obj(target).html(data)){
