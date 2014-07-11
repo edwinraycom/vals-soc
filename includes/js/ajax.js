@@ -149,13 +149,13 @@ function isFunction(func){
 	}
 }
 
-function ajaxCall(category, action, data, target, handler, type, extra_args) {
+function ajaxCall(handler_type, action, data, target, type, extra_args) {
 	if (!type)
 		type = 'html';// possible types are html, json, xml, text, script,
 						// jsonp
 	var call = {
 		type : "POST",
-		url : url(category, action),
+		url : url(handler_type, action),
 		data : data,
 		dataType : type
 	};
@@ -173,7 +173,7 @@ function ajaxCall(category, action, data, target, handler, type, extra_args) {
 					args = [extra_args];
 			}
 			call.success = function(msg){
-					window[target](handler, msg, args);
+					window[target](msg, args);
 				};
 		} else {
 			call.success = function(msg) {
@@ -201,16 +201,15 @@ function ajaxCall(category, action, data, target, handler, type, extra_args) {
 	}
 
 	call.fail = function(jqXHR, textStatus, errorThrown) {
-		console
-				.log('AjaxCall failed with some error.Redirected to its fail function with: '
-						+ errorThrown);
+		console.log('AjaxCall failed with some error.Redirected to its fail function with: '
+			+ errorThrown);
 	};
 
 
 	return $jq.ajax(call);
 }
 
-function ajaxFormCall(frm, category, action, data, target, handler, type, args) {
+function ajaxFormCall(frm, handler_type, action, data, target, type, args) {
 	CKupdate();
 	var call_args = $jq('#' + frm).serialize();
 	if (data) {
@@ -224,7 +223,7 @@ function ajaxFormCall(frm, category, action, data, target, handler, type, args) 
 			call_args = call_args.concat('&' + data);
 		}
 	}
-	return ajaxCall(category, action, call_args, target, handler, type, args);
+	return ajaxCall(handler_type, action, call_args, target, type, args);
 
 }
 

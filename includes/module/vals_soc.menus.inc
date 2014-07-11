@@ -21,6 +21,9 @@ function vals_soc_menu_handler(){
 	$items['dashboard/program_settings/messages'] = getEditMessagesLink('access administration pages', MENU_CALLBACK);
 	$items['dashboard/program_settings/timeline'] = getEditTimelineLink('access administration pages', MENU_CALLBACK);
 	$items['dashboard/members'] = getMembersLink();
+	$items['dashboard/institute/members'] = getMembersLink2();
+	$items['dashboard/institute/administer'] = getAdministerLink();
+	$items['dashboard/institute/group/administer'] = getGroupAdministerLink();
 	$items['dashboard/organisations/browse'] = getOrganisationBrowseLink('dashboard/organisations/browse');
 	$items['dashboard/projects/browse'] = getProjectsBrowseLink('dashboard/projects/browse');
 	$items['dashboard/projects/administer'] = getProjectsAdministerLink('dashboard/projects/administer');
@@ -146,6 +149,42 @@ function getMembersLink(){
 			'file path' => _VALS_SOC_PATH . '/includes/module/',
 	);
 }
+
+function getMembersLink2($type='institute'){
+	return array(
+			'title' => tt('Overview of the members of your %1$s', t($type)),
+			'type' => MENU_CALLBACK,
+			'page callback' => 'vals_soc_members_page',
+			'access arguments' => array('vals admin register'), // This needs to be revisited
+			'description' => t('Administer page'),
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module/',
+	);
+}
+
+function getAdministerLink(){//$items['dashboard/institute/administer']
+	return array(
+			'title' => t('Administer your institute'),
+			'type' => MENU_CALLBACK,
+			'page callback' => 'vals_soc_administer_institute_page',
+			'access arguments' => array('vals admin register'), // This needs to be revisited
+			'description' => t('Administer page'),
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module/',
+	);
+}
+function getGroupAdministerLink(){//$items['dashboard/institute/group/administer']
+	return array(
+			'title' => t('Administer your groups'),
+			'type' => MENU_CALLBACK,
+			'page callback' => 'vals_soc_administer_groupspage',
+			'access arguments' => array('vals admin register'), // This needs to be revisited
+			'description' => t('Administer groups in your institute page'),
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module/',
+	);
+}
+
 
 function getProjectsAdministerLink(){
 	return array(

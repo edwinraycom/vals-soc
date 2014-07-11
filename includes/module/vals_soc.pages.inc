@@ -18,6 +18,30 @@ function vals_soc_administer_page(){
     return ob_get_clean();
 }
 
+function vals_soc_members_page(){
+	ob_start();
+	$action = 'members';
+	include(_VALS_SOC_ROOT. '/includes/module/ui/administer/blocklayout.inc');
+	return ob_get_clean();
+}
+
+
+function vals_soc_administer_institute_page(){
+	ob_start();
+	$action = 'administer';
+	include(_VALS_SOC_ROOT. '/includes/module/ui/administer/blocklayout.inc');
+	return ob_get_clean();
+}
+
+function vals_soc_administer_groupspage(){
+	ob_start();
+	$action = 'groups';
+	include(_VALS_SOC_ROOT. '/includes/module/ui/administer/blocklayout.inc');
+	//This does not work with variables being defined in this scope like action
+// 	module_load_include('inc', 'vals_soc', 'includes/module/ui/administer/blocklayout');
+	return ob_get_clean();
+}
+
 function vals_soc_administer_projects_page(){
 	ob_start();
 	module_load_include('inc', 'vals_soc', 'includes/module/ui/administer/project');

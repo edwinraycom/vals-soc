@@ -50,9 +50,9 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $id=0,
 			$call_target = "'$target'";
 			echo "onclick=\"${pre}ajaxCall('$parent_type', '$action', {type:'$type', id:$id, target:'$target'},";
 			if (isset($data[$t][6]) && $data[$t][6]){
-				$call_target = " 'formResult', '$parent_type', 'html', '$target'";
+				$call_target = " 'formResult', 'html', ['$target', '$parent_type']";
 			} elseif ($delete_tab){
-				$call_target = " 'handleDeleteResult', 'json', 'admin_container'";
+				$call_target = " 'handleDeleteResult', 'json', ['admin_container', '$parent_type']";			
 			}
 			echo " $call_target);$post\"";
 		}

@@ -26,7 +26,7 @@ function formatMemberRecordNice($record, $type){
 	}
 	
 	$output='';
-	$output .= '<br/><br/>';
+	$output .= '';
 	$output .= '<dl class="view_record">';
 	// check to see if there is an 'owner_id field'
 	if(isset($record->owner_id)){
@@ -91,7 +91,7 @@ function renderStudents($group_selection='', $students=''){
         $s .= "</ul>";
         return $s;
     } else {
-        return t('There are no students yet in this group');
+        return t('There are no students yet');
     }  
 }
 
@@ -197,13 +197,12 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
     	$s = '';
     	if ($show_buttons){
 	    	$pPath=request_path();
-	    	$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"administration\", \"json\", [\"$type\", \"$target\"]);}'";
-	    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"$type\", \"html\", \"$target\");'";
-	    	//$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
-	    	
+	    	$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"administration\"]);}'";
+	    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
+
 	    	$s .= "<input type='button' value='".t('edit')."' $edit_action/>";
-	    	$s .= "<input type='button' value='".t('delete')."' $delete_action/>";
-	    	$sub_type_user = '';
+	    	$s .= "<input type='button' value='".t('delete')."' $delete_action/><br/><br/>";
+	    	//$sub_type_user = '';
     	}
         $s .= formatMemberRecordNice($organisation, $type);
         return $s;
