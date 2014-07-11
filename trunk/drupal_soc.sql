@@ -28,7 +28,7 @@ CHANGE `mentor` `mentor` MEDIUMINT( 9 ) NOT NULL DEFAULT '0',
 CHANGE `proposal_id` `proposal_id` MEDIUMINT( 9 ) NOT NULL DEFAULT '0',
 CHANGE `tags` `tags` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT ''''''
 */
-use vals_vps;
+-- use vals_vps;
 
 
 CREATE TABLE IF NOT EXISTS `soc_names` (
@@ -91,13 +91,13 @@ CREATE TABLE IF NOT EXISTS soc_projects (
   owner_id int(11) NOT NULL,
   title varchar(255) NOT NULL DEFAULT '' COMMENT 'The title of the project.',
   description text COMMENT 'The description of the project.',
-  url varchar(1024) NOT NULL,
+  url varchar(1024),
   state varchar(128) DEFAULT NULL COMMENT 'The state of the project',
   org_id int(11) unsigned NOT NULL,
-  mentor mediumint(9) NOT NULL,
-  proposal_id mediumint(9) NOT NULL,
-  selected tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Whether the project is chosen by a student',
-  tags varchar(255) NOT NULL,
+  mentor mediumint(9),
+  proposal_id mediumint(9),
+  selected tinyint(4) DEFAULT '0' COMMENT 'Whether the project is chosen by a student',
+  tags varchar(255),
   PRIMARY KEY (pid)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='The table of the projects' AUTO_INCREMENT=23 ;
 

@@ -22,8 +22,10 @@ function initDashboardLayout(){
 		case ORG_SIGNUP_PERIOD:
 		case PRE_ORGS_ANNOUNCED_PERIOD:
 			$timeline_args['dashboardLegend'] =
-				t("Program has started.  Menu options will be available from the following date. ") .
-					Timeline::getInstance()->getOrgsAnnouncedDate()->format('F j, Y, g:i a');;
+				t("Program has started.  More menu options will be available from the following date. ") .
+					Timeline::getInstance()->getOrgsAnnouncedDate()->format('F j, Y, g:i a');
+			$timeline_args['myOrganisationsVisible'] = TRUE;
+			$timeline_args['manageProjectIdeasVisible'] = TRUE; // should we also allow mentors to modify project ideas?
 			break;
 		case POST_ORGS_ANNOUNCED_PERIOD:
 			$timeline_args['dashboardLegend'] = t("Here you can view your organisations and see the project ideas.");

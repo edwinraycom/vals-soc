@@ -11,7 +11,16 @@ class Project extends AbstractEntity{
 		}
 		return self::$instance;
 	}
-    
+	
+	public function getKeylessFields(){
+		// we dont want to return the key fields here
+		return array_slice(Project::$fields, 2);
+	}
+	
+	public function getAllFields(){
+		return Project::$fields;
+	}
+	
     public function getProjects(){
     	$projects = db_select('soc_projects')->fields('soc_projects')->execute()->fetchAll(PDO::FETCH_ASSOC);
     	return $projects;
@@ -105,4 +114,71 @@ class Project extends AbstractEntity{
     	
     	return $my_projects;
 	}
+	
+	static function addProject($props){
+		if (! $props){
+			drupal_set_message(t('Insert requested with empty (filtered) data set'), 'error');
+			return false;
+		}
+		// sort and process the datetime array structure
+		// pre sql statement.
+		Project::normaliseFormArrays($props);
+		
+		global $user;
+		$txn = db_transaction();
+		try {
+			$uid = $user->uid;
+			$props['owner_id'] = $uid;
+			$result = FALSE;
+			$query = db_insert(tableName('project'))->fields($props);
+			$id = $query->execute();
+			if ($id){
+				$result = $id;
+			}
+			else {
+				drupal_set_message(t('We could not add your project'), 'error');
+			}
+		}
+		catch (Exception $ex) {
+			$txn->rollback();
+			drupal_set_message(t('We could not add your project. '). (_DEBUG? $ex->__toString(): ''), 'error');
+		}
+		return $result;
+	}
+	
+	static function changeProject($props, $id){
+		if (!$props){
+			drupal_set_message(t('Update requested with empty data set'));
+			return false;
+		}
+		$key = self::keyField('project');
+		//Project::normaliseFormArrays($props);
+		$query = db_update(tableName('project'))
+			->condition($key, $id)
+			->fields($props);
+		$res = $query->execute();
+		// the returned value from db_update is how many rows were updated rather than a boolean
+		// - however if the user submits the form without changing anything no rows are actually updated and
+		// zero is returned, which is not an error per se. so as a hack set this back to '1'
+		// until we find a better way of handling this
+		if($res==0){
+			$res=1;
+		}
+		return $res;
+	}
+	
+	static function normaliseFormArrays(&$props){
+		$processedProps = array();
+		foreach ($props as $key => $value) {
+			if (is_array($value)) {
+				$value = implode(" ",$value);
+			}
+			// dont use empty values
+			if($value !=  " "){
+				$processedProps[$key]=$value;
+			}
+		}
+		$props = $processedProps;
+	}
+	
 }

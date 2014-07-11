@@ -1,4 +1,170 @@
 <?php
+include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');
+
+function showProjectPage(){
+	//TODO check for the role of current user
+
+	$role = getRole();
+	//Get my groups
+	$my_organisations = Groups::getGroups('organisation');
+	//print_r($my_organisations); die('dit later weer weg');
+	if (!$my_organisations->rowCount()){
+		//There are no organisations yet for this user
+		if ($role == 'organisation_admin') {
+			echo t('You have no organisation yet.').'<br/>';
+			echo "<a href='"._VALS_SOC_URL. "/dashboard/members'>".t('Please go to the organisation register page')."</a>";
+				
+		} else {
+			echo t('You are not connected to any organisation yet.').'<br/>';
+			echo "<a href='"._VALS_SOC_URL. "/user'>".t('Please go to the register page')."</a>";
+				
+		}
+	} else {
+		echo '<h2>'.t('Your projects').'</h2>';
+		//TODO weg print_r($my_organisations->fetchCol());die();
+		$projects = Project::getProjectsByUser($role, $GLOBALS['user']->uid, $my_organisations->fetchCol());
+		if (! $projects){
+			echo t('You have no project yet registered');
+			echo '<h2>'.t('Add your project').'</h2>';
+			/*
+				$f3 = drupal_get_form('vals_soc_project_form', '', 'group_page-1');
+			$add_tab .= drupal_render($f3);
+			*/
+
+			$form = drupal_get_form('vals_soc_project_form', '', 'project_page-1');
+			$form['#action'] = url('dashboard/projects/administer');
+			// Process the submit button which uses ajax
+			$form['submit'] = ajax_pre_render_element($form['submit']);
+			// Build renderable array
+			$build = array(
+					'form' => $form,
+					'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
+			);
+			// Print $form
+			$add_tab = drupal_render($build);
+			// Print JS
+			$add_tab .= drupal_get_js();
+
+			$data = array();
+			$data[] = array(1, 'Add', 'addproject', 'project', null, "target=admin_container");
+			echo renderTabs(1, null, 'project_page-', 'project', $data, null, TRUE, $add_tab,'1','project');
+			?>
+				<script type="text/javascript">
+		        	   activatetabs('tab_', ['project_page-1']);
+		        </script><?php
+		} else {
+			$nr = 1;
+			$data = array();
+			$activating_tabs = array();
+			
+			foreach ($projects as $project){
+				if ($nr == 1){
+					$id = $project->pid;
+					$my_project = $project;
+				}
+				$activating_tabs[] = "'project_page-$nr'";
+				$data[] = array(0, $project->title, 'view', 'project', $project->pid);
+				$nr++;
+			}
+	
+			$data[] = array(1, 'Add', 'add', 'project', 0, "target=project_page-$nr");
+			$activating_tabs[] = "'project_page-$nr'";
+	
+			$nr2 = 1;
+			$data2 = array();
+			// 		[translate, label, action, type, id, extra GET arguments]
+			$data2[] = array(1, 'All Projects', 'list', 'project', null);
+			$activating_tabs2 = array("'project2_page-$nr2'");
+			if ($my_organisations->rowCount() > 1){
+				foreach ($my_organisations as $organisation){
+					$nr2++;
+					$activating_tabs2[] = "'project2_page-$nr2'";
+					$data2[] = array(2, $organisation->title, 'list', 'project', $organisation->org_id);
+				}
+			}
+			echo renderTabs($nr, 'Project', 'project_page-', 'project', $data, $id, TRUE,
+				renderProject($my_project, "project_page-1"),'1','project');
+	
+			echo "<hr>";
+			
+			echo '<h2>'.t('All your projects').'</h2>';
+			echo renderTabs($nr2, 'Organisation', 'project2_page-', 'organisation', $data2, null, TRUE,
+				renderProjects('', $projects));
+			?>
+			<script type="text/javascript">
+				activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>]);
+				activatetabs('tab_', [<?php echo implode(', ', $activating_tabs2);?>], null, true);
+			</script>
+		<?php
+		}
+	}
+}
+
+function renderProjects($organisation_selection='', $projects='', $target=''){
+	if (!$projects){
+		//if we pass empty value to getGroups the current supervisor is assumed
+		$projects = Groups::getGroups($organisation_selection);
+	}
+	$target_set = ! empty($target);
+	if ($projects){
+		$s = "<ul class='projectlist'>";
+		foreach($projects as $project){
+			$project = objectToArray($project);
+			$s .= "<li>";
+			// $member_url = "/vals/actions/project"
+			if (!$target_set) {
+				$target = "show_${project['pid']}";
+			}
+			$s .= "<a href='javascript: void(0);' onclick='".
+				//($target_set ? "" : "\$jq(\"#$target\").toggle();").
+			"ajaxCall(\"project\", \"view\", {id:${project['pid']},type:\"project\", target:\"$target\"}, \"$target\");'>${project['title']}</a>";
+			if (! $target_set) {
+				$s .= "<div id='$target' ></div>";
+			}
+			$s .= "</li>";
+		}
+		$s .= "</ul>";
+		return $s;
+	} 
+	else {
+		return t('You have no projects yet');
+	}
+}
+
+function renderProject($project='', $target=''){
+	if (!$project){
+		return t('I cannot show this project. It seems empty');
+	}
+	if (is_object($project)){
+		$project = objectToArray($project);
+	} else {
+		//return 'het Is GEEN object dus array';
+	}
+	$key_name = Groups::keyField('project');
+	$id = $project[$key_name];
+	$content = "<h2>".$project['title']."</h2>";
+	$content .= '<p>'.$project['description']. '</p>';
+	if ($project['url']){
+		$content .= '<p>'.tt('More information can be found at %1$s', "<a href='${project['url']}'> ${project['url']}</a>"). '</p>';
+	}
+	$role = getRole();
+	$content .="<div class=\"totheright\">";
+	if ('student' == getRole()){
+		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
+		")\" value='Submit proposal for this project'/>";
+	}
+	if (Groups::isOwner('project', $id)){
+		$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"project\", \"delete\", {type: \"project\", id: $id}, \"refreshTabs\", \"project\", \"json\", [\"$type\", \"$target\"]);}'";
+		$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"project\", id: $id, target: \"$target\"}, \"formResult\", \"project\", \"html\", \"$target\");'";
+		//$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"project\", id: $id, target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
+	
+		$content .= "<input type='button' value='".t('edit')."' $edit_action/>";
+		$content .= "<input type='button' value='".t('delete')."' $delete_action/>";
+	}
+	$content .="</div>";
+	return $content;
+}
+
 function initBrowseProjectLayout(){//$target='content'
 	$org_id=0;
 	if(isset($_GET['organisation'])){

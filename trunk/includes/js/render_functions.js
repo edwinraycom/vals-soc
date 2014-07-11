@@ -165,7 +165,7 @@ function getProposalFormForProject(projectId){
 	//possible forms: ajaxCall(module, action, data, handleResult, json, args)
 	// ajaxCall(module, action, data, target, html)
 	//Note that formResult and jsonFormResult store the call in the target and convert the textareas
-	ajaxCall("student", "proposal", {id: projectId, target:'content'}, "formResult", 'html', 'content');
+	ajaxCall("student", "proposal", {id: projectId, target:'content'}, "formResult", 'student', 'html', 'content');
 	//ajaxCall("student", "proposal", {id: projectId, target:'content'}, 'content');
 }
 
