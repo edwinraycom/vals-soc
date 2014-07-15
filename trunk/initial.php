@@ -13,7 +13,6 @@ function getInitialPath($path1, $path2){
 	}
 	$arr1 = str_split($path1, $pos);
 	return $arr1[0];
-}
-
+} 
 $vals = getInitialPath($_SERVER['PHP_SELF'], '/sites/all/modules');
 define('_VALS_SOC_URL', $vals);
