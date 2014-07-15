@@ -25,13 +25,40 @@ function page_access_check($access_string) {
 	//drupal_set_message("test:".$access_data);
 	global $user;
 	switch ($access_string) {
-		case 'dashboard/proposals/browse':
-			return hasPermission('vals browse proposals');
+		case 'dashboard/members':
+			return hasPermission('vals admin register') && Timeline::getInstance()->organisationSignupPeriodOpened();
 			break;
-		case 'dashboard/projects/apply': // this actual url path does not exist
-			return hasPermission('vals apply projects');
+		case 'dashboard/institute/administer':
+		case 'dashboard/institute/members':
+		case 'dashboard/institute/group/administer':
+			// maybe also add check to see if users is also instadamin/supervisor, now its split up
+			return hasPermission('vals admin register') && Timeline::getInstance()->organisationSignupPeriodOpened();
+			break;
+		case 'dashboard/projects/administer':
+			return hasPermission('vals admin projects') && Timeline::getInstance()->organisationSignupPeriodOpened();
+			break;
+		case 'projects/browse':
+		case 'dashboard/projects/browse':
+			// any user must have 'val browse projects' permission
+			if(hasPermission('vals browse projects')){
+				// students AND unauthenticated users can only see the projects after the organisations have been announced
+				if( (hasRole(array('student')) || hasRole(array('anonymous user'))) && Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
+					return TRUE;
+				}
+				// everyone else with 'vals browse projects' permission can see projects once org applications open
+				else if(Timeline::getInstance()->organisationSignupPeriodOpened()){
+					return TRUE;
+				}
+				else{
+					return FALSE;
+				}
+			}
+			else{
+				return FALSE;
+			}
 			break;
 		case 'projects/apply':
+		case 'dashboard/projects/apply':
 			// only students with 'vals apply projects' permission can apply for a project AND only during the student signup period
 			if(hasRole(array('student')) && hasPermission('vals apply projects') && Timeline::getInstance()->isStudentsSignupPeriod()){
 				return TRUE;
@@ -40,29 +67,29 @@ function page_access_check($access_string) {
 				return FALSE;
 			}
 			break;
-		case 'projects/browse':
-		case 'dashboard/projects/browse':
-			return TRUE;
-			// any role can access projects/browse - but only after the organisations have been announced
-			if(hasPermission('vals browse projects')&& Timeline::getInstance()->isAfterOrgsAnnouncedDate()){
-				return TRUE;
+		case 'organisations/browse':
+		case 'dashboard/organisations/browse':
+			// any user must have 'val browse organisations' permission
+			if(hasPermission('vals browse organisations')){
+				// students AND unauthenticated users can only see the orgs after the organisations have been announced
+				if( (hasRole(array('student')) || hasRole(array('anonymous user'))) && Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
+					return TRUE;
+				}
+				// everyone else with 'vals browse organisations' permission can see orgs once org applications open
+				else if(Timeline::getInstance()->organisationSignupPeriodOpened()){
+					return TRUE;
+				}
+				else{
+					return FALSE;
+				}
 			}
 			else{
 				return FALSE;
 			}
 			break;
-		
-		case 'organisations/browse':
-		case 'dashboard/organisations/browse':
-			// any role can access organisations/browse - but only after the organisations have been announced
-			// note - reusing the browse projects permission here *maybe add another new one*
-			if(hasPermission('vals browse projects')&& Timeline::getInstance()->isAfterOrgsAnnouncedDate()){
-				return TRUE;
-			}
-			else{
-				return FALSE;
-			}
-			break;	
+		case 'dashboard/proposals/browse': 
+			return hasPermission('vals browse proposals'); // NOTE: NO SUCH PERMISSION IN DB AT PRESENT
+			break;
 		default:
 			return hasPermission($access_string);
 	}

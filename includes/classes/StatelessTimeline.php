@@ -173,6 +173,13 @@ class StatelessTimeline {
 		return $date;
 	}
 
+	public function organisationSignupPeriodOpened(){
+		if($this->cached_org_signup_start_date < $this->getNow()){
+			return true;
+		}
+		return false;
+	}
+	
 	public function isOrganisationSignupPeriod(){
 		if($this->cached_org_signup_start_date < $this->getNow() && $this->cached_org_signup_end_date > $this->getNow()){
 			return true;

@@ -200,8 +200,9 @@ function getStudentLayout($timeline_args){
 		$output .='
 					<div class="column-entry proposals_submitted">
 						<h4>
-							<a class="dashboard-link component-link"
-							href="'.$base_url.'/dashboard/proposals/mine"
+							<a class="dashboard-link component-link"'.
+							//href="'.$base_url.'/dashboard/proposals/mine"
+							'href="#"
 							title="'.t("Proposals").'">'.t("Proposals").'</a>
 						</h4>
 						<p>'.t("List of my proposals submitted").'</p>
