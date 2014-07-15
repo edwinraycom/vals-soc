@@ -46,7 +46,7 @@ function showAdminPage(){
 
 function showSupervisorPage(){
 	//TODO check for the role of current user
-	echo '<h2>'.t('Your student groups').'</h2>';
+	echo '<h2>'.t('Your students').'</h2>';
 	//Get my groups
 	$groups = Groups::getGroups('studentgroup', $GLOBALS['user']->uid);
 	if (! $groups->rowCount()){
@@ -62,14 +62,14 @@ function showSupervisorPage(){
 		// Process the submit button which uses ajax
 		$form['submit'] = ajax_pre_render_element($form['submit']);
 		// Build renderable array
-		$build = array(
-				'form' => $form,
-				'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
-		);
+// 		$build = array(
+// 				'form' => $form,
+// 				'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
+// 		);
 		// Print $form
-		$add_tab = drupal_render($build);
+		$add_tab = drupal_render($form);
 		// Print JS
-		$add_tab .= drupal_get_js();
+		//$add_tab .= drupal_get_js();
 
 		$data = array();
 		$data[] = array(1, 'Add', 'addgroup', 'studentgroup', null, "target=admin_container");
@@ -103,10 +103,10 @@ function showSupervisorPage(){
 			$data2[] = array(0, 'Group', 'showmembers', 'studentgroup', $group->studentgroup_id);
 		}
 
-		$data[] = array(1, 'Add', 'addgroup', 'studentgroup', null, "target=group_page-$nr");
+		//$data[] = array(1, 'Add', 'addgroup', 'studentgroup', null, "target=group_page-$nr");
 		$activating_tabs[] = "'group_page-$nr'";
 
-		echo sprintf('<h3>%1$s</h3>', t('Your groups'));
+		echo sprintf('<h3>%1$s</h3>', t('Your students'));
 		echo renderTabs($nr, 'Group', 'group_page-', 'studentgroup', $data, $id, TRUE,
 			renderOrganisation('studentgroup', $my_group, null, "group_page-1"));
 
@@ -232,7 +232,7 @@ function showInstitutePage($action){
 		$f3 = drupal_get_form('vals_soc_institute_form', '', 'group_page-1');
 		$add_tab .= drupal_render($f3);
 		$data = array();
-		$data[] = array(1, 'Add', 'add', 'institute', null, "target=admin_container", true);
+		$data[] = array(1, 'Add', 'add', 'institute', null, "target=admin_container", false);
 		echo renderTabs(1, null, 'inst_page-', 'institute', $data, null, TRUE, $add_tab);
 		?>
 		<script type="text/javascript">
@@ -403,7 +403,7 @@ function showOrganisationPage(){
 		//$add_tab .= drupal_get_js();
 
 		$data = array();
-		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=admin_container");
+		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=admin_container", true, 'adding');
 		echo renderTabs(1, null, 'organisation_page-', 'organisation', $data, null, TRUE, $add_tab);
 		?>
 		<script type="text/javascript">
@@ -416,7 +416,7 @@ function showOrganisationPage(){
 
 		$nr2 = 1;
 		$data2 = array();
-// 		[translate, label, action, type, id, extra GET arguments]
+// 		[translate, label, action, type, id, extra GET arguments, rte, class]
 		$data2[] = array(1, 'All your Mentors', 'showmembers', 'organisation', 0, 'subtype=mentor');
 		$tabs2 = array("'mentor_page-$nr2'");
 		foreach ($organisations as $org){
@@ -433,7 +433,7 @@ function showOrganisationPage(){
 		}
 		//To remove the add tab: comment the three lines below
 		$nr++;
-		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=organisation_page-$nr");
+		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=organisation_page-$nr", true, 'adding');
 		$tabs[] = "'organisation_page-$nr'";
 
 		echo sprintf('<h3>%1$s</h3>', t('Organisations you are involved in'));

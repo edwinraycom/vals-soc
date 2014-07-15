@@ -122,7 +122,7 @@ class Groups extends AbstractEntity{
 		return $num_deleted2;
 	}
 	
-	static function addProject($props){
+/* 	static function addProject($props){
 		if (! $props){
 			drupal_set_message(t('Insert requested with empty (filtered) data set'), 'error');
 			return false;
@@ -147,7 +147,7 @@ class Groups extends AbstractEntity{
 			drupal_set_message(t('We could not add your project. '). (_DEBUG? $ex->__toString(): ''), 'error');
 		}
 		return $result;
-	}
+	} */
 	
 	
 	static function addGroup($props, $type){
@@ -168,12 +168,11 @@ class Groups extends AbstractEntity{
 				$subtype = 'mentor';
 			} else if ($type == 'institute'){
 				$subtype = 'supervisor';
-			} 
-			/*
-			 * else if ($type == 'project'){
-				if (!isset($props['mentor']))
+			} else {
+				drupal_set_message(tt('This type of group cannot be added: %1$s', $type), 'error');
+				return false;
 			}
-			 */
+
 			$id = db_insert(tableName($type))->fields($props)->execute();
 			if ($id){
 				//Make current user creating this organisation, member
