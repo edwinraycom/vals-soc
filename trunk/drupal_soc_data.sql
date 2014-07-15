@@ -25,7 +25,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- Summary changes:
 -- all values ' group' are replaced by 'studentgroup'
 
-use vals_vps;
+-- use vals_vps;
 
 TRUNCATE TABLE `soc_codes`;
 TRUNCATE TABLE `soc_studentgroups`;
@@ -158,7 +158,18 @@ INSERT INTO role_permission (rid, permission, module) VALUES
 (5, 'vals access dashboard', 'vals_soc'), # mentor role
 (12, 'vals access dashboard', 'vals_soc'), # institute_admin role
 (9, 'vals access dashboard', 'vals_soc'), # supervisor role
-(4, 'vals access dashboard', 'vals_soc'); # student role
+(4, 'vals access dashboard', 'vals_soc'), # student role
+(1, 'vals browse projects', 'vals_soc'), # unauthenticated users can see projects only after orgs announced
+
+(4, 'vals browse organisations', 'vals_soc'), # student role
+(5, 'vals browse organisations', 'vals_soc'), # mentor role
+(8, 'vals browse organisations', 'vals_soc'),# organisation_admin role
+
+(9, 'vals browse organisations', 'vals_soc'), # supervisor role
+(12, 'vals browse organisations', 'vals_soc'),  # institute_admin role
+(14, 'vals browse organisations', 'vals_soc'), # soc ???
+(1, 'vals browse organisations', 'vals_soc'); # unauthenticated can see orgs only after orgs announced
+
 
 --
 -- Gegevens worden uitgevoerd voor tabel 'soc_codes'
@@ -319,20 +330,18 @@ INSERT INTO users_roles (uid, rid) VALUES
 -- -------------------------------------------------------------
 DELETE from variable where name like 'vals_timeline%';
 INSERT INTO `variable` VALUES 
-('vals_timeline_accepted_org_announced_date','s:16:\"2014-03-26 00:00\";'),
-('vals_timeline_accepted_students_announced_deadline_date','s:16:\"2014-05-12 00:00\";'),
-('vals_timeline_coding_end_date','s:16:\"2014-11-28 00:00\";'),
-('vals_timeline_coding_start_date','s:16:\"2014-09-01 00:00\";'),
-('vals_timeline_community_bonding_end_date','N;'),
-('vals_timeline_community_bonding_start_date','N;'),
-('vals_timeline_org_app_end_date','s:16:\"2014-03-24 00:00\";'),
-('vals_timeline_org_app_start_date','s:16:\"2014-03-03 00:00\";'),
-('vals_timeline_org_review_student_applications_date','s:16:\"2014-04-28 00:00\";'),
 ('vals_timeline_program_active','i:1;'),
-('vals_timeline_program_end_date','s:16:\"2015-01-01 00:00\";'),
-('vals_timeline_program_start_date','s:16:\"2014-03-01 00:59\";'),
-('vals_timeline_students_matched_to_mentors_deadline_date','s:16:\"2014-05-05 00:00\";'),
-('vals_timeline_student_signup_end_date','s:16:\"2014-04-21 00:00\";'),
-('vals_timeline_student_signup_start_date','s:16:\"2014-04-07 00:00\";'),
-('vals_timeline_suggested_coding_deadline','s:16:\"2014-11-21 00:00\";');
+('vals_timeline_program_start_date','s:16:\"2014-07-01 00:00\";'),
+('vals_timeline_program_end_date','s:16:\"2015-05-01 00:00\";'),
+('vals_timeline_org_app_start_date','s:16:\"2014-07-21 00:00\";'),
+('vals_timeline_org_app_end_date','s:16:\"2014-09-12 00:00\";'),
+('vals_timeline_accepted_org_announced_date','s:16:\"2014-09-15 00:00\";'),
+('vals_timeline_student_signup_start_date','s:16:\"2014-09-15 07:00\";'),
+('vals_timeline_student_signup_end_date','s:16:\"2014-11-14 00:00\";'),
+('vals_timeline_org_review_student_applications_date','s:16:\"2014-11-21 00:00\";'),
+('vals_timeline_students_matched_to_mentors_deadline_date','s:16:\"2014-11-28 00:00\";'),
+('vals_timeline_accepted_students_announced_deadline_date','s:16:\"2014-12-01 00:00\";'),
+('vals_timeline_coding_start_date','s:16:\"2014-12-01 07:00\";'),
+('vals_timeline_suggested_coding_deadline','s:16:\"2015-04-13 00:00\";'),
+('vals_timeline_coding_end_date','s:16:\"2015-04-30 00:00\";');
 -- The end
