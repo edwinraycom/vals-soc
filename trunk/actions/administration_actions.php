@@ -190,7 +190,7 @@ switch ($_GET['action']){
         $properties = Groups::filterPost($type, $_POST);
         if (!$id){
         	$result = ($type == 'studentgroup') ? Groups::addStudentGroup($properties) :
-        		($type == 'project' ? Groups::addProject($properties) : Groups::addGroup($properties, $type));
+        		($type == 'project' ? Project::getInstance()->addProject($properties) : Groups::addGroup($properties, $type));
         } else {
         	$result = Groups::changeGroup($type, $properties, $id);
         }
