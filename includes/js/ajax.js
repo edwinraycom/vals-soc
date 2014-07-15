@@ -209,8 +209,29 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 	return $jq.ajax(call);
 }
 
+//function test_required(form_id){
+//	var msgs = '';
+//	$jq("#" + form_id+ " .required").each(function( index ) {
+//		console.log( index + ": " + $( this ).val() );
+//	});
+//	alert('later verplaatsen');
+//}
+
 function ajaxFormCall(frm, handler_type, action, data, target, type, args) {
 	CKupdate();
+	if (isFunction('test_required_fields')){
+		if (isFunction(target)){
+			if (typeof args != ' undefined' && isArray(args) && typeof args[1] != ' undefined'){
+				var msg_target = 'msg_'+ args[1];
+			} else {
+				var msg_target = 'msg_'+ target;
+			}
+		}
+		if (!test_required_fields(frm, msg_target)) 
+			return false;
+	} else {
+		//no test needs to be done or forgotten to include test_functions.js
+	}
 	var call_args = $jq('#' + frm).serialize();
 	if (data) {
 		if (data instanceof Object) {

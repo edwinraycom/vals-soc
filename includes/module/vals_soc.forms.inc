@@ -417,6 +417,7 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 		"#type" => "textarea",
 		'#title' => t('Describe your organisation, if you like'),
 		"#size" => 60,
+							'#required' => '1',
 		//"#size" => 20,
 		//'#cols' =>5,
 		//'#rows' =>4,

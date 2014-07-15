@@ -70,9 +70,10 @@ switch ($_GET['action']){
 			'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
 		);
 		// Print $form
-		print drupal_render($build);
+		print drupal_render($form);?>
+		<script type="text/javascript" src='<?php echo _VALS_SOC_FULL_URL.'/includes/js/test_functions.js';?>'></script><?php
 		// Print JS
-		print drupal_get_js();
+		//print drupal_get_js();
 	break;
     case 'showmembers':
     	if ($_POST['type'] == 'studentgroup'){
@@ -161,7 +162,8 @@ switch ($_GET['action']){
         	);
         	print "<div id='msg_$target'></div>";
         	// Print $form
-        	print drupal_render($form);//$build
+        	print drupal_render($form);//$build' ///http://localhost/'?>
+        	<script type="text/javascript" src='<?php echo _VALS_SOC_FULL_URL.'/includes/js/test_functions.js';?>'></script><?php
         	
         	/* if ($form['#attached']['js']){
         		foreach ($form['#attached']['js'] as $incl){
