@@ -12,6 +12,7 @@ function showRoleDependentAdminPage($role, $action='administer'){
 		case 'institute_admin':
 			showInstitutePage($action);
 			break;
+		case 'mentor':
 		case 'organisation_admin':
 			showOrganisationPage($action);
 			break;
@@ -377,7 +378,7 @@ function showInstituteAdminPage($my_institute){
 function showOrganisationPage($action){
 	//Get my organisations
 	$organisations = Groups::getGroups('organisation', $GLOBALS['user']->uid);
-	if (! $organisations->rowCount()){
+	if (! $organisations->rowCount() && hasPermission('vals admin register')){
 		echo t('You have no organisation yet registered');
 		$add_tab = '<h2>'.t('Add your organisation').'</h2>';
 		
@@ -415,11 +416,13 @@ function showOrganisationAdminPage($organisations){
 		$tabs[] = "'organisation_page-$nr'";
 		$data[] = array(2, $org->name, 'view', 'organisation', $org->org_id);
 	}
-	//To remove the add tab: comment the three lines below
-	$nr++;
-	$data[] = array(1, 'Add', 'add', 'organisation', null, "target=organisation_page-$nr");
-	$tabs[] = "'organisation_page-$nr'";
-
+	// check for org admin editing rights
+	if(user_access('vals admin register')){
+		//To remove the add tab: comment the three lines below
+		$nr++;
+		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=organisation_page-$nr");
+		$tabs[] = "'organisation_page-$nr'";
+	}
 	echo sprintf('<h3>%1$s</h3>', t('Organisations you are involved in'));
 	echo renderTabs($nr, 'Org', 'organisation_page-', 'organisation', $data, $id, TRUE,
 		renderOrganisation('organisation', $my_organisation, null, "organisation_page-1"));

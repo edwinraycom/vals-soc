@@ -28,14 +28,16 @@ function page_access_check($access_string) {
 		case 'dashboard/members':
 			return hasPermission('vals admin register') && Timeline::getInstance()->organisationSignupPeriodOpened();
 			break;
-		
-		case 'dashboard/organisation/administer':
+		case 'dashboard/organisation/view':
+			return hasPermission('vals admin view') && Timeline::getInstance()->organisationSignupPeriodOpened();
+			break;
 		case 'dashboard/organisation/members':
-			// maybe also add check to see if users is also orgadamin/mentor, now its split up
+			return (hasPermission('vals admin register') || hasPermission('vals admin view')) && Timeline::getInstance()->organisationSignupPeriodOpened();
+			break;
+		case 'dashboard/organisation/administer':
 		case 'dashboard/institute/administer':
 		case 'dashboard/institute/members':
 		case 'dashboard/institute/group/administer':
-			// maybe also add check to see if users is also instadamin/supervisor, now its split up
 			return hasPermission('vals admin register') && Timeline::getInstance()->organisationSignupPeriodOpened();
 			break;
 		case 'dashboard/projects/administer':

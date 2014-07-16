@@ -145,7 +145,9 @@ class Groups extends AbstractEntity{
 			->condition('type', $type)
 			->execute();
 			if (!$num_deleted2){
-				drupal_set_message(tt('The group has been deleted, but it had no members.', $type), 'error');
+				if($type != 'project'){
+					drupal_set_message(tt('The group has been deleted, but it had no members.', $type), 'error');
+				}
 				return $num_deleted;
 			}
 				

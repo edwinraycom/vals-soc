@@ -20,17 +20,27 @@ function showProjectPage(){
 				
 		}
 	} else {
-		//echo '<h2>'.t('Your projects').'</h2>';
+		//echo '<h2>'.$role.'</h2>';
 		//TODO weg print_r($my_organisations->fetchCol());die();
 		$projects = Project::getProjectsByUser($role, $GLOBALS['user']->uid, $my_organisations->fetchCol());
+		//echo var_dump($projects);
 		if (! $projects){
 			echo t('You have no project yet registered');
 			echo '<h2>'.t('Add your project').'</h2>';
 			/*
-				$f3 = drupal_get_form('vals_soc_project_form', '', 'group_page-1');
-			$add_tab .= drupal_render($f3);
+			$f3 = drupal_get_form('vals_soc_project_form', '', 'project_page-1');
+			$add_tab = drupal_render($f3);
+			$add_tab .= valssoc_form_get_js($f3);
 			*/
-
+			$form = drupal_get_form("vals_soc_project_form", '', 'project_page-1');
+			$form['submit'] = ajax_pre_render_element($form['submit']);
+			$extra_js = valssoc_form_get_js($form);
+			$form['#attached']['js'] = array();
+			// Print $form
+			$add_tab = drupal_render($form);
+			$add_tab .=  $extra_js;
+			
+/*
 			$form = drupal_get_form('vals_soc_project_form', '', 'project_page-1');
 			$form['#action'] = url('dashboard/projects/administer');
 			// Process the submit button which uses ajax
@@ -44,9 +54,9 @@ function showProjectPage(){
 			$add_tab = drupal_render($build);
 			// Print JS
 			$add_tab .= drupal_get_js();
-
+*/
 			$data = array();
-			$data[] = array(1, 'Add', 'addproject', 'project', null, "target=admin_container", true, 'adding from the right');
+			$data[] = array(1, 'Add', 'add', 'project', '0', "target=admin_container", true, 'adding from the right');
 			echo renderTabs(1, null, 'project_page-', 'project', $data, null, TRUE, $add_tab,'1','project');
 			?>
 				<script type="text/javascript">

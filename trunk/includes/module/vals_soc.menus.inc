@@ -35,8 +35,10 @@ function vals_soc_menu_handler(){
 	$items['dashboard/organisation/administer'] = getAdministerLink('dashboard/organisation/administer', 'organisation');
 	// allow organisations to view mentors/other orgadmins
 	$items['dashboard/organisation/members'] = getEntityMembersLink('dashboard/organisation/members', 'organisation');
+	// allow mentors to VIEW the admin details but not add new orgs or edit like org admin can do
+	$items['dashboard/organisation/view'] = getAdministerLink('dashboard/organisation/view', 'organisation');
 	
-	// organisation actions
+	// organisation actions - let users see all the announced organisations
 	$items['dashboard/organisations/browse'] = getOrganisationBrowseLink('dashboard/organisations/browse');
 	
 	// project actions

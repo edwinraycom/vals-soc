@@ -77,20 +77,23 @@ switch ($_GET['action']){
 	case 'add':
 		$target = altSubValue($_POST, 'target');
 		$type = altSubValue($_POST, 'type');
-		echo '<h2>'.t('Add new').'</h2>';
+		echo '<h2>'.t('Add new1').'</h2>';
 		echo "<div id='msg_$target'></div>"; 
 		$form = drupal_get_form("vals_soc_project_form", '', $target);
-	
-		//$form['#action'] = url('administer/members');
 		// Process the submit button which uses ajax
 		$form['submit'] = ajax_pre_render_element($form['submit']);
 		// Build renderable array
+		/*
 		$build = array(
 			'form' => $form,
 			'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
 		);
 		// Print $form
 		print drupal_render($build);
+		*/
+		
+		// Print $form
+		print drupal_render($form);
 		
 		print valssoc_form_get_js($form);
 		// Print JS

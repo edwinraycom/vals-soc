@@ -195,7 +195,7 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
     $id = $organisation->$key_name;
     if ($organisation){
     	$s = '';
-    	if ($show_buttons){
+    	if ($show_buttons && user_access('vals admin register')){
 	    	$pPath=request_path();
 	    	$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"administration\"]);}'";
 	    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
