@@ -154,7 +154,7 @@ function renderProject($project='', $target=''){
 		")\" value='Submit proposal for this project'/>";
 	}
 	if (Groups::isAssociate('project', $id)){
-		$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"project\", \"delete\", {type: \"project\", id: $id}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"project\"]);}'";
+		$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"project\", \"delete\", {type: \"project\", id: $id}, \"refreshTabs\", \"json\", [\"project\", \"$target\", \"project\"]);}'";
 		$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"project\", id: $id, target: \"$target\"}, \"formResult\", \"html\", [\"$target\", \"project\"]);'";
 		//$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"project\", id: $id, target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
 	

@@ -94,6 +94,9 @@ switch ($_GET['action']){
 
         } elseif ($_POST['type'] == 'organisation'){
            $organisation_id = altSubValue($_POST, 'id', '');
+           if($organisation_id == 0){
+           	$organisation_id = 'all';
+           }
            echo renderUsers('mentor', '', $organisation_id, 'organisation');
         }
      break;
