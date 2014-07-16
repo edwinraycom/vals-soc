@@ -374,81 +374,88 @@ function showInstituteAdminPage($my_institute){
 	    <?php
 }
 
-
-function showOrganisationPage(){
+function showOrganisationPage($action){
 	//Get my organisations
 	$organisations = Groups::getGroups('organisation', $GLOBALS['user']->uid);
 	if (! $organisations->rowCount()){
 		echo t('You have no organisation yet registered');
-		echo '<h2>'.t('Add your organisation').'</h2>';
-		/*
+		$add_tab = '<h2>'.t('Add your organisation').'</h2>';
+		
 		$f3 = drupal_get_form('vals_soc_organisation_form', '', 'organisation_page-1');
-		$add_tab = drupal_render($f3);
-		*/
-
-		$form = drupal_get_form('vals_soc_organisation_form', '', 'organisation_page-1');
-		$form['#action'] = url('administer/members');
-		// Process the submit button which uses ajax
-		$form['submit'] = ajax_pre_render_element($form['submit']);
-		// Build renderable array
-		$build = array(
-			'form' => $form,
-			'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
-		);
-		// Print $form
-		$add_tab = drupal_render($build);
-		// Print JS
-		$target_fun_src = _VALS_SOC_URL.drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js';
-		$add_tab .= "<script type='text/javascript' src='$target_fun_src' ></script>";
-		//$add_tab .= drupal_get_js();
-
+		$add_tab .= drupal_render($f3);
 		$data = array();
-		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=admin_container", true, 'adding');
+		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=admin_container");
 		echo renderTabs(1, null, 'organisation_page-', 'organisation', $data, null, TRUE, $add_tab);
 		?>
 		<script type="text/javascript">
         	   activatetabs('tab_', ['organisation_page-1']);
         </script><?php
 	} else {
-		$nr = 0;
-		$data = array();
-		$tabs = array();
-
-		$nr2 = 1;
-		$data2 = array();
-// 		[translate, label, action, type, id, extra GET arguments, rte, class]
-		$data2[] = array(1, 'All your Mentors', 'showmembers', 'organisation', 0, 'subtype=mentor');
-		$tabs2 = array("'mentor_page-$nr2'");
-		foreach ($organisations as $org){
-			$nr++;
-			$nr2++;
-			if ($nr == 1){
-				$id = $org->org_id;
-				$my_organisation = $org;
-			}
-			$tabs[] = "'organisation_page-$nr'";
-			$tabs2[] = "'mentor_page-$nr2'";
-			$data[] = array(2, $org->name, 'view', 'organisation', $org->org_id);
-			$data2[] = array(2, $org->name, 'showmembers', 'organisation', $org->org_id);
+		if ($action == 'administer'){
+			showOrganisationAdminPage($organisations);
+		} elseif ($action == 'members') {
+			showOrganisationMembersPage($organisations);
+		} else {
+			echo tt('there is no such action possible %1$s', $action);
 		}
-		//To remove the add tab: comment the three lines below
-		$nr++;
-		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=organisation_page-$nr", true, 'adding');
-		$tabs[] = "'organisation_page-$nr'";
-
-		echo sprintf('<h3>%1$s</h3>', t('Organisations you are involved in'));
-		echo renderTabs($nr, 'Org', 'organisation_page-', 'organisation', $data, $id, TRUE,
-				renderOrganisation('organisation', $my_organisation, null, "organisation_page-1"));
-	    echo "<hr>";
-
-	    echo '<h2>'.t('The registered mentors of your organisations').'</h2>';
-	    echo renderTabs($nr2, 'Org', 'mentor_page-', 'organisation', $data2, null, TRUE,
-	    		renderUsers('mentor', '', '', 'organisation'));
-	    ?>
-	    <script type="text/javascript">
-			activatetabs('tab_', [<?php echo implode(',', $tabs);?>]);
-			activatetabs('tab_', [<?php echo implode(',', $tabs2);?>], null, true);
-		</script>
-	    <?php
 	}
+}
+
+function showOrganisationAdminPage($organisations){
+	$nr = 0;
+	$data = array();
+	$tabs = array();
+
+	foreach ($organisations as $org){
+		$nr++;
+		if ($nr == 1){
+			$id = $org->org_id;
+			$my_organisation = $org;
+		}
+		$tabs[] = "'organisation_page-$nr'";
+		$data[] = array(2, $org->name, 'view', 'organisation', $org->org_id);
+	}
+	//To remove the add tab: comment the three lines below
+	$nr++;
+	$data[] = array(1, 'Add', 'add', 'organisation', null, "target=organisation_page-$nr");
+	$tabs[] = "'organisation_page-$nr'";
+
+	echo sprintf('<h3>%1$s</h3>', t('Organisations you are involved in'));
+	echo renderTabs($nr, 'Org', 'organisation_page-', 'organisation', $data, $id, TRUE,
+		renderOrganisation('organisation', $my_organisation, null, "organisation_page-1"));
+	echo "<hr>";
+	?>
+	<script type="text/javascript">
+		activatetabs('tab_', [<?php echo implode(',', $tabs);?>]);
+		</script>
+	<?php
+}
+
+function showOrganisationMembersPage($organisations){
+	$nr = 0;
+	$nr2 = 1;
+	$data2 = array();
+	// 		[translate, label, action, type, id, extra GET arguments]
+	$data2[] = array(1, 'All your Mentors', 'showmembers', 'organisation', 0, 'subtype=mentor');
+	$tabs2 = array("'mentor_page-$nr2'");
+	foreach ($organisations as $org){
+		$nr++;
+		$nr2++;
+		if ($nr == 1){
+			$id = $org->org_id;
+			$my_organisation = $org;
+		}
+		$tabs2[] = "'mentor_page-$nr2'";
+		$data2[] = array(2, $org->name, 'showmembers', 'organisation', $org->org_id);
+	}
+
+	echo '<h2>'.t('The registered mentors of your organisations').'</h2>';
+	echo renderTabs($nr2, 'Org', 'mentor_page-', 'organisation', $data2, null, TRUE,
+			renderUsers('mentor', '', 'all', 'organisation'));
+	?>
+	<script type="text/javascript">
+		activatetabs('tab_', [<?php echo implode(',', $tabs2);?>]);
+	</script>
+	<?php
+
 }

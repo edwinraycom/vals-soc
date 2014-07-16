@@ -18,17 +18,16 @@ function vals_soc_administer_page(){
     return ob_get_clean();
 }
 
-function vals_soc_members_page(){
+function vals_soc_administer_entity_page(){
 	ob_start();
-	$action = 'members';
+	$action = 'administer';
 	include(_VALS_SOC_ROOT. '/includes/module/ui/administer/blocklayout.inc');
 	return ob_get_clean();
 }
 
-
-function vals_soc_administer_institute_page(){
+function vals_soc_members_page(){
 	ob_start();
-	$action = 'administer';
+	$action = 'members';
 	include(_VALS_SOC_ROOT. '/includes/module/ui/administer/blocklayout.inc');
 	return ob_get_clean();
 }

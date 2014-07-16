@@ -25,11 +25,16 @@ function vals_soc_menu_handler(){
 	$items['dashboard/members'] = getMembersLink('dashboard/members');
 	
 	//allow institutes to add/edit their institute details
-	$items['dashboard/institute/administer'] = getAdministerLink('dashboard/institute/administer');
+	$items['dashboard/institute/administer'] = getAdministerLink('dashboard/institute/administer', 'institute');
 	// allow institutes to view supervisors/other instadmins
 	$items['dashboard/institute/members'] = getEntityMembersLink('dashboard/institute/members', 'institute');
 	// used just for institutes to allow creation of student groups
 	$items['dashboard/institute/group/administer'] = getGroupAdministerLink('dashboard/institute/group/administer');
+	
+	//allow organisations to add/edit their organisation details
+	$items['dashboard/organisation/administer'] = getAdministerLink('dashboard/organisation/administer', 'organisation');
+	// allow organisations to view mentors/other orgadmins
+	$items['dashboard/organisation/members'] = getEntityMembersLink('dashboard/organisation/members', 'organisation');
 	
 	// organisation actions
 	$items['dashboard/organisations/browse'] = getOrganisationBrowseLink('dashboard/organisations/browse');
@@ -163,11 +168,11 @@ function getMembersLink($path){ //dashboard/members
 	);
 }
 
-function getAdministerLink($path){//$items['dashboard/institute/administer']
+function getAdministerLink($path, $type){//$items['dashboard/institute/administer']
 	return array(
-			'title' => t('Administer your institute'),
+			'title' => t('Administer your ' . $type),
 			'type' => MENU_CALLBACK,
-			'page callback' => 'vals_soc_administer_institute_page',
+			'page callback' => 'vals_soc_administer_entity_page',
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' => array($path),
 			'description' => t('Administer page'),

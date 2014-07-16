@@ -290,7 +290,7 @@ INSERT INTO soc_user_membership (mem_id, uid, `type`, group_id) VALUES
 (31, 29, 'studentgroup', 21),
 (32, 29, 'studentgroup', 22),
 (34, 32, 'organisation', 3),
-(35, 32, 'organisation', 3),
+-- (35, 32, 'organisation', 3), # duplicate of one above
 (36, 31, 'institute', 3);
 
 -- --------------------------------------------------------

@@ -169,7 +169,7 @@ function getOrgAdminLayout($timeline_args){
 					<div class="column-entry org_app">
 						<h4>
 							<a class="dashboard-link component-link"
-								href="'.$base_url.'/dashboard/members"
+								href="'.$base_url.'/dashboard/organisation/administer"
 								title="'.t("Managed organisations").'">'.t("Managed organisations").'</a>
 						</h4>
 						<p>'.t("Organizations for which you are an administrator").'</p>
@@ -200,7 +200,7 @@ function getOrgAdminLayout($timeline_args){
 					<div class="column-entry participants">
 						<h4>
 							<a class="dashboard-link component-link"
-							href="#"
+							href="'.$base_url.'/dashboard/organisation/members"
 							title="'.t("Members of my organisations").'">'.t("Members of my organisations").'</a>
 						</h4>
 						<p>'.t("List of your organisations members").'</p>

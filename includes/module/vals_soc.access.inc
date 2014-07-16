@@ -28,6 +28,10 @@ function page_access_check($access_string) {
 		case 'dashboard/members':
 			return hasPermission('vals admin register') && Timeline::getInstance()->organisationSignupPeriodOpened();
 			break;
+		
+		case 'dashboard/organisation/administer':
+		case 'dashboard/organisation/members':
+			// maybe also add check to see if users is also orgadamin/mentor, now its split up
 		case 'dashboard/institute/administer':
 		case 'dashboard/institute/members':
 		case 'dashboard/institute/group/administer':
