@@ -211,7 +211,7 @@ function getGroupAdministerLink($path){//$items['dashboard/institute/group/admin
  */
 function getProjectsAdministerLink($path){ //dashboard/projects/administer
 	return array(
-			'title' => t('Administer'),
+			'title' => t('Administer your projects'),
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_administer_projects_page',
 			'access callback' => 'vals_soc_access_check',

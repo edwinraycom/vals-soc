@@ -36,6 +36,7 @@ switch ($_GET['action']){
 		"<br/>Supervisor: ".$student_details->supervisor_name."</div>";
 		$f = drupal_get_form('vals_soc_proposal_form', $proposal, $target, $project_id);
 		print drupal_render($f);
+		print valssoc_form_get_js($f);
 		break;
 	case 'save':
 		$id = altSubValue($_POST, 'id', '');

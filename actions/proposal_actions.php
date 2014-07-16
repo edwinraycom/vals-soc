@@ -84,7 +84,7 @@ switch ($_GET['action']){
 				
 				$f = drupal_get_form('vals_soc_proposal_form', $proposal, $target);
 				if ($f){
-					jsonGoodResult(drupal_render($f, $proposal, $target));
+					jsonGoodResult(drupal_render($f).valssoc_form_get_js($f), $proposal, $target);
 				} else {
 					jsonBadResult();
 				}

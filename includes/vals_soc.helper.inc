@@ -56,8 +56,12 @@ function variableGetFromStruct($var, $field, $default='')
 	}
 }
 
-function single_getJs($src){
+function src_getJs($src){
 	return "<script type='text/javascript' src='$src'></script>";
+}
+
+function script_getJs($script){
+	return "<script type='text/javascript'>$script</script>";
 }
 
 function errorDiv($msg){
@@ -99,6 +103,22 @@ function mapOrganisation($org){
 		case 'institute': return 'supervisor';break;
 		case 'organisation': return 'mentor';break;
 		default: return $org;
+	}
+}
+
+function valssoc_form_get_js($form){
+	if ($form['#attached']['js']){
+		$js = '';
+		foreach ($form['#attached']['js'] as $incl){
+			if ($incl['type'] == 'file'){
+				$js .= src_getJs(_VALS_SOC_FULL_URL.'/'.$incl['data']);
+			} else {
+				$js .= script_getJs($incl['data']);
+			}
+		}
+		return $js;
+	} else {
+		return '';	
 	}
 }
 

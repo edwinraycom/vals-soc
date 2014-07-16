@@ -91,6 +91,8 @@ switch ($_GET['action']){
 		);
 		// Print $form
 		print drupal_render($build);
+		
+		print valssoc_form_get_js($form);
 		// Print JS
 	//	print drupal_get_js();
 		
@@ -150,6 +152,7 @@ switch ($_GET['action']){
 		print "<div id='msg_$target'></div>";
 		// Print $form
 		print drupal_render($form);//$build
+		print valssoc_form_get_js($form);
 
 	    break;
 	    case 'delete':

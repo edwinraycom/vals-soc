@@ -20,7 +20,7 @@ function showProjectPage(){
 				
 		}
 	} else {
-		echo '<h2>'.t('Your projects').'</h2>';
+		//echo '<h2>'.t('Your projects').'</h2>';
 		//TODO weg print_r($my_organisations->fetchCol());die();
 		$projects = Project::getProjectsByUser($role, $GLOBALS['user']->uid, $my_organisations->fetchCol());
 		if (! $projects){
@@ -46,7 +46,7 @@ function showProjectPage(){
 			$add_tab .= drupal_get_js();
 
 			$data = array();
-			$data[] = array(1, 'Add', 'addproject', 'project', null, "target=admin_container");
+			$data[] = array(1, 'Add', 'addproject', 'project', null, "target=admin_container", true, 'adding from the right');
 			echo renderTabs(1, null, 'project_page-', 'project', $data, null, TRUE, $add_tab,'1','project');
 			?>
 				<script type="text/javascript">
@@ -67,7 +67,7 @@ function showProjectPage(){
 				$nr++;
 			}
 	
-			$data[] = array(1, 'Add', 'add', 'project', 0, "target=project_page-$nr");
+			$data[] = array(1, 'Add', 'add', 'project', 0, "target=project_page-$nr", true, 'adding from the right');
 			$activating_tabs[] = "'project_page-$nr'";
 	
 			$nr2 = 1;
