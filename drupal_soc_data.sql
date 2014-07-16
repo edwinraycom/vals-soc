@@ -132,10 +132,6 @@ INSERT INTO role_permission (rid, permission, module) VALUES
 (3, 'view own unpublished content', 'node'),
 (3, 'view revisions', 'node'),
 (3, 'view the administration theme', 'system'),
-(4, 'vals apply projects', 'vals_soc'),
-(4, 'vals browse projects', 'vals_soc'),
-(5, 'vals admin projects', 'vals_soc'),
-(5, 'vals browse projects', 'vals_soc'),
 (8, 'access administration menu', 'admin_menu'),
 (8, 'administer ckeditor', 'ckeditor'),
 (8, 'administer date tools', 'date_tools'),
@@ -144,32 +140,42 @@ INSERT INTO role_permission (rid, permission, module) VALUES
 (8, 'customize ckeditor', 'ckeditor'),
 (8, 'display drupal links', 'admin_menu'),
 (8, 'flush caches', 'admin_menu'),
-(8, 'vals admin projects', 'vals_soc'),
-(8, 'vals admin register', 'vals_soc'),
-(8, 'vals browse projects', 'vals_soc'),
 (8, 'view date repeats', 'date_repeat_field'),
-(9, 'vals admin register', 'vals_soc'),
-(9, 'vals browse projects', 'vals_soc'),
-(12, 'vals admin register', 'vals_soc'),
-(12, 'vals browse projects', 'vals_soc'),
-(12, 'vals edit projects', 'vals_soc'),
-(14, 'vals browse projects', 'vals_soc'),
+
 (8, 'vals access dashboard', 'vals_soc'), # organisation_admin role
 (5, 'vals access dashboard', 'vals_soc'), # mentor role
 (12, 'vals access dashboard', 'vals_soc'), # institute_admin role
 (9, 'vals access dashboard', 'vals_soc'), # supervisor role
 (4, 'vals access dashboard', 'vals_soc'), # student role
-(1, 'vals browse projects', 'vals_soc'), # unauthenticated users can see projects only after orgs announced
 
-(4, 'vals browse organisations', 'vals_soc'), # student role
-(5, 'vals browse organisations', 'vals_soc'), # mentor role
-(8, 'vals browse organisations', 'vals_soc'),# organisation_admin role
-
-(9, 'vals browse organisations', 'vals_soc'), # supervisor role
-(12, 'vals browse organisations', 'vals_soc'),  # institute_admin role
 (14, 'vals browse organisations', 'vals_soc'), # soc ???
-(1, 'vals browse organisations', 'vals_soc'); # unauthenticated can see orgs only after orgs announced
+(8, 'vals browse organisations', 'vals_soc'),  # organisation_admin role
+(5, 'vals browse organisations', 'vals_soc'),  # mentor role
+(12, 'vals browse organisations', 'vals_soc'), # institute_admin role
+(9, 'vals browse organisations', 'vals_soc'),  # supervisor role
+(4, 'vals browse organisations', 'vals_soc'),  # student role
+(1, 'vals browse organisations', 'vals_soc'),  # unauthenticated can see orgs only after orgs announced
 
+(14, 'vals browse projects', 'vals_soc'), # soc ???
+(8, 'vals browse projects', 'vals_soc'),  # organisation_admin role
+(5, 'vals browse projects', 'vals_soc'),  # mentor role
+(12, 'vals browse projects', 'vals_soc'), # institute_admin role
+(9, 'vals browse projects', 'vals_soc'),  # supervisor role
+(4, 'vals browse projects', 'vals_soc'),  # student role
+(1, 'vals browse projects', 'vals_soc'),  # unauthenticated users can see projects only after orgs announced
+
+(8, 'vals admin projects', 'vals_soc'), # organisation_admin role
+(5, 'vals admin projects', 'vals_soc'), # mentor role
+
+(8, 'vals admin register', 'vals_soc'),  # organisation_admin role
+(12, 'vals admin register', 'vals_soc'), # institute_admin role
+(9, 'vals admin register', 'vals_soc'),  # supervisor role
+
+(5, 'vals admin view', 'vals_soc'),  # mentor role
+
+(12, 'vals edit projects', 'vals_soc'),  # institute_admin role
+
+(4, 'vals apply projects', 'vals_soc');  # student role
 
 --
 -- Gegevens worden uitgevoerd voor tabel 'soc_codes'

@@ -109,7 +109,7 @@ class Project extends AbstractEntity{
     			return array();
     		}
     		$my_projects =
-    			db_query("SELECT p.* from $table as p WHERE p.mentor = $user_id")->fetchAll();
+    			db_query("SELECT p.* from $table as p WHERE p.owner_id = $user_id")->fetchAll();
     	}
     	
     	return $my_projects;

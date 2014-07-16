@@ -1,7 +1,6 @@
 <?php
 drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/module/ui/dashboard/css/dashboard.css');
 function initDashboardLayout(){
-	//echo '<h1>'.Timeline::getInstance()->getNow()->format('F j, Y, g:i a').'</h1>';
 	$timeline_args = array();
 	$timeline_args['managedOrganisationsVisible'] = FALSE;
 	$timeline_args['manageProjectIdeasVisible'] = FALSE;

@@ -1,6 +1,5 @@
 <?php
 drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/module/ui/dashboard/css/dashboard.css');
-
 function initDashboardLayout(){
 	$timeline_args = array();
 	$timeline_args['myOrganisationsVisible'] = FALSE; // a list of organisations i participate in
@@ -26,6 +25,7 @@ function initDashboardLayout(){
 					Timeline::getInstance()->getOrgsAnnouncedDate()->format('F j, Y, g:i a');
 			$timeline_args['myOrganisationsVisible'] = TRUE;
 			$timeline_args['manageProjectIdeasVisible'] = TRUE; // should we also allow mentors to modify project ideas?
+			$timeline_args['organisationMembersVisible'] = TRUE;
 			break;
 		case POST_ORGS_ANNOUNCED_PERIOD:
 			$timeline_args['dashboardLegend'] = t("Here you can view your organisations and see the project ideas.");
@@ -158,7 +158,7 @@ function getMentorLayout($timeline_args){
 					<div class="column-entry adminning_organizations">
 						<h4>
 							<a class="dashboard-link component-link"
-							href="'.$base_url.'/dashboard/members"
+							href="'.$base_url.'/dashboard/organisation/view"
 							title="'.t("My organisations").'">'.t("My organisations").'</a>
 						</h4>
 						<p>'.t("List of organisations which I participate in").'</p>
@@ -170,7 +170,7 @@ function getMentorLayout($timeline_args){
 					<div class="column-entry org_app manage_project_ideas">
 						<h4>
 							<a class="dashboard-link component-link"
-								href="#"
+								href="'.$base_url.'/dashboard/projects/administer"
 								title="'.t("Manage project ideas").'">'.t("Manage project ideas").'</a>
 						</h4>
 						<p>'.t("Allows you to add and amend project ideas for students.").'</p>
@@ -189,7 +189,7 @@ function getMentorLayout($timeline_args){
 					<div class="column-entry participants">
 						<h4>
 							<a class="dashboard-link component-link"
-							href="#"
+							href="'.$base_url.'/dashboard/organisation/members"
 							title="'.t("Members of my organisations").'">'.t("Members of my organisations").'</a>
 						</h4>
 						<p>'.t("List of your organisations members").'</p>
