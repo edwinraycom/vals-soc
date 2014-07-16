@@ -23,9 +23,11 @@ function test_required_fields(form_id, msg_target){
 		}
 		
 	});
-	msgs = 'You have left some required fields open';
-	ajaxError(msg_target, msgs);
-	console.log(msgs);
+	if (all_good === false) {
+		msgs = 'You have left some required fields open';
+		ajaxError(msg_target, msgs);
+		console.log(msgs);
+	}
 	return all_good;
 }
 //From 
