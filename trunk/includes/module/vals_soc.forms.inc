@@ -8,8 +8,8 @@ function populate($obj, $prop, $default=''){
 
 function entityCall($type, $obj, $target, $action_handler='administration'){
 	$key = AbstractEntity::keyField($type);
-        $id = $obj && $obj->$key ? $obj->$key : 0;
-        $post_function = $id ? 'refreshSingleTab' : 'refreshTabs';
+    $id = $obj && $obj->$key ? $obj->$key : 0;
+    $post_function = $id ? 'refreshSingleTab' : 'refreshTabs';
 	$call = "ajaxFormCall('vals-soc-$type-form', '$action_handler', 'save', {type: '$type',id: $id},".
 		"'$post_function','json',['$type', '$target', '$action_handler']);";
 	return $call;
@@ -417,7 +417,6 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 		"#type" => "textarea",
 		'#title' => t('Describe your organisation, if you like'),
 		"#size" => 60,
-							'#required' => '1',
 		//"#size" => 20,
 		//'#cols' =>5,
 		//'#rows' =>4,
@@ -466,12 +465,12 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 		'#attributes' => array('onClick' => 'location.reload(); return true;'),
 		'#post_render' => array('vals_soc_fix_submit_button'),
 	);
-// 	$form['#attached']['js'] = array(
-// 		array(
-// 			'type'  => 'file',
-// 			'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
-// 		),
-// 	);
+	$form['#attached']['js'] = array(
+		array(
+			'type'  => 'file',
+			'data' => '/includes/js/test_functions.js',
+		),
+	);
 	return $form;
 }
 
@@ -513,6 +512,12 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='')
 		'#prefix' => '&nbsp; &nbsp; &nbsp;',
 		'#attributes' => array('onClick' => 'location.reload(); return true;'),
 		'#post_render' => array('vals_soc_fix_submit_button'),
+	);
+	$form['#attached']['js'] = array(
+		array(
+			'type'  => 'file',
+			'data' => '/includes/js/test_functions.js',
+		),
 	);
 	return $form;
 }
@@ -569,12 +574,12 @@ function vals_soc_studentgroup_form($form, &$form_state, $group='', $target=''){
 		'#attributes' => array('onClick' => 'location.reload(); return true;'),
 		'#post_render' => array('vals_soc_fix_submit_button'),
 	);
-// 	$form['#attached']['js'] = array(
-// 		array(
-// 			'type'  => 'file',
-// 			'data' => drupal_get_path('module', 'vals_soc') .'/includes/js/drupal_ajax_functions.js',
-// 		),
-// 	);
+	$form['#attached']['js'] = array(
+		array(
+			'type'  => 'file',
+			'data' => '/includes/js/test_functions.js',
+		),
+	);
 	return $form;
 }
 
@@ -585,7 +590,7 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 	);
 	$my_organisations = Groups::getGroups('organisation');
 	$number_of_organisations = $my_organisations->rowCount();
-		
+		//$DDDD = $my_organisations->fetchCol();
 	// now turn results into array
 	$organisations = objectToArray($my_organisations);
 	$select_values = array(); // to store the result
@@ -597,7 +602,7 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 	if ($number_of_organisations < 2){
 		$form['org_id'] = array(
 				'#type' => 'hidden',
-				"#default_value" => ($number_of_organisations ? $my_organisations->fetchCol(): 0),
+				"#default_value" => ($number_of_organisations ? $organisations[0]['org_id']: 0),
 		);
 	} else {
 		$form['org_id'] = array(
@@ -647,6 +652,12 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 			'#prefix' => '&nbsp; &nbsp; &nbsp;',
 			'#attributes' => array('onClick' => 'location.reload(); return true;'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
+	);
+	$form['#attached']['js'] = array(
+		array(
+			'type'  => 'file',
+			'data' => '/includes/js/test_functions.js',
+		),
 	);
 	return $form;
 }
@@ -730,6 +741,12 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 					' {id:'.$proposal_id.', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSubmitResult", "json", ["'.$target.'"]);}')
 			,'#post_render' => array('vals_soc_fix_submit_button')
 	);
+	$form['#attached']['js'] = array(
+		array(
+			'type'  => 'file',
+			'data' => '/includes/js/test_functions.js',
+		),
+	);
 
 	return $form;	
 }
@@ -744,22 +761,22 @@ function vals_soc_fix_submit_button($markup, $element) {
 	return $markup;
 }
 
-function vals_soc_entity_form_callback($form, &$form_state){
-	// if there are errors, return the form to display the error messages
-	$target='';
-	if (form_get_errors()) {
-		$form_state['rebuild'] = TRUE;
-		return $form;
-	}
-	else{
-		$commands = array();
-		$commands[] = ajax_command_html('#vals_soc_entity_form_wrapper', render($form));
-		$commands[] = array(
-			'command' => 'jsEntitySaveCallback',
-			'key' => $form_state['values']['key'],
-			'tabTarget' => $form_state['values']['tab_target'],
-			'entityType' => $form_state['values']['entity_type'],
-		);
-		return array('#type' => 'ajax', '#commands' => $commands);
-	}
-}
+// function vals_soc_entity_form_callback($form, &$form_state){
+// 	// if there are errors, return the form to display the error messages
+// 	$target='';
+// 	if (form_get_errors()) {
+// 		$form_state['rebuild'] = TRUE;
+// 		return $form;
+// 	}
+// 	else{
+// 		$commands = array();
+// 		$commands[] = ajax_command_html('#vals_soc_entity_form_wrapper', render($form));
+// 		$commands[] = array(
+// 			'command' => 'jsEntitySaveCallback',
+// 			'key' => $form_state['values']['key'],
+// 			'tabTarget' => $form_state['values']['tab_target'],
+// 			'entityType' => $form_state['values']['entity_type'],
+// 		);
+// 		return array('#type' => 'ajax', '#commands' => $commands);
+// 	}
+// }

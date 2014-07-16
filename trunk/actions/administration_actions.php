@@ -44,10 +44,12 @@ switch ($_GET['action']){
 				'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
 		);
 		// Print $form
-		$form_to_print = drupal_render($form);//used to be build
-		// Print JS
-		//$form_to_print .= drupal_get_js();
-		echo $form_to_print;
+// 		$form_to_print = drupal_render($form);//used to be build
+// 		// Print JS
+// 		//$form_to_print .= drupal_get_js();
+// 		echo $form_to_print;
+		print drupal_render($form);
+		print valssoc_form_get_js($form);
 
 	break;
 	case 'add':
@@ -70,9 +72,8 @@ switch ($_GET['action']){
 			'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
 		);
 		// Print $form
-		print drupal_render($form);?>
-		<script type="text/javascript" src='<?php echo _VALS_SOC_FULL_URL.'/includes/js/test_functions.js';?>'></script><?php
-		// Print JS
+		print drupal_render($form);
+        print valssoc_form_get_js($form);// Print JS
 		//print drupal_get_js();
 	break;
     case 'showmembers':
@@ -138,7 +139,7 @@ switch ($_GET['action']){
         $type = altSubValue($_POST, 'type', '');
         $id = altSubValue($_POST, 'id', '');
         $target = altSubValue($_POST, 'target', '');
-        if (! isValidOrganisationType($type) ) {//&& ($type !== 'project') for convenience we have made a project an organisationtype as well //TODO: make this better
+        if (! isValidOrganisationType($type) ) {//for convenience we have made a project an organisationtype as well //TODO: make this better
         	echo t('There is no such type to edit :'.$type);
         } else {
         	$obj = Groups::getGroup($type, $id);
@@ -156,16 +157,18 @@ switch ($_GET['action']){
         	// Process the submit button which uses ajax
         	//$form['submit'] = ajax_pre_render_element($form['submit']);
         	// Build renderable array
-        	$build = array(
-        			'form' => $form,
-        			'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
-        	);
+//         	$build = array(
+//         			'form' => $form,
+//         			'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
+//         	);
         	print "<div id='msg_$target'></div>";
         	// Print $form
-        	print drupal_render($form);//$build' ///http://localhost/'?>
-        	<script type="text/javascript" src='<?php echo _VALS_SOC_FULL_URL.'/includes/js/test_functions.js';?>'></script><?php
+        	print drupal_render($form);
+        	print valssoc_form_get_js($form);
         	
-        	/* if ($form['#attached']['js']){
+        	
+        	/* <script type="text/javascript" src='<?php echo _VALS_SOC_FULL_URL.'/includes/js/test_functions.js';?>'></script><?php
+        	 * if ($form['#attached']['js']){
         		foreach ($form['#attached']['js'] as $incl){
         			if ($incl['type'] == 'file'){
         				echo single_getJs(_VALS_SOC_URL.'/'.$incl['data']);
