@@ -153,7 +153,7 @@ function renderProject($project='', $target=''){
 		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
 		")\" value='Submit proposal for this project'/>";
 	}
-	if (Groups::isOwner('project', $id)){
+	if (Groups::isAssociate('project', $id)){
 		$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"project\", \"delete\", {type: \"project\", id: $id}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"project\"]);}'";
 		$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"project\", id: $id, target: \"$target\"}, \"formResult\", \"html\", [\"$target\", \"project\"]);'";
 		//$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"project\", id: $id, target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";

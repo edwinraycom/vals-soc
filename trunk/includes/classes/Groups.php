@@ -71,6 +71,52 @@ class Groups extends AbstractEntity{
 		return $entity && ($entity['owner_id'] == $GLOBALS['user']->uid);
 	}
 	
+	static function isAssociate($type, $id){	
+		$scope_table = array('institute'=>'institute','organisation'=>'organisation',
+				'studentgroup'=>'institute', 'project' =>'organisation', 'proposal' => 'institute');
+		if (! in_array($type, array_keys($scope_table))){
+			drupal_set_message(tt('You cannot be the associate of an entity called %1$s', $type));
+			return FALSE;
+		}
+		$key_field = self::keyField($type);
+		$entity = db_query("SELECT * FROM ".tableName($type)." WHERE $key_field = $id")->fetchAssoc();
+		//fetchAssoc returns next record (array) or false if there is none
+		if (!$entity) {
+			return false;
+		}
+	
+		//Is the current user the owner of this object, fine
+		if ($entity['owner_id'] == $GLOBALS['user']->uid) {
+			return true;
+		}
+		
+		//Check if the current user is member of the organisation in scope to edit for example
+		//If not, return here that the user is not associated (like a supervisor with students in his institute
+		if (!self::isMember($scope_table[$type], $entity[self::keyField($scope_table[$type])])){
+			return false;
+		}
+		//We impose some extra role restrictions: students can only have extensive rights for their own proposals
+		//institutes and organisations can only be edited by admins
+		if ($type == 'institute'){
+			return Users::isInstituteAdmin(); 
+		} elseif ($type == 'organisation'){
+			return Users::isOrganisationAdmin();
+		} elseif($type == 'proposal'){
+			return ! Users::isStudent();
+		}
+		return true;
+	}
+	
+	static function isMember($type, $id){
+		global $user;
+		if (!$user) {
+			echo "hij vindt geenuser";
+			return false;
+		}
+		//Assuming there is always an owner inside the group
+		return db_query("SELECT * FROM soc_user_membership WHERE type = '$type' AND group_id = $id AND uid = ".$user->uid)->rowCount() > 0;
+	}	
+	
 	static function hasMembers($type, $id){
 		//Assuming there is always an owner inside the group
 		return db_query("SELECT * FROM soc_user_membership WHERE type = '$type' AND group_id = $id")->rowCount() > 1;
