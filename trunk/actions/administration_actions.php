@@ -102,7 +102,8 @@ switch ($_GET['action']){
      break;
     case 'show':
     	$action = altSubValue($_POST, 'action', 'administer');
-    	showRoleDependentAdminPage(getRole(), $action);
+    	$show_last = altSubValue($_POST, 'new', false);
+    	showRoleDependentAdminPage(getRole(), $action, $show_last);
     break;
     case 'view':
     	$type = altSubValue($_POST, 'type');

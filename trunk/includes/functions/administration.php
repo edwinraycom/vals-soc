@@ -1,25 +1,25 @@
 <?php
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after propjects.php which does the same
 
-function showRoleDependentAdminPage($role, $action='administer'){
+function showRoleDependentAdminPage($role, $action='administer', $show_last= FALSE){
 	switch ($role){
 		case 'administrator':
-			showAdminPage($action);
+			showAdminPage($action, $show_last);
 			break;
 		case 'supervisor':
-			showSupervisorPage($action);
+			showSupervisorPage($action, $show_last);
 			break;
 		case 'institute_admin':
-			showInstitutePage($action);
+			showInstitutePage($action, $show_last);
 			break;
 		case 'mentor':
 		case 'organisation_admin':
-			showOrganisationPage($action);
+			showOrganisationPage($action, $show_last);
 			break;
 	}
 }
 
-function showAdminPage(){
+function showAdminPage($action, $show_last=FALSE){
 	//TODO check for the role of current user
 	echo '<h2>'.t('All the groups and persons').'</h2>';
 	$data = array();
@@ -45,7 +45,7 @@ function showAdminPage(){
 }
 
 
-function showSupervisorPage(){
+function showSupervisorPage($action, $show_last=FALSE){
 	//TODO check for the role of current user
 	echo '<h2>'.t('Your students').'</h2>';
 	//Get my groups
@@ -223,7 +223,7 @@ function showSupervisorPage(){
 	}
 }
  */
-function showInstitutePage($action){
+function showInstitutePage($action, $show_last=FALSE){
 	//Get my institutions
 	$institutes = Groups::getGroups('institute', $GLOBALS['user']->uid);
 	if (! $institutes->rowCount()){
@@ -375,7 +375,7 @@ function showInstituteAdminPage($my_institute){
 	    <?php
 }
 
-function showOrganisationPage($action){
+function showOrganisationPage($action, $show_last=FALSE){
 	//Get my organisations
 	$organisations = Groups::getGroups('organisation', $GLOBALS['user']->uid);
 	if (! $organisations->rowCount() && hasPermission('vals admin register')){

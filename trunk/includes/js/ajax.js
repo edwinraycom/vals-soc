@@ -15,14 +15,25 @@ function url(category, action) {
 	return moduleUrl + "actions/"+category+"_actions.php?action="+ action;
 }
 
+function altSub(arr_obj, prop, def){
+	if (arr_obj && (typeof arr_obj[prop] != 'undefined')){
+		return arr_obj[prop];
+	} else {
+		return def ? def : '';
+	}
+}
+
 function ajaxInsert(msg, target) {
 	var tar = $jq('#' + target);
 	if (tar.length) {
 		tar.html(msg);
 		Drupal.attachBehaviors();
+		return true;
 	} else {
 		alertdev('Could not find target ' + target);
+		return false;
 	}
+	
 }
 
 function isObject(mixed_var){
@@ -104,18 +115,21 @@ function ajaxAppend(msg, container, err, before){
 	}
 
 	if (t) {
+		var msg2 = "<a href=javascript:void(0); onclick='var o = this.parentNode;$jq(o).html(\"\").removeClass(\"messages status\");'>"+
+			msg+ "</a>";
 		t.addClass('messages '+err);
-		t.html(msg);
+		t.html(msg2);
 	}
 
 }
 
 function ajaxError(targ, msg) {
 	if (msg){
-		var err_target = Obj(targ);//$jq('#'+targ);
-
+		var err_target = Obj(targ);
+		var msg2 = "<a href=javascript:void(0); onclick='$jq(\"#" +targ+"\").html(\"\").removeClass(\"messages status\");'>"+
+		msg+ "</a>";
 		if (err_target.length){
-			err_target.html(msg);
+			err_target.html(msg2);
 			err_target.addClass('messages error');
 		} else {
 			alertdev('Target for error '+ targ+ ' could not be found.');
@@ -126,10 +140,13 @@ function ajaxError(targ, msg) {
 function ajaxMessage(targ, msg) {
 	if (msg){
 		var err_target = $jq('#'+targ);
-
+		var msg2 = "<a href=javascript:void(0); onclick='$jq(\"#" +targ+"\").html(\"\").removeClass(\"messages status\");'>"+
+		msg+ "</a>";
 		if (err_target.length){
-			err_target.html(msg);
+			err_target.html(msg2);
 			err_target.addClass('messages status');
+		} else {
+			alertdev('Target for msg '+ targ+ ' could not be found.');
 		}
 	}
 }

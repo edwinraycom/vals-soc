@@ -6,7 +6,6 @@ var testing = testing || {
 		var none_style = {'border-style'  :'', 'border-color' : '' };
 		var self = this;
 		$jq("#" + form_selector+ " .required").each(function( index ) {
-			console.log(' we zien voor '+ index + ' : '+ $jq(this).prop("tagName"));
 			if ($jq(this).prop("tagName") == 'TEXTAREA'){
 				var rte_id = '#cke_' + $jq(this).prop("id");
 				if (self.isBlank($jq( this ).val())){
@@ -16,7 +15,6 @@ var testing = testing || {
 					$jq(rte_id).css(none_style);
 				}
 			} else {
-				console.log('er is een required field ');
 				if (self.isBlank($jq( this ).val())){
 					$jq(this).css(warning_style);
 					all_good = false;
@@ -33,9 +31,7 @@ var testing = testing || {
 //			all_good = true;
 //			return false;
 		} else {
-			console.log('all is good');
-//			all_good = true;
-//			return true;
+			//console.log('all is good');
 		}
 		return all_good;
 	},

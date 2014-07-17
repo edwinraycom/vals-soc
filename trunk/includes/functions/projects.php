@@ -1,13 +1,12 @@
 <?php
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after administration.php which does the same
 
-function showProjectPage(){
+function showProjectPage($action='', $show_last=FALSE){
 	//TODO check for the role of current user
 
 	$role = getRole();
 	//Get my groups
 	$my_organisations = Groups::getGroups('organisation');
-	//print_r($my_organisations); die('dit later weer weg');
 	if (!$my_organisations->rowCount()){
 		//There are no organisations yet for this user
 		if ($role == 'organisation_admin') {
@@ -20,18 +19,10 @@ function showProjectPage(){
 				
 		}
 	} else {
-		//echo '<h2>'.$role.'</h2>';
-		//TODO weg print_r($my_organisations->fetchCol());die();
 		$projects = Project::getProjectsByUser($role, $GLOBALS['user']->uid, $my_organisations->fetchCol());
-		//echo var_dump($projects);
 		if (! $projects){
 			echo t('You have no project yet registered');
 			echo '<h2>'.t('Add your project').'</h2>';
-			/*
-			$f3 = drupal_get_form('vals_soc_project_form', '', 'project_page-1');
-			$add_tab = drupal_render($f3);
-			$add_tab .= valssoc_form_get_js($f3);
-			*/
 			$form = drupal_get_form("vals_soc_project_form", '', 'project_page-1');
 			$form['submit'] = ajax_pre_render_element($form['submit']);
 			$extra_js = valssoc_form_get_js($form);
@@ -57,18 +48,20 @@ function showProjectPage(){
 */
 			$data = array();
 			$data[] = array(1, 'Add', 'add', 'project', '0', "target=admin_container", true, 'adding from the right');
-			echo renderTabs(1, null, 'project_page-', 'project', $data, null, TRUE, $add_tab,'1','project');
+			echo renderTabs(1, null, 'project_page-', 'project', $data, null, TRUE, $add_tab, 1,'project');
 			?>
 				<script type="text/javascript">
 		        	   activatetabs('tab_', ['project_page-1']);
 		        </script><?php
 		} else {
 			$nr = 1;
+			$tab_id_prefix = 'project_page-';
 			$data = array();
 			$activating_tabs = array();
-			
+			$nr_projects = count($projects);
+			$current_tab = $show_last ? $nr_projects : 1;
 			foreach ($projects as $project){
-				if ($nr == 1){
+				if ($nr == $current_tab){
 					$id = $project->pid;
 					$my_project = $project;
 				}
@@ -92,8 +85,8 @@ function showProjectPage(){
 					$data2[] = array(2, $organisation->title, 'list', 'project', $organisation->org_id);
 				}
 			}
-			echo renderTabs($nr, 'Project', 'project_page-', 'project', $data, $id, TRUE,
-				renderProject($my_project, "project_page-1"),'1','project');
+			echo renderTabs($nr, 'Project', $tab_id_prefix, 'project', $data, $id, TRUE,
+				renderProject($my_project, "$tab_id_prefix$current_tab"), $current_tab,'project');
 	
 			echo "<hr>";
 			
@@ -102,7 +95,8 @@ function showProjectPage(){
 				renderProjects('', $projects));
 			?>
 			<script type="text/javascript">
-				activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>]);
+				activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>], '<?php echo 
+					"$tab_id_prefix$current_tab";?>');
 				activatetabs('tab_', [<?php echo implode(', ', $activating_tabs2);?>], null, true);
 			</script>
 		<?php
@@ -165,7 +159,7 @@ function renderProject($project='', $target=''){
 		")\" value='Submit proposal for this project'/>";
 	}
 	if (Groups::isAssociate('project', $id)){
-		$delete_action = "onclick='if(confirm(\"".t('Are you sure?')."\")){ajaxCall(\"project\", \"delete\", {type: \"$type\", id: $id}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"project\"]);}'";
+		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this project?')."\")){ajaxCall(\"project\", \"delete\", {type: \"$type\", id: $id}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"project\"]);}'";
 		$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"$type\", id: $id, target: \"$target\"}, \"formResult\", \"html\", [\"$target\", \"project\"]);'";
 		$content .= "<input type='button' value='".t('edit')."' $edit_action/>";
 		$content .= "<input type='button' value='".t('delete')."' $delete_action/>";
