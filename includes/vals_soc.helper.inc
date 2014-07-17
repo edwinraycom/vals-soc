@@ -111,7 +111,7 @@ function valssoc_form_get_js($form){
 		$js = '';
 		foreach ($form['#attached']['js'] as $incl){
 			if ($incl['type'] == 'file'){
-				$js .= src_getJs(_VALS_SOC_FULL_URL.'/'.$incl['data']);
+				$js .= src_getJs(_VALS_SOC_FULL_URL.$incl['data']);//we assume all paths start with /
 			} else {
 				$js .= script_getJs($incl['data']);
 			}

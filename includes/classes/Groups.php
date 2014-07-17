@@ -41,7 +41,7 @@ class Groups extends AbstractEntity{
 	static function changeGroup($type, $organisation, $id)
 	{
 		if (! $organisation){
-			drupal_set_message(t('Update requested with empty data set'));
+			drupal_set_message(t('Update requested with empty data set'), 'error');
 			return false;
 		}
 		$key = self::keyField($type);
@@ -62,7 +62,7 @@ class Groups extends AbstractEntity{
 
 	static function isOwner($type, $id){
 		if (! in_array($type, array('studentgroup', 'institute', 'organisation', 'project', 'proposal'))){
-			drupal_set_message(tt('You cannot be the owner of an entity called %1$s', $type));
+			drupal_set_message(tt('You cannot be the owner of an entity called %1$s', $type), 'error');
 			return FALSE;
 		}
 		$key_field = self::keyField($type);
@@ -75,7 +75,7 @@ class Groups extends AbstractEntity{
 		$scope_table = array('institute'=>'institute','organisation'=>'organisation',
 				'studentgroup'=>'institute', 'project' =>'organisation', 'proposal' => 'institute');
 		if (! in_array($type, array_keys($scope_table))){
-			drupal_set_message(tt('You cannot be the associate of an entity called %1$s', $type));
+			drupal_set_message(tt('You cannot be the associate of an entity called %1$s', $type), 'error');
 			return FALSE;
 		}
 		$key_field = self::keyField($type);
@@ -110,7 +110,6 @@ class Groups extends AbstractEntity{
 	static function isMember($type, $id){
 		global $user;
 		if (!$user) {
-			echo "hij vindt geenuser";
 			return false;
 		}
 		//Assuming there is always an owner inside the group

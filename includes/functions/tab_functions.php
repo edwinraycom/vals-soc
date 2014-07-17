@@ -23,6 +23,7 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $id=0,
 				$post= "} else {Obj('$target').html('". t(' You canceled the request')."')}";
 			}
 		}
+		$pre .= "Obj('$target').html('".t('Moment geduld aub.'). "');";
 		?>
 		<li<?php echo $tab_class;?>><a href="#tab_<?php echo $target;?>" <?php
 		//title
