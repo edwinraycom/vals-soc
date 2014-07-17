@@ -205,21 +205,13 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 			+ errorThrown);
 	};
 
-
 	return $jq.ajax(call);
 }
 
-//function test_required(form_id){
-//	var msgs = '';
-//	$jq("#" + form_id+ " .required").each(function( index ) {
-//		console.log( index + ": " + $( this ).val() );
-//	});
-//	alert('later verplaatsen');
-//}
-
-function ajaxFormCall(frm, handler_type, action, data, target, type, args) {
+function ajaxFormCall(frm_selector, handler_type, action, data, target, type, args) {
 	CKupdate();
-	if (isFunction('test_required_fields')){
+	//testing is a global object with testing functions 
+	if (testing && isFunction('testing.test_required_fields')){
 		if (isFunction(target)){
 			if (typeof args != ' undefined' && isArray(args) && typeof args[1] != ' undefined'){
 				var msg_target = 'msg_'+ args[1];
@@ -227,12 +219,14 @@ function ajaxFormCall(frm, handler_type, action, data, target, type, args) {
 				var msg_target = 'msg_'+ target;
 			}
 		}
-		if (!test_required_fields(frm, msg_target)) 
+		if (!testing.test_required_fields(frm_selector, msg_target)) 
 			return false;
 	} else {
 		//no test needs to be done or forgotten to include test_functions.js
 	}
-	var call_args = $jq('#' + frm).serialize();
+	//We assume the form is contained in a container with an id, or just the form id is passed (if it is unique)
+	//this is possible otherwise we need a unique container (mostly the target where the form is put)
+	var call_args = $jq('#' + frm_selector).serialize();
 	if (data) {
 		if (data instanceof Object) {
 			var ds = '';
@@ -348,7 +342,7 @@ jQuery.extend({
 
 /*
  * Used for ckeditor: the hidden textarea fields will be filled with the actual code just before sending
- * the ajax. We make the developer responsible for calling this function before sending the form
+ * the ajax. This function will be called automatically for ajaxFormCall.
  */
 function CKupdate(){
 	if (CKEDITOR && ! jQuery.isEmptyObject(CKEDITOR.instances)){

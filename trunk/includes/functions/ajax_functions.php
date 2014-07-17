@@ -69,7 +69,7 @@ function showDrupalMessages($category='status', $echo=FALSE){
 	if (empty($category)){
 		$s = '';
 		$msgs = drupal_get_messages();
-		foreach ($msgs as $type =>$msgs1){
+		foreach ($msgs as $type => $msgs1){
 			$s .= "<br/>$type :<br/>";
 			$s.= implode('<br/>', $msgs1);
 		}

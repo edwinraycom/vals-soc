@@ -8,7 +8,7 @@ function refreshTabs(json_data, args){
 		return;
 	}
 	if (arguments.length > 1 && args) {
-		var type = args[0];
+		type = args[0];
 		targ = (args.length > 1) ? 'msg_'+ args[1] : '';
 		handler = (args.length > 2) ? args[2] : '';
 		container = (args.length > 3) ? args[3] : 'admin_container';
@@ -25,11 +25,13 @@ function refreshTabs(json_data, args){
 	}
 	
 	if (json_data && (json_data.result !== 'error')){
-		ajaxMessage(targ, json_data.msg);
-		ajaxCall(handler, 'show', {type:type, action:json_data.action}, container);
+		if (json_data.msg) 
+		if (ajaxCall(handler, 'show', {type:type, action:json_data.action}, container)){
+			if (json_data.msg) ajaxAppend(json_data.msg, container, 'status');
+			//ajaxMessage(targ, json_data.msg);
+		}
 	} else {
 		if (typeof json_data.error != 'undefined') {
-			
 			ajaxError(targ, json_data.error);
 		} else {
 			alertdev('Some error occured but no message was set.');
@@ -54,9 +56,8 @@ function refreshSingleTab(json_data, args){
 	var id = json_data.id;
 	var type = json_data.type;
 	if (json_data && (json_data.result !== 'error')){
-		
-		ajaxCall(handler, 'view', {id:id,type:type,target:target}, 'handleContentAndMessage', 'html', [target, 'msg_'+target, 
-		                                                                                       json_data.msg]);
+		ajaxCall(handler, 'view', {id:id,type:type,target:target}, 'handleContentAndMessage',
+			'html', [target, 'msg_'+target, json_data.msg]);
 	} else {
 		ajaxError('msg_'+target, json_data.error);
 	}
@@ -67,7 +68,8 @@ function formResult(data, args){
 	var target = args[0];
 	//todo: we want jquery to wait for the dom to be ready until ckeditor call
     if (Obj(target).html(data)){
-    	CKEDITOR.replaceAll();
+    	//replaces only the textareas inside the target
+    	transform_into_rte(target);
     }
 }
 
@@ -78,24 +80,33 @@ function jsonFormResult(data, args){
 	} else {
 		//todo: we want jquery to wait for the dom to be ready until ckeditor call
         if (Obj(target).html(data.result)){
-        	CKEDITOR.replaceAll();
+        	//replaces only the textareas inside the target
+        	transform_into_rte(target);
         }
 	}     
 }
 
 function transform_into_rte(){
-	CKEDITOR.replaceAll();
+	if (arguments.length){
+		target = arguments[0];
+		$jq('#'+target+ ' form textarea').each(function(index, element){
+    		CKEDITOR.replace(element);
+    	});
+    	//CKEDITOR.replaceAll();
+	} else {
+		CKEDITOR.replaceAll();
+	}
 }
 
+//Gets content and waits for content to be placed to handle the messages which target is inside the new content
 function handleContentAndMessage(result, args){
 	var content_target = args[0];
-	ajaxInsert(result, content_target);
-	if (args.length > 1){
+	var inserting = ajaxInsert(result, content_target);
+	if (inserting && args.length > 1){
 		var msg_target = args[1];
 		var msg_content= args[2];
 		ajaxMessage(msg_target, msg_content);
 	}
-	
 }
 
 function handleResult(result, args){

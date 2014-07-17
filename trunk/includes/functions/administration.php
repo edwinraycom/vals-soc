@@ -385,7 +385,7 @@ function showOrganisationPage($action){
 		$f3 = drupal_get_form('vals_soc_organisation_form', '', 'organisation_page-1');
 		$add_tab .= drupal_render($f3);
 		$data = array();
-		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=admin_container");
+		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=admin_container", true, 'adding_to_the right');
 		echo renderTabs(1, null, 'organisation_page-', 'organisation', $data, null, TRUE, $add_tab);
 		?>
 		<script type="text/javascript">
@@ -420,7 +420,7 @@ function showOrganisationAdminPage($organisations){
 	if(user_access('vals admin register')){
 		//To remove the add tab: comment the three lines below
 		$nr++;
-		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=organisation_page-$nr");
+		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=organisation_page-$nr", true, 'adding_to_the right');
 		$tabs[] = "'organisation_page-$nr'";
 	}
 	echo sprintf('<h3>%1$s</h3>', t('Organisations you are involved in'));

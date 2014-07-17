@@ -10,7 +10,7 @@ function entityCall($type, $obj, $target, $action_handler='administration'){
 	$key = AbstractEntity::keyField($type);
     $id = $obj && $obj->$key ? $obj->$key : 0;
     $post_function = $id ? 'refreshSingleTab' : 'refreshTabs';
-	$call = "ajaxFormCall('vals-soc-$type-form', '$action_handler', 'save', {type: '$type',id: $id},".
+	$call = "ajaxFormCall('vals_soc_entity_form_wrapper_$target form', '$action_handler', 'save', {type: '$type',id: $id},".
 		"'$post_function','json',['$type', '$target', '$action_handler']);";
 	return $call;
 }
@@ -386,26 +386,9 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 
 function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 	$form = array(
-		'#prefix' => '<div id="vals_soc_entity_form_wrapper">',
-		'#suffix' => '</div>',
+			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
+			'#suffix' => '</div>',
 	);
-// 	$form['key'] = array(
-// 		'#type' => 'hidden', 
-// 		"#default_value" => populate($org, 'org_id'),
-// 	);
-// 	$form['tab_target'] = array(
-// 		'#type' => 'hidden',
-// 		"#default_value" => $target,
-// 	);
-// 	$form['entity_type'] = array(
-// 		'#type' => 'hidden',
-// 		"#default_value" => 'organisation',
-// 	); 
-	/*Still experimenting with using paths -possible will be removed soon.
-	$form['tRequest_path'] = array(
-		'#type' => 'hidden',
-		'#default_value' => request_path(),
-	);*/
 	$form['name'] = array(
 		"#type" => "textfield",
 		'#title' => t('What is the name of your organisation?'),
@@ -476,8 +459,8 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 
 function vals_soc_institute_form($form, &$form_state, $institute='', $target=''){
 	$form = array(
-		'#prefix' => '<div id="vals_soc_entity_form_wrapper">',
-		'#suffix' => '</div>',
+			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
+			'#suffix' => '</div>',
 	);
 	$form['name'] = array(
 		"#type" => "textfield",
@@ -524,8 +507,8 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='')
 
 function vals_soc_studentgroup_form($form, &$form_state, $group='', $target=''){
 	$form = array(
-		'#prefix' => '<div id="vals_soc_entity_form_wrapper">',
-		'#suffix' => '</div>',
+			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
+			'#suffix' => '</div>',
 	);
 	$form['key'] = array(
 		'#type' => 'hidden',
@@ -585,7 +568,7 @@ function vals_soc_studentgroup_form($form, &$form_state, $group='', $target=''){
 
 function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 	$form = array(
-			'#prefix' => '<div id="vals_soc_entity_form_wrapper">',
+			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
 			'#suffix' => '</div>',
 	);
 	$my_organisations = Groups::getGroups('organisation');
@@ -599,12 +582,13 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 		$select_values[$organisation['org_id']] = $organisation['name'];
 	}
 	
-	if ($number_of_organisations < 2){
+	if ($project || ($number_of_organisations < 2)){
+		$org_id = $project ? $project->org_id : ($number_of_organisations ? $organisations[0]['org_id']: 0);
 		$form['org_id'] = array(
 				'#type' => 'hidden',
-				"#default_value" => ($number_of_organisations ? $organisations[0]['org_id']: 0),
+				"#default_value" => $org_id,
 		);
-	} else {
+	}  else {
 		$form['org_id'] = array(
 			"#type" => "select",
 			'#title' => t('For which organisation will this project be?'),
@@ -615,7 +599,7 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 	};
 	$form['title'] = array(
 			"#type" => "textfield",
-			'#title' => t('Give a name to the project'),
+			'#title' => t('The name of the project'),
 			"#size" => 60,
 			'#required' => '1',
 			"#default_value" => populate($project, 'title')
@@ -669,6 +653,10 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'error');
 		return FALSE;
 	}
+	$form = array(
+			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
+			'#suffix' => '</div>',
+	);
 // 	$form['name'] = array(
 //		"#type" => "textfield",
 //		'#title' => t('Give your full name'),
