@@ -97,7 +97,7 @@ class Project extends AbstractEntity{
     				
 	    			$my_projects = 
 	    				db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",
-	    					array(':orgs' => $my_orgs))->fetchAll();
+	    					array(':orgs' => $my_orgs))->fetchAll();	    			
     			} else {
     				drupal_set_message(t('You have no organisation yet'), 'error');
     				return array();

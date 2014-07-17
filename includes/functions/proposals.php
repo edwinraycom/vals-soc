@@ -7,7 +7,6 @@ function initBrowseProposalsLayout(){
 	if(isset($_GET['organisation'])){
 		$org_id = $_GET['organisation'];
 	}
-//	echo "Wat zijn de rechten van mij? apply $apply_projects browse $browse_proposals";
 	if ($apply_projects && !$browse_proposals){
 		//A student may only browse their own proposals
 		$student_id = $GLOBALS['user']->uid;
@@ -69,18 +68,8 @@ function initBrowseProposalsLayout(){
 
 			//We make the ajax script path absolute as the language module might add a language code
 			//to the path
-			//var apply_projects = <?php echo $apply_projects ? 1: 0;?>;
 			window.view_settings = {};
 			window.view_settings.apply_projects = <?php echo $apply_projects ? 1: 0;?>;
-			//window.view_settings.target_id = '<?php //echo $target;?>';
-			//var apply_projects = <?php echo $apply_projects ? 1: 0;?>;
-			///var target_id = '<?php // echo $target;?>';
-			/*
-			function getProposalForm(proposalId){
-				Drupal.CTools.Modal.dismiss();
-				alert("get the proposal form for proposal#"+proposalId);
-			}
-			*/
 
 
 			function loadFilteredProposals(){

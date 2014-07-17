@@ -25,11 +25,11 @@ function refreshTabs(json_data, args){
 	}
 	
 	if (json_data && (json_data.result !== 'error')){
-		if (json_data.msg) 
-		if (ajaxCall(handler, 'show', {type:type, action:json_data.action}, container)){
-			if (json_data.msg) ajaxAppend(json_data.msg, container, 'status');
-			//ajaxMessage(targ, json_data.msg);
-		}
+		var show_action = altSub(json_data, 'action');
+		var new_tab = altSub(json_data, 'new_tab', false);
+		console.log(' hier komen de gegevens ',container, targ, json_data.msg);
+		ajaxCall(handler, 'show', {type:type, action:show_action, new_tab: new_tab}, 
+			'handleContentAndMessage', 'html', [container, 'ajax_msg', json_data.msg]);
 	} else {
 		if (typeof json_data.error != 'undefined') {
 			ajaxError(targ, json_data.error);

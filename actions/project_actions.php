@@ -103,11 +103,13 @@ switch ($_GET['action']){
 	case 'save':
 		$type = altSubValue($_POST, 'type', '');
 		$id = altSubValue($_POST, 'id', '');
+		
 		$properties = Project::getInstance()->filterPostLite(Project::getInstance()->getKeylessFields(), $_POST);
 		if (!$id){
+			$new = true;
 			$result = Project::getInstance()->addProject($properties);
-		}
-		else {
+		} else {
+			$new = false;
 			$result = Project::getInstance()->changeProject($properties, $id);
 		}
 		if ($result){
@@ -115,6 +117,7 @@ switch ($_GET['action']){
 					'result'=>TRUE,
 					'id' => $id,
 					'type'=> $type,
+					'new_tab' => $new,
 					'msg'=>
 					($id ? tt('You succesfully changed the data of your %1$s', t($type)):
 							tt('You succesfully added your %1$s', t($type))).
@@ -126,7 +129,9 @@ switch ($_GET['action']){
 		}
 	break;
 	case 'show':
-		showProjectPage();
+		$action = 'NOTIMPORTANTNOW';
+		$show_last = altSubValue($_POST, 'new_tab', false);
+		showProjectPage($action, $show_last);
 	break;
 	case 'edit':
 		$type = altSubValue($_POST, 'type', '');
@@ -158,17 +163,16 @@ switch ($_GET['action']){
 		print valssoc_form_get_js($form);
 
 	    break;
-	    case 'delete':
-	    	//return var_dump($_POST);
-	    	$type = altSubValue($_POST, 'type', '');
-	    	$id = altSubValue($_POST, 'id', '');
-	    	if (! isValidOrganisationType($type)) {
-	    		echo t('There is no such type we can delete');
-	    	} else {
-	    		$result = Groups::removeGroup($type, $id);
-	    		echo $result ? jsonGoodResult() : jsonBadResult();
-	    	}
-	    break;
+    case 'delete':
+    	$type = altSubValue($_POST, 'type', '');
+    	$id = altSubValue($_POST, 'id', '');
+    	if (! isValidOrganisationType($type)) {
+    		echo jsonBadResult(t('There is no such type we can delete'));
+    	} else {
+    		$result = Groups::removeGroup($type, $id);
+    		echo $result ? jsonGoodResult() : jsonBadResult();
+    	}
+    break;
 	//
 	default: echo "No such action: ".$_GET['action'];
 }

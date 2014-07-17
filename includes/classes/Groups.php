@@ -133,21 +133,18 @@ class Groups extends AbstractEntity{
 			return FALSE;
 		}
 		if (!isValidOrganisationType($type)){
-				
+			drupal_set_message(tt('This (%1$s) is not something you can remove.', t($type)), 'error');
+			return FALSE;	
 		}
-		$num_deleted = db_delete(tableName($type))
-		->condition(self::keyField($type), $id)
-		->execute();
-		if ($num_deleted){
+		
+		try {
+		if($type != 'project'){
 			$num_deleted2 = db_delete("soc_user_membership")
 			->condition('group_id', $id)
 			->condition('type', $type)
 			->execute();
-			if (!$num_deleted2){
-				if($type != 'project'){
-					drupal_set_message(tt('The group has been deleted, but it had no members.', $type), 'error');
-				}
-				return $num_deleted;
+			if (!$num_deleted2){					
+				drupal_set_message(tt('The group had no members.', $type), 'status');
 			}
 				
 			$subtype = ($type == 'organisation') ? 'mentor' : (($type == 'institute') ? 'supervisor' : 'studentgroup');
@@ -156,17 +153,30 @@ class Groups extends AbstractEntity{
 			->condition('entity_id', $id)
 			->condition('type', $subtype)
 			->execute();
-				
+		
 			if (!$num_deleted3){
-				drupal_set_message(tt('The %1$s has been deleted, but it had no code attached.', $type), 'error');
-				return $num_deleted;
+				drupal_set_message(tt('The %1$s had no code attached.', $type), 'status');
 			}
+		}
+		} catch (Exception $e){
+			drupal_set_message(tt(' We could not delete the %1$s', t($type)).(_DEBUG ? $ex->getMessage():''), 'error');
+			return FALSE;
+		}
+		$num_deleted = db_delete(tableName($type))
+		->condition(self::keyField($type), $id)
+		->execute();
+		try{
+		if ($num_deleted){			
+			drupal_set_message(tt('The %1$s has been deleted.', $type), 'status');
+			return TRUE;
 		} else {
 			drupal_set_message(tt('The group seems to have been deleted already, refresh your screen to see if this is true.', $type), 'error');
 			return 0;
 		}
-	
-		return $num_deleted2;
+		} catch (Exception $e){
+			drupal_set_message(tt(' We could not delete the %1$s', t($type)).(_DEBUG ? $ex->getMessage():''), 'error');
+			return FALSE;
+		}
 	}
 	
 /* 	static function addProject($props){

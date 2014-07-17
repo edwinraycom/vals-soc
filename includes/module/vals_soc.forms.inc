@@ -621,7 +621,7 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 			"#type" => "textfield",
 			'#title' => t('Some tags to facilitate searching (php,...)'),
 			"#size" => 60,
-			'#required' => '1',
+			//'#required' => '1',
 			"#default_value" => populate($project, 'tags')
 	);
 	$form['submit'] = array(
@@ -643,7 +643,7 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 			'data' => '/includes/js/test_functions.js',
 		),
 	);
-	return $form;
+	return $form;//http://localhost/vals/dashboard/projects/administer#tab_project_page-5
 }
 
 function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $project_id=''){
