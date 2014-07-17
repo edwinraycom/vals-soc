@@ -127,13 +127,30 @@ class Users extends AbstractEntity{
 		$group_head = $user->uid;
 		//todo: find out whether current user is indeed head of the group
 
-		if ($group_id == 'all'){
-			$members = db_query(
-					'select u.*,n.name as fullname from users as u '.
-					'left join users_roles as ur on u.uid=ur.uid '.
-					'left join role as r on r.rid=ur.rid '.
-					'left join soc_names as n on u.uid=n.names_uid '.
-					'WHERE r.name=:role ', array(':role' => $member_type));
+ 		if ($group_id == 'all'){
+ 			// updated to ensure we only retrieve users that belong to
+ 			// one of the logged in users 'soc_user_membership ' groups. 
+ 			// For example, this was originally retrieving ALL mentors, 
+ 			// inc ones not in any of the current users organisations
+			$group_ids = db_query(
+					"SELECT group_id from soc_user_membership t".
+					" WHERE t.uid = $group_head ")
+					->fetchCol();
+			if ($group_ids){
+				//So we know which groups and of which type membertype should be member
+				$query = "SELECT DISTINCT u.*,n.name as fullname from users as u ".
+						"left join users_roles as ur on u.uid = ur.uid ".
+						"left join role as r  on ur.rid = r.rid ".
+						"left join soc_user_membership as um  on u.uid = um.uid ".
+						'left join soc_names as n on u.uid=n.names_uid '.
+						"WHERE r.name = '$member_type' AND um.type = '$group_type' AND um.group_id IN (".
+						implode(',', $group_ids).")";
+				$members = db_query($query);
+					
+			} 
+			else {
+				return NULL;
+			}
 		} else {
 			if ($id){
 				$members = db_query(

@@ -435,29 +435,33 @@ function showOrganisationAdminPage($organisations){
 }
 
 function showOrganisationMembersPage($organisations){
-	$nr = 0;
-	$nr2 = 1;
-	$data2 = array();
+	$init_offset = 1;
+	$data = array();
+	$tab = array();
 	// 		[translate, label, action, type, id, extra GET arguments]
-	$data2[] = array(1, 'All your Mentors', 'showmembers', 'organisation', 0, 'subtype=mentor');
-	$tabs2 = array("'mentor_page-$nr2'");
+	if(user_access('vals admin register')){
+		$data[] = array($init_offset, 'All your Mentors', 'showmembers', 'organisation', 'all', 'subtype=mentor');
+		$tabs = array("'mentor_page-$init_offset'");
+		$init_offset++;
+	}
+	
+	$all_orgs_i_participate_in = array();
 	foreach ($organisations as $org){
-		$nr++;
-		$nr2++;
-		if ($nr == 1){
-			$id = $org->org_id;
-			$my_organisation = $org;
-		}
-		$tabs2[] = "'mentor_page-$nr2'";
-		$data2[] = array(2, $org->name, 'showmembers', 'organisation', $org->org_id);
+		$tabs[] = "'mentor_page-$init_offset'";
+		$data[] = array($init_offset, $org->name, 'showmembers', 'organisation', $org->org_id);
+		array_push($all_orgs_i_participate_in, $org->org_id);
+		$init_offset++;
 	}
 
+	$first_tab_data_type = $data[0][4];
+	
 	echo '<h2>'.t('The registered mentors of your organisations').'</h2>';
-	echo renderTabs($nr2, 'Org', 'mentor_page-', 'organisation', $data2, null, TRUE,
-			renderUsers('mentor', '', 'all', 'organisation'));
+	echo renderTabs(--$init_offset, 'Org', 'mentor_page-', 'organisation', $data, null, TRUE,
+		renderUsers('mentor', '', $first_tab_data_type, 'organisation'));
+
 	?>
 	<script type="text/javascript">
-		activatetabs('tab_', [<?php echo implode(',', $tabs2);?>]);
+		activatetabs('tab_', [<?php echo implode(',', $tabs);?>]);
 	</script>
 	<?php
 

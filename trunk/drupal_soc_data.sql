@@ -38,6 +38,7 @@ TRUNCATE TABLE `users`;
 TRUNCATE TABLE `users_roles`;
 TRUNCATE TABLE `role`;
 TRUNCATE TABLE `role_permission`;
+TRUNCATE TABLE `soc_names`;
 
 INSERT INTO `soc_names` (`names_uid`, `type`, `name`) VALUES
 (28, 'supervisor', 'Julian Sas'),
@@ -207,10 +208,10 @@ INSERT INTO soc_institutes (inst_id, owner_id, `name`, contact_name, contact_ema
 --
 
 INSERT INTO soc_organisations (org_id, owner_id, `name`, contact_name, contact_email, url, description) VALUES
-(1, 26, 'Apache Software Foundation', 'P Sharples', 'psharples@apache.org', 'http://www.apache.org', 'Established in 1999, the all-volunteer Foundation oversees nearly one hundred fifty leading Open Source projects, \r\nincluding Apache HTTP Server the world''s most popular Web server software. Through the ASF''s meritocratic process known as ''The Apache Way'', more than 350 individual Members and 3,000 Committers successfully collaborate to develop freely available enterprise-grade software, benefiting millions of users worldwide: thousands of software solutions are distributed under the Apache License; and the community actively participates in ASF mailing lists, mentoring initiatives, and ApacheCon, the Foundation''s official user conference, trainings, and expo. The ASF is a US 501(3)(c) not-for-profit charity, funded by individual donations and corporate sponsors including Citrix, Facebook, Google, Yahoo!, Microsoft, AMD, Basis Technology, Cloudera, Go Daddy, Hortonworks, HP, Huawei, InMotion Hosting, IBM, Matt Mullenweg, PSW GROUP, SpringSource/VMWare, and WANDisco.'),
-(2, 26, 'Acme Foundation and so on', 'F Smith', 'fsmith@acme.org', 'http://www.acme.org', 'blah blah blah and more bla'),
+(1, 25, 'Apache Software Foundation', 'P Sharples', 'psharples@apache.org', 'http://www.apache.org', 'Established in 1999, the all-volunteer Foundation oversees nearly one hundred fifty leading Open Source projects, \r\nincluding Apache HTTP Server the world''s most popular Web server software. Through the ASF''s meritocratic process known as ''The Apache Way'', more than 350 individual Members and 3,000 Committers successfully collaborate to develop freely available enterprise-grade software, benefiting millions of users worldwide: thousands of software solutions are distributed under the Apache License; and the community actively participates in ASF mailing lists, mentoring initiatives, and ApacheCon, the Foundation''s official user conference, trainings, and expo. The ASF is a US 501(3)(c) not-for-profit charity, funded by individual donations and corporate sponsors including Citrix, Facebook, Google, Yahoo!, Microsoft, AMD, Basis Technology, Cloudera, Go Daddy, Hortonworks, HP, Huawei, InMotion Hosting, IBM, Matt Mullenweg, PSW GROUP, SpringSource/VMWare, and WANDisco.'),
+(2, 25, 'Acme Foundation and so on', 'F Smith', 'fsmith@acme.org', 'http://www.acme.org', 'blah blah blah and more bla'),
 (3, 26, 'Drupal', 'David Day', 'dday@drupal.org', 'http://www.drupal.org', 'blah blah '),
-(4, 26, 'Groovy Community', 'Pat Garr', 'pgarr@groovy.org', 'http://www.groovy.org', 'The Groovy programming language for the JVM gathers a community and ecosystem around it made of various \r\nprojects, like web frameworks, testing libraries, concurrency toolkits, and more. The Groovy Community proposes \r\nto be the umbrella for all the project of the Groovy ecosystem.');
+(4, 34, 'Groovy Community', 'Pat Garr', 'pgarr@groovy.org', 'http://www.groovy.org', 'The Groovy programming language for the JVM gathers a community and ecosystem around it made of various \r\nprojects, like web frameworks, testing libraries, concurrency toolkits, and more. The Groovy Community proposes \r\nto be the umbrella for all the project of the Groovy ecosystem.');
 
 -- --------------------------------------------------------
 
@@ -281,13 +282,12 @@ INSERT INTO soc_studentgroups (studentgroup_id, owner_id, inst_id, `name`, descr
 
 INSERT INTO soc_user_membership (mem_id, uid, `type`, group_id) VALUES
 (1, 1, 'institute', 1),
-(3, 25, 'organisation', 3),
-(4, 26, 'organisation', 3),
 (6, 27, 'institute', 5),
 (7, 29, 'institute', 5),
 (8, 30, 'institute', 3),
-(9, 30, 'studentgroup', 2),
+(36, 31, 'institute', 3),
 (10, 31, 'institute', 3),
+(9, 30, 'studentgroup', 2),
 (11, 31, 'studentgroup', 2),
 (12, 30, 'studentgroup', 3),
 (13, 30, 'studentgroup', 4),
@@ -295,9 +295,16 @@ INSERT INTO soc_user_membership (mem_id, uid, `type`, group_id) VALUES
 (15, 29, 'studentgroup', 5),
 (31, 29, 'studentgroup', 21),
 (32, 29, 'studentgroup', 22),
-(34, 32, 'organisation', 3),
--- (35, 32, 'organisation', 3), # duplicate of one above
-(36, 31, 'institute', 3);
+
+(40, 25, 'organisation', 1),  # orgadmin1 is a member of org1 (apache) owner is orgadmin1
+(41, 25, 'organisation', 2),  # orgadmin1 is a member of org2 (acme) owner is orgadmin1
+(42, 25, 'organisation', 3),  # orgadmin1 is a member of org3 (drupal) owner is orgadmin2
+(43, 26, 'organisation', 3),  # orgadmin2 is a member of org3 (drupal) owner is orgadmin2
+(44, 34, 'organisation', 4),  # orgadmin3 is a member of org4 (groovy) owner is orgadmin3
+(45, 32, 'organisation', 2), # mentor1 is a member of org 3 (acme)
+(46, 32, 'organisation', 3), # mentor1 is a member of org 3 (drupal)
+(47, 36, 'organisation', 3), # mentor2 is a member of org 3 (drupal)
+(48, 37, 'organisation', 4); # mentor3 is a member of org 4 (groovy)
 
 -- --------------------------------------------------------
 -- Can we keep these user/passwords the same. Records 25-32 passwords are the 
@@ -305,31 +312,34 @@ INSERT INTO soc_user_membership (mem_id, uid, `type`, group_id) VALUES
 INSERT INTO users (uid, `name`, pass, mail, theme, signature, signature_format, created, access, login, `status`, timezone, `language`, picture, init, `data`) VALUES
 (0, '', '', '', '', '', NULL, 0, 0, 0, 0, NULL, '', 0, '', NULL),
 (1, 'admin', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin@raycom.com', '', '', 'filtered_html', 1394721311, 1401884149, 1401450007, 1, 'Europe/Paris', 'nl', 0, 'edwin@raycom.com', 'a:6:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";s:7:"overlay";i:0;}'),
-(25, 'orgadmin', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+1@raycom.com', '', '', 'filtered_html', 1397205806, 1400256334, 1400160734, 1, 'Europe/Paris', 'es', 0, 'edwin+1@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
-(26, 'orgadmin2', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+2@raycom.com', '', '', 'filtered_html', 1397209973, 0, 0, 1, 'Europe/Paris', 'es', 0, 'edwin+2@raycom.com', NULL),
 (27, 'instadmin', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+3@raycom.com', '', '', 'filtered_html', 1397210143, 1400577479, 1400257398, 1, 'Europe/Paris', 'es', 0, 'edwin+3@raycom.com', 'b:0;'),
+(35, 'instadmin2', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+99@raycom.com', '', '', 'filtered_html', 1397210143, 1400577479, 1400257398, 1, 'Europe/Paris', 'es', 0, 'edwin+99@raycom.com', 'b:0;'),
 (28, 'tutor1', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+4@raycom.com', '', '', 'filtered_html', 1397211191, 0, 0, 1, 'Europe/Paris', 'it', 0, 'edwin+4@raycom.com', NULL),
 (29, 'tutor2', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+5@raycom.com', '', '', 'filtered_html', 1397211502, 1400752361, 1400676920, 1, 'Europe/Paris', 'en', 0, 'edwin+5@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
 (30, 'tutor3', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+6@raycom.com', '', '', 'filtered_html', 1397211598, 1399972053, 1397224028, 1, 'Europe/Paris', 'el', 0, 'edwin+6@raycom.com', 'b:0;'),
 (31, 'student1', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+9@raycom.com', '', '', 'filtered_html', 1397222564, 1401449439, 1401447650, 1, 'Europe/Paris', 'en', 0, 'edwin+9@raycom.com', 'b:0;'),
+(25, 'orgadmin1', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+1@raycom.com', '', '', 'filtered_html', 1397205806, 1400256334, 1400160734, 1, 'Europe/Paris', 'es', 0, 'edwin+1@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
+(26, 'orgadmin2', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+2@raycom.com', '', '', 'filtered_html', 1397209973, 0, 0, 1, 'Europe/Paris', 'es', 0, 'edwin+2@raycom.com', NULL),
+(34, 'orgadmin3', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+12@raycom.com', '', '', 'filtered_html', 1400754935, 1400765047, 1400754987, 1, 'Europe/Paris', 'nl', 0, 'edwin+12@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
 (32, 'mentor1', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+21@raycom.com', '', '', 'filtered_html', 1400586065, 1400586093, 1400586093, 1, 'Europe/Paris', 'en', 0, 'edwin+21@raycom.com', 'b:0;'),
-(33, 'Een mentor', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+11@raycom.com', '', '', 'filtered_html', 1400753564, 0, 0, 1, 'Europe/Paris', 'en', 0, 'edwin+11@raycom.com', NULL),
-(34, 'orgadmin4', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+12@raycom.com', '', '', 'filtered_html', 1400754935, 1400765047, 1400754987, 1, 'Europe/Paris', 'nl', 0, 'edwin+12@raycom.com', 'a:5:{s:16:"ckeditor_default";s:1:"t";s:20:"ckeditor_show_toggle";s:1:"t";s:14:"ckeditor_width";s:4:"100%";s:13:"ckeditor_lang";s:2:"en";s:18:"ckeditor_auto_lang";s:1:"t";}'),
-(35, 'instadmin2', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+99@raycom.com', '', '', 'filtered_html', 1397210143, 1400577479, 1400257398, 1, 'Europe/Paris', 'es', 0, 'edwin+99@raycom.com', 'b:0;');
-
+(36, 'mentor2', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+67@raycom.com', '', '', 'filtered_html', 1400586065, 1400586093, 1400586093, 1, 'Europe/Paris', 'en', 0, 'edwin+21@raycom.com', 'b:0;'),
+(37, 'mentor3', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+68@raycom.com', '', '', 'filtered_html', 1400586065, 1400586093, 1400586093, 1, 'Europe/Paris', 'en', 0, 'edwin+21@raycom.com', 'b:0;'),
+(33, 'Een mentor', '$S$DpBo9xxVTOGQhuXOY5YfmrGKLIp0JgJxotQ73/PdK1cFrITWLlpw', 'edwin+11@raycom.com', '', '', 'filtered_html', 1400753564, 0, 0, 1, 'Europe/Paris', 'en', 0, 'edwin+11@raycom.com', NULL);
 -- --------------------------------------------------------
 
 INSERT INTO users_roles (uid, rid) VALUES
 (1, 3),
 (31, 4),
 (32, 5),
+(36, 5),
+(37, 5),
 (25, 8),
 (26, 8),
 (34, 8),
 (28, 9),
 (29, 9),
 (30, 9),
-(33, 9),
+(33, 5),
 (27, 12),
 (35, 12);
 
