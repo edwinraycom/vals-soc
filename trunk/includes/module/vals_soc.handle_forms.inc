@@ -11,18 +11,20 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
     if ($current_role == 'administrator'){
         return;
     }
-    
-    if (! (isset($form_state['values']['account_key']))){
-        form_set_error('account_key', t('There is no key entered. Ask the Semester of Code Admin.'));
-        return;
-    }
-    
-    $code_entered = $form_state['values']['account_key'];
+    $super = t('Semester of Code Admin');
     $requested_user_type = isset($form_state['values']['account_type']) ? $form_state['values']['account_type'] : 'none';
     if ($requested_user_type == 'none'){
     	form_set_error('account_key', t('There is no type of the account entered.'));
     	return;
     }
+    
+    if (! (isset($form_state['values']['account_key']))){
+        form_set_error('account_key', tt('There is no key entered. %1$s.'), $super);
+        return;
+    }
+    
+    $code_entered = $form_state['values']['account_key'];
+    
     //Check the student belonging to a valid group
     if ($requested_user_type == 'student'){
         if (! isset($form_state['values']['institute']) || $form_state['values']['institute']  == 0){
@@ -158,6 +160,8 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
 function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 	$current_role = getRole();
 	
+	
+	$super = t('Semester of Code Admin');
 	//If no  errors are encountered, just return, otherwise call form_set_error
 	if (isset($form_state['values']['fullname']) && (strlen($form_state['values']['fullname']) > 25)){
 		form_set_error('fullname', tt('The name you entered is a bit too long, Please abbreviate to a max of %1d chars', 25));
@@ -167,23 +171,28 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 		return;
 	}
 	$group_type = in_array($current_role, array('supervisor', 'institute_admin', 'student')) ? 'institute': 'organisation';
+	
 	$my_groups = Groups::getGroups($group_type);
 	if ($my_groups->rowCount()){
 		//The user is already in an institute or organisation. Do not expect an account key or do anything with the 
 		//organisation/institute. So the form validates as the other Drupal tests already passed if we are here.
 		return;
 	}
-	if (! (isset($form_state['values']['account_key']) && $form_state['values']['account_key'])){
-		form_set_error('account_key', t('There is no key entered.'));
-		return;
-	}
+	
 
 	$code_entered = $form_state['values']['account_key'];
 
 	//Check the student belonging to a valid group
 	if ($current_role == 'student'){
+		$super = t('supervisor');
 		if (! isset($form_state['values']['institute']) || $form_state['values']['institute']  == 0){
 			form_set_error('institute', t('You should select your university or institute.'));
+			return;
+		}
+		//If some organisation or institute is chosen, the key should be present
+		if ((! (isset($form_state['values']['account_key']) && $form_state['values']['account_key']))){
+			form_set_error('account_key', tt('There is no key entered. Ask your %1$s'), $super);
+			return;
 		}
 		$db_and = db_and();
 		$db_and->condition('code', $code_entered);
@@ -196,34 +205,40 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 		}
 
 		return;
-	}
-	$org = 0;
-	if (in_array($current_role, array('mentor', 'organisation_admin') ) && $form_state['values']['organisation']){
-		$org = $form_state['values']['organisation'];
-		$super = t('Organisation administrator');
-	}
-	if (in_array($current_role, array('supervisor', 'institute_admin')) && $form_state['values']['institute']){
-		$org = $form_state['values']['institute'];
-		$super = t('Institution administrator');
-	}
-	$db_and2 = db_and();
-	$db_and2->condition('type', $current_role);
-	$db_and2->condition('code', $code_entered);
-	if ((! in_array($current_role, array('institute_admin', 'organisation_admin', 'soc', 'administrator')))&&
-			$org){
-		$db_and2->condition('entity_id', $org);
-	}
-	$found_codes = db_select('soc_codes')->fields('soc_codes')->condition($db_and2)->execute()->rowCount();
-	$possible_code_rec = db_select('soc_codes')->fields('soc_codes')->
-		condition('type', $current_role)->
-		condition('entity_id', $org)->
-		execute()->fetchAssoc();
-	//->fetchAllAssoc('type', PDO::FETCH_ASSOC); returns [student=>[type=>student, code=><student_code>,....]
-	if (!$found_codes){
-		form_set_error('account_key', tt('The key you typed is not correct. Ask your %1$s.', $super).
-				(_DEBUG ? '<BR>'.t('In this phase, we just give you the code: ').$possible_code_rec['code']: ''));
 	} else {
-		return;
+		$org = 0;
+		if (in_array($current_role, array('mentor', 'organisation_admin') ) && $form_state['values']['organisation']){
+			$org = $form_state['values']['organisation'];
+			$super = t('Organisation administrator');
+		}
+		if (in_array($current_role, array('supervisor', 'institute_admin')) && $form_state['values']['institute']){
+			$org = $form_state['values']['institute'];
+			$super = t('Institution administrator');
+		}
+		if ($org){
+			$db_and2 = db_and();
+			$db_and2->condition('type', $current_role);
+			$db_and2->condition('code', $code_entered);
+			if ((! in_array($current_role, array('institute_admin', 'organisation_admin', 'soc', 'administrator')))&&
+					$org){
+				$db_and2->condition('entity_id', $org);
+			}
+			$found_codes = db_select('soc_codes')->fields('soc_codes')->condition($db_and2)->execute()->rowCount();
+			$possible_code_rec = db_select('soc_codes')->fields('soc_codes')->
+				condition('type', $current_role)->
+				condition('entity_id', $org)->
+				execute()->fetchAssoc();
+			//->fetchAllAssoc('type', PDO::FETCH_ASSOC); returns [student=>[type=>student, code=><student_code>,....]
+			if (!$found_codes){
+				form_set_error('account_key', tt('The key you typed is not correct. Ask your %1$s.', $super).
+						(_DEBUG ? '<BR>'.t('In this phase, we just give you the code: ').$possible_code_rec['code']: ''));
+			} else {
+				return;
+			}
+		} else {
+			//user changes details without connecting to an organisation or institute
+			return;
+		}
 	}
 
 }
