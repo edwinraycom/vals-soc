@@ -6,11 +6,12 @@ function populate($obj, $prop, $default=''){
 	return ($obj && isset($obj->$prop)) ? $obj->$prop : $default;
 }
 
-function entityCall($type, $obj, $target, $action_handler='administration'){
+function entityCall($type, $obj, $target, $show_action='administer', $action_handler='administration'){
 	$key = AbstractEntity::keyField($type);
     $id = $obj && $obj->$key ? $obj->$key : 0;
     $post_function = $id ? 'refreshSingleTab' : 'refreshTabs';
-	$call = "ajaxFormCall('vals_soc_entity_form_wrapper_$target form', '$action_handler', 'save', {type: '$type',id: $id},".
+	$call = "ajaxFormCall('vals_soc_entity_form_wrapper_$target form', '$action_handler', 'save', ".
+		"{type: '$type',id: $id, show_action:'$show_action'},".
 		"'$post_function','json',['$type', '$target', '$action_handler']);";
 	return $call;
 }
@@ -384,7 +385,7 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 	return $form;
 }
 
-function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
+function vals_soc_organisation_form($form, &$form_state, $org='', $target='', $show_action='administer'){
 	$form = array(
 			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
 			'#suffix' => '</div>',
@@ -428,7 +429,7 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 	);
 	$form['submit'] = array(
 			'#type' => 'submit',
-			'#attributes' => array('onclick'=> entityCall('organisation', $org, $target)),
+			'#attributes' => array('onclick'=> entityCall('organisation', $org, $target, $show_action)),
 			'#value' => t('Save'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
@@ -457,7 +458,7 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target=''){
 	return $form;
 }
 
-function vals_soc_institute_form($form, &$form_state, $institute='', $target=''){
+function vals_soc_institute_form($form, &$form_state, $institute='', $target='', $show_action='administer'){
 	$form = array(
 			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
 			'#suffix' => '</div>',
@@ -485,7 +486,7 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='')
 	);
 	$form['submit'] = array(
 		'#type' => 'submit',
-		'#attributes' => array('onclick'=> entityCall('institute', $institute, $target)),
+		'#attributes' => array('onclick'=> entityCall('institute', $institute, $target, $show_action)),
 		'#value' => t('Save'),
 		'#post_render' => array('vals_soc_fix_submit_button'),
 	);
@@ -505,7 +506,7 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='')
 	return $form;
 }
 
-function vals_soc_studentgroup_form($form, &$form_state, $group='', $target=''){
+function vals_soc_studentgroup_form($form, &$form_state, $group='', $target='', $show_action='administer'){
 	$form = array(
 			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
 			'#suffix' => '</div>',
@@ -546,7 +547,7 @@ function vals_soc_studentgroup_form($form, &$form_state, $group='', $target=''){
 // 	);
 	$form['submit'] = array(
 			'#type' => 'submit',
-			'#attributes' => array('onclick'=> entityCall('studentgroup', $group, $target)),
+			'#attributes' => array('onclick'=> entityCall('studentgroup', $group, $target, $show_action)),
 			'#value' => t('Save'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
@@ -626,7 +627,8 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 	);
 	$form['submit'] = array(
 			'#type' => 'submit',
-			'#attributes' => array('onclick'=> entityCall('project', $project, $target, 'project')),
+			'#attributes' => array('onclick'=> entityCall('project', $project, $target,
+				'does_not_matter', 'project')),
 			'#value' => t('Save'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
@@ -643,7 +645,7 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 			'data' => '/includes/js/test_functions.js',
 		),
 	);
-	return $form;//http://localhost/vals/dashboard/projects/administer#tab_project_page-5
+	return $form;
 }
 
 function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $project_id=''){

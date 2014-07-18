@@ -25,10 +25,10 @@ function refreshTabs(json_data, args){
 	}
 	
 	if (json_data && (json_data.result !== 'error')){
-		var show_action = altSub(json_data, 'action');
+		var show_action = altSub(json_data, 'show_action', 'administer');
 		var new_tab = altSub(json_data, 'new_tab', false);
 		console.log(' hier komen de gegevens ',container, targ, json_data.msg);
-		ajaxCall(handler, 'show', {type:type, action:show_action, new_tab: new_tab}, 
+		ajaxCall(handler, 'show', {type:type, show_action:show_action, new_tab: new_tab}, 
 			'handleContentAndMessage', 'html', [container, 'ajax_msg', json_data.msg]);
 	} else {
 		if (typeof json_data.error != 'undefined') {
@@ -122,11 +122,9 @@ function handleResult(result, args){
 			} else {
 				if (typeof result.msg != 'undefined') {
 					if (replace_target) {
-						alertdev('maakt target leeg');
 						Obj(target).html('');
 						before = '';
 					}
-					alertdev('append met '+ target + ' en '+ result.msg );
 					ajaxAppend(result.msg, target, 'status', before);
 				} else {
 					alertdev('The action succeeded.');
@@ -162,7 +160,7 @@ function handleDeleteResult(result, args){
 			if (row){
 				row.remove();
 			} else {
-				alertdev('hij kon de row met data-record = '+result.id+ ' niet vinden');
+				alertdev('it could not find the row : data-record = '+result.id);
 			}
 		}
 	} else {
