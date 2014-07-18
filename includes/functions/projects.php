@@ -51,6 +51,7 @@ function showProjectPage($action='', $show_last=FALSE){
 			echo renderTabs(1, null, 'project_page-', 'project', $data, null, TRUE, $add_tab, 1,'project');
 			?>
 				<script type="text/javascript">
+					   transform_into_rte();
 		        	   activatetabs('tab_', ['project_page-1']);
 		        </script><?php
 		} else {
