@@ -124,6 +124,7 @@ function renderProposalTabs(result, labels, container){
 	}
 	s += '</ol>';
 	s += '<div class="tabs_container">';
+	//TODO: translate this
 	var ney = 'Nothing entered yet';
 	for (var t=0; t < count;t++){
 		target = labels[t].tab;

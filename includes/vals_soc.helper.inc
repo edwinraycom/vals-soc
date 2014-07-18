@@ -29,7 +29,17 @@ function altSubValue($arr, $field, $default=''){
 		return $default;
 	}
 }
+function deriveTypeAndAction($derive_type=true){
+	$current_path = explode('/', $_SERVER['HTTP_REFERER']);
+	$action = array_pop($current_path);
+	$derived = array('show_action'=> $action);
+	if ($derive_type){
+		$type = array_pop($current_path);
+		$derived['type'] = 'DEZE WEG';// $type;
+	}
+	return $derived;
 
+}
 function getRequestVar($field, $default='', $request='all'){
 	if ($request == 'post'){
 		return altSubValue($_POST, $field, $default);

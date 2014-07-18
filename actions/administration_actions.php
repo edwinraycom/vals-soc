@@ -7,6 +7,7 @@ include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
 include(_VALS_SOC_ROOT.'/includes/functions/projects.php');
 include(_VALS_SOC_ROOT.'/includes/functions/administration.php');
 
+
 //return result depending on action parameter
 switch ($_GET['action']){
 	case 'list':
@@ -131,8 +132,9 @@ switch ($_GET['action']){
     	$type = altSubValue($_POST, 'type', '');
     	$id = altSubValue($_POST, 'id', '');
     	$target = altSubValue($_POST, 'target', '');
+    	extract(deriveTypeAndAction(empty($type)), EXTR_OVERWRITE);
     	if (! isValidOrganisationType($type)) {
-    		echo t('There is no such type we can delete');
+    		echo jsonBadResult(t('There is no such type we can delete'));
     	} else {
     		$result = Groups::removeGroup($type, $id);
     		echo $result ? jsonGoodResult() : jsonBadResult('', 'error', array('target'=>$target));

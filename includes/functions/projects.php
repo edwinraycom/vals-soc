@@ -160,7 +160,7 @@ function renderProject($project='', $target=''){
 		")\" value='Submit proposal for this project'/>";
 	}
 	if (Groups::isAssociate('project', $id)){
-		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this project?')."\")){ajaxCall(\"project\", \"delete\", {type: \"$type\", id: $id}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"project\"]);}'";
+		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this project?')."\")){ajaxCall(\"project\", \"delete\", {type: \"$type\", id: $id, target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"project\"]);}'";
 		$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"$type\", id: $id, target: \"$target\"}, \"formResult\", \"html\", [\"$target\", \"project\"]);'";
 		$content .= "<input type='button' value='".t('edit')."' $edit_action/>";
 		$content .= "<input type='button' value='".t('delete')."' $delete_action/>";
