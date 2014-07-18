@@ -4,8 +4,9 @@ function initDashboardLayout(){
 	$timeline_args = array();
 	$timeline_args['managedOrganisationsVisible'] = FALSE;
 	$timeline_args['manageProjectIdeasVisible'] = FALSE;
-	$timeline_args['connectionsVisible'] = FALSE;
+	$timeline_args['browseProjectIdeasVisible'] = FALSE;
 	$timeline_args['organisationMembersVisible'] = FALSE;
+	$timeline_args['connectionsVisible'] = FALSE;
 	$timeline_args['proposalsVisible'] = FALSE;
 	$timeline_args['matchedProjectsVisible'] = FALSE;
 	$timeline_args['dashboardLegend'] = "";
@@ -27,6 +28,7 @@ function initDashboardLayout(){
 					Timeline::getInstance()->getOrgsSignupEndDate()->format('F j, Y, g:i a');
 			$timeline_args['managedOrganisationsVisible'] = TRUE;
 			$timeline_args['manageProjectIdeasVisible'] = TRUE;
+			$timeline_args['browseProjectIdeasVisible'] = TRUE;
 			$timeline_args['organisationMembersVisible'] = TRUE;
 			break;
 		case PRE_ORGS_ANNOUNCED_PERIOD:
@@ -36,12 +38,14 @@ function initDashboardLayout(){
 					Timeline::getInstance()->getOrgsAnnouncedDate()->format('F j, Y, g:i a');
 			$timeline_args['managedOrganisationsVisible'] = TRUE; // only modify entries
 			$timeline_args['manageProjectIdeasVisible'] = TRUE;
+			$timeline_args['browseProjectIdeasVisible'] = TRUE;
 			$timeline_args['organisationMembersVisible'] = TRUE;
 			break;
 		case POST_ORGS_ANNOUNCED_PERIOD:
 			$timeline_args['dashboardLegend'] = t("Your organisations and project ideas are now visible to other users of the system.");
 			$timeline_args['managedOrganisationsVisible'] = TRUE;
 			$timeline_args['manageProjectIdeasVisible'] = TRUE;
+			$timeline_args['browseProjectIdeasVisible'] = TRUE;
 			$timeline_args['organisationMembersVisible'] = TRUE;
 			$timeline_args['connectionsVisible'] = TRUE;
 			break;
@@ -49,6 +53,7 @@ function initDashboardLayout(){
 			$timeline_args['dashboardLegend'] = t("Student signup period. Students can now submit project proposals");
 			$timeline_args['managedOrganisationsVisible'] = TRUE;
 			$timeline_args['manageProjectIdeasVisible'] = TRUE;
+			$timeline_args['browseProjectIdeasVisible'] = TRUE;
 			$timeline_args['organisationMembersVisible'] = TRUE;
 			$timeline_args['connectionsVisible'] = TRUE;
 			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
@@ -58,6 +63,7 @@ function initDashboardLayout(){
 				Timeline::getInstance()->getOrgsReviewApplicationsDate()->format('F j, Y, g:i a');
 			$timeline_args['managedOrganisationsVisible'] = TRUE;
 			$timeline_args['manageProjectIdeasVisible'] = TRUE;
+			$timeline_args['browseProjectIdeasVisible'] = TRUE;
 			$timeline_args['organisationMembersVisible'] = TRUE;
 			$timeline_args['connectionsVisible'] = TRUE;
 			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
@@ -67,6 +73,7 @@ function initDashboardLayout(){
 				Timeline::getInstance()->getStudentsMatchedToMentorsDate()->format('F j, Y, g:i a');
 			$timeline_args['managedOrganisationsVisible'] = TRUE;
 			$timeline_args['manageProjectIdeasVisible'] = TRUE;
+			$timeline_args['browseProjectIdeasVisible'] = TRUE;
 			$timeline_args['organisationMembersVisible'] = TRUE;
 			$timeline_args['connectionsVisible'] = TRUE;
 			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
@@ -76,6 +83,7 @@ function initDashboardLayout(){
 				Timeline::getInstance()->getAcceptedStudentsAnnouncedDate()->format('F j, Y, g:i a');
 			$timeline_args['managedOrganisationsVisible'] = TRUE;
 			$timeline_args['manageProjectIdeasVisible'] = TRUE;
+			$timeline_args['browseProjectIdeasVisible'] = TRUE;
 			$timeline_args['organisationMembersVisible'] = TRUE;
 			$timeline_args['connectionsVisible'] = TRUE;
 			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
@@ -86,6 +94,7 @@ function initDashboardLayout(){
 				Timeline::getInstance()->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
 			$timeline_args['managedOrganisationsVisible'] = TRUE;
 			$timeline_args['manageProjectIdeasVisible'] = TRUE;
+			$timeline_args['browseProjectIdeasVisible'] = TRUE;
 			$timeline_args['organisationMembersVisible'] = TRUE;
 			$timeline_args['connectionsVisible'] = TRUE;
 			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
@@ -96,6 +105,7 @@ function initDashboardLayout(){
 				Timeline::getInstance()->getCodingStartDate()->format('F j, Y, g:i a');
 			$timeline_args['managedOrganisationsVisible'] = TRUE;
 			$timeline_args['manageProjectIdeasVisible'] = TRUE;
+			$timeline_args['browseProjectIdeasVisible'] = TRUE;
 			$timeline_args['organisationMembersVisible'] = TRUE;
 			$timeline_args['connectionsVisible'] = TRUE;
 			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
@@ -106,6 +116,7 @@ function initDashboardLayout(){
 				Timeline::getInstance()->getSuggestedCodingDeadline()->format('F j, Y, g:i a');
 			$timeline_args['managedOrganisationsVisible'] = TRUE;
 			$timeline_args['manageProjectIdeasVisible'] = TRUE;
+			$timeline_args['browseProjectIdeasVisible'] = TRUE;
 			$timeline_args['organisationMembersVisible'] = TRUE;
 			$timeline_args['connectionsVisible'] = TRUE;
 			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
@@ -116,6 +127,7 @@ function initDashboardLayout(){
 				Timeline::getInstance()->getCodingEndDate()->format('F j, Y, g:i a');
 			$timeline_args['managedOrganisationsVisible'] = TRUE;
 			$timeline_args['manageProjectIdeasVisible'] = TRUE;
+			$timeline_args['browseProjectIdeasVisible'] = TRUE;
 			$timeline_args['organisationMembersVisible'] = TRUE;
 			$timeline_args['connectionsVisible'] = TRUE;
 			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
@@ -181,7 +193,7 @@ function getOrgAdminLayout($timeline_args){
 						<h4>
 							<a class="dashboard-link component-link"
 								href="'.$base_url.'/dashboard/projects/administer"
-								title="'.t("Manage project ideas").'">'.t("Manage project ideas").'</a>
+								title="'.t("Manage your project ideas").'">'.t("Manage your project ideas").'</a>
 						</h4>
 						<p>'.t("Allows you to add and amend project ideas for students.").'</p>
 					</div>
@@ -203,6 +215,19 @@ function getOrgAdminLayout($timeline_args){
 							title="'.t("Members of my organisations").'">'.t("Members of my organisations").'</a>
 						</h4>
 						<p>'.t("List of your organisations members").'</p>
+					</div>
+		';
+	}
+	
+	if($timeline_args['browseProjectIdeasVisible']){
+		$output .='
+					<div class="column-entry org_app manage_project_ideas">
+						<h4>
+							<a class="dashboard-link component-link"
+								href="'.$base_url.'/dashboard/projects/browse"
+								title="'.t("All project ideas (read only)").'">'.t("All project ideas (read only)").'</a>
+						</h4>
+						<p>'.t("All project ideas from all organisations").'</p>
 					</div>
 		';
 	}
