@@ -4,7 +4,7 @@
  */
 function vals_soc_cron_handler(){
 	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
-	drupal_set_message(t('vals_soc_cron_handler called'));
+	//drupal_set_message(t('vals_soc_cron_handler called'));
 	//module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
 	//$period = Timeline::getInstance()->getCurrentPeriod();
 	//variable_set('vals_soc_current_period', $period);
@@ -33,7 +33,7 @@ function vals_soc_cron_handler(){
  * @return multitype:string number
  */
 function vals_soc_cron_queue_info_handler() {
-	drupal_set_message(t('vals_soc_cron_queue_info_handler called'));
+	//drupal_set_message(t('vals_soc_cron_queue_info_handler called'));
 	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
 	$queues['vals_soc_cron_email'] = array( 'worker callback' => 'vals_soc_cron_email_handler', // This is the callback function for each queue item.
 		'time' => 180); // This is the max run time per cron run in seconds. 
