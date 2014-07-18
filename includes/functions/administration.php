@@ -77,7 +77,8 @@ function showSupervisorPage($action, $show_last=FALSE){
 		echo renderTabs(1, null, 'group_page-', 'studentgroup', $data, null, TRUE, $add_tab);
 		?>
 		<script type="text/javascript">
-        	   activatetabs('tab_', ['group_page-1']);
+				transform_into_rte();
+				activatetabs('tab_', ['group_page-1']);
         </script><?php
 	} else {
 		$nr = 1;
@@ -237,6 +238,7 @@ function showInstitutePage($action, $show_last=FALSE){
 		echo renderTabs(1, null, 'inst_page-', 'institute', $data, null, TRUE, $add_tab);
 		?>
 		<script type="text/javascript">
+			transform_into_rte();
 			activatetabs('tab_', ['inst_page-1']);
         </script><?php
 
@@ -389,7 +391,8 @@ function showOrganisationPage($action, $show_last=FALSE){
 		echo renderTabs(1, null, 'organisation_page-', 'organisation', $data, null, TRUE, $add_tab);
 		?>
 		<script type="text/javascript">
-        	   activatetabs('tab_', ['organisation_page-1']);
+		   transform_into_rte();
+		   activatetabs('tab_', ['organisation_page-1']);
         </script><?php
 	} else {
 		if ($action == 'administer'){
