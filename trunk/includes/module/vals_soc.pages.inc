@@ -76,7 +76,7 @@ function vals_soc_dashboard_overview_page(){
 		$includeFile = 'includes/module/ui/dashboard/instadminlayout';
 	}
 	elseif(hasRole(array('supervisor'))){  // may need to update this to separate page
-		$includeFile = 'includes/module/ui/dashboard/mentorlayout';
+		$includeFile = 'includes/module/ui/dashboard/supervisorlayout';
 	}
 	elseif(hasRole(array('student'))){
 		$includeFile = 'includes/module/ui/dashboard/studentlayout';
