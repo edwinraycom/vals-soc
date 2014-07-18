@@ -448,11 +448,9 @@ function showOrganisationMembersPage($organisations){
 		$init_offset++;
 	}
 	
-	$all_orgs_i_participate_in = array();
 	foreach ($organisations as $org){
 		$tabs[] = "'mentor_page-$init_offset'";
 		$data[] = array($init_offset, $org->name, 'showmembers', 'organisation', $org->org_id);
-		array_push($all_orgs_i_participate_in, $org->org_id);
 		$init_offset++;
 	}
 
