@@ -77,7 +77,7 @@ switch ($_GET['action']){
 	case 'add':
 		$target = altSubValue($_POST, 'target');
 		$type = altSubValue($_POST, 'type');
-		echo '<h2>'.t('Add new1').'</h2>';
+		echo '<h2>'.t('Add new project').'</h2>';
 		echo "<div id='msg_$target'></div>"; 
 		$form = drupal_get_form("vals_soc_project_form", '', $target);
 		// Process the submit button which uses ajax
@@ -129,9 +129,9 @@ switch ($_GET['action']){
 		}
 	break;
 	case 'show':
-		$action = 'NOTIMPORTANTNOW';
+		$show_action = 'NOTIMPORTANTNOW';
 		$show_last = altSubValue($_POST, 'new_tab', false);
-		showProjectPage($action, $show_last);
+		showProjectPage($show_action, $show_last);
 	break;
 	case 'edit':
 		$type = altSubValue($_POST, 'type', '');

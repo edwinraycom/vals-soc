@@ -55,6 +55,7 @@ switch ($_GET['action']){
 	case 'add':
 		$target = altSubValue($_POST, 'target');
 		$type = altSubValue($_POST, 'type');
+		$show_action = altSubValue($_GET, 'show_action', 'administer');
 		echo
 		'<h2>'.
 			(($type == 'studentgroup') ? t('Add a group to your list of groups') :
@@ -62,7 +63,7 @@ switch ($_GET['action']){
 		'</h2>'; // when is this ever called for a student group? - there is a separate addgroup task above.
 		echo "<div id='msg_$target'></div>";
 
-		$form = drupal_get_form("vals_soc_${type}_form", null, $target);
+		$form = drupal_get_form("vals_soc_${type}_form", null, $target, $show_action);
 		$form['#action'] = url('administer/members');
 		// Process the submit button which uses ajax
 		$form['submit'] = ajax_pre_render_element($form['submit']);
@@ -101,9 +102,9 @@ switch ($_GET['action']){
         }
      break;
     case 'show':
-    	$action = altSubValue($_POST, 'action', 'administer');
-    	$show_last = altSubValue($_POST, 'new', false);
-    	showRoleDependentAdminPage(getRole(), $action, $show_last);
+    	$show_action = altSubValue($_POST, 'show_action', 'administer');
+    	$show_last = altSubValue($_POST, 'new_tab', false);
+    	showRoleDependentAdminPage(getRole(), $show_action, $show_last);
     break;
     case 'view':
     	$type = altSubValue($_POST, 'type');
@@ -138,8 +139,6 @@ switch ($_GET['action']){
     	}
     break;
     case 'edit':
-    	//echo "<form action='"
-    	//just a tryout
         $type = altSubValue($_POST, 'type', '');
         $id = altSubValue($_POST, 'id', '');
         $target = altSubValue($_POST, 'target', '');
@@ -188,6 +187,7 @@ switch ($_GET['action']){
     case 'save':
         $type = altSubValue($_POST, 'type', '');
         $id = altSubValue($_POST, 'id', '');
+        $show_action = altSubValue($_POST, 'show_action', '');
         //TODO do some checks here
         if(! isValidOrganisationType($type) ){//&& ($type !== 'project')
         	$result = NULL;
@@ -198,9 +198,11 @@ switch ($_GET['action']){
 
         $properties = Groups::filterPost($type, $_POST);
         if (!$id){
+        	$new = true;
         	$result = ($type == 'studentgroup') ? Groups::addStudentGroup($properties) :
         		($type == 'project' ? Project::getInstance()->addProject($properties) : Groups::addGroup($properties, $type));
         } else {
+        	$new = false;
         	$result = Groups::changeGroup($type, $properties, $id);
         }
 
@@ -209,6 +211,8 @@ switch ($_GET['action']){
             		'result'=>TRUE,
             		'id' => $id,
             		'type'=> $type,
+					'new_tab' => $new,
+            		'show_action' => $show_action,
             		'msg'=>
             		($id ? tt('You succesfully changed the data of your %1$s', t($type)):
             			   tt('You succesfully added your %1$s', t($type))).
