@@ -266,7 +266,7 @@ function showInstituteGroupsAdminPage($my_institute, $show_last){
 		
 		$tab_id_prefix = 'group_page-';
 		$tab_id_prefix2 = 'group2_page-';
-		$nr_groups = count($groups);
+		$nr_groups = $groups->rowCount();
 		$current_tab = $show_last ? $nr_groups : 1;
 		foreach ($groups as $group){
 			$nr3++;
@@ -331,7 +331,7 @@ function showInstituteMembersPage($my_institute, $show_last=FALSE){
 		
 // 		$tab_id_prefix = 'group_page-';
 		$tab_id_prefix2 = 'group2_page-';
-		//$nr_groups = count($groups);
+		//$nr_groups = $groups->rowCount();
 		//$current_tab = $show_last ? $nr_groups : 1;
 		$current_tab = 1;
 		foreach ($groups as $group){
