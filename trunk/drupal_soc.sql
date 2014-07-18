@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS soc_organisations (
   contact_name varchar(128) NOT NULL DEFAULT '' COMMENT 'The name of the contact person.',
   contact_email varchar(128) NOT NULL DEFAULT '' COMMENT 'The email of the contact person.',
   url varchar(256) DEFAULT '' COMMENT 'The website of the organisation',
-  description varchar(1024) DEFAULT '' COMMENT 'Description of the organisation',
+  description TEXT DEFAULT '' COMMENT 'Description of the organisation',
   PRIMARY KEY (org_id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='The organisations gettting involved in the Semester of Code' AUTO_INCREMENT=5 ;
 
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS soc_projects (
   pid int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Project id.',
   owner_id int(11) NOT NULL,
   title varchar(255) NOT NULL DEFAULT '' COMMENT 'The title of the project.',
-  description text COMMENT 'The description of the project.',
+  description TEXT COMMENT 'The description of the project.',
   url varchar(1024),
   state varchar(128) DEFAULT NULL COMMENT 'The state of the project',
   org_id int(11) unsigned NOT NULL,
@@ -130,7 +130,7 @@ CREATE TABLE IF NOT EXISTS soc_studentgroups (
   owner_id int(11) NOT NULL COMMENT 'The id of the teacher',
   inst_id int(11) NOT NULL COMMENT 'Institute id.',
   `name` varchar(255) NOT NULL COMMENT 'The name of the group to remind.',
-  description varchar(512) DEFAULT '' COMMENT 'Some description or comment',
+  description TEXT DEFAULT '' COMMENT 'Some description or comment',
   PRIMARY KEY (studentgroup_id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='The students will be divided in groups, each teacher...' AUTO_INCREMENT=23 ;
 
