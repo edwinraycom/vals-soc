@@ -27,7 +27,6 @@ function refreshTabs(json_data, args){
 	if (json_data && (json_data.result !== 'error')){
 		var show_action = altSub(json_data, 'show_action', 'administer');
 		var new_tab = altSub(json_data, 'new_tab', false);
-		console.log(' hier komen de gegevens ',container, targ, json_data.msg);
 		ajaxCall(handler, 'show', {type:type, show_action:show_action, new_tab: new_tab}, 
 			'handleContentAndMessage', 'html', [container, 'ajax_msg', json_data.msg]);
 	} else {
@@ -146,11 +145,9 @@ function handleDeleteResult(result, args){
 			} else {
 				if (typeof result.msg != 'undefined') {
 					if (result.replace_target) {
-						alertdev('maakt target leeg '+ result.target);
 						Obj(result.target).html('');
 						before = '';
 					}
-					alertdev('append met '+ result.target + ' en '+ result.msg );
 					ajaxAppend(result.msg, result.target, 'status', result.before);
 				} else {
 					alertdev('The action succeeded.');
