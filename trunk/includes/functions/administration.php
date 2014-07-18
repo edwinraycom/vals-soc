@@ -438,9 +438,8 @@ function showOrganisationAdminPage($organisations, $show_last=FALSE){
 	$tabs = array();
 
 	$tab_id_prefix = 'organisation_page-';
-	$nr_orgs = count($organisations);
+	$nr_orgs = $organisations->rowCount();
 	$current_tab = $show_last ? $nr_orgs : 1;
-	
 	foreach ($organisations as $org){
 		$nr++;
 		if ($nr == $current_tab){
@@ -463,7 +462,7 @@ function showOrganisationAdminPage($organisations, $show_last=FALSE){
 	echo "<hr>";
 	?>
 	<script type="text/javascript">
-		activatetabs('tab_', [<?php echo implode(',', $tabs);?>]);
+		activatetabs('tab_', [<?php echo implode(',', $tabs);?>], '<?php echo "$tab_id_prefix$current_tab";?>');
 		</script>
 	<?php
 }
