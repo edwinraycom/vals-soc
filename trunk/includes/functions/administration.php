@@ -380,7 +380,7 @@ function showInstituteAdminPage($my_institute){
 function showOrganisationPage($action, $show_last=FALSE){
 	//Get my organisations
 	$organisations = Groups::getGroups('organisation', $GLOBALS['user']->uid);
-	if (! $organisations->rowCount() && hasPermission('vals admin register')){
+	if (! $organisations->rowCount() && user_access('vals admin register')){
 		echo t('You have no organisation yet registered');
 		echo '<h2>'.t('Add your organisation').'</h2>';
 		
