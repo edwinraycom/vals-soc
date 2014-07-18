@@ -11,12 +11,12 @@ function showProjectPage($action='', $show_last=FALSE){
 		//There are no organisations yet for this user
 		if ($role == 'organisation_admin') {
 			echo t('You have no organisation yet.').'<br/>';
-			echo "<a href='"._VALS_SOC_URL. "/dashboard/members'>".t('Please go to the organisation register page')."</a>";
-				
+			echo "<a href='"._VALS_SOC_URL. "/dashboard/organisation/administer'>".t('Please go to the organisation register page')."</a>";
+
 		} else {
 			echo t('You are not connected to any organisation yet.').'<br/>';
 			echo "<a href='"._VALS_SOC_URL. "/user'>".t('Please go to the register page')."</a>";
-				
+
 		}
 	} else {
 		$projects = Project::getProjectsByUser($role, $GLOBALS['user']->uid, $my_organisations->fetchCol());
@@ -30,7 +30,7 @@ function showProjectPage($action='', $show_last=FALSE){
 			// Print $form
 			$add_tab = drupal_render($form);
 			$add_tab .=  $extra_js;
-			
+
 /*
 			$form = drupal_get_form('vals_soc_project_form', '', 'project_page-1');
 			$form['#action'] = url('dashboard/projects/administer');
@@ -70,10 +70,10 @@ function showProjectPage($action='', $show_last=FALSE){
 				$data[] = array(0, $project->title, 'view', 'project', $project->pid);
 				$nr++;
 			}
-	
+
 			$data[] = array(1, 'Add', 'add', 'project', 0, "target=project_page-$nr", true, 'adding from the right');
 			$activating_tabs[] = "'project_page-$nr'";
-	
+
 			$nr2 = 1;
 			$data2 = array();
 			// 		[translate, label, action, type, id, extra GET arguments]
@@ -88,15 +88,15 @@ function showProjectPage($action='', $show_last=FALSE){
 			}
 			echo renderTabs($nr, 'Project', $tab_id_prefix, 'project', $data, $id, TRUE,
 				renderProject($my_project, "$tab_id_prefix$current_tab"), $current_tab,'project');
-	
+
 			echo "<hr>";
-			
+
 			echo '<h2>'.t('All your projects').'</h2>';
 			echo renderTabs($nr2, 'Organisation', 'project2_page-', 'organisation', $data2, null, TRUE,
 				renderProjects('', $projects));
 			?>
 			<script type="text/javascript">
-				activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>], '<?php echo 
+				activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>], '<?php echo
 					"$tab_id_prefix$current_tab";?>');
 				activatetabs('tab_', [<?php echo implode(', ', $activating_tabs2);?>], null, true);
 			</script>
@@ -130,7 +130,7 @@ function renderProjects($organisation_selection='', $projects='', $target=''){
 		}
 		$s .= "</ul>";
 		return $s;
-	} 
+	}
 	else {
 		return t('You have no projects yet');
 	}
@@ -193,7 +193,7 @@ function initBrowseProjectLayout(){//$target='content'
 	</div>
 	<div id="ProjectTableContainer" style="width: 600px;"></div>
 
-<script type="text/javascript">	
+<script type="text/javascript">
 	jQuery(document).ready(function($){
 
 	window.view_settings = {};
@@ -201,7 +201,7 @@ function initBrowseProjectLayout(){//$target='content'
 	//window.view_settings.target_id = '<?php //echo $target;?>';
 	//var apply_projects = <?php //echo $apply_projects ? 1: 0;?>;
 	///var target_id = '<?php //echo $target;?>';//was misused in old getProposalFormForProject only
-	
+
 
 	//Prepare jTable
 	$("#ProjectTableContainer").jtable({
@@ -214,7 +214,7 @@ function initBrowseProjectLayout(){//$target='content'
 			listAction: moduleUrl + "actions/project_actions.php?action=list_projects"
 		},
 		fields: {
-			pid: {								
+			pid: {
 				key: true,
 				create: false,
 				edit: false,
@@ -244,7 +244,7 @@ function initBrowseProjectLayout(){//$target='content'
 					},
 				create: false,
 				edit: false
-			}<?php 
+			}<?php
 			if ($apply_projects) {?>
 				,
 				Propose: {
@@ -257,19 +257,19 @@ function initBrowseProjectLayout(){//$target='content'
 						},
 					create: false,
 					edit: false
-				}<?php 
+				}<?php
 			}?>
-		
+
 		}
-		
+
 	});
-	
+
 	//Load project list from server on initial page load
 	$("#ProjectTableContainer").jtable("load", {
 		tags: $("#tags").val(),
 		organisation: $("#organisation").val()
 	});
-		
+
 	$("#tags").keyup(function(e) {
 		e.preventDefault();
 		// only auto clear when there is no tag info
@@ -280,7 +280,7 @@ function initBrowseProjectLayout(){//$target='content'
 			});
 		}
 	});
-		
+
 	$("#organisation").change(function(e) {
 		e.preventDefault();
 		if(testTagInput()){
@@ -290,7 +290,7 @@ function initBrowseProjectLayout(){//$target='content'
 			});
 		}
 	});
-	
+
 	$("#project_filter").submit(function(e){
 		e.preventDefault();
 		if(testTagInput()){
@@ -300,11 +300,11 @@ function initBrowseProjectLayout(){//$target='content'
 			});
 		}
 	});
-		
+
 	// define these at the window level so that they can still be called once loaded
 	window.getProposalFormForProject = getProposalFormForProject;
 	window.getProjectDetail = getProjectDetail;
-	
+
 	});
 	</script>
 <?php

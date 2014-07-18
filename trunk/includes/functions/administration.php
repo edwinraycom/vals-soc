@@ -382,10 +382,20 @@ function showOrganisationPage($action, $show_last=FALSE){
 	$organisations = Groups::getGroups('organisation', $GLOBALS['user']->uid);
 	if (! $organisations->rowCount() && hasPermission('vals admin register')){
 		echo t('You have no organisation yet registered');
-		$add_tab = '<h2>'.t('Add your organisation').'</h2>';
+		echo '<h2>'.t('Add your organisation').'</h2>';
 		
-		$f3 = drupal_get_form('vals_soc_organisation_form', '', 'organisation_page-1');
+		$form = drupal_get_form('vals_soc_organisation_form', '', 'organisation_page-1');
+		/*
 		$add_tab .= drupal_render($f3);
+		*/
+		$form['submit'] = ajax_pre_render_element($form['submit']);
+		$extra_js = valssoc_form_get_js($form);
+		$form['#attached']['js'] = array();
+		// Print $form
+		$add_tab = drupal_render($form);
+		$add_tab .=  $extra_js;
+		
+		
 		$data = array();
 		$data[] = array(1, 'Add', 'add', 'organisation', null, "target=admin_container", true, 'adding_to_the right');
 		echo renderTabs(1, null, 'organisation_page-', 'organisation', $data, null, TRUE, $add_tab);
