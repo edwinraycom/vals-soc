@@ -8,9 +8,11 @@ function vals_soc_cron_handler(){
 	//module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
 	//$period = Timeline::getInstance()->getCurrentPeriod();
 	//variable_set('vals_soc_current_period', $period);
+	/*
 	$to = "ps3com40@gmail.com";
 	$items = array();
 	$items[0] = array('to' => $to, 'message_type' => 'vals_soc_email_accepted_organisation');
+	*/
 	/*
 	$queue = DrupalQueue::get('vals_soc_cron_email');
 	foreach($items as $item) {
