@@ -54,7 +54,17 @@ function vals_soc_menu_handler(){
 	$items['organisations/browse'] = getOrganisationBrowseLink('organisations/browse');
 	// Allows user to browse projects registered in the system
 	$items['projects/browse'] = getProjectsBrowseLink('projects/browse');
-
+	
+	$items['http://semesterofcode.com/'] = array(
+		'title' => t('Information'),
+		'type' => MENU_NORMAL_ITEM,
+		'access arguments' => TRUE, 
+		'page callback' => 'drupal_goto',
+		'page arguments' => array('http://semesterofcode.com/')
+	);
+	// open this in a new window
+	$items['http://semesterofcode.com/']['options']['attributes']['target'] = '_blank';
+	
 	return $items;
 }
 
@@ -141,14 +151,14 @@ function getDashboardLink(){
 	);
 }
 
-
 /*********************************************************************************************
  * 	 PLACE FUNCTIONS BELOW THAT ARE TIMELINE DEPENDANT AND MUST GO THROUGH THE ACCESS CHECK
  * *******************************************************************************************
  */
 
 /**
- * SHOWS A DIFFERENT SET OF TABS DEPENDING ON ROLE TYPE
+ * TODO - DEPRICATE TIHS FUNCTION
+ * HOWS A DIFFERENT SET OF TABS DEPENDING ON ROLE TYPE
  * - ORG ADMIN CAN ENTER/EDIT/DELETE ORGANSATIONS
  * - INST ADMIN CAN ENTER/EDIT/DELETE INSTITUTES
  * - SUPERVISORS CAN ENTER/EDIT/DELETE STUDENTGROUPS
