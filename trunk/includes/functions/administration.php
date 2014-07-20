@@ -352,11 +352,12 @@ function showInstituteMembersPage($my_institute, $show_last=FALSE){
 	//	[translate, label, action, type, id, extra GET arguments, render with rich text area, render tab to the right]
 // 		$data3[] = array(1, 'Add', 'addgroup', 'studentgroup', null, "target=$tab_id_prefix$nr3", true);
 // 		$tabs3[] = "'$tab_id_prefix$nr3'";
-
+		$teachers = Users::getSupervisors($my_institute->inst_id);
 
 	    echo '<h2>'.t('The registered supervisors and students of your institute').'</h2>';
 	    echo renderTabs($nr2, '', 'member_page-', 'institute', $data2, $my_institute->inst_id, TRUE,
-	    		renderUsers('supervisor', '', $my_institute->inst_id, 'institute'));
+	    		//renderUsers('supervisor', '', $my_institute->inst_id, 'institute'));
+	    		renderSupervisors('', $teachers));
 	        
 	    if ($nr4 > 0){//There is more than the add tab
 		    echo sprintf('<h2>%1$s</h2>', t('Your students as divided in groups'));
@@ -473,7 +474,7 @@ function showOrganisationMembersPage($organisations){
 	$tab = array();
 	// 		[translate, label, action, type, id, extra GET arguments]
 	if(user_access('vals admin register')){
-		$data[] = array($init_offset, 'All your Mentors', 'showmembers', 'organisation', 'all', 'subtype=mentor');
+		$data[] = array($init_offset, t('All Members'), 'showmembers', 'organisation', 'all', 'subtype=mentor');
 		$tabs = array("'mentor_page-$init_offset'");
 		$init_offset++;
 	}
@@ -486,8 +487,9 @@ function showOrganisationMembersPage($organisations){
 
 	$first_tab_data_type = $data[0][4];
 	
-	echo '<h2>'.t('The registered mentors of your organisations').'</h2>';
+	//echo '<h2>'.t('The registered mentors of your organisations').'</h2>';
 	echo renderTabs(--$init_offset, 'Org', 'mentor_page-', 'organisation', $data, null, TRUE,
+		renderUsers('organisation_admin', '', $first_tab_data_type, 'organisation').
 		renderUsers('mentor', '', $first_tab_data_type, 'organisation'));
 
 	?>

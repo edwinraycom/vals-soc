@@ -77,7 +77,7 @@ input[type=button]  {
 	line-height: 30px;
 	margin: 0;
 	padding: 0 0 0 7px;
-	text-transform: uppercase;
+	font-weight: bold;
 }
 
 .block .block-content {
@@ -102,7 +102,14 @@ input[type=button]  {
 	display: inline-block;
 }
 
-
+.underline-as-drupal{
+	margin: 0 0 0.5em;
+	border-bottom: 1px solid #d6d6d6;
+	padding-bottom: 5px;
+	text-shadow: 0 1px 0 #fff;
+    font-size: 1.071em;
+    line-height: 1.2;
+}
 /*************************************************
 	CSS for the timeline block
 *************************************************/

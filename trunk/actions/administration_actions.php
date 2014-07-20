@@ -99,7 +99,9 @@ switch ($_GET['action']){
            if($organisation_id == 0){
            	$organisation_id = 'all';
            }
-           echo renderUsers('mentor', '', $organisation_id, 'organisation');
+           echo 
+			renderUsers('organisation_admin', '', $organisation_id, 'organisation'). 
+			renderUsers('mentor', '', $organisation_id, 'organisation');
         }
      break;
     case 'show':
@@ -116,7 +118,7 @@ switch ($_GET['action']){
     		die(t('There are missing arguments. Please inform the administrator of this mistake.'));
     	}
     	$is_project = ($type == 'project');
-    	$organisation = $is_project ? Project::getInstance()->getProjectById($id, TRUE) : 
+    	$organisation = $is_project ? Project::getInstance()->getProjectById($id, TRUE) :
     		Groups::getGroup($type, $id);
     	if (! $organisation){
     		echo tt('The %1$s cannot be found', t($type));
@@ -170,8 +172,8 @@ switch ($_GET['action']){
         	// Print $form
         	print drupal_render($form);
         	print valssoc_form_get_js($form);
-        	
-        	
+
+
         	/* <script type="text/javascript" src='<?php echo _VALS_SOC_FULL_URL.'/includes/js/test_functions.js';?>'></script><?php
         	 * if ($form['#attached']['js']){
         		foreach ($form['#attached']['js'] as $incl){
@@ -182,8 +184,8 @@ switch ($_GET['action']){
         	} */
         	// Print JS
 //        	print drupal_get_js();?>
-        <?php 
-        	
+        <?php
+
         }
     break;
     case 'save':

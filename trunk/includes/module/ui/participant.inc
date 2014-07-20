@@ -4,6 +4,43 @@
  * instititutes, mentors, supervisors, students etc
  */
 
+function formatUsersNice($users, $type='User', $empty_message='', $show_title=FALSE){
+	$output='';
+	$output .= '<dl class="view_record">';
+	if($show_title){
+		$output .=  '<dt>';
+		$formatted_type = ucfirst(str_replace('_', ' ', $type)) .'s';
+		$output .= $formatted_type;
+		$output .=  '</dt>';
+		$output .=  '<span class="ui-icon ui-icon-arrowreturn-1-e"></span>';
+	}
+	
+	if($users && $users->rowCount()){
+		foreach($users as $member){
+			$output .=  '<dd>';
+			$output .=  '<b>'.t('Name').': </b>';
+			if(isset($member->fullname)){
+				$output .= $member->fullname;
+			}
+			else{
+				$output .= $member->name;
+			}
+			$output .=  '</dd>';
+			$output .=  '<dd>';
+			$output .=  '<b>'.t('Email').': </b>'. $member->mail;
+			$output .=  '</dd>';
+			$output .=  '<br/>';
+		}
+	}
+	else{
+		$output .=  '<dd>';
+		$output .=  $empty_message;;
+		$output .=  '</dd>';
+	}
+	$output .=  '</dl>';
+	return $output;
+}
+
 /**
  * Replaces the unordered list used show a member record
  * @param unknown $record - array of key => values (form)
@@ -81,6 +118,7 @@ function renderStudents($group_selection='', $students=''){
         //get all his students
         $students = Users::getStudents($group_selection);
     }
+    /*
     if ($students && $students->rowCount()){
         $s = "<ul class='grouplist'>";
         foreach($students as $student){
@@ -93,6 +131,8 @@ function renderStudents($group_selection='', $students=''){
     } else {
         return t('There are no students yet');
     }  
+    */
+    return formatUsersNice($students, 'student', t('There are no students yet'));
 }
 
 function renderSupervisors($group_selection='', $supervisors=''){
@@ -101,6 +141,7 @@ function renderSupervisors($group_selection='', $supervisors=''){
         //get all his supervisors in his/her institute
         $supervisors = Users::getSupervisors($group_selection);
     }
+    /*
     if ($supervisors->rowCount()){
         $s = "<ul class='grouplist'>";
         foreach($supervisors as $supervisor){
@@ -113,6 +154,8 @@ function renderSupervisors($group_selection='', $supervisors=''){
     } else {
         return t('There are no supervisors yet in this institute');
     }
+    */
+    return formatUsersNice($supervisors, 'supervisor', t('There are no supervisors yet in this institute'));
 }
     
 function renderUsers($type='', $users='', $group_selection='', $group_type=''){
@@ -123,6 +166,7 @@ function renderUsers($type='', $users='', $group_selection='', $group_type=''){
         	$users = null;
         }
     }
+    /*
     if ($users && $users->rowCount()){
         $s = "<ul class='grouplist'>";
         foreach($users as $member){
@@ -136,7 +180,13 @@ function renderUsers($type='', $users='', $group_selection='', $group_type=''){
     	$group_type = $group_type ?: 'studentgroup';
         return $group_selection ? tt('There is no %1$s yet in this %2$s', t($type), t($group_type)) :
         	tt('You have no %1$s yet.', t($type));
-    }  
+    } 
+    */
+    $group_type = $group_type ?: 'studentgroup';
+    $empty_message =  $group_selection ? tt('There is no %1$s yet in this %2$s', t($type), t($group_type)) :
+    tt('You have no %1$s yet.', t($type));
+    return formatUsersNice($users, $type, $empty_message, TRUE);
+    
 }
 
 function renderGroups($supervisor_selection='', $groups=''){

@@ -1,7 +1,7 @@
 <?php
 drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/module/ui/dashboard/css/dashboard.css');
 function getTimelineEnabledMessage(){
-	
+	$return_args = array();
 	$period = Timeline::getInstance()->getCurrentPeriod();
 	switch ($period) {
 		case PROGRAM_NOT_YET_STARTED:
@@ -17,18 +17,31 @@ function getTimelineEnabledMessage(){
 				'</p>';
 			break;
 		case PRE_ORG_SIGNUP_PERIOD:
+			$return_args[0] = t("Program started on"). " " . Timeline::getInstance()->getProgramStartDate()->format('F j, Y, g:i a');
+			$return_args[1] =t("Organisations and Academic partner admins can login and start to create their profile from ") .
+					Timeline::getInstance()->getOrgsSignupStartDate()->format('F j, Y, g:i a');
+			return $return_args;
+			/*
 			return
-				'<p style="font-size: 1.2em;">'.
+				'<h3 class="underline-as-drupal">'.
 					t("Program started on"). " " . Timeline::getInstance()->getProgramStartDate()->format('F j, Y, g:i a') .
-					'<hr class="small-style">'.
-				'</p>'.
+				'</h3>'.
 					
 				'<p>'.
 					t("Organisations and Academic partner admins can login and start to create their profile from ") .
 					Timeline::getInstance()->getOrgsSignupStartDate()->format('F j, Y, g:i a') .
 				'</p>';
+				*/
 			break;
 		case ORG_SIGNUP_PERIOD:
+			
+			$return_args[0] = t("Partner signup period starts"). " " . Timeline::getInstance()->getOrgsSignupStartDate()->format('F j, Y, g:i a');
+			$return_args[1] = t("Organisations and Academic partner admins can now login and start to create their profile.") . ' ' 
+					.'<br/">'.
+					t("You have until the following date to complete your Organisation and Academic partner details.") . ' ' .
+					Timeline::getInstance()->getOrgsSignupEndDate()->format('F j, Y, g:i a');
+			return $return_args;
+			/*
 			return
 				'<p style="font-size: 1.2em;">'.
 					t("Partner signup period starts"). " " . Timeline::getInstance()->getOrgsSignupStartDate()->format('F j, Y, g:i a') .
@@ -41,6 +54,7 @@ function getTimelineEnabledMessage(){
 					t("You have until the following date to complete your Organisation and Academic partner details.") . ' ' .
 					Timeline::getInstance()->getOrgsSignupEndDate()->format('F j, Y, g:i a') .
 				'</p>';
+				*/
 			break;
 		case PRE_ORGS_ANNOUNCED_PERIOD:
 			return
@@ -208,10 +222,14 @@ function getTimelineEnabledMessage(){
 
 
 function renderFrontProgram(){
+	$result = getTimelineEnabledMessage();
 	echo '
 <div class="vals-program block-padding">
-	<div class="block-padding-no-border">
-		' . getTimelineEnabledMessage() . '
+	<div class="block">
+		<h4>'.$result[0].'</h4>
+			<div class="block-padding-no-border">
+				<p>'.$result[1].'</p>
+			</div>
 	</div>
 </div>
 ';
