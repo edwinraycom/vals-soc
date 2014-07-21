@@ -21,7 +21,8 @@
 			</ol><br/>
 			<div id="block-how-it-works-description" class="description">
 				<p>VALS Semester of Code is a program that offers students the chance to write code for open source projects. 
-				We have worked with the open source community to identify and fund exciting projects for the upcoming summer.</p>
+				We have worked with the open source community to identify and fund exciting 
+                                projects for the upcoming academic year.</p>
 			</div>
 		</div>
 	</div>
