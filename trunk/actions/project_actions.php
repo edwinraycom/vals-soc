@@ -21,14 +21,25 @@ switch ($_GET['action']){
 			if(isset($_POST['organisation'])){
 				$organisation = $_POST['organisation'];
 			}
+			$project_id = getRequestVar('pid', null);
 			//Return result to jTable
 			$jTableResult = array();
 			$jTableResult['Result'] = "OK";
-			$jTableResult['TotalRecordCount'] = Project::getInstance()->getProjectsRowCountBySearchCriteria(
-					$tags, $organisation);
-				
-			$jTableResult['Records'] = Project::getInstance()->getProjectsBySearchCriteria($tags,
-					$organisation, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
+			if ($project_id){
+				$project = Project::getInstance()->getProjectById($project_id);
+				if ($project){
+					$jTableResult['TotalRecordCount'] = 1;
+					$jTableResult['Records'] = array($project);
+				} else {
+					$jTableResult['TotalRecordCount'] = 0;
+					$jTableResult['Records'] = array();
+				}
+			} else {
+				$jTableResult['TotalRecordCount'] = Project::getInstance()->getProjectsRowCountBySearchCriteria(
+						$tags, $organisation);
+				$jTableResult['Records'] = Project::getInstance()->getProjectsBySearchCriteria($tags,
+						$organisation, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
+			}
 			print json_encode($jTableResult);
 		}
 		catch(Exception $ex){

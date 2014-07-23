@@ -38,7 +38,7 @@ class Organisations extends Groups{
     }
     
     public function getOrganisationsBySearchCriteria($name, $sorting, $startIndex, $pageSize){
-    	$queryString = "SELECT o.org_id  as org_id, o.name as oname"
+    	$queryString = "SELECT o.org_id, o.name, o.url"
     			." FROM soc_organisations o";
     	 
     	if(isset($name)){

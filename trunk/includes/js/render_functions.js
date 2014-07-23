@@ -24,6 +24,21 @@ function renderProject(project, apply_projects){
 	return content; 
 }
 
+function renderOrganisation(org){
+	var content = "<h1>"+org.name+"</h1>";
+	content += "<h3>Information</h3>"+ org.description;
+//	if (apply_projects){
+//		content +="<div class=\"totheright\" style=\"display:none\">";
+//		//content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+//	
+//		content +="<br/><br/><input id='vals-btn-cancel' type='button' onclick=\"Drupal.CTools.Modal.dismiss()\" value='Cancel' />";
+//		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='Submit proposal for this project'/>";
+//		content +="</div>";
+//	}
+	content += "<br/><h3>(Project)site</h3><a href='"+org.url+"'>"+org.url+"</a>";
+	return content; 
+	
+}
 function renderStudent(data){
 	var s = '<ol>';
 	s += '<li>name: '+(data.student_name ? data.student_name: data.name)+ '</li>';
@@ -177,7 +192,14 @@ function getProjectDetail(projectId){
 		generateAndPopulateModal(data, renderProject, window.view_settings.apply_projects);
 	});
 }
-	
+
+function getOrganisationDetail(org_id){	
+	var url = moduleUrl + "actions/organisation_actions.php?action=organisation_detail&orgid=" + org_id;
+	$jq.get(url,function(data,status){
+		generateAndPopulateModal(data, renderOrganisation);//, window.view_settings.apply_projects
+	});
+}
+
 function testTagInput() {
 	var filter = /^[a-z0-9+_.\s]+$/i;
 	if (filter.test($jq("#tags").val()) || $jq("#tags").val()=="") {
