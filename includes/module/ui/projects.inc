@@ -20,4 +20,5 @@ drupal_add_js(_VALS_SOC_PATH .'/includes/js/jtable/jquery.jtable.js');
 drupal_add_css(_VALS_SOC_PATH . '/includes/js/jtable/jtable.css');
 ctools_include('modal');
 ctools_modal_add_js();
-initBrowseProjectLayout('content');
+$pid = getRequestVar('pid', '', 'get');
+initBrowseProjectLayout($pid);

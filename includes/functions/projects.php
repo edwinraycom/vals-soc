@@ -169,7 +169,7 @@ function renderProject($project='', $target=''){
 	return $content;
 }
 
-function initBrowseProjectLayout(){//$target='content'
+function initBrowseProjectLayout($pid=''){
 	$org_id=0;
 	if(isset($_GET['organisation'])){
 		$org_id = $_GET['organisation'];
@@ -196,78 +196,88 @@ function initBrowseProjectLayout(){//$target='content'
 <script type="text/javascript">
 	jQuery(document).ready(function($){
 
-	window.view_settings = {};
-	window.view_settings.apply_projects = <?php echo $apply_projects ? 1: 0;?>;
-	//window.view_settings.target_id = '<?php //echo $target;?>';
-	//var apply_projects = <?php //echo $apply_projects ? 1: 0;?>;
-	///var target_id = '<?php //echo $target;?>';//was misused in old getProposalFormForProject only
-
-
-	//Prepare jTable
-	$("#ProjectTableContainer").jtable({
-		//title: "Table of projects",
-		paging: true,
-		pageSize: 10,
-		sorting: true,
-		defaultSorting: "title ASC",
-		actions: {
-			listAction: moduleUrl + "actions/project_actions.php?action=list_projects"
-		},
-		fields: {
-			pid: {								
-				key: true,
-				create: false,
-				edit: false,
-				list: false
+		window.view_settings = {};
+		window.view_settings.apply_projects = <?php echo $apply_projects ? 1: 0;?>;
+	
+		//Prepare jTable
+		$("#ProjectTableContainer").jtable({
+			//title: "Table of projects",
+			paging: true,
+			pageSize: 10,
+			sorting: true,
+			defaultSorting: "title ASC",
+			actions: {
+				listAction: moduleUrl + "actions/project_actions.php?action=list_projects"
 			},
-			title: {
-				title: "Project title",
-				width: "40%"
-			},
-			name: {
-				title: "Organisation",
-				width: "20%"
-			},
-			tags: {
-				title: "Tags",
-				width: "26%",
-				create: false,
-				edit: false
-			},
-			Detail: {
-				width: "2%",
-				title: "",
-				sorting: false,
-				display: function (data) {
-					return "<a title=\"View project details\" href=\"#\" onclick=\"getProjectDetail("+
-						data.record.pid+")\"><span class=\"ui-icon ui-icon-info\"></span></a>";
-					},
-				create: false,
-				edit: false
-			}<?php 
-			if ($apply_projects) {?>
-				,
-				Propose: {
+			fields: {
+				pid: {								
+					key: true,
+					create: false,
+					edit: false,
+					list: false
+				},
+				title: {
+					title: "Project title",
+					width: "40%"
+				},
+				name: {
+					title: "Organisation",
+					width: "20%"
+				},
+				tags: {
+					title: "Tags",
+					width: "26%",
+					create: false,
+					edit: false
+				},
+				Detail: {
 					width: "2%",
 					title: "",
 					sorting: false,
 					display: function (data) {
-						return "<a title=\"Propose a project for this idea\" href=\"#\" onclick=\"getProposalFormForProject("+data.record.pid+")\">"+
-						"<span class=\"ui-icon ui-icon-script\"></span></a>";
+						return "<a title=\"View project details\" href=\"#\" onclick=\"getProjectDetail("+
+							data.record.pid+")\"><span class=\"ui-icon ui-icon-info\"></span></a>";
 						},
 					create: false,
 					edit: false
 				}<?php 
-			}?>
-		
-		}
-		
-	});
+				if ($apply_projects) {?>
+					,
+					Propose: {
+						width: "2%",
+						title: "",
+						sorting: false,
+						display: function (data) {
+							return "<a title=\"Propose a project for this idea\" href=\"#\" onclick=\"getProposalFormForProject("+data.record.pid+")\">"+
+							"<span class=\"ui-icon ui-icon-script\"></span></a>";
+							},
+						create: false,
+						edit: false
+					}<?php 
+				}?>
+			}
+		//	/*
+, //end fields
+			recordsLoaded: function(event, data) {
+				var browse_url = baseUrl + "dashboard/projects/browse?pid=";
+				
+				$(".jtable-data-row").each(function(){
+					var $parent = $(this);
+					
+					var row_id = $parent.attr("data-record-key");
+					$parent.children('td:first-child').click(function() {
+						document.location.href=browse_url + row_id;
+					});
+				});
+			}
+		//	*/
+		});
 	
 	//Load project list from server on initial page load
 	$("#ProjectTableContainer").jtable("load", {
 		tags: $("#tags").val(),
-		organisation: $("#organisation").val()
+		organisation: $("#organisation").val()<?php 
+		if ($pid){echo ", pid: $pid";}?>
 	});
 		
 	$("#tags").keyup(function(e) {
@@ -300,7 +310,10 @@ function initBrowseProjectLayout(){//$target='content'
 			});
 		}
 	});
-		
+
+	
+	
+					
 	// define these at the window level so that they can still be called once loaded
 	window.getProposalFormForProject = getProposalFormForProject;
 	window.getProjectDetail = getProjectDetail;
