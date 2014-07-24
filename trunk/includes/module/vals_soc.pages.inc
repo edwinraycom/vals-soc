@@ -104,6 +104,12 @@ function vals_soc_browse_organisations(){
 	return ob_get_clean();
 }
 
+function vals_soc_browse_institutes(){
+	ob_start();
+	module_load_include('inc', 'vals_soc', 'includes/module/ui/institutes');
+	return ob_get_clean();
+}
+
 function vals_soc_browse_proposals(){
 	ob_start();
 	module_load_include('inc', 'vals_soc', 'includes/module/ui/proposals_browse');

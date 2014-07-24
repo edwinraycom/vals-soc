@@ -1,26 +1,26 @@
 <?php
-function initBrowseOrgsLayout($org_id=''){?>
+function initBrowseInstitutesLayout($inst_id=''){?>
 	
 	<div class="filtering">
 		<span id="infotext" style="margin-left: 34px"></span>
 		<form id="organisation_filter">
-			<?php echo t('Name');?>: <input type="text" name="oname" id="oname" />
+			<?php echo t('Name');?>: <input type="text" name="iname" id="iname" />
 		</form>
 	</div>
-	<div id="OrganisationTableContainer" style="width: 600px;"></div>
+	<div id="InstituteTableContainer" style="width: 600px;"></div>
 		
 	<script type="text/javascript">
 		jQuery(document).ready(function($){
 			
-			function testOrganisationInput() {
+			function testInstituteInput() {
 				var filter = /^[a-z0-9+_.\s]+$/i;
-				if (filter.test($("#oname").val()) || $("#oname").val()=="") {
-					$("#oname").removeClass("error");
+				if (filter.test($("#iname").val()) || $("#iname").val()=="") {
+					$("#iname").removeClass("error");
 					$("#infotext").removeClass("error");
 					$("#infotext").text("");
 					return true;
 				} else {
-					$("#oname").addClass("error");
+					$("#iname").addClass("error");
 					$("#infotext").addClass("error");
 					$("#infotext").text("Invalid character/s entered");
 					return false;
@@ -28,36 +28,31 @@ function initBrowseOrgsLayout($org_id=''){?>
 			}
 	
 			//Prepare jTable
-			$("#OrganisationTableContainer").jtable({
-				//title: "Table of organisations",
+			$("#InstituteTableContainer").jtable({
+				//title: "Table of institutes",
 				paging: true,
 				pageSize: 10,
 				sorting: true,
-				defaultSorting: "oname ASC",
+				defaultSorting: "iname ASC",
 				actions: {
-					listAction: moduleUrl + "actions/organisation_actions.php?action=list_organisations"
+					listAction: moduleUrl + "actions/institute_actions.php?action=list"
 				},
 				fields: {
-					org_id: {
+					inst_id: {
 						key: true,
 						create: false,
 						edit: false,
 						list: false
 					},
 					name: {
-						title: "Organisation",
+						title: "Institute",
 						width: "30%",
-						display: function (data) {
-							return "<a title=\"View organisation details\" href=\"#\" onclick=\"getOrganisationDetail("+
+						/*
+display: function (data) {
+							return "<a title=\"View institute details\" href=\"#\" onclick=\"getInstituteDetail("+
 								data.record.org_id+")\">"+data.record.name+"</a>";
 							},
-					},
-					url:{
-						title: "More information",
-						width: "70%",
-						display: function (data) {
-							return "<a title=\"View organisation/project site\" target=\"_blank\" href=\""+data.record.url+"\" >"+data.record.url+"</a>";
-							},
+						*/
 					}
 				},
 				/*
@@ -73,13 +68,13 @@ recordsLoaded: function(event, data) {
 			});
 			
 			//Load org list from server on initial page load
-			$("#OrganisationTableContainer").jtable("load", {<?php 
-					echo ($org_id ? "orgid: $org_id": "");?>});
+			$("#InstituteTableContainer").jtable("load", {<?php 
+					echo ($inst_id ? "instid: $inst_id": "");?>});
 			$("#organisation_filter").submit(function(e){
 				e.preventDefault();
-				if(testOrganisationInput()){
-					$("#OrganisationTableContainer").jtable("load", {
-						oname: $("#oname").val()
+				if(testInstituteInput()){
+					$("#InstituteTableContainer").jtable("load", {
+						iname: $("#iname").val()
 					});
 				}
 			});

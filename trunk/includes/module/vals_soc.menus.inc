@@ -50,7 +50,8 @@ function vals_soc_menu_handler(){
 	$items['dashboard/proposals/mine'] = getMyProposalBrowseLink('dashboard/proposals/mine'); //browse only my proposals
 
 	//########################## TOP LEVEL LINKS ##############################
-	// These are usually used when we want unauthenticated users to view something not via the dashboard  
+	// These are usually used when we want unauthenticated users to view something not via the dashboard
+	$items['institutes/browse'] = getInstituteBrowseLink('institutes/browse');
 	$items['organisations/browse'] = getOrganisationBrowseLink('organisations/browse');
 	// Allows user to browse projects registered in the system
 	$items['projects/browse'] = getProjectsBrowseLink('projects/browse');
@@ -282,6 +283,28 @@ function getOrganisationBrowseLink($path){ // dashboard/organisations/browse or 
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' =>  array($path),
 			'description' => t('Organisations page'),
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module/',
+	);
+}
+
+/**
+ * ALLOWS USERS TO VIEW THE ORGANISAITONS IN THE SYSTEM
+ *
+ * USES ROLE_PERMISSION - 'vals browse organisations'
+ *
+ * IS PASSED either 'dashboard/organisations/browse' or 'organisations/browse'
+ * @param unknown $path
+ * @return multitype:string NULL multitype:unknown
+ */
+function getInstituteBrowseLink($path){ // dashboard/organisations/browse or organisations/browse
+	return  array(
+			'title' => t('Institutes'),
+			'type' => MENU_NORMAL_ITEM,
+			'page callback' => 'vals_soc_browse_institutes',
+			'access callback' => 'vals_soc_access_check',
+			'access arguments' =>  array($path),
+			'description' => t('Institutions page'),
 			'file' => 'vals_soc.pages.inc',
 			'file path' => _VALS_SOC_PATH . '/includes/module/',
 	);
