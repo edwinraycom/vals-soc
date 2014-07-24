@@ -118,6 +118,19 @@ function mapOrganisation($org){
 	}
 }
 
+function renderForm(&$form, $target, $return=false){
+	$s = "<div id='msg_$target'></div>";
+	// Print $form
+	$s .= drupal_render($form);
+	$s .= valssoc_form_get_js($form);
+	$form['#attached']['js'] = array();//Sometimes it seems Drupal uses the same struct to do a rebuild. We do not
+	//want Drupal to interprete the attached js at the moment: the path is relative to the module and D does not 
+	//know that
+	if ($return) return $s;
+	echo $s;
+	return true;
+}
+
 function valssoc_form_get_js($form){
 	if ($form['#attached']['js']){
 		$js = '';

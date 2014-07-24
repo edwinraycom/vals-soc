@@ -82,9 +82,9 @@ switch ($_GET['action']){
 				include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
 				$proposal = Proposal::getInstance()->getProposalById($proposal_id, true);
 				
-				$f = drupal_get_form('vals_soc_proposal_form', $proposal, $target);
-				if ($f){
-					jsonGoodResult(drupal_render($f).valssoc_form_get_js($f), $proposal, $target);
+				$form = drupal_get_form('vals_soc_proposal_form', $proposal, $target);
+				if ($form){
+					jsonGoodResult(renderForm($form, $target, true), $proposal, $target);
 				} else {
 					jsonBadResult();
 				}

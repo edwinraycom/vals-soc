@@ -34,9 +34,8 @@ switch ($_GET['action']){
 		echo '<h3>'.t('Student details').'</h3>';
 		echo "<div id='student_details'>Institute: ".$student_details->institute_name.
 		"<br/>Supervisor: ".$student_details->supervisor_name."</div>";
-		$f = drupal_get_form('vals_soc_proposal_form', $proposal, $target, $project_id);
-		print drupal_render($f);
-		print valssoc_form_get_js($f);
+		$form = drupal_get_form('vals_soc_proposal_form', $proposal, $target, $project_id);
+		renderForm($form, $target);
 		break;
 	case 'save':
 		$id = altSubValue($_POST, 'id', '');

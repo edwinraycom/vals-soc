@@ -2,8 +2,8 @@
 function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state){
     $current_role = getRole();
     
-    if (isset($form_state['values']['fullname']) && (strlen($form_state['values']['fullname']) > 25)){
-    	form_set_error('fullname', tt('The name you entered is a bit too long, Please abbreviate to a max of %1d chars', 25));
+    if (isset($form_state['values']['fullname']) && (strlen($form_state['values']['fullname']) > _FULL_NAME_LENGTH)){
+    	form_set_error('fullname', tt('The name you entered is a bit too long, Please abbreviate to a max of %1d chars', _FULL_NAME_LENGTH));
     	return;
     }
     
@@ -169,8 +169,8 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 	
 	$super = t('Semester of Code Admin');
 	//If no  errors are encountered, just return, otherwise call form_set_error
-	if (isset($form_state['values']['fullname']) && (strlen($form_state['values']['fullname']) > 25)){
-		form_set_error('fullname', tt('The name you entered is a bit too long, Please abbreviate to a max of %1d chars', 25));
+	if (isset($form_state['values']['fullname']) && (strlen($form_state['values']['fullname']) > _FULL_NAME_LENGTH)){
+		form_set_error('fullname', tt('The name you entered is a bit too long, Please abbreviate to a max of %1d chars', _FULL_NAME_LENGTH));
 		return;
 	}
 	if ($current_role == 'administrator'){

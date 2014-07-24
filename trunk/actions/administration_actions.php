@@ -32,25 +32,22 @@ switch ($_GET['action']){
 	case 'addgroup':
 		$target = altSubValue( $_GET, 'target');
 		echo '<h2>'.t('Add a group to your list of groups').'</h2>';
-		//$f2 = drupal_get_form('vals_soc_studentgroup_form', null, $target);
-		//print drupal_render($f2);
 
 		$form = drupal_get_form('vals_soc_studentgroup_form', null, $target);
 		$form['#action'] = url('administer/members');
 		// Process the submit button which uses ajax
 		$form['submit'] = ajax_pre_render_element($form['submit']);
 		// Build renderable array
-		$build = array(
-				'form' => $form,
-				'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
-		);
+// 		$build = array(
+// 				'form' => $form,
+// 				'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
+// 		);
 		// Print $form
 // 		$form_to_print = drupal_render($form);//used to be build
 // 		// Print JS
 // 		//$form_to_print .= drupal_get_js();
 // 		echo $form_to_print;
-		print drupal_render($form);
-		print valssoc_form_get_js($form);
+		renderForm($form, $target);
 
 	break;
 	case 'add':
@@ -62,20 +59,21 @@ switch ($_GET['action']){
 			(($type == 'studentgroup') ? t('Add a group to your list of groups') :
 			tt('Add your %1$s', t($type))).
 		'</h2>'; // when is this ever called for a student group? - there is a separate addgroup task above.
-		echo "<div id='msg_$target'></div>";
+		//echo "<div id='msg_$target'></div>";
 
 		$form = drupal_get_form("vals_soc_${type}_form", null, $target, $show_action);
 		$form['#action'] = url('administer/members');
 		// Process the submit button which uses ajax
 		$form['submit'] = ajax_pre_render_element($form['submit']);
 		// Build renderable array
-		$build = array(
-			'form' => $form,
-			'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
-		);
+// 		$build = array(
+// 			'form' => $form,
+// 			'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
+// 		);
 		// Print $form
-		print drupal_render($form);
-        print valssoc_form_get_js($form);// Print JS
+		renderForm($form, $target);
+// 		print drupal_render($form);
+//         print valssoc_form_get_js($form);// Print JS
 		//print drupal_get_js();
 	break;
     case 'showmembers':
@@ -168,24 +166,7 @@ switch ($_GET['action']){
 //         			'form' => $form,
 //         			'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
 //         	);
-        	print "<div id='msg_$target'></div>";
-        	// Print $form
-        	print drupal_render($form);
-        	print valssoc_form_get_js($form);
-
-
-        	/* <script type="text/javascript" src='<?php echo _VALS_SOC_FULL_URL.'/includes/js/test_functions.js';?>'></script><?php
-        	 * if ($form['#attached']['js']){
-        		foreach ($form['#attached']['js'] as $incl){
-        			if ($incl['type'] == 'file'){
-        				echo single_getJs(_VALS_SOC_URL.'/'.$incl['data']);
-        			}
-        		}
-        	} */
-        	// Print JS
-//        	print drupal_get_js();?>
-        <?php
-
+        	renderForm($form, $target);
         }
     break;
     case 'save':
