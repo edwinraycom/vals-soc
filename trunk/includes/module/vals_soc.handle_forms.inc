@@ -80,8 +80,7 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
 
 function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
     $email = isset($form_state['values']['mail']) ? $form_state['values']['mail'] : ''; 
-    
-    //First get the current user. As the user gets at this hook, the user is already entered in the system
+   //First get the current user. As the user gets at this hook, the user is already entered in the system
     $user = db_select('users', 'r')->fields('r')->condition('mail', $email)->execute()->fetchAssoc();
     if ($user){
         $uid = $user['uid'];
@@ -121,7 +120,7 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
 //    }
     
     
-    if ((($type == 'student') || ($type == 'supervisor') || ($type == 'institute')) && ($form_state['values']['institute'])){
+    if ((($type == 'student') || ($type == 'supervisor') || ($type == 'institute_admin')) && ($form_state['values']['institute'])){
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => 'institute', 
