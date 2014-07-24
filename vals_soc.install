@@ -104,7 +104,7 @@ function vals_soc_DONOTDOTHISupdate_7101() {
   db_create_table('soc_studentgroups', $schema['soc_studentgroups']);
 }
 
-function vals_soc_DONOTDOTHISupdate_7102() {
+function vals_soc_DONOTDOTHISupdate_7102() {//every new field has description, type, not null
 	$new_field = array(
 		'description' => 'The description of the project.',
 		'type' => 'text',
@@ -122,4 +122,16 @@ ALTER TABLE `soc_organisations` ADD `owner_id` INT NOT NULL AFTER `org_id`
 NOt yet reflected in drupal_soc.sql
 
 */
+}
+
+function vals_soc_DONOTDOTHISupdate_7104() {
+//	$new_field = array(
+	//	'description' => 'The description of the project.',
+	//	'type' => 'text',
+	//	'not null' => FALSE,
+	//);	
+	//db_change_field('soc_projects', 'description', 'description', $new_field);
+	
+	//This is what should happen
+	//ALTER TABLE `soc_names` CHANGE `name` `name` VARCHAR( 50 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
 }

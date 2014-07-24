@@ -23,14 +23,17 @@ function showProjectPage($action='', $show_last=FALSE){
 		if (! $projects){
 			echo t('You have no project yet registered');
 			echo '<h2>'.t('Add your project').'</h2>';
+			
+			$tab_prefix = 'project_page-';
+			$target = "${tab_prefix}1";
 			$form = drupal_get_form("vals_soc_project_form", '', 'project_page-1');
 			$form['submit'] = ajax_pre_render_element($form['submit']);
-			$extra_js = valssoc_form_get_js($form);
-			$form['#attached']['js'] = array();
-			// Print $form
-			$add_tab = drupal_render($form);
-			$add_tab .=  $extra_js;
-
+// 			$extra_js = valssoc_form_get_js($form);
+// 			$form['#attached']['js'] = array();
+// 			// Print $form
+// 			$add_tab = drupal_render($form);
+// 			$add_tab .=  $extra_js;
+			$add_tab =  renderForm($form, $target, true);
 /*
 			$form = drupal_get_form('vals_soc_project_form', '', 'project_page-1');
 			$form['#action'] = url('dashboard/projects/administer');

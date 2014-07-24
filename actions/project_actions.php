@@ -92,7 +92,7 @@ switch ($_GET['action']){
 		echo "<div id='msg_$target'></div>"; 
 		$form = drupal_get_form("vals_soc_project_form", '', $target);
 		// Process the submit button which uses ajax
-		$form['submit'] = ajax_pre_render_element($form['submit']);
+		//$form['submit'] = ajax_pre_render_element($form['submit']);
 		// Build renderable array
 		/*
 		$build = array(
@@ -104,11 +104,7 @@ switch ($_GET['action']){
 		*/
 		
 		// Print $form
-		print drupal_render($form);
-		
-		print valssoc_form_get_js($form);
-		// Print JS
-	//	print drupal_get_js();
+		renderForm($form, $target);
 		
 	break;
 	case 'save':
@@ -168,10 +164,7 @@ switch ($_GET['action']){
 				'form' => $form,
 				'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
 		);
-		print "<div id='msg_$target'></div>";
-		// Print $form
-		print drupal_render($form);//$build
-		print valssoc_form_get_js($form);
+		renderForm($form, $target);
 
 	    break;
     case 'delete':
