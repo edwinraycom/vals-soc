@@ -34,7 +34,7 @@ CHANGE `tags` `tags` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci N
 CREATE TABLE IF NOT EXISTS `soc_names` (
   `names_uid` int(11) NOT NULL,
   `type` varchar(32) NOT NULL,
-  `name` varchar(25) NOT NULL
+  `name` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
