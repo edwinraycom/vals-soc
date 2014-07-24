@@ -42,21 +42,27 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
 
         return;
     }
+   	$becomes_some_admin = (in_array($requested_user_type, array('institute_admin', 'organisation_admin', 'soc') ));
+    	
     $org = 0;
-	if (in_array($current_role, array('mentor', 'organisation_admin') ) && $form_state['values']['organisation']){
+	if (in_array($requested_user_type, array('mentor', 'organisation_admin') ) && $form_state['values']['organisation']){
 		$org = $form_state['values']['organisation'];
 	}
-	if (in_array($current_role, array('supervisor', 'institute_admin')) && $form_state['values']['institute']){
+	if (in_array($requested_user_type, array('supervisor', 'institute_admin')) && $form_state['values']['institute']){
 		$org = $form_state['values']['institute'];
 	}
-	
+	if (!$org && !$becomes_some_admin){
+		if ($requested_user_type == ' mentor'){
+			form_set_error('organisation', t('You should select your organisation.'));
+		} else {
+			form_set_error('institute', t('You should select your university or institute.'));
+		}
+		return;
+	}
 	$db_and2 = db_and();
     $db_and2->condition('type', $requested_user_type);
     $db_and2->condition('code', $code_entered);
-    if ((! in_array($requested_user_type, array('institute_admin', 'organisation_admin', 'soc', 'administrator')))&&
-        $org){
-        $db_and2->condition('entity_id', $org);
-    }
+    $db_and2->condition('entity_id', $org);
     $found_codes = db_select('soc_codes')->fields('soc_codes')->condition($db_and2)->execute()->rowCount();
     $possible_code_rec = db_select('soc_codes')->fields('soc_codes')->
         condition('type', $requested_user_type)->

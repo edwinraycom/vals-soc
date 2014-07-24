@@ -16,17 +16,18 @@ class Groups extends AbstractEntity{
 			if ($id){
 					
 				$members = db_query(
-						"SELECT o.*, c.code from ".tableName($org_type)." as o ".
-						"left join soc_codes as c ".
-						" on o.$key_column = c.$code_key_column ".
+						"SELECT o.*, c.code, c2.code as owner_code from ".tableName($org_type)." as o ".
+						"left join soc_codes as c on o.$key_column = c.$code_key_column ".
+						"left join soc_codes as c2 on o.$key_column = c2.$code_key_column AND c2.type = '${org_type}_admin'".
 						"WHERE o.$key_column = $id ");
 			} else {
 				$group_head_id = $group_head_id ?: $group_head;
 		
 				$members = db_query(
-						"SELECT o.*, c.code from ".tableName($org_type)." as o ".
+						"SELECT o.*, c.code, c2.code as owner_code from ".tableName($org_type)." as o ".
 						"left join soc_user_membership as um on o.$key_column = um.group_id ".
 						"left join soc_codes as c on o.$key_column = c.$code_key_column AND c.type = '$member_type'".
+						"left join soc_codes as c2 on o.$key_column = c2.$code_key_column AND c2.type = '${org_type}_admin'".
 						"WHERE um.type = '$org_type' AND um.uid = $group_head_id ");
 			}
 		}	
@@ -122,6 +123,10 @@ class Groups extends AbstractEntity{
 	}
 	
 	static function removeGroup($type, $id){
+		if (!isValidOrganisationType($type)){
+			drupal_set_message(tt('This (%1$s) is not something you can remove.', t($type)), 'error');
+			return FALSE;	
+		}
 		if (! self::isOwner($type, $id)){
 			drupal_set_message(t('You are not authorised to perform this action'), 'error');
 			return FALSE;
@@ -132,32 +137,37 @@ class Groups extends AbstractEntity{
 					t($type)), 'error');
 			return FALSE;
 		}
-		if (!isValidOrganisationType($type)){
-			drupal_set_message(tt('This (%1$s) is not something you can remove.', t($type)), 'error');
-			return FALSE;	
-		}
 		
 		try {
-		if($type != 'project'){
-			$num_deleted2 = db_delete("soc_user_membership")
-			->condition('group_id', $id)
-			->condition('type', $type)
-			->execute();
-			if (!$num_deleted2){					
-				drupal_set_message(tt('The group had no members.', $type), 'status');
+			if($type != 'project'){
+				$num_deleted2 = db_delete("soc_user_membership")
+				->condition('group_id', $id)
+				->condition('type', $type)
+				->execute();
+				if (!$num_deleted2){					
+					drupal_set_message(tt('The group had no members.', $type), 'status');
+				}
+					
+				$subtype = ($type == 'organisation') ? 'mentor' : (($type == 'institute') ? 'supervisor' : 'studentgroup');
+					
+				$num_deleted3 = db_delete("soc_codes")
+					->condition(
+						db_and()
+							->condition('entity_id', $id)
+							->condition(
+								db_or()
+									->condition('type', $subtype)
+									->condition('type', "${type}_admin")))
+					->execute();
+			/*
+			 * ts->condition(db_and()
+            ->condition('gid', $gid)
+            ->condition('realm', $realm));
+			 */
+				if (!$num_deleted3){
+					drupal_set_message(tt('The %1$s had no code attached.', $type), 'status');
+				}
 			}
-				
-			$subtype = ($type == 'organisation') ? 'mentor' : (($type == 'institute') ? 'supervisor' : 'studentgroup');
-				
-			$num_deleted3 = db_delete("soc_codes")
-			->condition('entity_id', $id)
-			->condition('type', $subtype)
-			->execute();
-		
-			if (!$num_deleted3){
-				drupal_set_message(tt('The %1$s had no code attached.', $type), 'status');
-			}
-		}
 		} catch (Exception $e){
 			drupal_set_message(tt(' We could not delete the %1$s', t($type)).(_DEBUG ? $ex->getMessage():''), 'error');
 			return FALSE;
@@ -239,11 +249,18 @@ class Groups extends AbstractEntity{
 						'group_id'=>$id,
 				))->execute();
 				if ($result){
-					$result = $result && db_insert('soc_codes')->fields( array(
-							'type'=>$subtype,
+					$insert = db_insert('soc_codes')->fields(
+						array('type', 'code','entity_id', 'studentgroup_id')
+					);
+					$insert->values(array('type'=>$subtype,
 							'code' => createRandomCode($subtype, $id),
 							'entity_id'=> $id,
-							'studentgroup_id' =>0))->execute();
+							'studentgroup_id' =>0));
+					$insert->values(array('type'=>"${type}_admin",
+							'code' => createRandomCode($type, $id),
+							'entity_id'=> $id,
+							'studentgroup_id' =>0));
+					$result = $result && $insert->execute();
 					if (!$result){
 						drupal_set_message(t('We could not add a code.'), 'error');
 					}
