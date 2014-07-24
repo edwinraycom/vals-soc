@@ -250,8 +250,9 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
 	        		"#attributes"=> array('onchange'=>"if (this.value != 0){makeVisible('account_key_wrap')} else {makeInvisible('account_key_wrap');}")
 	        );
 	        if (!$is_admin){
+	        	$show_account_key = (isset($form_state['input']['institute'])) && $form_state['input']['institute'];
 		        $form['account']['account_key'] = array(
-		        		'#prefix' => '<div  id="account_key_wrap" class="invisible">',
+		        		'#prefix' => '<div  id="account_key_wrap" class="'.($show_account_key ? '' : 'invisible').'">',
 		        		'#suffix' => '</div>',
 		        		"#type" => "textfield",
 		        		"#title" => t("Type the key you got from your colleague in the institute "),
@@ -282,9 +283,12 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
 	                "#default_value" => $member_org,
 	        		"#attributes"=> array('onchange'=>"if (this.value != 0){makeVisible('account_key_wrap')} else {makeInvisible('account_key_wrap');}")
 	        );
+	        //when rebuilding this form there might be an organisation set. We need to know whether to make the account_key visible
+	        
 	        if (!$is_admin){
+	        	$show_account_key = (isset($form_state['input']['organisation'])) && $form_state['input']['organisation'];
 		        $form['account']['account_key'] = array(
-		        		'#prefix' => '<div  id="account_key_wrap" class="invisible">',
+		        		'#prefix' => '<div  id="account_key_wrap" class="'.($show_account_key ? '' : 'invisible').'">',
 		        		'#suffix' => '</div>',
 		        		"#type" => "textfield",
 		        		"#title" => t("Type the key you got from your colleague in the organisation "),

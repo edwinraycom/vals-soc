@@ -62,7 +62,7 @@ function formatMemberRecordNice($record, $type){
 		default: $member_type = 'users';
 	}
 	
-	$output='';
+	$output=''.gettype($record);
 	$output .= '';
 	$output .= '<dl class="view_record">';
 	// check to see if there is an 'owner_id field'
@@ -102,7 +102,12 @@ function formatMemberRecordNice($record, $type){
 			$output .=  $val;
 			if ($key=='code'){
 				$output .= '<br/>';
-				$output .= '<i>' . t('Use this code to invite your '. $member_type . ' to participate'). '</i>';
+				$output .= '<i>' . tt('Use this code to invite your %1$s to participate', $member_type). '</i>';
+			}
+			if ($key=='owner_code'){
+				$output .= '<br/>';
+				$output .= '<i>' . tt('Use the following code to invite a colleague to manage this %1$s together ',
+						$type). '</i>';
 			}
 			$output .=  '</dd>';
 		}
