@@ -15,8 +15,8 @@ switch ($_GET['action']){
 			//Return result to jTable
 			$jTableResult = array();
 			$jTableResult['Result'] = "OK";
-			if ($org_id){
-				$institutions = Institutes::getInstance()->getInstituteById($org_id);
+			if ($inst_id){
+				$institutions = Institutes::getInstance()->getInstituteById($inst_id);
 				$jTableResult['TotalRecordCount'] = count($institutions);
 				$jTableResult['Records'] = $institutions;
 				
