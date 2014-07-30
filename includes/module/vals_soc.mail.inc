@@ -8,6 +8,8 @@
  * @param unknown $params
  */
 function vals_soc_mail_handler($key, &$message, $params) {
+	//All these messages are saved with rte textareas and so already in html format
+	$html_format = true;
 	switch($key) {
 		case 'vals_soc_email_accepted_organisation':
 			$message['subject'] = t('Organisation application for VALS summer of code');
@@ -41,6 +43,12 @@ function vals_soc_mail_handler($key, &$message, $params) {
 			$message['subject'] = t('Your project proposal to the VALS summer of code');
 			$message['body'][] = variableGetFromStruct('vals_rejected_students_message', 'value');
 			break;
+		default:
+			$html_format = false;
+		break;
+	}
+	if ($html_format){
+		$message['headers']['Content-Type'] = str_replace('text/plain', 'text/html', $message['headers']['Content-Type']);
 	}
 }
 
@@ -56,6 +64,10 @@ function vals_soc_mail_alter_handler(&$message) {
 		'Content-Transfer-Encoding' => '8Bit',
 		'X-Mailer' => 'Drupal',
 	);
+	$headers2 = $message['headers'];
+	if (strpos($headers2['Content-Type'], 'plain')){
+		$headers['Content-Type'] = str_replace('text/html', 'text/plain', $headers['Content-Type']);
+	}
 	foreach ($headers as $key => $value) {
 		$message['headers'][$key] = $value;
 	}

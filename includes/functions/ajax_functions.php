@@ -22,13 +22,7 @@ function jsonResult($result, $msg='', $type='', $args=array(), $show_always=FALS
 		$struct['error'] = $msg;
 		
 	} else {
-		
-		if ($result === 'html'){
-			$struct['result'] = 'html';
-			$struct['html'] = $result;
-		} else {
-			$struct['result'] = $result;
-		}
+		$struct['result'] = $result;
 		$struct['msg'] = $msg;
 		
 	}

@@ -24,3 +24,6 @@ do a bootstrap in ajax. The bootstrap from the index doesn't suffer from that. P
 the base url (based on assumptions about the position of index.php if it is already defined. Instead we derive it ourselves
 from a location that is known before the bootstrap. All urls served pass either the (/vals)/index.php or
 the (/vals)/sites/all/modules/vals_soc/actions
+
+Copy the file index.php to the root of the installation. Also due to a combination of Drupal and server configuration
+the index needed a bug fix.

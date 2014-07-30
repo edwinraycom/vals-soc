@@ -229,7 +229,17 @@ function handleSubmitResult(result, args){
 function populateModal(result, fun, arg){
 	// TODO : work more on the formatting
 	// and add other fields from DB
-	var data = jQuery.parseJSON(result);
+	try{
+		var data = jQuery.parseJSON(result);
+	} catch (err){
+		console.log('Some program error occured. We could not render the result');
+		Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
+		if (debugging){
+			Obj("modal-content").html("<div class='messages error'>"+result+ "</div>");
+		} else {
+			Obj("modal-content").html("<div class='messages error'>Some program error occured. Could not parse result.</div>");
+		}
+	}
 	if (data && data.result !== 'error'){
 		var content = '';
 		if (typeof fun == 'function'){
