@@ -39,7 +39,7 @@ function vals_soc_menu_handler(){
 	$items['dashboard/organisation/view'] = getAdministerLink('dashboard/organisation/view', 'organisation');
 	
 	// organisation actions - let users see all the announced organisations
-	$items['dashboard/organisations/browse'] = getOrganisationBrowseLink('dashboard/organisations/browse');
+	//$items['dashboard/organisations/browse'] = getOrganisationBrowseLink('dashboard/organisations/browse');
 	
 	// project actions
 	$items['dashboard/projects/administer'] = getProjectsAdministerLink('dashboard/projects/administer');
@@ -90,7 +90,7 @@ function getProgramSettingsLink($path, $title, $menu_type){
 			'access arguments' => array($path),
 			'description' => t('Allow Administration on the summer of code module.'),
 			'file' => 'vals_soc.pages.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
 
@@ -109,7 +109,7 @@ function getEditMessagesLink($path, $menu_type){
 			'access arguments' => array($path),
 			'description' => t('Edit the email messages that are sent to users.'),
 			'file' => 'vals_soc.forms.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
 
@@ -128,7 +128,7 @@ function getEditTimelineLink($path, $menu_type){
 			'access arguments' => array($path),
 			'description' => t('Edit the timeline and other settings.'),
 			'file' => 'vals_soc.forms.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
 
@@ -148,7 +148,7 @@ function getDashboardLink(){
 			'access arguments' => array('vals access dashboard'),
 			'description' => t('Dashboard'),
 			'file' => 'vals_soc.pages.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
 
@@ -177,7 +177,7 @@ function getMembersLink($path){ //dashboard/members
 			'access arguments' => array($path),
 			'description' => t('Administer page'),
 			'file' => 'vals_soc.pages.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
 
@@ -190,20 +190,20 @@ function getAdministerLink($path, $type){//$items['dashboard/institute/administe
 			'access arguments' => array($path),
 			'description' => t('Administer page'),
 			'file' => 'vals_soc.pages.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
 
 function getEntityMembersLink($path, $type){ //'dashboard/institute/members'
 	return array(
-			'title' => tt('Overview of the members of your %1$s', t($type)),
+			'title' => tt('Overview of the members of your %1$ss', t($type)),
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_members_page',
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' => array($path),
 			'description' => t('Administer page'),
 			'file' => 'vals_soc.pages.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
 
@@ -216,7 +216,7 @@ function getGroupAdministerLink($path){//$items['dashboard/institute/group/admin
 			'access arguments' => array($path),
 			'description' => t('Administer groups in your institute page'),
 			'file' => 'vals_soc.pages.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
 
@@ -236,7 +236,7 @@ function getProjectsAdministerLink($path){ //dashboard/projects/administer
 			'access arguments' => array($path),
 			'description' => t('Administer page for projects'),
 			'file' => 'vals_soc.pages.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
 
@@ -262,7 +262,7 @@ function getProjectsBrowseLink($path){// dashboard/projects/browse or projects/b
 			'access arguments' => array($path),
 			'description' => t('Projects page'),
 			'file' => 'vals_soc.pages.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
 
@@ -284,7 +284,7 @@ function getOrganisationBrowseLink($path){ // dashboard/organisations/browse or 
 			'access arguments' =>  array($path),
 			'description' => t('Organisations page'),
 			'file' => 'vals_soc.pages.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
 
@@ -297,7 +297,7 @@ function getOrganisationBrowseLink($path){ // dashboard/organisations/browse or 
  * @param unknown $path
  * @return multitype:string NULL multitype:unknown
  */
-function getInstituteBrowseLink($path){ // dashboard/organisations/browse or organisations/browse
+function getInstituteBrowseLink($path){ // dashboard/institutes/browse or institutes/browse
 	return  array(
 			'title' => t('Institutes'),
 			'type' => MENU_NORMAL_ITEM,
@@ -306,7 +306,7 @@ function getInstituteBrowseLink($path){ // dashboard/organisations/browse or org
 			'access arguments' =>  array($path),
 			'description' => t('Institutions page'),
 			'file' => 'vals_soc.pages.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
 
@@ -329,7 +329,7 @@ function getProposalsBrowseLink($path){ //dashboard/proposals/browse
 			'access arguments' =>  array($path),
 			'description' => 'Proposal page',
 			'file' => 'vals_soc.pages.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
 
@@ -351,6 +351,6 @@ function getMyProposalBrowseLink($path){ //dashboard/proposals/mine
 			'access arguments' =>  array($path),
 			'description' => t('My Proposal page'),
 			'file' => 'vals_soc.pages.inc',
-			'file path' => _VALS_SOC_PATH . '/includes/module/',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }

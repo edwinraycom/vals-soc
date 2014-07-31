@@ -1,13 +1,5 @@
 <?php
 include('include.php');
-// print_r(get_included_files());die('dat waren ze');
-//This file is included as part of the bootstrap process as the handle_forms file includes it which is included itself
-//automatically
-// module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');
-// include(_VALS_SOC_ROOT.'/includes/vals_soc.helper.inc');
-//include(_VALS_SOC_ROOT.'/includes/classes/AbstractEntity.php');
-include(_VALS_SOC_ROOT.'/includes/classes/Users.php');
-// include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');//action:proposal,...
 include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');//action:proposal,...
 

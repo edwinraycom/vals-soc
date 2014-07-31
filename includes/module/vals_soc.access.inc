@@ -1,6 +1,5 @@
 <?php
 module_load_include('php', 'vals_soc', 'includes/classes/Timeline');
-module_load_include('php', 'vals_soc', 'includes/classes/Users');
 
 function hasRole($roles){
 	global $user;
@@ -90,9 +89,12 @@ function pageAccessCheck($access_string) {
 			}
 			break;
 		case 'dashboard/proposals/browse': 
-			return hasPermission('vals browse proposals'); // NOTE: NO SUCH PERMISSION IN DB AT PRESENT
+			return (! hasRole(array('anonymous user'))) && (!hasRole(array('student')));//hasPermission('vals browse proposals'); // NOTE: NO SUCH PERMISSION IN DB AT PRESENT
 			break;
-		case 'institute/browse':
+		case 'dashboard/proposals/mine':
+			return  hasRole(array('student')); // hasPermission('vals browse proposals') && NOTE: NO SUCH PERMISSION IN DB AT PRESENT
+			break;		
+		case 'institutes/browse':
 			 if( (hasRole(array('student')) || hasRole(array('anonymous user'))) && 
 					Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
 					return TRUE;

@@ -1,11 +1,7 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
-//This file is included as part of the bootstrap process as the handle_forms file includes it which is included itself
-//automatically
-// module_load_include('inc', 'vals_soc', 'includes/classes/AbstractEntity');
 
 module_load_include('php', 'vals_soc', 'includes/classes/Proposal');
-module_load_include('php', 'vals_soc', 'includes/classes/Users');
 
 $apply_proposals = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 $browse_proposals = vals_soc_access_check('dashboard/proposals/browse') ? 1 : 0;
