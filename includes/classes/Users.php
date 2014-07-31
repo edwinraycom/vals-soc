@@ -72,10 +72,11 @@ class Users extends AbstractEntity{
 	}
 	
 	public static function getStudentDetails($id){
+		if ($id){
 		return db_query(
 				"SELECT u.name as supervisor_name, u.mail as supervisor_mail, u.uid as supervisor_id ".
 				",u2.name as student_name, u2.mail as student_mail, u2.uid as student_id, ".
-				"g.*,i.name as institute_name, i.inst_id ".
+				"g.name as group_name,i.name as institute_name, i.inst_id ".
 				"from soc_user_membership um ".
 				"left join users_roles as ur on $id=ur.uid ".
 				"left join role as r on r.rid=ur.rid ".
@@ -84,6 +85,9 @@ class Users extends AbstractEntity{
 				"left join soc_institutes as i on i.inst_id = g.inst_id ".
 				"left join users as u2 on u2.uid = $id ".
 				"WHERE um.uid = $id AND um.type = 'studentgroup' AND r.name = 'student'")->fetchObject();
+		} else {
+			return null;
+		}
 	}
 	
 	public static function getStudents($group=''){

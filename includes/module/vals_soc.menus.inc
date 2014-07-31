@@ -278,7 +278,7 @@ function getProjectsBrowseLink($path){// dashboard/projects/browse or projects/b
 function getOrganisationBrowseLink($path){ // dashboard/organisations/browse or organisations/browse
 	return  array(
 			'title' => t('Organisations'),
-			'type' => MENU_CALLBACK,
+			'type' => MENU_NORMAL_ITEM,
 			'page callback' => 'vals_soc_browse_organisations',
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' =>  array($path),

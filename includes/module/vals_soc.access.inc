@@ -1,5 +1,6 @@
 <?php
 module_load_include('php', 'vals_soc', 'includes/classes/Timeline');
+module_load_include('php', 'vals_soc', 'includes/classes/Users');
 
 function hasRole($roles){
 	global $user;
@@ -24,6 +25,10 @@ function hasPermission($permission){
 function page_access_check($access_string) {
 	//drupal_set_message("test:".$access_data);
 	global $user;
+	
+	if (_VALS_TEST_UI_ONLY && Users::isAdmin()){
+		return TRUE;
+	}
 	switch ($access_string) {
 		case 'dashboard/members':
 			return hasPermission('vals admin register') && Timeline::getInstance()->organisationSignupPeriodOpened();
@@ -78,18 +83,13 @@ function page_access_check($access_string) {
 			// any user must have 'val browse organisations' permission
 			if(hasPermission('vals browse organisations')){
 				// students AND unauthenticated users can only see the orgs after the organisations have been announced
-				if( (hasRole(array('student')) || hasRole(array('anonymous user'))) && Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
+				if( (hasRole(array('student')) || hasRole(array('anonymous user'))) && 
+					Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
 					return TRUE;
+				} else {
+					return (Timeline::getInstance()->organisationSignupPeriodOpened());
 				}
-				// everyone else with 'vals browse organisations' permission can see orgs once org applications open
-				else if(Timeline::getInstance()->organisationSignupPeriodOpened()){
-					return TRUE;
-				}
-				else{
-					return FALSE;
-				}
-			}
-			else{
+			} else{
 				return FALSE;
 			}
 			break;
