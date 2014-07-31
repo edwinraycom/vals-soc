@@ -1,17 +1,17 @@
 <?php
 module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.access');
-drupal_add_library('system','ui.datepicker');
+//drupal_add_library('system','ui.datepicker');
 
 function generateValsFrontPageLayout(){
-	module_load_include('php', 'vals_soc', 'includes/classes/Timeline');
+	//module_load_include('php', 'vals_soc', 'includes/classes/Timeline');
 	// use this for testing the timeline
-	/*
-	if(hasPermission('access content') && _DEBUG){
+
+	if (Users::isAdmin() && _DEBUG){
 		ob_start();
 		module_load_include('inc', 'vals_soc', 'includes/module/ui/homepage/testfunctions');
 		echo ob_get_clean();
 	}
-	*/
+
 	echo '<div id="vals_block_content" class="">';
 	
 	// get the intro div
@@ -19,6 +19,7 @@ function generateValsFrontPageLayout(){
 	module_load_include('inc', 'vals_soc', 'includes/module/ui/homepage/intro');
 	echo ob_get_clean();
 	
+	echo "<div id='vals_block_content_bottom' class='block'>";
 	// get the news div
 	ob_start();
 	module_load_include('inc', 'vals_soc', 'includes/module/ui/homepage/news');
@@ -34,6 +35,7 @@ function generateValsFrontPageLayout(){
 	module_load_include('inc', 'vals_soc', 'includes/module/ui/homepage/program');
 	echo ob_get_clean();
 
+	echo '</div>';
 	echo '</div>';
 	
 }

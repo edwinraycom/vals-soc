@@ -87,10 +87,11 @@ input[type=button]  {
 }
 
 .vals-news{
-	/**overflow: hidden;**/
+	/**overflow: hidden;
+	height: 176px;**/
 	float:left;
 	width: 436px;
-	height: 176px;
+	
 	display: inline-block;
 }
 
@@ -120,7 +121,8 @@ input[type=button]  {
 	width: 213px;
 	/**  border: 1px solid blue;**/
 	display: inline-block;
-	min-height: 370px;
+	min-height: 520px;
+	height: inherit;
 }
 
 .block-project-timeline .block-content {

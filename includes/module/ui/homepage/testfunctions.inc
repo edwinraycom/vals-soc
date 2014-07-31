@@ -28,4 +28,6 @@ function getTimelineTester(){
 		</div>
 ';
 }
-getTimelineTester();
+if (_DEBUG){
+	getTimelineTester();
+}
