@@ -22,7 +22,7 @@ function hasPermission($permission){
  * so you can also pass the permission a la
  * 	   'vals browse proposals'
  */
-function page_access_check($access_string) {
+function pageAccessCheck($access_string) {
 	//drupal_set_message("test:".$access_data);
 	global $user;
 	
@@ -51,20 +51,16 @@ function page_access_check($access_string) {
 		case 'projects/browse':
 		case 'dashboard/projects/browse':
 			// any user must have 'val browse projects' permission
-			if(hasPermission('vals browse projects')){
+			if (hasPermission('vals browse projects')) {
 				// students AND unauthenticated users can only see the projects after the organisations have been announced
-				if( (hasRole(array('student')) || hasRole(array('anonymous user'))) && Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
+				if( (hasRole(array('student')) || hasRole(array('anonymous user'))) && 
+					Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
 					return TRUE;
+				} else {
+					// everyone else with 'vals browse projects' permission can see projects once org applications open
+				 	return (Timeline::getInstance()->organisationSignupPeriodOpened());
 				}
-				// everyone else with 'vals browse projects' permission can see projects once org applications open
-				else if(Timeline::getInstance()->organisationSignupPeriodOpened()){
-					return TRUE;
-				}
-				else{
-					return FALSE;
-				}
-			}
-			else{
+			} else {
 				return FALSE;
 			}
 			break;
@@ -96,6 +92,14 @@ function page_access_check($access_string) {
 		case 'dashboard/proposals/browse': 
 			return hasPermission('vals browse proposals'); // NOTE: NO SUCH PERMISSION IN DB AT PRESENT
 			break;
+		case 'institute/browse':
+			 if( (hasRole(array('student')) || hasRole(array('anonymous user'))) && 
+					Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
+					return TRUE;
+				} else {
+					// everyone else with 'vals browse projects' permission can see projects once org applications open
+				 	return (Timeline::getInstance()->organisationSignupPeriodOpened());
+				};//! hasRole(array('anonymous user'));
 		default:
 			return hasPermission($access_string);
 	}
