@@ -4,7 +4,7 @@
  * We should only use this file for drupal hooks  
  * (Otherwise this file will get rather large)
  * NOTE: module_load_include results in a "require_once" anyway
- * The functionality that needs to be there always is included in the standard way.
+ * The functionality that needs to be there always, is included in the standard way.
  */
 
 module_load_include('php', 'vals_soc', 'includes/settings/settings');
@@ -12,6 +12,7 @@ module_load_include('php', 'vals_soc', 'includes/settings/settings');
 include(_VALS_SOC_ROOT.'/includes/vals_soc.helper.inc');
 include(_VALS_SOC_ROOT.'/includes/install/vals_soc.roles.inc');
 include(_VALS_SOC_ROOT.'/includes/classes/AbstractEntity.php');//necessary for forms
+include(_VALS_SOC_ROOT.'/includes/classes/Users.php');//necessary for access checks
 include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');//necessary for forms
 include(_VALS_SOC_ROOT.'/includes/module/vals_soc.forms.inc');
 include(_VALS_SOC_ROOT.'/includes/module/vals_soc.handle_forms.inc');
