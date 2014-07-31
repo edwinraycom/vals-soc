@@ -62,7 +62,7 @@ function formatMemberRecordNice($record, $type){
 		default: $member_type = 'users';
 	}
 	
-	$output=''.gettype($record);
+	$output='';
 	$output .= '';
 	$output .= '<dl class="view_record">';
 	// check to see if there is an 'owner_id field'
@@ -90,21 +90,24 @@ function formatMemberRecordNice($record, $type){
 		$output .=  $owner_details;
 		$output .=  '</dd>';
 	}
+	$is_some_admin = Users::isSomeAdmin();
+	$output .= ($is_some_admin ? ' Mijke ik houd heel veel van je': 'Mijke ik heb altijd van je gehouden');
 	// just loop through the rest of the fields
 	foreach($record as $key => $val){
-		// don't show any field ending with '_id'
-		if (substr_compare($key, '_id', -strlen('_id'))!= 0){
+		// don't show any field ending with '_id' and do not show the codes unless you are an admin
+		if ((substr_compare($key, '_id', -strlen('_id'))!= 0) &&
+			($is_some_admin || (($key !== 'code') && ($key !== 'owner_code')))){
 			$output .=  '<dt>';
 			$output .=  ucfirst(str_replace('_', ' ', $key));
 			$output .=  '</dt>';
 			$output .=  '<span class="ui-icon ui-icon-arrowreturn-1-e"></span>';
 			$output .=  '<dd>';
 			$output .=  $val;
-			if ($key=='code'){
+			if (($key=='code')){
 				$output .= '<br/>';
 				$output .= '<i>' . tt('Use this code to invite your %1$s to participate', $member_type). '</i>';
 			}
-			if ($key=='owner_code'){
+			if (($key=='owner_code')){
 				$output .= '<br/>';
 				$output .= '<i>' . tt('Use the following code to invite a colleague to manage this %1$s together ',
 						$type). '</i>';

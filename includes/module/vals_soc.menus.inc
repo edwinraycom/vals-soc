@@ -183,7 +183,7 @@ function getMembersLink($path){ //dashboard/members
 
 function getAdministerLink($path, $type){//$items['dashboard/institute/administer']
 	return array(
-			'title' => t('Administer your ' . $type),
+			'title' => tt('Administer your %1$ss', t($type)),
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_administer_entity_page',
 			'access callback' => 'vals_soc_access_check',

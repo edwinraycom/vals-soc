@@ -7,28 +7,28 @@ function getTimelineEnabledMessage(){
 		case PROGRAM_NOT_YET_STARTED:
 			return 
 				'<p style="font-size: 1.2em;">'.
-					t("Program starts"). " " . Timeline::getInstance()->getProgramStartDate()->format('F j, Y, g:i a') . 
+					t("Program starts"). ": " . Timeline::getInstance()->getProgramStartDate()->format('F j, Y, g:i a') . 
 					'<hr class="small-style">'. 
 				'</p>'.
 					
 				'<p>'.
-					t("Organisations and Academic partner admins can login and start to create their profiles from ") .
+					t("Organisations and Academic partner admins can login and start to create their profiles from: ") .
 					Timeline::getInstance()->getOrgsSignupStartDate()->format('F j, Y, g:i a') .
 				'</p>';
 			break;
 		case PRE_ORG_SIGNUP_PERIOD:
 			$return_args[0] = t("Program started on"). " " . Timeline::getInstance()->getProgramStartDate()->format('F j, Y, g:i a');
-			$return_args[1] =t("Organisations and Academic partner admins can login and start to create their profile from ") .
+			$return_args[1] =t("Organisations and Academic partner admins can login and start to create their profile from: ") .
 					Timeline::getInstance()->getOrgsSignupStartDate()->format('F j, Y, g:i a');
 			return $return_args;
 			/*
 			return
 				'<h3 class="underline-as-drupal">'.
-					t("Program started on"). " " . Timeline::getInstance()->getProgramStartDate()->format('F j, Y, g:i a') .
+					t("Program started on: "). Timeline::getInstance()->getProgramStartDate()->format('F j, Y, g:i a') .
 				'</h3>'.
 					
 				'<p>'.
-					t("Organisations and Academic partner admins can login and start to create their profile from ") .
+					t("Organisations and Academic partner admins can login and start to create their profile from: ") .
 					Timeline::getInstance()->getOrgsSignupStartDate()->format('F j, Y, g:i a') .
 				'</p>';
 				*/
@@ -38,20 +38,20 @@ function getTimelineEnabledMessage(){
 			$return_args[0] = t("Partner signup period starts"). " " . Timeline::getInstance()->getOrgsSignupStartDate()->format('F j, Y, g:i a');
 			$return_args[1] = t("Organisations and Academic partner admins can now login and start to create their profile.") . ' ' 
 					.'<br/">'.
-					t("You have until the following date to complete your Organisation and Academic partner details.") . ' ' .
+					t("You have until the following date to complete your Organisation and Academic partner details: ") . ' ' .
 					Timeline::getInstance()->getOrgsSignupEndDate()->format('F j, Y, g:i a');
 			return $return_args;
 			/*
 			return
 				'<p style="font-size: 1.2em;">'.
-					t("Partner signup period starts"). " " . Timeline::getInstance()->getOrgsSignupStartDate()->format('F j, Y, g:i a') .
+					t("Partner signup period starts: "). " " . Timeline::getInstance()->getOrgsSignupStartDate()->format('F j, Y, g:i a') .
 					'<hr class="small-style">'.
 				'</p>'.
 						
 				'<p>'.
 					t("Organisations and Academic partner admins can now login and start to create their profile.") . ' ' 
 					.'<br/">'.
-					t("You have until the following date to complete your Organisation and Academic partner details.") . ' ' .
+					t("You have until the following date to complete your Organisation and Academic partner details: ") . ' ' .
 					Timeline::getInstance()->getOrgsSignupEndDate()->format('F j, Y, g:i a') .
 				'</p>';
 				*/
@@ -66,7 +66,7 @@ function getTimelineEnabledMessage(){
 				'<p>'.
 					t("Organisations and Academic partner registration has ended.") . ' ' 
 					.'<br/><br/>'.
-					t("Partners announced system wide") . ' ' .
+					t("Partners announced system wide: ") . ' ' .
 					Timeline::getInstance()->getOrgsAnnouncedDate()->format('F j, Y, g:i a') .
 				'</p>';
 			break;
@@ -74,14 +74,14 @@ function getTimelineEnabledMessage(){
 			
 			return
 				'<p style="font-size: 1.2em;">'.
-					t("Student signup period starts"). " " . Timeline::getInstance()->getStudentsSignupStartDate()->format('F j, Y, g:i a') .
+					t("Student signup period starts: "). " " . Timeline::getInstance()->getStudentsSignupStartDate()->format('F j, Y, g:i a') .
 					'<hr class="small-style">'.
 				'</p>'.
 						
 				'<p>'.
 					t("Organisations and Academic partner registration has ended.") . ' ' 
 					.'<br/><br/>'.
-					t("Student signup period begins") . ' ' .
+					t("Student signup period begins: ") . ' ' .
 					Timeline::getInstance()->getStudentsSignupStartDate()->format('F j, Y, g:i a') .
 				'</p>';
 			break;
@@ -97,7 +97,7 @@ function getTimelineEnabledMessage(){
 					t("Mentors should now invite students into their own student groups by sending them an email containing their groups activation code. ".
 					" They can then browse the project ideas.")
 					.'<br/>'.
-					t("Student signup period ends") . ' ' .
+					t("Student signup period ends: ") . ' ' .
 					Timeline::getInstance()->getStudentsSignupEndDate()->format('F j, Y, g:i a') .
 				'</p>';
 			break;
@@ -112,7 +112,7 @@ function getTimelineEnabledMessage(){
 				'<p>'.
 					t("Students can no longer submit project proposals.").
 					'<br/>'.
-					t("Organisations review project applications deadline") . ' ' .
+					t("Organisations review project applications deadline: ") . ' ' .
 					Timeline::getInstance()->getOrgsReviewApplicationsDate()->format('F j, Y, g:i a') .
 				'</p>';
 			break;
@@ -120,14 +120,14 @@ function getTimelineEnabledMessage(){
 			
 			return
 				'<p style="font-size: 1.2em;">'.
-					t("Student signup period ended"). " " . Timeline::getInstance()->getStudentsSignupEndDate()->format('F j, Y, g:i a') .					
+					t("Student signup period ended: "). " " . Timeline::getInstance()->getStudentsSignupEndDate()->format('F j, Y, g:i a') .					
 					'<hr class="small-style">'.
 				'</p>'.
 					
 				'<p>'.
 					t("Students can no longer submit project proposals.").
 					'<br/>'.
-					t("Mentors and tutors deadline to match to accepted projects to mentors.") . ' ' .
+					t("Mentors and tutors deadline to match accepted projects to mentors: ") . ' ' .
 					Timeline::getInstance()->getOrgsReviewApplicationsDate()->format('F j, Y, g:i a') .
 				'</p>';
 			break;
@@ -135,7 +135,7 @@ function getTimelineEnabledMessage(){
 			
 			return
 				'<p style="font-size: 1.2em;">'.
-					t("Student signup period ended"). " " . Timeline::getInstance()->getStudentsSignupEndDate()->format('F j, Y, g:i a') .					
+					t("Student signup period ended: "). " " . Timeline::getInstance()->getStudentsSignupEndDate()->format('F j, Y, g:i a') .					
 					'<hr class="small-style">'.
 				'</p>'.
 					
@@ -144,7 +144,7 @@ function getTimelineEnabledMessage(){
 					'<br/>'.
 					t("Community bonding period soon.").
 					'<br/>'.
-					t("Accepted Students and projects announced on ") . ' ' .
+					t("Accepted Students and projects announced on: ") . ' ' .
 					Timeline::getInstance()->getAcceptedStudentsAnnouncedDate()->format('F j, Y, g:i a') .
 				'</p>';
 			break;
@@ -158,7 +158,7 @@ function getTimelineEnabledMessage(){
 				'<p>'.
 					t("Students can no longer submit project proposals.").
 					'<br/>'.
-					t("The Bonding period starts on the following date. ") .
+					t("The Bonding period starts on the following date: ") .
 					Timeline::getInstance()->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
 				'</p>';
 			break;
@@ -172,7 +172,7 @@ function getTimelineEnabledMessage(){
 					t("This period is intended to allow all participants to communicate and and ask questions in advance of actually starting the tasks.").
 					'<br/>'.
 					'<br/>'.
-					t(" Coding starts on the following date. ") .
+					t(" Coding starts on the following date: ") .
 						Timeline::getInstance()->getCodingStartDate()->format('F j, Y, g:i a');
 				'</p>';
 			break;
@@ -186,7 +186,7 @@ function getTimelineEnabledMessage(){
 					t("The suggested date students finish their work.") . ' ' . Timeline::getInstance()->getSuggestedCodingDeadline()->format('F j, Y, g:i a').
 					'<br/>'.
 					'<br/>'.
-				 	t("The deadline date for students to finish their work. ") . Timeline::getInstance()->getCodingEndDate()->format('F j, Y, g:i a').
+				 	t("The deadline date for students to finish their work: ") . Timeline::getInstance()->getCodingEndDate()->format('F j, Y, g:i a').
 				'</p>';
 			break;
 		case PRE_CODING_DEADLINE:
@@ -199,7 +199,7 @@ function getTimelineEnabledMessage(){
 					t("The suggested date students finish their work has expired.") . ' ' . Timeline::getInstance()->getSuggestedCodingDeadline()->format('F j, Y, g:i a').
 					'<br/>'.
 					'<br/>'.
-				 	t("The deadline date for students to finish their work. ") . Timeline::getInstance()->getCodingEndDate()->format('F j, Y, g:i a').
+				 	t("The deadline date for students to finish their work: ") . Timeline::getInstance()->getCodingEndDate()->format('F j, Y, g:i a').
 				'</p>';
 			break;
 		case OUT_OF_SEASON:

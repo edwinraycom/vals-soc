@@ -356,7 +356,7 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
                         'supervisor' => t("Supervisor"),
                         'mentor' => t("Mentor"),
                         'organisation_admin' => t('Organisation Administrator'),
-                        'institute_admin' => t('Institute Admin'),
+                        'institute_admin' => t('Institute Administrator'),
                 ),
                 "#description" => t("Select your role in Semester of Code."),
         );
