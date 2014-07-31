@@ -36,6 +36,11 @@ class Users extends AbstractEntity{
     	return self::isOfType('organisation_admin');
     }
     
+    public static function isSomeAdmin()
+    {
+    	return self::isAdmin() || self::isInstituteAdmin() || self::isOrganisationAdmin();
+    }
+    
     public static function isSuperVisor()
     {
     	global $user;

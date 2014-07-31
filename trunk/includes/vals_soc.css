@@ -19,6 +19,12 @@ input[type=button]  {
 	  background-color: lightblue;
 }
 
+/*also used in the tabs class files */
+.totheright{
+	margin-left:auto;
+	margin-right:auto;
+	text-align: right ; 
+}
 /*************************************************
 	CSS for the projects views
 *************************************************/	
