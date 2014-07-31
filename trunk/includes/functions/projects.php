@@ -146,18 +146,14 @@ function renderProject($project='', $target=''){
 	if (is_object($project)){
 		$project = objectToArray($project);
 	} else {
-		//return 'het Is GEEN object dus array';
+		//It is NOT an object, so: array
 	}
 	$key_name = Groups::keyField('project');
 	$id = $project[$key_name];
-	$content = "<h2>".$project['title']."</h2>";
-	$content .= '<p>'.$project['description']. '</p>';
-	if ($project['url']){
-		$content .= '<p>'.tt('More information can be found at %1$s', "<a href='${project['url']}'> ${project['url']}</a>"). '</p>';
-	}
 	$type = 'project';
 	$role = getRole();
-	$content .="<div class=\"totheright\">";
+	
+	$content ="<div class=\"totheright\">";
 	if ('student' == getRole()){
 		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
 		")\" value='Submit proposal for this project'/>";
@@ -169,6 +165,12 @@ function renderProject($project='', $target=''){
 		$content .= "<input type='button' value='".t('delete')."' $delete_action/>";
 	}
 	$content .="</div>";
+	$content .= "<h2>".$project['title']."</h2>";
+	$content .= '<p>'.$project['description']. '</p>';
+	if ($project['url']){
+		$content .= '<p>'.tt('More information can be found at %1$s', "<a href='${project['url']}'> ${project['url']}</a>"). '</p>';
+	}
+	
 	return $content;
 }
 
