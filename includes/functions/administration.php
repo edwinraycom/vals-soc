@@ -375,33 +375,34 @@ function showOrganisationAdminPage($organisations, $show_last=FALSE){
 }
 
 function showOrganisationMembersPage($organisations){
-	$init_offset = 1;
+	$tab_offset = 1;
 	$data = array();
-	$tab = array();
+	$tabs = array();
 	// 		[translate, label, action, type, id, extra GET arguments]
 	if(user_access('vals admin register')){
-		$data[] = array($init_offset, t('All Members'), 'showmembers', 'organisation', 'all', 'subtype=mentor');
-		$tabs = array("'mentor_page-$init_offset'");
-		$init_offset++;
+		$data[] = array(1, t('All Members'), 'showmembers', 'organisation', 'all');
+		$tabs = array("'mentor_page-$tab_offset'");
+		$tab_offset++;
 	}
 	
 	foreach ($organisations as $org){
-		$tabs[] = "'mentor_page-$init_offset'";
-		$data[] = array($init_offset, $org->name, 'showmembers', 'organisation', $org->org_id);
-		$init_offset++;
+		$tabs[] = "'mentor_page-$tab_offset'";
+		$data[] = array(2, $org->name, 'showmembers', 'organisation', $org->org_id);
+		$tab_offset++;
 	}
-
-	$first_tab_data_type = $data[0][4];
+	if ($data){
+		$first_tab_group_id = $data[0][4];
+		
+		echo renderTabs(--$tab_offset, 'Org', 'mentor_page-', 'organisation', $data, null, TRUE,
+				renderUsers('organisation_admin', '', $first_tab_group_id, 'organisation').
+				renderUsers('mentor', '', $first_tab_group_id, 'organisation'));
 	
-	//echo '<h2>'.t('The registered mentors of your organisations').'</h2>';
-	echo renderTabs(--$init_offset, 'Org', 'mentor_page-', 'organisation', $data, null, TRUE,
-		renderUsers('organisation_admin', '', $first_tab_data_type, 'organisation').
-		renderUsers('mentor', '', $first_tab_data_type, 'organisation'));
-
-	?>
-	<script type="text/javascript">
-		activatetabs('tab_', [<?php echo implode(',', $tabs);?>]);
-	</script>
+		?>
+		<script type="text/javascript">
+			activatetabs('tab_', [<?php echo implode(',', $tabs);?>]);
+		</script>
 	<?php
-
+	} else {
+		echo t('You cannot see organisation members at the moment');	
+	}
 }

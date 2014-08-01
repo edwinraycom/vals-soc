@@ -3,13 +3,15 @@
 		<h4 id="title-section-how-it-works"><?php echo t('News and other information');?></h4>
 			<div class="block-padding-no-border">
 				<p>
-					<?php echo("Originally we planned to use the well-known Melange software from Google's ".
-							'Summer of Code, but for various good reasons we started a couple of months ago '.
-							'developing this platform. Although all the basic functionality should be there, we
-							expect further developments and improvements coming up the coming months.<br/><br/>'.
-							'If you have remarks or suggestions, please tell us, so that we can further improve this '.
-							'platform. Please have in mind that it is work in progress and that we do not develop 
-							a full product; it is meant as a pilot project, so it can always be improved.');?>
+					<?php echo("We originally planned to use the well-known Melange platform used by Google's 
+							Summer of Code, but at the time there was no stable version available that we could 
+							use. We then deceided to start development of our own platform that follows similar 
+							logic as Melange, but more tuned to our project's needs.<br /> 
+							Although the Vals platform is still under development, it is currently stable and 
+							ready for the Semester of Code pilot. Over the next period we will continuously add
+							new functionality and improvements.<br/><br/>
+							If you have any suggestions or other remarks, please tell us so that we can further
+							improve our service.");?>
 				</p>
 				<p>
 					<?php echo('Check here for external links and updates to the program, as they become available.');?>

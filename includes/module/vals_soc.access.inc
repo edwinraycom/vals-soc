@@ -22,7 +22,6 @@ function hasPermission($permission){
  * 	   'vals browse proposals'
  */
 function pageAccessCheck($access_string) {
-	//drupal_set_message("test:".$access_data);
 	global $user;
 	
 	if (_VALS_TEST_UI_ONLY && Users::isAdmin()){
