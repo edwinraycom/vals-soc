@@ -227,8 +227,8 @@ function vals_soc_init(){
  * @param unknown $message
  */
 function vals_soc_mail_alter(&$message) {
-	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
-	return vals_soc_mail_alter_handler($message);
+	//module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
+	//return vals_soc_mail_alter_handler($message);
 }
 
 

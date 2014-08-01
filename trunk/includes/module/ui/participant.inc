@@ -177,25 +177,11 @@ function renderUsers($type='', $users='', $group_selection='', $group_type=''){
         	$users = null;
         }
     }
-    /*
-    if ($users && $users->rowCount()){
-        $s = "<ul class='grouplist'>";
-        foreach($users as $member){
-            $s .=  "<li>";
-            $s .= ($member->fullname ?: $member->name).' : '. $member->mail;
-            $s .= "</li>";
-        }
-        $s .= "</ul>";
-        return $s; 
-    } else {
-    	$group_type = $group_type ?: 'studentgroup';
-        return $group_selection ? tt('There is no %1$s yet in this %2$s', t($type), t($group_type)) :
-        	tt('You have no %1$s yet.', t($type));
-    } 
-    */
-    $group_type = $group_type ?: 'studentgroup';
-    $empty_message =  $group_selection ? tt('There is no %1$s yet in this %2$s', t($type), t($group_type)) :
-    tt('You have no %1$s yet.', t($type));
+    
+    $group_type = $group_type ?: 'environment';
+    $type_nice = str_replace('_', ' ', $type);
+    $empty_message =  $group_selection ? tt('There is no %1$s yet in this %2$s', t($type_nice), t($group_type)) :
+    tt('You have no %1$s yet.', t($type_nice));
     return formatUsersNice($users, $type, $empty_message, TRUE);
     
 }

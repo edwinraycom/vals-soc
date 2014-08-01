@@ -209,14 +209,14 @@ class Users extends AbstractEntity{
 	}
 
 	public static function getParticipantBasicSubset($id){
-		if(isset($id)){
-		return db_query(
-				"SELECT u.name, u.mail,n.name as fullname from users as u ".
-				'left join soc_names as n on u.uid=n.names_uid '.
-				"WHERE u.uid = '$id'")->fetchObject();
-		}
-		else{
-			t('No identifier specified');
+		if(isset($id) && $id){
+			return db_query(
+					"SELECT u.name, u.mail,n.name as fullname from users as u ".
+					'left join soc_names as n on u.uid=n.names_uid '.
+					"WHERE u.uid = '$id'")->fetchObject();
+		} else {
+			drupal_set_message(t('No valid identifier specified'), 'error');
+			return null;
 		}
 	}
 	

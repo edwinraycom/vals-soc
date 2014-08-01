@@ -48,7 +48,13 @@ function vals_soc_mail_handler($key, &$message, $params) {
 		break;
 	}
 	if ($html_format){
-		$message['headers']['Content-Type'] = str_replace('text/plain', 'text/html', $message['headers']['Content-Type']);
+		//change header format for html formatted emails (in effect all the vals_soc emails now)
+		$message['headers'] = array(
+			'MIME-Version' => '1.0',
+			'Content-Type' => 'text/html; charset=iso-8859-1; format=flowed',
+			'Content-Transfer-Encoding' => '8Bit',
+			'X-Mailer' => 'Drupal',
+		);
 	}
 }
 
@@ -58,19 +64,22 @@ function vals_soc_mail_handler($key, &$message, $params) {
  * @param unknown $message
  */
 function vals_soc_mail_alter_handler(&$message) {
-	$headers = array(
-		'MIME-Version' => '1.0',
-		'Content-Type' => 'text/html; charset=iso-8859-1; format=flowed',
-		'Content-Transfer-Encoding' => '8Bit',
-		'X-Mailer' => 'Drupal',
-	);
-	$headers2 = $message['headers'];
-	if (strpos($headers2['Content-Type'], 'plain')){
-		$headers['Content-Type'] = str_replace('text/html', 'text/plain', $headers['Content-Type']);
-	}
-	foreach ($headers as $key => $value) {
-		$message['headers'][$key] = $value;
-	}
+	//We now directly apply these header changes for the vals_soc mails only in the function
+	//vals_soc_mail_handler.
+	
+// 	$headers = array(
+// 			'MIME-Version' => '1.0',
+// 			'Content-Type' => 'text/html; charset=iso-8859-1; format=flowed',
+// 			'Content-Transfer-Encoding' => '8Bit',
+// 			'X-Mailer' => 'Drupal',
+// 		);
+// 	$headers2 = $message['headers'];
+// 	if (strpos($headers2['Content-Type'], 'plain')){
+// 		$headers['Content-Type'] = str_replace('text/html', 'text/plain', $headers['Content-Type']);
+// 	}
+// 	foreach ($headers as $key => $value) {
+// 		$message['headers'][$key] = $value;
+// 	}
 }
 
 /**
