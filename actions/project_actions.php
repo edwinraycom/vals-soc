@@ -78,9 +78,6 @@ switch ($_GET['action']){
 		if (! $organisation){
 			echo tt('The %1$s cannot be found', t($type));
 		} else {
-			//$is_owner = Groups::isOwner($type, $id);
-			//     		 echo $is_owner ? sprintf('<h3>%1$s</h3>', tt('Your %1$s', t($type))):
-			//     		 	sprintf('<h3>%1$s</h3>', ($is_project ? $organisation['title'] : $organisation->name));
 			echo "<div id='msg_$target'></div>";
 			echo $is_project ? renderProject($organisation, $target) : renderOrganisation($type, $organisation, null, $target);
 		}

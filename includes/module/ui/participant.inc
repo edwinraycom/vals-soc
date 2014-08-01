@@ -75,11 +75,15 @@ function formatMemberRecordNice($record, $type){
 		else{
 			// else owner someone else, get their details
 			$user = Users::getParticipantBasicSubset($record->owner_id);
-			if (isset($user->fullname)){
-				$owner_details= $user->fullname . ' (' . $user->mail . ')';
-			}
-			else{
-				$owner_details= $user->name . ' (' . $user->mail . ')';
+			if ($user){
+				if (isset($user->fullname)){
+					$owner_details = $user->fullname . ' (' . $user->mail . ')';
+				}
+				else{
+					$owner_details = $user->name . ' (' . $user->mail . ')';
+				}
+			} else {
+				$owner_details = tt('We could not find the owner of this %1$s', t($type));
 			}
 		}
 		$output .=  '<dt>';
@@ -91,7 +95,6 @@ function formatMemberRecordNice($record, $type){
 		$output .=  '</dd>';
 	}
 	$is_some_admin = Users::isSomeAdmin();
-	$output .= ($is_some_admin ? ' Mijke ik houd heel veel van je': 'Mijke ik heb altijd van je gehouden');
 	// just loop through the rest of the fields
 	foreach($record as $key => $val){
 		// don't show any field ending with '_id' and do not show the codes unless you are an admin

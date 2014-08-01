@@ -66,6 +66,11 @@ class Groups extends AbstractEntity{
 			drupal_set_message(tt('You cannot be the owner of an entity called %1$s', $type), 'error');
 			return FALSE;
 		}
+		if (Users::isAdmin()){
+			//We always want the admin to be able to delete stuff for example and can expect him/her to be very
+			//cautious about that of course
+			return TRUE;
+		}
 		$key_field = self::keyField($type);
 		$entity = db_query("SELECT * FROM ".tableName($type)." WHERE $key_field = $id")->fetchAssoc();
 		//fetchAssoc returns next record (array) or false if there is none

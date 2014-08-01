@@ -49,7 +49,7 @@ switch ($_GET['action']){
 		if (!$id){
 			$id = $result = Proposal::insertProposal($properties, $project_id);
 		} else {
-			if (!Groups::isOwner('proposal', $id) && !Users::isAdmin()){
+			if (!Groups::isOwner('proposal', $id)){
 				drupal_set_message(t('You are not the owner of this proposal'), 'error');
 				$result = null;
 			} else {
@@ -81,7 +81,7 @@ switch ($_GET['action']){
 		if (!$id){
 			$result = Proposal::insertProposal($properties, $project_id);
 		} else {
-			if (!Groups::isOwner('proposal', $id)&& !Users::isAdmin()){
+			if (!Groups::isOwner('proposal', $id)){
 				drupal_set_message(t('You are not the owner of this proposal'), 'error');
 				$result = null;
 			} else {
