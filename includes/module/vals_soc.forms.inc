@@ -615,6 +615,12 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 			//"#size" => 1024,
 			"#default_value" => populate($project, 'description')
 	);
+	$form['url_description_text'] = array(
+			'#markup' => '<p><i>' . 'At a minimum, please include the expected outcome of the project, a potential mentor, the skills and/or 
+				languages required to complete the project, and a general "difficulty" level. The project should take about 3 months to complete. 
+				Please bear in mind that it\'s better to start with a smaller project that can be extended if your student proves to be capable 
+				rather than have an over-ambitious idea which can\'t be completed in time.'. '</i></p>'
+	);
 	$form['url'] = array(
 			"#type" => "textfield",
 			'#title' => t('The url of this project'),
@@ -622,9 +628,12 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 			'#required' => '1',
 			"#default_value" => populate($project, 'url')
 	);
+	$form['url_help_text'] = array(
+			'#markup' => '<p><i>' . 'This could be for example a link to a bug tracker issue or google doc that describes the project idea.'. '</i></p>'
+	);
 	$form['tags'] = array(
 			"#type" => "textfield",
-			'#title' => t('Some tags to facilitate searching (php,...)'),
+			'#title' => t('Some tags to facilitate searching (Delimited by comma i.e. php, javascript, html)'),
 			"#size" => 60,
 			//'#required' => '1',
 			"#default_value" => populate($project, 'tags')
