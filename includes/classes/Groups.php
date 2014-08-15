@@ -14,21 +14,28 @@ class Groups extends AbstractEntity{
 			$code_key_column = ($org_type == 'studentgroup') ? 'studentgroup_id' : 'entity_id';
 			$member_type = ($org_type == 'studentgroup') ? 'studentgroup' :(($org_type == 'organisation') ? 'mentor': 'supervisor');
 			if ($id){
-					
-				$members = db_query(
-						"SELECT o.*, c.code, c2.code as owner_code from ".tableName($org_type)." as o ".
+				/*
+				$sqlStr = "SELECT o.*, c.code, c2.code as owner_code from ".tableName($org_type)." as o ".
 						"left join soc_codes as c on o.$key_column = c.$code_key_column ".
 						"left join soc_codes as c2 on o.$key_column = c2.$code_key_column AND c2.type = '${org_type}_admin'".
-						"WHERE o.$key_column = $id ");
+						" WHERE o.$key_column = $id ";
+						*/
+				$sqlStr = "SELECT o.*, c.code, c2.code as owner_code from ".tableName($org_type)." as o ".
+						"left join soc_user_membership as um on o.$key_column = um.group_id ".
+						" left join soc_codes as c on o.$key_column = c.$code_key_column AND c.type = '$member_type'".
+						" left join soc_codes as c2 on o.$key_column = c2.$code_key_column AND c2.type = '${org_type}_admin'".
+						" WHERE um.type = '$org_type' AND o.$key_column = $id ";
+				$members = db_query($sqlStr);
+				//echo '<br/><br/><pre>sql='.$sqlStr.'</pre>';
 			} else {
 				$group_head_id = $group_head_id ?: $group_head;
-		
-				$members = db_query(
-						"SELECT o.*, c.code, c2.code as owner_code from ".tableName($org_type)." as o ".
+				$sqlStr = "SELECT o.*, c.code, c2.code as owner_code from ".tableName($org_type)." as o ".
 						"left join soc_user_membership as um on o.$key_column = um.group_id ".
-						"left join soc_codes as c on o.$key_column = c.$code_key_column AND c.type = '$member_type'".
-						"left join soc_codes as c2 on o.$key_column = c2.$code_key_column AND c2.type = '${org_type}_admin'".
-						"WHERE um.type = '$org_type' AND um.uid = $group_head_id ");
+						" left join soc_codes as c on o.$key_column = c.$code_key_column AND c.type = '$member_type'".
+						" left join soc_codes as c2 on o.$key_column = c2.$code_key_column AND c2.type = '${org_type}_admin'".
+						" WHERE um.type = '$org_type' AND um.uid = $group_head_id ";
+				$members = db_query($sqlStr);
+				//echo '<br/><br/><pre>sql='.$sqlStr.'</pre>';
 			}
 		}	
 		return $members;
