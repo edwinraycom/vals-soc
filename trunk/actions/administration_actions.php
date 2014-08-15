@@ -135,6 +135,54 @@ switch ($_GET['action']){
     		echo $result ? jsonGoodResult() : jsonBadResult('', 'error', array('target'=>$target));
     	}
     break;
+    case 'send_invite_email':
+    	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');	
+    	$type = altSubValue($_POST, 'type', '');
+    	$email = altSubValue($_POST, 'contact_email', '');
+    	$subject = altSubValue($_POST, 'subject', '');
+    	$body = altSubValue($_POST, 'description', '');
+		$result = vals_soc_send_email('vals_soc_invite_new_user', $email, NULL, $subject, $body);
+    	$id = altSubValue($_POST, 'id', '');
+    	$show_action = altSubValue($_POST, 'show_action', '');
+    	
+		if ($result){
+            echo json_encode(array(
+            		'result'=>TRUE,
+            		'id' => $id,
+            		'type'=> $type,
+					//'new_tab' => $new,
+            		'show_action' => $show_action,
+            		'msg'=> t('Email successfully sent') .
+            		(_DEBUG ? showDrupalMessages(): '')
+            		
+            		));
+        } else {
+        	echo jsonBadResult();
+        }
+    break;
+    case 'inviteform':
+    	$type = altSubValue($_POST, 'type', '');
+    	$subtype = altSubValue($_POST, 'subtype', '');
+    	$id = altSubValue($_POST, 'id', '');
+    	$target = altSubValue($_POST, 'target', '');
+    	if (! isValidOrganisationType($type) ) {//for convenience we have made a project an organisationtype as well //TODO: make this better
+    		echo t('There is no such type to edit :'.$type);
+    	} else {
+    		$obj = Groups::getGroup($type, $id);
+    		// See http://drupal.stackexchange.com/questions/98592/ajax-processed-not-added-on-a-form-inside-a-custom-callback-my-module-deliver
+    		// for additions below
+    		$originalPath = false;
+    		if(isset($_POST['path'])){
+    			$originalPath = $_POST['path'];
+    		}
+    		unset($_POST);
+    		$form = drupal_get_form("vals_soc_invite_form", $obj, $target, '', $subtype);
+    		if($originalPath){
+    			$form['#action'] = url($originalPath);
+    		}
+    		renderForm($form, $target);
+    	}
+    	break;
     case 'edit':
         $type = altSubValue($_POST, 'type', '');
         $id = altSubValue($_POST, 'id', '');

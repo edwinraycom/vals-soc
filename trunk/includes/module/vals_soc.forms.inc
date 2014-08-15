@@ -6,11 +6,11 @@ function populate($obj, $prop, $default=''){
 	return ($obj && isset($obj->$prop)) ? $obj->$prop : $default;
 }
 
-function entityCall($type, $obj, $target, $show_action='administer', $action_handler='administration'){
+function entityCall($type, $obj, $target, $show_action='administer', $action_handler='administration', $entity_action='save'){
 	$key = AbstractEntity::keyField($type);
     $id = $obj && $obj->$key ? $obj->$key : 0;
     $post_function = $id ? 'refreshSingleTab' : 'refreshTabs';
-	$call = "ajaxFormCall('vals_soc_entity_form_wrapper_$target form', '$action_handler', 'save', ".
+	$call = "ajaxFormCall('vals_soc_entity_form_wrapper_$target form', '$action_handler', '$entity_action', ".
 		"{type: '$type',id: $id, show_action:'$show_action'},".
 		"'$post_function','json',['$type', '$target', '$action_handler']);";
 	return $call;
@@ -752,6 +752,56 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 	);
 
 	return $form;	
+}
+
+function vals_soc_invite_form($form, &$form_state, $org='', $target='', $show_action='administer', $subtype){
+	include_once(_VALS_SOC_ROOT. '/includes/module/vals_soc.mail.inc');
+	$message = format_invite_message($org, $subtype);
+	$form = array(
+			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
+			'#suffix' => '</div>',
+	);
+	$form['email_contact_header'] = array(
+			'#markup' => '<h2>' . tt('Invite new %1$s', $subtype). '</h2><br/>'
+	);
+	$form['subject'] = array(
+			'#type' => 'hidden',
+			"#default_value" => t('Invitation to join the VALS Semester of code'),
+	);
+	$form['contact_email'] = array(
+			"#type" => "textfield",
+			'#title' => t('Email of the person to invite'),
+			"#size" => 100,
+			'#required' => '1',
+			"#default_value" => '',
+	);
+	$form['description'] = array(
+			"#type" => "textarea",
+			'#title' => t('Message'),
+			//"#size" => 1024,
+			"#default_value" => $message,
+		
+	);
+	$form['submit'] = array(
+			'#type' => 'submit',
+			'#attributes' => array('onclick'=> entityCall('organisation', $org, $target, 'administer', 'administration', 'send_invite_email')),
+			'#value' => t('Send'),
+			'#post_render' => array('vals_soc_fix_submit_button'),
+	);
+	$form['cancel'] = array(
+			'#type' => 'button',
+			'#value' => t('Cancel'),
+			'#prefix' => '&nbsp; &nbsp; &nbsp;',
+			'#attributes' => array('onClick' => 'location.reload(); return true;'),
+			'#post_render' => array('vals_soc_fix_submit_button'),
+	);
+	$form['#attached']['js'] = array(
+			array(
+					'type'  => 'file',
+					'data' => '/includes/js/test_functions.js',
+			),
+	);
+	return $form;
 }
 
 /*

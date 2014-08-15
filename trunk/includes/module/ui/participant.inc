@@ -47,19 +47,23 @@ function formatUsersNice($users, $type='User', $empty_message='', $show_title=FA
  * @param string $member_type - used to show what type of entity is supposed to be used by the generated CODE
  * @return string - a bunch of HTML
  */
-function formatMemberRecordNice($record, $type){
+function formatMemberRecordNice($record, $type, $target=''){
+	$key_name = Groups::keyField($type);
+	$id = $record->$key_name;
 	$member_type='';
 	switch ($type){
 		case 'organisation': // organisations invite mentors
-			$member_type = 'mentors';
+			$parent_member_type = 'organisation administrator';
+			$member_type = 'mentor';
 			break;
 		case 'institute': // institutes invite supervisors
-			$member_type = 'supervisors';
+			$parent_member_type = 'institution administrator';
+			$member_type = 'supervisor';
 			break;
 		case 'studentgroup': // studentgroups invite students
-			$member_type = 'students';
+			$member_type = 'student';
 			break;
-		default: $member_type = 'users';
+		default: $member_type = 'user';
 	}
 	
 	$output='';
@@ -108,12 +112,31 @@ function formatMemberRecordNice($record, $type){
 			$output .=  $val;
 			if (($key=='code')){
 				$output .= '<br/>';
-				$output .= '<i>' . tt('Use this code to invite your %1$s to participate', $member_type). '</i>';
+				$output .= '<i>' . tt('You can use this code to invite a %1$s to participate.', $member_type);
+				$output .= '<br/>';
+				$output .= '<br/>';
+				$output .= tt('To sign up a %1$s for your %2$s, send them this code and direct them to '.
+						'http://vps.semesterofcode.com/user/register where they can use it to sign up.', $member_type, $type);
+				$output .= '<br/>';
+				$output .= '<br/>';
+				$output .= t('Alternatively click the button below to send an email containing signup instructions') . '</i>';
+				$output .= '<br/>';
+				$invite_mentor_action = "onclick='ajaxCall(\"administration\", \"inviteform\", {type: \"$type\", id: $id, path: \"\", target: \"$target\", subtype: \"$member_type\"}, \"formResult\", \"html\", \"$target\");'";
+				$output .= "<input type='button' value='".tt('Invite %1$s', $member_type)."' $invite_mentor_action/>";
 			}
 			if (($key=='owner_code')){
 				$output .= '<br/>';
-				$output .= '<i>' . tt('Use the following code to invite a colleague to manage this %1$s together ',
-						$type). '</i>';
+				$output .= '<i>' . tt('You can use the following code to invite a colleague to manage this %1$s together ', $type). '</i>';
+				$output .= '<br/>';
+				$output .= '<br/>';
+				$output .= tt('To sign up a %1$s for your %2$s, send them this code and direct them to '.
+						'http://vps.semesterofcode.com/user/register where they can use it to sign up.', $parent_member_type, $type);
+				$output .= '<br/>';
+				$output .= '<br/>';
+				$output .= t('Alternatively click the button below to send an email containing signup instructions') . '</i>';
+				$output .= '<br/>';
+				$invite_org_admin_action = "onclick='ajaxCall(\"administration\", \"inviteform\", {type: \"$type\", id: $id, path: \"\", target: \"$target\", subtype: \"$parent_member_type\"}, \"formResult\", \"html\", \"$target\");'";
+				$output .= "<input type='button' value='".tt('Invite %1$s', $parent_member_type)."' $invite_org_admin_action/>";
 			}
 			$output .=  '</dd>';
 		}
@@ -251,7 +274,7 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
 	    	$s .= "<input type='button' value='".t('delete')."' $delete_action/><br/><br/>";
 	    	//$sub_type_user = '';
     	}
-        $s .= formatMemberRecordNice($organisation, $type);
+        $s .= formatMemberRecordNice($organisation, $type, $target);
         return $s;
     } else {
         return tt('You have no %1$s registered yet', $type);

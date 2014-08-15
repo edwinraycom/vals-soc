@@ -11,6 +11,10 @@ function vals_soc_mail_handler($key, &$message, $params) {
 	//All these messages are saved with rte textareas and so already in html format
 	$html_format = true;
 	switch($key) {
+		case 'vals_soc_invite_new_user':
+			$message['subject'] = $params['subject'];
+			$message['body'][] = $params['body'];
+			break;
 		case 'vals_soc_email_accepted_organisation':
 			$message['subject'] = t('Organisation application for VALS summer of code');
 			$message['body'][] = variableGetFromStruct('vals_accepted_organisations_message', 'value');
@@ -115,6 +119,20 @@ function vals_soc_handle_test_emails($to){
 	drupal_set_message($mail_results);
 }
 
+function vals_soc_send_email($key, $to, $from, $subject, $body){
+	$message = drupal_mail('vals_soc', $key, $to, user_preferred_language($user),
+		array('body' => $body,
+			'subject' => $subject,
+			$from,
+			TRUE)
+	);
+	if (!empty($message['result'])) {
+		return true;
+	}else{
+		return false;
+	}
+}
+
 /*****************
  *  TESTING
  */
@@ -154,4 +172,53 @@ function vals_soc_cron_email_handler($item){
 		$mail_results .= $item['message_type'] . ' sent!!.' .'<br/>';
 	}
 	drupal_set_message($mail_results);
+}
+
+function format_invite_message($entity, $subtype){
+	$output = '';
+	
+	$entity_name = $entity->name;
+	$db_code_key = '';
+	if($subtype == 'mentor' || $subtype == 'supervisor' || $subtype == 'student'){
+		$db_code_key = 'code';
+	}else{
+		$db_code_key = 'owner_code';
+	}
+	$invite_key = $entity->$db_code_key;
+	
+	$output .= '<p>';
+	$output .= t('Hello').',';
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= tt('You have been invited to participate in the VALS Semester of code program, as a member of the %1$s group for %2$s.', $subtype, $entity_name);
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= t('The first step is to sign up...'); 
+	$output .= '<br/>';
+	$output .= '<ul class=\'grouplist\'>';
+		$output .= "<li>";
+		$output .= t('Go to <a href="http://vps.semesterofcode.com/user/register" target="_blank">http://vps.semesterofcode.com/user/register to register.</a>');
+		$output .= "</li>";
+		$output .= "<li>";
+		$output .= tt('Fill in your basic details and select "%1$s" as your role.', $subtype); 
+		$output .= "</li>";
+		$output .= "<li>";
+		$output .= t('Enter the following admin key: ' . $invite_key);
+		$output .= "</li>";
+		$output .= "<li>";
+		$output .= t('Click "Create New Account"');
+		$output .= "</li>";
+		$output .= "<li>";
+		$output .= t('You will recieve an email with a one-time login link. Log in and set your password.');
+		$output .= "</li>";
+	$output .= "</ul>";
+	$output .= '<br/>';
+	$output .= t('Many Thanks,');
+	$output .= '<br/>';
+	$output .= t('The VALS team');
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= '<img src="http://vps.semesterofcode.com/sites/all/themes/media/logo.png">';
+	$output .= '<p>';
+	return $output;
 }
