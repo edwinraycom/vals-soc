@@ -166,7 +166,7 @@ switch ($_GET['action']){
     	$id = altSubValue($_POST, 'id', '');
     	$target = altSubValue($_POST, 'target', '');
     	if (! isValidOrganisationType($type) ) {//for convenience we have made a project an organisationtype as well //TODO: make this better
-    		echo t('There is no such type to edit :'.$type);
+    		echo t('There is no such type you can invite people to :'.$type);
     	} else {
     		$obj = Groups::getGroup($type, $id);
     		// See http://drupal.stackexchange.com/questions/98592/ajax-processed-not-added-on-a-form-inside-a-custom-callback-my-module-deliver
