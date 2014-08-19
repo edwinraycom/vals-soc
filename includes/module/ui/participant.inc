@@ -152,20 +152,6 @@ function renderStudents($group_selection='', $students=''){
         //get all his students
         $students = Users::getStudents($group_selection);
     }
-    /*
-    if ($students && $students->rowCount()){
-        $s = "<ul class='grouplist'>";
-        foreach($students as $student){
-            $s .= "<li>";
-            $s .= $student->name.' : '. $student->mail;
-            $s .= "</li>";
-        }
-        $s .= "</ul>";
-        return $s;
-    } else {
-        return t('There are no students yet');
-    }  
-    */
     return formatUsersNice($students, 'student', t('There are no students yet'));
 }
 
@@ -175,20 +161,6 @@ function renderSupervisors($group_selection='', $supervisors=''){
         //get all his supervisors in his/her institute
         $supervisors = Users::getSupervisors($group_selection);
     }
-    /*
-    if ($supervisors->rowCount()){
-        $s = "<ul class='grouplist'>";
-        foreach($supervisors as $supervisor){
-            $s .= "<li>";
-            $s .= $supervisor->name.' : '. $supervisor->mail;
-            $s .= "</li>";
-        }
-        $s .= "</ul>";
-        return $s;
-    } else {
-        return t('There are no supervisors yet in this institute');
-    }
-    */
     return formatUsersNice($supervisors, 'supervisor', t('There are no supervisors yet in this institute'));
 }
     

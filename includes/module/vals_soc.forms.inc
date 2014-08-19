@@ -235,6 +235,8 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
        
         if ((! $member_inst)  || $is_admin){
 	        //So we know the user is not in an institute yet
+        	//He/she can choose between existing institutes (or leave the institute option as 'Fill in later' 
+        	//and enter an own institute)
 	        $institutes = db_select('soc_institutes', 'i')->fields('i', array('inst_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
 	        $options_institutes = array(0 => t('Fill in later'));
 	        foreach ($institutes as $ins){
@@ -261,14 +263,14 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
 		        );
 	        }
         }
-        //(or leave the institute option as 'Fill in later' and enter your own institute)
-        //(or leave the organisation option as 'Fill in later' and enter your own organisation)
-    } elseif (in_array($role, array('organisation_admin', 'mentor'))) {
+     } elseif (in_array($role, array('organisation_admin', 'mentor'))) {
         $member_org_rec = db_select('soc_user_membership', 'mem')->fields('mem')->condition('uid', $uid)->
             condition('type', 'organisation')->execute()->fetchAssoc();
         $member_org = $member_org_rec ? $member_org_rec['group_id'] : 0;
     	if ((! $member_org)  || $is_admin){
 	        //So we know the user is not in an organisation yet
+    		//He/she can choose between existing organisations (or leave the organisation option as 
+    		//'Fill in later'and enter an own organisation)
 	        $organisations = db_select('soc_organisations', 'o')->fields('o', array('org_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
 	        $options_organisation = array(0 => t('Fill in later'));
 	        foreach ($organisations as $org){
