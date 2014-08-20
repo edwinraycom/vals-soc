@@ -123,7 +123,8 @@ function renderForm(&$form, $target, $return=false){
 	// Print $form
 	$s .= drupal_render($form);
 	$s .= valssoc_form_get_js($form);
-	$form['#attached']['js'] = array();//Sometimes it seems Drupal uses the same struct to do a rebuild. We do not
+	$form['#vals_soc_attached']['js'] = array();
+	//Sometimes it seems Drupal uses the same struct to do a rebuild. We do not
 	//want Drupal to interprete the attached js at the moment: the path is relative to the module and D does not 
 	//know that
 	if ($return) return $s;
@@ -132,9 +133,9 @@ function renderForm(&$form, $target, $return=false){
 }
 
 function valssoc_form_get_js($form){
-	if ($form['#attached']['js']){
+	if ($form['#vals_soc_attached']['js']){
 		$js = '';
-		foreach ($form['#attached']['js'] as $incl){
+		foreach ($form['#vals_soc_attached']['js'] as $incl){
 			if ($incl['type'] == 'file'){
 				$js .= src_getJs(_VALS_SOC_FULL_URL.$incl['data']);//we assume all paths start with /
 			} else {

@@ -228,15 +228,17 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 function ajaxFormCall(frm_selector, handler_type, action, data, target, type, args) {
 	CKupdate();
 	//testing is a global object with testing functions 
-	if (testing && isFunction('testing.test_required_fields')){
+	if (testing && isFunction('testing.run')){
+		var msg_target = 'msg_'+ target;
 		if (isFunction(target)){
 			if (typeof args != ' undefined' && isArray(args) && typeof args[1] != ' undefined'){
-				var msg_target = 'msg_'+ args[1];
+				msg_target = 'msg_'+ args[1];
 			} else {
-				var msg_target = 'msg_'+ target;
+				//TODO Change this: this should be some meaningfull default (if target is function it will not be)
+				msg_target = 'msg_'+ target;
 			}
 		}
-		if (!testing.test_required_fields(frm_selector, msg_target)) 
+		if (!testing.run(frm_selector, msg_target)) 
 			return false;
 	} else {
 		//no test needs to be done or forgotten to include test_functions.js
