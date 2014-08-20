@@ -91,7 +91,6 @@ function transform_into_rte(){
 		$jq('#'+target+ ' form textarea').each(function(index, element){
     		CKEDITOR.replace(element);
     	});
-    	//CKEDITOR.replaceAll();
 	} else {
 		CKEDITOR.replaceAll();
 	}

@@ -230,8 +230,7 @@ function renderOrganisations($type='', $organisations='', $organisation_head='',
 
 function renderOrganisation($type, $organisation='', $organisation_owner='', $target='', $show_buttons=true){
     if (!$organisation){
-        $organisations = Groups::getGroups($type, $organisation_owner);
-        $organisation = $organisations->fetchObject();
+        $organisation = Groups::getGroup($type, '', $organisation_owner);
     }
     $key_name = Groups::keyField($type);
     $id = $organisation->$key_name;

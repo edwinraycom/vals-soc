@@ -23,7 +23,7 @@ switch ($_GET['action']){
 		} else {
 			$owner_id = $GLOBALS['user']->uid;
 		}
-		$project = Project::getInstance()->getProjectById($project_id);
+		$project = Project::getProjectById($project_id);
 		echo "<h2>".t('Solution proposal for '.$project['title'])."</h2>";
 		$student_details = Users::getStudentDetails($owner_id);
 		if ($student_details){
@@ -44,7 +44,7 @@ switch ($_GET['action']){
 	case 'save':
 		$id = altSubValue($_POST, 'id', '');
 		$project_id = altSubValue($_POST, 'project_id', '');
-		$project = Project::getInstance()->getProjectById($project_id);
+		$project = Project::getProjectById($project_id);
 		$properties = Proposal::filterPost($_POST);
 		if (!$id){
 			$id = $result = Proposal::insertProposal($properties, $project_id);
@@ -75,7 +75,7 @@ switch ($_GET['action']){
 	case 'submit':
 		$id = altSubValue($_POST, 'id', '');
 		$project_id = altSubValue($_POST, 'project_id', '');
-		$project = Project::getInstance()->getProjectById($project_id);
+		$project = Project::getProjectById($project_id);
 		$properties = Proposal::filterPost($_POST);
 		$properties['state'] = 'published';
 		if (!$id){

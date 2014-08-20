@@ -26,7 +26,7 @@ switch ($_GET['action']){
 			$jTableResult = array();
 			$jTableResult['Result'] = "OK";
 			if ($project_id){
-				$project = Project::getInstance()->getProjectById($project_id);
+				$project = Project::getProjectById($project_id);
 				if ($project){
 					$jTableResult['TotalRecordCount'] = 1;
 					$jTableResult['Records'] = array($project);
@@ -54,7 +54,7 @@ switch ($_GET['action']){
 		$project_id=null;
 		if(isset($_GET['project_id'])){
 			try {
-				$project = Project::getInstance()->getProjectById($_GET['project_id']);
+				$project = Project::getProjectById($_GET['project_id']);
 				jsonGoodResult($project);
 			} catch (Exception $e){
 				jsonBadResult($e->getMessage());
@@ -64,24 +64,38 @@ switch ($_GET['action']){
 			jsonBadResult( t("No Project identifier submitted!"));
 		}
 	break;
-	//
+	//TODO It was like this (copy pasted from administration_actions; remove in future)
+// 	case 'view':
+// 		$type = altSubValue($_POST, 'type');
+// 		$id = altSubValue($_POST, 'id');
+// 		$target = altSubValue($_POST, 'target', '');
+// 		if (! ($id && $type && $target)){
+// 			die(t('There are missing arguments. Please inform the administrator of this mistake.'));
+// 		}
+// 		$is_project = ($type == 'project');
+// 		$organisation = $is_project ? Project::getProjectById($id, TRUE) : Groups::getGroup($type, $id);
+// 		if (! $organisation){
+// 			echo tt('The %1$s cannot be found', t($type));
+// 		} else {
+// 			echo "<div id='msg_$target'></div>";
+// 			echo $is_project ? renderProject($organisation, $target) : renderOrganisation($type, $organisation, null, $target);
+// 		}
+// 	break;
 	case 'view':
-		$type = altSubValue($_POST, 'type');
+		$type = 'project';
 		$id = altSubValue($_POST, 'id');
 		$target = altSubValue($_POST, 'target', '');
 		if (! ($id && $type && $target)){
 			die(t('There are missing arguments. Please inform the administrator of this mistake.'));
 		}
-		$is_project = ($type == 'project');
-		$organisation = $is_project ? Project::getInstance()->getProjectById($id, TRUE) :
-		Groups::getGroup($type, $id);
-		if (! $organisation){
-			echo tt('The %1$s cannot be found', t($type));
+		$project = Project::getProjectById($id, TRUE);
+		if (! $project){
+			echo t('The project cannot be found');
 		} else {
 			echo "<div id='msg_$target'></div>";
-			echo $is_project ? renderProject($organisation, $target) : renderOrganisation($type, $organisation, null, $target);
+			echo renderProject($project, $target);
 		}
-	break;
+		break;
 	case 'add':
 		$target = altSubValue($_POST, 'target');
 		$type = altSubValue($_POST, 'type');
@@ -142,7 +156,12 @@ switch ($_GET['action']){
 		$id = altSubValue($_POST, 'id', '');
 		$target = altSubValue($_POST, 'target', '');
 
-		$obj = Groups::getGroup($type, $id);
+		$obj = Project::getProjectById($id, FALSE, NULL);
+		if (!$obj){
+			echo t('The project could not be found');
+			return;
+		}
+		
 		// See http://drupal.stackexchange.com/questions/98592/ajax-processed-not-added-on-a-form-inside-a-custom-callback-my-module-deliver
 		// for additions below
 		$originalPath = false;
@@ -157,10 +176,10 @@ switch ($_GET['action']){
 		// Process the submit button which uses ajax
 		//$form['submit'] = ajax_pre_render_element($form['submit']);
 		// Build renderable array
-		$build = array(
-				'form' => $form,
-				'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
-		);
+// 		$build = array(
+// 				'form' => $form,
+// 				'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
+// 		);
 		renderForm($form, $target);
 
 	    break;

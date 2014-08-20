@@ -15,7 +15,7 @@ class Groups extends AbstractEntity{
 			$member_type = ($org_type == 'studentgroup') ? 'studentgroup' :(($org_type == 'organisation') ? 'mentor': 'supervisor');
 			if ($id){
 				$sqlStr = "SELECT o.*, c.code, c2.code as owner_code from ".tableName($org_type)." as o ".
-						"left join soc_user_membership as um on o.$key_column = um.group_id ".
+						" left join soc_user_membership as um on o.$key_column = um.group_id ".
 						" left join soc_codes as c on o.$key_column = c.$code_key_column AND c.type = '$member_type'".
 						" left join soc_codes as c2 on o.$key_column = c2.$code_key_column AND c2.type = '${org_type}_admin'".
 						" WHERE um.type = '$org_type' AND o.$key_column = $id ";
@@ -23,7 +23,7 @@ class Groups extends AbstractEntity{
 			} else {
 				$group_head_id = $group_head_id ?: $group_head;
 				$sqlStr = "SELECT o.*, c.code, c2.code as owner_code from ".tableName($org_type)." as o ".
-						"left join soc_user_membership as um on o.$key_column = um.group_id ".
+						" left join soc_user_membership as um on o.$key_column = um.group_id ".
 						" left join soc_codes as c on o.$key_column = c.$code_key_column AND c.type = '$member_type'".
 						" left join soc_codes as c2 on o.$key_column = c2.$code_key_column AND c2.type = '${org_type}_admin'".
 						" WHERE um.type = '$org_type' AND um.uid = $group_head_id ";
@@ -33,9 +33,8 @@ class Groups extends AbstractEntity{
 		return $members;
 	}
 	
-	public static function getGroup($org_type, $id='')
-	{
-		return self::getGroups($org_type, '', $id)->fetchObject();
+	public static function getGroup($org_type, $id='', $group_head_id=''){
+		return self::getGroups($org_type, $group_head_id, $id)->fetchObject();
 	}
 	
 	static function changeGroup($type, $organisation, $id)

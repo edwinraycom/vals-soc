@@ -110,8 +110,7 @@ function showProjectPage($action='', $show_last=FALSE){
 
 function renderProjects($organisation_selection='', $projects='', $target=''){
 	if (!$projects){
-		//if we pass empty value to getGroups the current supervisor is assumed
-		$projects = Groups::getGroups($organisation_selection);
+		$projects = Project::getProjects('', $GLOBALS['user']->uid, $organisation_selection);
 	}
 	$target_set = ! empty($target);
 	if ($projects){
