@@ -113,16 +113,33 @@ switch ($_GET['action']){
     	if (! ($id && $type && $target)){
     		die(t('There are missing arguments. Please inform the administrator of this mistake.'));
     	}
-    	$is_project = ($type == 'project');
-    	$organisation = $is_project ? Project::getInstance()->getProjectById($id, TRUE) :
-    		Groups::getGroup($type, $id);
+    	$organisation = Groups::getGroup($type, $id);
     	if (! $organisation){
     		echo tt('The %1$s cannot be found', t($type));
     	} else {
-     		 echo "<div id='msg_$target'></div>";
-    		 echo $is_project ? renderProject($organisation, $target) : renderOrganisation($type, $organisation, null, $target, $buttons);
+    		echo "<div id='msg_$target'></div>";
+    		echo renderOrganisation($type, $organisation, null, $target, $buttons);
     	}
-    break;
+    	break;
+// TODO    this counted on the fact that projects are viewed via this handler. We should treat it as a special case
+//remove this comment in the future
+//case 'view':
+//     	$type = altSubValue($_POST, 'type');
+//     	$id = altSubValue($_POST, 'id');
+//     	$target = altSubValue($_POST, 'target', '');
+//     	$buttons = altSubValue($_GET, 'buttons', true);
+//     	if (! ($id && $type && $target)){
+//     		die(t('There are missing arguments. Please inform the administrator of this mistake.'));
+//     	}
+//     	$is_project = ($type == 'project');
+//     	$organisation = $is_project ? Project::getProjectById($id, TRUE) : Groups::getGroup($type, $id);
+//     	if (! $organisation){
+//     		echo tt('The %1$s cannot be found', t($type));
+//     	} else {
+//      		 echo "<div id='msg_$target'></div>";
+//     		 echo $is_project ? renderProject($organisation, $target) : renderOrganisation($type, $organisation, null, $target, $buttons);
+//     	}
+//     break;
     case 'delete':
     	$type = altSubValue($_POST, 'type', '');
     	$id = altSubValue($_POST, 'id', '');

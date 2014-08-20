@@ -25,7 +25,7 @@ var testing = testing || {
 			
 		});
 		if (all_good === false) {
-			msgs = 'You have left some required fields open';
+			msgs = 'You have left some required fields open.';
 			ajaxError(msg_target, msgs);
 			console.log(msgs);
 //			all_good = true;

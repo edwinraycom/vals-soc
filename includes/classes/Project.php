@@ -20,13 +20,13 @@ class Project extends AbstractEntity{
 	public function getAllFields(){
 		return Project::$fields;
 	}
-	
-    public function getProjects(){
-    	$projects = db_select('soc_projects')->fields('soc_projects')->execute()->fetchAll(PDO::FETCH_ASSOC);
+	//Todo: never used. Keep it?
+    public function getAllProjects($fetch_style=PDO::FETCH_ASSOC){
+    	$projects = db_select('soc_projects')->fields('soc_projects')->execute()->fetchAll($fetch_style);
     	return $projects;
     }
     
-    public function getProjectById($id, $details= false){
+    public static function getProjectById($id, $details= false, $fetch_style=PDO::FETCH_ASSOC){
     	$query = db_select('soc_projects', 'p')->fields('p', self::$fields)->condition('pid', $id);
     	if ($details){
     		$query->leftjoin('soc_names', 'owner', 'p.owner_id = %alias.names_uid');
@@ -38,7 +38,7 @@ class Project extends AbstractEntity{
     		$query->fields('o', array('name'));
     	}
     	//project is one asociative array
-    	$project = $query->execute()->fetch(PDO::FETCH_ASSOC);
+    	$project = $query->execute()->fetch($fetch_style);
     	return $project;
     }
     
@@ -74,9 +74,29 @@ class Project extends AbstractEntity{
     	}
     	return $rows;
     }
-    
-    public static function getProjectsByUser($user_type, $user_id='', $organisations='')
-    {
+
+    //TODO Rewrite this function a bit: multiple returns, unclear why the user_type should be passed
+    public static function getProjects($project_id='', $owner_id='', $organisations=''){
+    	global $user;
+    	
+    	$my_role = getRole();
+
+    	if ($project_id){
+    		$p = self::getProjectById($project_id, FALSE, NULL);
+    		return $p ? array($p) : array();
+    	} elseif ($owner_id){
+    		return self::getProjectsByUser($my_role, $owner_id, $organisations);
+    	} elseif ($organisations) {
+    		$table = tableName('project');
+    		return db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",
+    			array(':orgs' => $organisations))->fetchAll();
+    	} else {
+    		return self::getAllProjects(NULL);
+    	}
+    }
+       
+    //TODO Rewrite this function a bit: multiple returns, unclear why the user_type should be passed
+    public static function getProjectsByUser($user_type, $user_id='', $organisations=''){
     	global $user;
    
     	$org_admin_or_mentor = $user->uid;
@@ -94,7 +114,6 @@ class Project extends AbstractEntity{
     					"LEFT JOIN soc_User_membership as um on o.org_id = um.group_id ".
     					" WHERE um.uid = $user_id AND um.type = 'organisation'")->fetchCol();
     			if ($my_orgs){
-    				
 	    			$my_projects = 
 	    				db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",
 	    					array(':orgs' => $my_orgs))->fetchAll();	    			

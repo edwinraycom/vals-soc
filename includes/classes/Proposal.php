@@ -102,7 +102,7 @@ class Proposal extends AbstractEntity{
     			drupal_set_message(t('You must be a student to submit a proposal'), 'error');
     			return false; 
     		}
-    		$project = Project::getInstance()->getProjectById($project_id);
+    		$project = Project::getProjectById($project_id);
     		
     		$student_details = Users::getStudentDetails($uid);
     		$props['owner_id'] = $uid;
@@ -144,7 +144,7 @@ class Proposal extends AbstractEntity{
     			drupal_set_message(t('You must be a student to submit a proposal'), 'error');
     			return FALSE;
     		}
-    		//$project = Project::getInstance()->getProjectById($project_id);
+    		//$project = Project::getProjectById($project_id);
     
 //    		$student_details = Users::getStudentDetails($uid);
 //     		$props['owner_id'] = $uid;
