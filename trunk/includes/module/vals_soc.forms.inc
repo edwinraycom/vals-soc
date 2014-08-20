@@ -455,7 +455,7 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target='', $s
 		'#attributes' => array('onClick' => 'location.reload(); return true;'),
 		'#post_render' => array('vals_soc_fix_submit_button'),
 	);
-	$form['#attached']['js'] = array(
+	$form['#vals_soc_attached']['js'] = array(
 		array(
 			'type'  => 'file',
 			'data' => '/includes/js/test_functions.js',
@@ -503,7 +503,7 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='',
 		'#attributes' => array('onClick' => 'location.reload(); return true;'),
 		'#post_render' => array('vals_soc_fix_submit_button'),
 	);
-	$form['#attached']['js'] = array(
+	$form['#vals_soc_attached']['js'] = array(
 		array(
 			'type'  => 'file',
 			'data' => '/includes/js/test_functions.js',
@@ -564,7 +564,7 @@ function vals_soc_studentgroup_form($form, &$form_state, $group='', $target='', 
 		'#attributes' => array('onClick' => 'location.reload(); return true;'),
 		'#post_render' => array('vals_soc_fix_submit_button'),
 	);
-	$form['#attached']['js'] = array(
+	$form['#vals_soc_attached']['js'] = array(
 		array(
 			'type'  => 'file',
 			'data' => '/includes/js/test_functions.js',
@@ -654,7 +654,7 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 			'#attributes' => array('onClick' => 'location.reload(); return true;'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
-	$form['#attached']['js'] = array(
+	$form['#vals_soc_attached']['js'] = array(
 		array(
 			'type'  => 'file',
 			'data' => '/includes/js/test_functions.js',
@@ -746,7 +746,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 					' {id:'.$proposal_id.', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSubmitResult", "json", ["'.$target.'"]);}')
 			,'#post_render' => array('vals_soc_fix_submit_button')
 	);
-	$form['#attached']['js'] = array(
+	$form['#vals_soc_attached']['js'] = array(
 		array(
 			'type'  => 'file',
 			'data' => '/includes/js/test_functions.js',
@@ -797,7 +797,7 @@ function vals_soc_invite_form($form, &$form_state, $org='', $target='', $show_ac
 			'#attributes' => array('onClick' => 'location.reload(); return true;'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
-	$form['#attached']['js'] = array(
+	$form['#vals_soc_attached']['js'] = array(
 			array(
 					'type'  => 'file',
 					'data' => '/includes/js/test_functions.js',
