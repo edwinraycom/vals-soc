@@ -366,7 +366,6 @@ function showOrganisationAdminPage($organisations, $show_last=FALSE){
 	echo sprintf('<h3>%1$s</h3>', t('Organisations you are involved in'));
 	echo renderTabs($nr, 'Org', $tab_id_prefix, 'organisation', $data, $id, TRUE,
 		renderOrganisation('organisation', $my_organisation, null, "$tab_id_prefix$current_tab"), $current_tab);
-	echo "<hr>";
 	?>
 	<script type="text/javascript">
 		activatetabs('tab_', [<?php echo implode(',', $tabs);?>], '<?php echo "$tab_id_prefix$current_tab";?>');

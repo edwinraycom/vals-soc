@@ -45,6 +45,7 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $id=0,
 				$action = $data[$t][2];
 				$type = isset($data[$t][3]) ? $data[$t][3] : $type;
 				$id =  isset($data[$t][4]) ? $data[$t][4] : $id;
+			//add extra get arguments
 			if (isset($data[$t][5])){
 				$action	.= "&".$data[$t][5];
 			}

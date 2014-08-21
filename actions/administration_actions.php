@@ -5,7 +5,6 @@ include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
 include(_VALS_SOC_ROOT.'/includes/functions/projects.php');
 include(_VALS_SOC_ROOT.'/includes/functions/administration.php');
 
-
 //return result depending on action parameter
 switch ($_GET['action']){
 	case 'list':
@@ -22,10 +21,9 @@ switch ($_GET['action']){
 			case 'institute_admin':
 			case 'administer': echo renderUsers($type, '', 'all');break;
 			default:
-				echo tt('No such type: %1$s', $type);
-// 				showError(tt('No such type: %1$s', $type));
+				//echo tt('No such type: %1$s', $type);
+				showError(tt('No such type: %1$s', $type));
 		}
-		//echo jsonResult($result);
 	break;
 	case 'addgroup':
 		$target = altSubValue( $_GET, 'target');

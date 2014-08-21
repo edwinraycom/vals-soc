@@ -11,7 +11,7 @@ switch ($_GET['action']){
 		module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 		initBrowseProjectLayout();
 	break;
-	case 'list_projects':
+	case 'list_search':
 		try{
 			$tags=null;
 			if(isset($_POST['tags'])){
@@ -50,6 +50,20 @@ switch ($_GET['action']){
 			print json_encode($jTableResult);
 		}
 	break;
+	case 'list':
+		try{
+			$target = getRequestVar('target', null);
+			$inline = getRequestVar('inline', false);
+			$org_id = getRequestVar('org', null);
+			$organisations = $org_id ?  array($org_id) : null;
+			echo renderProjects($organisations, '', $target, $inline);//$target as thrd argument prevents showing inline
+				
+		}
+		catch(Exception $ex){
+			//Return error message
+			errorDiv($ex->getMessage());
+		}
+		break;
 	case 'project_detail':
 		$project_id=null;
 		if(isset($_GET['project_id'])){
@@ -85,6 +99,7 @@ switch ($_GET['action']){
 		$type = 'project';
 		$id = altSubValue($_POST, 'id');
 		$target = altSubValue($_POST, 'target', '');
+		$inline = getRequestVar('inline', FALSE);
 		if (! ($id && $type && $target)){
 			die(t('There are missing arguments. Please inform the administrator of this mistake.'));
 		}
@@ -93,15 +108,16 @@ switch ($_GET['action']){
 			echo t('The project cannot be found');
 		} else {
 			echo "<div id='msg_$target'></div>";
-			echo renderProject($project, $target);
+			echo renderProject($project, $target, $inline);
 		}
 		break;
 	case 'add':
 		$target = altSubValue($_POST, 'target');
 		$type = altSubValue($_POST, 'type');
+		$org  = altSubValue($_GET, 'org');
 		echo '<h2>'.t('Add new project').'</h2>';
 		echo "<div id='msg_$target'></div>"; 
-		$form = drupal_get_form("vals_soc_project_form", '', $target);
+		$form = drupal_get_form("vals_soc_project_form", '', $target, $org);
 		// Process the submit button which uses ajax
 		//$form['submit'] = ajax_pre_render_element($form['submit']);
 		// Build renderable array
@@ -124,7 +140,7 @@ switch ($_GET['action']){
 		
 		$properties = Project::getInstance()->filterPostLite(Project::getInstance()->getKeylessFields(), $_POST);
 		if (!$id){
-			$new = true;
+			$new = $properties['org_id'];
 			$result = Project::getInstance()->addProject($properties);
 		} else {
 			$new = false;
