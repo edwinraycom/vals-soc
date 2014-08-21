@@ -126,7 +126,9 @@ function ajaxAppend(msg, container, err, before){
 function ajaxError(targ, msg) {
 	if (msg){
 		var err_target = Obj(targ);
-		var msg2 = "<a href=javascript:void(0); onclick='$jq(\"#" +targ+"\").html(\"\").removeClass(\"messages status\");'>"+
+		var click = "onclick='$jq(\"#" +targ+"\").html(\"\").removeClass(\"messages error\");'";
+		var msg2 = "<span class='lefty'>"+msg + "</span><span class='close_button' "+ click+ ">X</span>";
+		//var msg2 = "<a href=javascript:void(0); onclick='$jq(\"#" +targ+"\").html(\"\").removeClass(\"messages error\");'>"+
 		msg+ "</a>";
 		if (err_target.length){
 			err_target.html(msg2);
@@ -140,13 +142,14 @@ function ajaxError(targ, msg) {
 function ajaxMessage(targ, msg) {
 	if (msg){
 		var err_target = $jq('#'+targ);
-		var msg2 = "<a href=javascript:void(0); onclick='$jq(\"#" +targ+"\").html(\"\").removeClass(\"messages status\");'>"+
-		msg+ "</a>";
+		var click = "onclick='$jq(\"#" +targ+"\").html(\"\").removeClass(\"messages status\");'";
+		var msg2 = "<span class='lefty'>"+msg + "</span><span class='close_button' "+ click+ ">X</span>";
+		//"<a href=javascript:void(0); "+ click+ ">X</a>";
 		if (err_target.length){
 			err_target.html(msg2);
 			err_target.addClass('messages status');
 		} else {
-			alertdev('Target for msg '+ targ+ ' could not be found.');
+			alertdev('Target '+ targ+ ' for the message "'+msg+'" could not be found.');
 		}
 	}
 }

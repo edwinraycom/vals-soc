@@ -573,7 +573,7 @@ function vals_soc_studentgroup_form($form, &$form_state, $group='', $target='', 
 	return $form;
 }
 
-function vals_soc_project_form($form, &$form_state, $project='', $target=''){
+function vals_soc_project_form($form, &$form_state, $project='', $target='', $org=''){
 	$form = array(
 			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
 			'#suffix' => '</div>',
@@ -589,7 +589,7 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 		$select_values[$organisation['org_id']] = $organisation['name'];
 	}
 	
-	if ($project || ($number_of_organisations < 2)){
+	if ($project || ($number_of_organisations < 2)){//|| $org
 		$org_id = $project ? $project->org_id : ($number_of_organisations ? $organisations[0]['org_id']: 0);
 		$form['org_id'] = array(
 				'#type' => 'hidden',
@@ -601,7 +601,7 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 			'#title' => t('For which organisation will this project be?'),
 			"#options" => $select_values,
 			'#required' => '1',
-			"#default_value" => populate($project, 'org_id')
+			"#default_value" => populate($project, 'org_id', ($org ?: ''))
 		);
 	};
 	$form['title'] = array(
@@ -666,7 +666,8 @@ function vals_soc_project_form($form, &$form_state, $project='', $target=''){
 function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $project_id=''){
 	$project_id = $proposal ? $proposal->pid : $project_id;
 	if (! $project_id){
-		drupal_set_message(showError(t('The project id has not been passed on well. Cannot continue. Please inform the system administrator')),
+		drupal_set_message(
+			t('The project id has not been passed on well. Cannot continue. Please inform the system administrator'),
 			'error');
 		return FALSE;
 	}

@@ -25,6 +25,26 @@ input[type=button]  {
 	margin-right:auto;
 	text-align: right ; 
 }
+/* necessary to get the close button relative to the messages box */
+div.messages {
+	position:relative;
+}
+.close_button {
+	line-height: 12px;
+	font-family: tahoma;
+	background-color:red;
+	font-size: 10pt;
+	padding:2px;
+	font-style:bold;
+	color:white;
+
+     position:absolute;
+     top:2px;
+     right:4px;
+     
+ }
+span.lefty { padding-right:20px;}
+
 /*************************************************
 	CSS for the projects views
 *************************************************/	

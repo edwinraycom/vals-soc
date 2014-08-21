@@ -77,19 +77,15 @@ class Project extends AbstractEntity{
 
     //TODO Rewrite this function a bit: multiple returns, unclear why the user_type should be passed
     public static function getProjects($project_id='', $owner_id='', $organisations=''){
-    	global $user;
-    	
-    	$my_role = getRole();
-
     	if ($project_id){
     		$p = self::getProjectById($project_id, FALSE, NULL);
     		return $p ? array($p) : array();
-    	} elseif ($owner_id){
-    		return self::getProjectsByUser($my_role, $owner_id, $organisations);
     	} elseif ($organisations) {
     		$table = tableName('project');
     		return db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",
     			array(':orgs' => $organisations))->fetchAll();
+    	} elseif ($owner_id){
+    		return self::getProjectsByUser(getRole(), $owner_id);
     	} else {
     		return self::getAllProjects(NULL);
     	}

@@ -77,13 +77,36 @@ function script_getJs($script){
 }
 
 function errorDiv($msg){
-	return "<div class='messages error'>$msg</div>";
+	$id = 'errorbox_'.rand(0, 100);
+	$close_action = "onclick='\$jq(\"#$id\").html(\"\").removeClass(\"messages status\");'";
+	return "<div id='$id' class='messages error'><span class='lefty'>$msg</span>".
+	"<span $close_action class='close_button'>X</span></div>";
 }
 
 function successDiv($msg){
-	return "<div class='messages status'>$msg</div>";
+	$id = 'messagebox_'.rand(0, 100);
+	$close_action = "onclick='\$jq(\"#$id\").html(\"\").removeClass(\"messages status\");'";
+	return "<div id='$id' class='messages status'><span class='lefty'>$msg</span>".
+		"<span $close_action class='close_button'>X</span></div>";
 }
 
+/*
+ * ffunction ajaxMessage(targ, msg) {
+	if (msg){
+		var err_target = $jq('#'+targ);
+		var click = "onclick='$jq(\"#" +targ+"\").html(\"\").removeClass(\"messages status\");'";
+		var msg2 = "<span class='lefty'>"+msg + "</span><span class='close_button' "+ click+ ">X</span>";
+		//"<a href=javascript:void(0); "+ click+ ">X</a>";
+		if (err_target.length){
+			err_target.html(msg2);
+			err_target.addClass('messages status');
+		} else {
+			alertdev('Target '+ targ+ ' for the message "'+msg+'" could not be found.');
+		}
+	}
+}
+}
+ */
 function tt($str){
 	$args = func_get_args();
 	$args[0] = t($str);

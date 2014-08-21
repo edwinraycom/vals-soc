@@ -6,7 +6,7 @@ function showProjectPage($action='', $show_last=FALSE){
 
 	$role = getRole();
 	//Get my groups
-	$my_organisations = Groups::getGroups('organisation');
+	$my_organisations = Groups::getGroups('organisation');	
 	if (!$my_organisations->rowCount()){
 		//There are no organisations yet for this user
 		if ($role == 'organisation_admin') {
@@ -19,7 +19,13 @@ function showProjectPage($action='', $show_last=FALSE){
 
 		}
 	} else {
-		$projects = Project::getProjectsByUser($role, $GLOBALS['user']->uid, $my_organisations->fetchCol());
+		$orgs = array();
+		$orgids = array();
+		foreach ($my_organisations as $org){
+			$orgs[] = $org;
+			$orgids[] = $org->org_id;
+		}
+		$projects = Project::getProjectsByUser($role, $GLOBALS['user']->uid, $orgids);//$my_organisations->fetchCol());
 		if (! $projects){
 			echo t('You have no project yet registered');
 			echo '<h2>'.t('Add your project').'</h2>';
@@ -58,7 +64,58 @@ function showProjectPage($action='', $show_last=FALSE){
 		        	   activatetabs('tab_', ['project_page-1']);
 		        </script><?php
 		} else {
-			$nr = 1;
+			$org =1;
+			$show_org_title = ($my_organisations->rowCount() > 1);
+			foreach ($orgs as $organisation){
+				$projects = Project::getProjects('', '', array($organisation->org_id));
+				showOrganisationProjects($org, $projects, $organisation, $show_org_title, $show_last, TRUE);
+				$org++;
+			}
+		}
+	}
+}
+
+function showOrganisationProjects($org_nr, $projects, $organisation, $show_org_title=TRUE, $show_last= FALSE, $inline=FALSE){
+	$org_id = $organisation->org_id;
+	$nr = 1;
+	$tab_id_prefix = "project_page$org_nr-";
+	$data = array();
+	$activating_tabs = array();
+	$nr_projects = count($projects);
+	$current_tab = ($show_last && ($show_last == $org_id)) ? ($nr_projects + 1) : 1;
+	$current_tab_id = "$tab_id_prefix$current_tab";
+	
+	//data is like: [translate, label, action, type, id, extra GET arguments, render with rich text area, render tab to the right]
+	$data[] = array(1, 'All', 'list', 'project', null, "org=$org_id&inline=".($inline? 1:0));
+	$activating_tabs[] = "'$tab_id_prefix$nr'";
+	$nr++;
+	if ($show_org_title){
+		echo '<h3>'.tt('Projects in your organisation ').sprintf('<i>%1$s</i>', $organisation->name).'</h3>';
+	}
+	foreach ($projects as $project){
+		if ($nr == $current_tab){
+			//$id = $project->pid;
+			$my_project = $project;
+		}
+		$activating_tabs[] = "'$tab_id_prefix$nr'";
+		$data[] = array(0, $project->title, 'view', 'project', $project->pid);
+		$nr++;
+	}
+	
+	$data[] = array(1, 'Add', 'add', 'project', 0, "target=$tab_id_prefix$nr&org=$org_id", TRUE, 'right');
+	$activating_tabs[] = "'$tab_id_prefix$nr'";
+	//If no target is sent along, the project views are shown inline
+	$current_tab_content = renderProjects('', $projects, $current_tab_id, $inline);
+	
+	echo renderTabs($nr, 'Project', $tab_id_prefix, 'project', $data, 0, TRUE, $current_tab_content,
+		$current_tab, 'project');?>
+	<script type="text/javascript">
+		activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>], '<?php echo $current_tab_id;?>');
+	</script>
+	<?php
+}
+/* This was the way it was
+ * 			$nr = 1;
 			$tab_id_prefix = 'project_page-';
 			$data = array();
 			$activating_tabs = array();
@@ -105,32 +162,30 @@ function showProjectPage($action='', $show_last=FALSE){
 			</script>
 		<?php
 		}
-	}
-}
-
-function renderProjects($organisation_selection='', $projects='', $target=''){
+ */
+function renderProjects($organisation_selection='', $projects='', $target='', $inline=FALSE){
 	if (!$projects){
 		$projects = Project::getProjects('', $GLOBALS['user']->uid, $organisation_selection);
 	}
 	$target_set = ! empty($target);
 	if ($projects){
-		$s = "<ul class='projectlist'>";
+		$s = "<ol class='projectlist'>";
 		foreach($projects as $project){
 			$project = objectToArray($project);
 			$s .= "<li>";
-			// $member_url = "/vals/actions/project"
-			if (!$target_set) {
+			if (!$target_set || $inline) {
 				$target = "show_${project['pid']}";
 			}
+			$inline = $inline ? 1 : 0;
 			$s .= "<a href='javascript: void(0);' onclick='".
 				//($target_set ? "" : "\$jq(\"#$target\").toggle();").
-			"ajaxCall(\"project\", \"view\", {id:${project['pid']},type:\"project\", target:\"$target\"}, \"$target\");'>${project['title']}</a>";
-			if (! $target_set) {
+			"ajaxCall(\"project\", \"view\", {id:${project['pid']},type:\"project\", target:\"$target\", inline:$inline}, \"$target\");'>${project['title']}</a>";
+			if (! $target_set || $inline) {
 				$s .= "<div id='$target' ></div>";
 			}
 			$s .= "</li>";
 		}
-		$s .= "</ul>";
+		$s .= "</ol>";
 		return $s;
 	} 
 	else {
@@ -138,9 +193,9 @@ function renderProjects($organisation_selection='', $projects='', $target=''){
 	}
 }
 
-function renderProject($project='', $target=''){
+function renderProject($project='', $target='', $inline=FALSE){
 	if (!$project){
-		return t('I cannot show this project. It seems empty');
+		return t('I cannot show this project. It seems empty.');
 	}
 	if (is_object($project)){
 		$project = objectToArray($project);
@@ -157,7 +212,7 @@ function renderProject($project='', $target=''){
 		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
 		")\" value='Submit proposal for this project'/>";
 	}
-	if (Groups::isAssociate('project', $id)){
+	if (Groups::isAssociate('project', $id) && !$inline){
 		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this project?')."\")){ajaxCall(\"project\", \"delete\", {type: \"$type\", id: $id, target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"project\"]);}'";
 		$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"$type\", id: $id, target: \"$target\"}, \"formResult\", \"html\", [\"$target\", \"project\"]);'";
 		$content .= "<input type='button' value='".t('edit')."' $edit_action/>";
@@ -211,7 +266,7 @@ function initBrowseProjectLayout($pid=''){
 			sorting: true,
 			defaultSorting: "title ASC",
 			actions: {
-				listAction: moduleUrl + "actions/project_actions.php?action=list_projects"
+				listAction: moduleUrl + "actions/project_actions.php?action=list_search"
 			},
 			fields: {
 				pid: {								

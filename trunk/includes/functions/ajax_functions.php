@@ -79,13 +79,13 @@ function showDrupalMessages($category='status', $echo=FALSE){
 function showError($msg='') {
 	$msg .= showDrupalMessages('error');
 	if ($msg){
-		echo errorDiv($msg);//echo "<div class='messages error'>'$msg'</div>";
+		echo errorDiv($msg);
 	}
 }
 
 function showSuccess($msg='') {
 	$msg .= showDrupalMessages('status');
 	if ($msg){
-		echo successDiv($msg);//"<div class='messages status'>'$msg'</div>";
+		echo successDiv($msg);
 	}
 }
