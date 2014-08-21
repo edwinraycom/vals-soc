@@ -158,7 +158,15 @@ class Users extends AbstractEntity{
 					
 			} 
 			else {
-				return NULL;
+				//So the admin cannot see who are subscribed???? Used to be : return NULL;
+				$group_type = self::participationGroup($member_type);
+				$query = "SELECT DISTINCT u.*,n.name as fullname from users as u ".
+						"left join users_roles as ur on u.uid = ur.uid ".
+						"left join role as r  on ur.rid = r.rid ".
+						"left join soc_user_membership as um  on u.uid = um.uid ".
+						'left join soc_names as n on u.uid=n.names_uid '.
+						"WHERE r.name = '$member_type' AND um.type = '$group_type' ";
+				$members = db_query($query);
 			}
 		} else {
 			if ($id){

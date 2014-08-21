@@ -17,6 +17,19 @@ abstract class AbstractEntity {
 			default: return '';
 		}
 	}
+	static function participationGroup($type){
+		switch ($type){
+			case 'organisation_admin':
+			case 'mentor': $group = 'organisation';break;
+			case 'institute_admin':
+			case 'supervisor':
+			case 'student': $group = 'institute';break;
+// 			case 'organisation_admin':
+// 			case 'mentor': $group = 'organisation';break;
+			default: $group = '';
+		}
+		return $group;
+	}
 	
 	static function filterPostLite($fieldz){
 		$input = array();
