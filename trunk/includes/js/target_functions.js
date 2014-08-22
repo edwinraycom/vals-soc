@@ -30,7 +30,7 @@ function refreshTabs(json_data, args){
 		ajaxCall(handler, 'show', {type:type, show_action:show_action, new_tab: new_tab}, 
 			'handleContentAndMessage', 'html', [container, 'ajax_msg', json_data.msg]);
 	} else {
-		if (typeof json_data.error != 'undefined') {
+		if (json_data && typeof json_data.error != 'undefined') {
 			ajaxError(targ, json_data.error);
 		} else {
 			alertdev('Some error occured but no message was set.');
@@ -58,7 +58,12 @@ function refreshSingleTab(json_data, args){
 		ajaxCall(handler, 'view', {id:id,type:type,target:target}, 'handleContentAndMessage',
 			'html', [target, 'msg_'+target, json_data.msg]);
 	} else {
-		ajaxError('msg_'+target, json_data.error);
+		if (json_data && typeof json_data.error != 'undefined') {
+			ajaxError('msg_'+target, json_data.error);
+		} else {
+			alertdev('Some error occured but no message was set.');
+		}
+		
 	}
 }
 
