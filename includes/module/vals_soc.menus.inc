@@ -25,7 +25,8 @@ function vals_soc_menu_handler(){
 	$items['dashboard/members'] = getMembersLink('dashboard/members');
 	
 	//allow institutes to add/edit their institute details
-	$items['dashboard/institute/administer'] = getAdministerLink('dashboard/institute/administer', 'institute');
+	$items['dashboard/institute/administer'] = getAdministerLink('dashboard/institute/administer', 'institute', false);
+	$items['dashboard/institute/view'] = getAdministerLink('dashboard/institute/view', 'institute', false);
 	// allow institutes to view supervisors/other instadmins
 	$items['dashboard/institute/members'] = getEntityMembersLink('dashboard/institute/members', 'institute');
 	// used just for institutes to allow creation of student groups
@@ -181,11 +182,17 @@ function getMembersLink($path){ //dashboard/members
 	);
 }
 
-function getAdministerLink($path, $type){//$items['dashboard/institute/administer']
+function getAdministerLink($path, $type, $plural=true){//$items['dashboard/institute/administer']
+	$path_arr = explode('/', $path);
+	$action = array_pop($path_arr);
+	$plural_str = $plural ? '(s)':'';
+	 
 	return array(
-			'title' => tt('Administer your %1$ss', t($type)),
+			'title' => ($action == 'view') ? tt('View your %1$s'.$plural_str, t($type)) : tt('%1$s your %2$s'.$plural_str, 
+					ucfirst(t($action)), t($type)),
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_administer_entity_page',
+			'page arguments' => array($action),
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' => array($path),
 			'description' => t('Administer page'),
@@ -194,9 +201,10 @@ function getAdministerLink($path, $type){//$items['dashboard/institute/administe
 	);
 }
 
-function getEntityMembersLink($path, $type){ //'dashboard/institute/members'
+function getEntityMembersLink($path, $type, $plural=true){ //'dashboard/institute/members'
+	$plural_str = $plural ? '(s)':'';
 	return array(
-			'title' => tt('Overview of the members of your %1$ss', t($type)),
+			'title' => tt('Overview of the members of your %1$s', t($type)).$plural_str,
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_members_page',
 			'access callback' => 'vals_soc_access_check',

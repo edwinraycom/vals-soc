@@ -1,14 +1,14 @@
 <?php
 class Groups extends AbstractEntity{
-	public static function getGroups($org_type, $group_head_id='', $id='')
+	public static function getGroups($org_type, $member_id='', $id='')
 	{
 		global $user;
 	
-		$group_head = $user->uid;
+		$current_userid = $user->uid;
 		//todo: find out whether current user is institute_admin
 	
-		if ($group_head_id == 'all'){
-			$members = db_query("SELECT o.* from soc_${org_type}s as o");
+		if ($member_id == 'all'){
+			$groups = db_query("SELECT o.* from soc_${org_type}s as o");
 		} else {
 			$key_column = self::keyField($org_type);
 			$code_key_column = ($org_type == 'studentgroup') ? 'studentgroup_id' : 'entity_id';
@@ -19,18 +19,18 @@ class Groups extends AbstractEntity{
 						" left join soc_codes as c on o.$key_column = c.$code_key_column AND c.type = '$member_type'".
 						" left join soc_codes as c2 on o.$key_column = c2.$code_key_column AND c2.type = '${org_type}_admin'".
 						" WHERE um.type = '$org_type' AND o.$key_column = $id ";
-				$members = db_query($sqlStr);
+				$groups = db_query($sqlStr);
 			} else {
-				$group_head_id = $group_head_id ?: $group_head;
+				$member_id = $member_id ?: $current_userid;
 				$sqlStr = "SELECT o.*, c.code, c2.code as owner_code from ".tableName($org_type)." as o ".
 						" left join soc_user_membership as um on o.$key_column = um.group_id ".
 						" left join soc_codes as c on o.$key_column = c.$code_key_column AND c.type = '$member_type'".
 						" left join soc_codes as c2 on o.$key_column = c2.$code_key_column AND c2.type = '${org_type}_admin'".
-						" WHERE um.type = '$org_type' AND um.uid = $group_head_id ";
-				$members = db_query($sqlStr);
+						" WHERE um.type = '$org_type' AND um.uid = $member_id ";
+				$groups = db_query($sqlStr);
 			}
 		}	
-		return $members;
+		return $groups;
 	}
 	
 	public static function getGroup($org_type, $id='', $group_head_id=''){

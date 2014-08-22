@@ -25,8 +25,8 @@ function getSupervisorLayout($timeline_args){
 					<div class="column-entry org_app">
 						<h4>
 							<a class="dashboard-link component-link"
-								href="'.$base_url.'/dashboard/institute/administer"
-								title="'.t("My institution").'">'.t("My institution").'</a>
+								href="'.$base_url.'/dashboard/institute/view"
+								title="'.t("Details for my institution").'">'.t("My institution").'</a>
 						</h4>
 						<p>'.t("Institution in which you are giving lectures").'</p>
 					</div>

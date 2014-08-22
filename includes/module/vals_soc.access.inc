@@ -40,6 +40,7 @@ function pageAccessCheck($access_string) {
 		case 'dashboard/organisation/administer':
 		case 'dashboard/institute/administer':
 		case 'dashboard/institute/members':
+		case 'dashboard/institute/view':
 		case 'dashboard/institute/group/administer':
 			return hasPermission('vals admin register') && Timeline::getInstance()->organisationSignupPeriodOpened();
 			break;

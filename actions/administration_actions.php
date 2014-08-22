@@ -19,7 +19,7 @@ switch ($_GET['action']){
 			case 'mentor':
 			case 'organisation_admin':
 			case 'institute_admin':
-			case 'administer': echo renderUsers($type, '', 'all');break;
+			case 'administer': echo renderUsers($type, '', 'all', '', TRUE);break;
 			default:
 				//echo tt('No such type: %1$s', $type);
 				showError(tt('No such type: %1$s', $type));
@@ -79,11 +79,16 @@ switch ($_GET['action']){
         } elseif ($_POST['type'] == 'institute'){
             $type = altSubValue($_GET, 'subtype', 'all');
             if ($type == 'student'){
-                $students = Users::getAllStudents($_POST['id']);
-                echo renderStudents('', $students);
+                echo renderStudents($_POST['id']);
             } elseif ($type == 'supervisor'){
-                $teachers = Users::getSupervisors($_POST['id']);
-                echo renderSupervisors('', $teachers);
+                echo renderSupervisors($_POST['id']);
+            } elseif ($type == 'institute_admin'){
+                echo renderUsers('institute_admin', '', $_POST['id'], 'institute');
+            } elseif ($type == 'staff'){
+                $inst_id = $_POST['id'];
+                echo renderUsers('institute_admin', '', $inst_id, 'institute', TRUE);
+	    		echo renderUsers('supervisor', '', $inst_id, 'institute', TRUE);
+	    		
             } else {
             	echo tt('No such type %1$s', $type);
             }
@@ -94,8 +99,8 @@ switch ($_GET['action']){
            	$organisation_id = 'all';
            }
            echo 
-			renderUsers('organisation_admin', '', $organisation_id, 'organisation'). 
-			renderUsers('mentor', '', $organisation_id, 'organisation');
+			renderUsers('organisation_admin', '', $organisation_id, 'organisation', TRUE). 
+			renderUsers('mentor', '', $organisation_id, 'organisation', TRUE);
         }
      break;
     case 'show':
