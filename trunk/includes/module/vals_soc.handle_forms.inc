@@ -52,6 +52,7 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
 		$org = $form_state['values']['institute'];
 	}
 	if (!$org && !$becomes_some_admin){
+		//Make distinction for choosing error message
 		if ($requested_user_type == ' mentor'){
 			form_set_error('organisation', t('You should select your organisation.'));
 		} else {

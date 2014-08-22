@@ -129,8 +129,7 @@ class Users extends AbstractEntity{
 	 * b) id is set => retrieve Users with that id (should be just one)
 	 * c) group id is set or can be derived from current user => get Users from that group
 	 */
-	public static function getUsers($member_type, $group_type='', $group_id='', $id='')
-	{
+	public static function getUsers($member_type, $group_type='', $group_id='', $id=''){
 		global $user;  
 
 		$group_head = $user->uid;
@@ -275,15 +274,18 @@ class Users extends AbstractEntity{
 					"left join role as r  on ur.rid = r.rid ".
 					"left join soc_user_membership as um on u.uid = um.uid ".
 					"WHERE r.name = 'supervisor' AND um.type = 'institute' ".
-					"AND um.group_id = $institute AND u.uid != $institute_admin ");
+					"AND um.group_id = $institute ");
 		} else {
 			//get the institute from the institute_admin
 			$institute = db_query("SELECT group_id from soc_user_membership um".
 					" WHERE um.type = 'institute' AND um.uid = $institute_admin ")->fetchColumn();
 			if ($institute){
-				$supervisors = db_query("SELECT u.* from users as u left join soc_user_membership um ".
-						"on u.uid = um.uid WHERE um.type = 'institute' AND um.group_id = $institute ".
-						"AND u.uid != $institute_admin ");
+				$supervisors = db_query("SELECT u.* from users as u ".
+					"left join soc_user_membership um on u.uid = um.uid ".
+					"left join users_roles as ur  on u.uid = ur.uid ".
+					"left join role as r  on ur.rid = r.rid ".
+					"WHERE um.type = 'institute' AND um.group_id = $institute ".
+						"AND r.name = 'supervisor' ");
 			} else {
 				return NULL;
 			}

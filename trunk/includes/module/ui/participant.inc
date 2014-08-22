@@ -150,7 +150,7 @@ function renderStudents($group_selection='', $students=''){
     if (!$students){
         //if we pass empty value to getStudents the current supervisor is assumed and we 
         //get all his students
-        $students = Users::getStudents($group_selection);
+        $students = Users::getAllStudents($group_selection);
     }
     return formatUsersNice($students, 'student', t('There are no students yet'));
 }
@@ -161,10 +161,10 @@ function renderSupervisors($group_selection='', $supervisors=''){
         //get all his supervisors in his/her institute
         $supervisors = Users::getSupervisors($group_selection);
     }
-    return formatUsersNice($supervisors, 'supervisor', t('There are no supervisors yet in this institute'));
+    return formatUsersNice($supervisors, 'supervisor', t('There are no supervisors yet in this institute'), TRUE);
 }
     
-function renderUsers($type='', $users='', $group_selection='', $group_type=''){
+function renderUsers($type='', $users='', $group_selection='', $group_type='', $show_title=FALSE){
 	//If no Users dataset is passed on, retrieve them based on the other arguments
     if (!$users){
     	$users = Users::getUsers($type, $group_type, $group_selection);
@@ -177,7 +177,7 @@ function renderUsers($type='', $users='', $group_selection='', $group_type=''){
     $type_nice = str_replace('_', ' ', $type);
     $empty_message =  $group_selection ? tt('There is no %1$s yet in this %2$s', t($type_nice), t($group_type)) :
     tt('You have no %1$s yet.', t($type_nice));
-    return formatUsersNice($users, $type, $empty_message, TRUE);
+    return formatUsersNice($users, $type, $empty_message, $show_title);
     
 }
 

@@ -2,6 +2,7 @@
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after propjects.php which does the same
 
 function showRoleDependentAdminPage($role, $show_action='administer', $show_last= FALSE){
+	echo "<a href='"._VALS_SOC_URL."/dashboard'>".t('Back To Dashboard')."</a>";
 	switch ($role){
 		case 'administrator':
 			showAdminPage($show_action, $show_last);
@@ -44,8 +45,28 @@ function showAdminPage($show_action, $show_last=FALSE){
         </script><?php
 }
 
-
 function showSupervisorPage($show_action, $show_last=FALSE){
+	//Get my institutions
+	$institutes = Groups::getGroups('institute', $GLOBALS['user']->uid);
+	if (! $institutes->rowCount()){
+		echo t('You have not registered yourself to an institute yet ');
+	} else {
+		$my_institute = $institutes->fetchObject();
+		
+		if ($show_action == 'administer'){
+			echo "determine what a supervisor should administer";//showInstituteAdminPage($my_institute);
+		} elseif ($show_action == 'view'){
+			showInstituteAdminPage($my_institute, $show_action);
+		} elseif ($show_action == 'members') {
+			showInstituteMembersPage($my_institute, $show_last);
+		} elseif ($show_action == 'groups'){
+			showInstituteGroupsAdminPage($my_institute, $show_last);
+		} else {
+			echo tt('there is no such action possible %1$s', $show_action);	
+		}
+	}
+}
+/*function showSupervisorPage($show_action, $show_last=FALSE){
 	//TODO check for the role of current user
 	echo '<h2>'.t('Your students').'</h2>';
 	//Get my groups
@@ -125,6 +146,7 @@ function showSupervisorPage($show_action, $show_last=FALSE){
 	<?php
 	}
 }
+*/
 
 function showInstitutePage($show_action, $show_last=FALSE){
 	//Get my institutions
@@ -150,6 +172,8 @@ function showInstitutePage($show_action, $show_last=FALSE){
 		$my_institute = $institutes->fetchObject();
 		if ($show_action == 'administer'){
 			showInstituteAdminPage($my_institute);
+		} elseif ($show_action == 'view'){
+			showInstituteAdminPage($my_institute, $show_action);
 		} elseif ($show_action == 'members') {
 			showInstituteMembersPage($my_institute, $show_last);
 		} elseif ($show_action == 'groups'){
@@ -221,8 +245,8 @@ function showInstituteMembersPage($my_institute, $show_last=FALSE){
 		$nr2 = 2;
 		$data2 = array();
 // 		 [translate, label, action, type, id, extra GET arguments, render with rich text area, render tab to the right]
-		$data2[] = array(1, 'All supervisors', 'showmembers', 'institute', $my_institute->inst_id, "subtype=supervisor");
-		$data2[] = array(1, 'All students', 'showmembers', 'institute', $my_institute->inst_id, "subtype=student");
+		$data2[] = array(1, 'Staff', 'showmembers', 'institute', $my_institute->inst_id, "subtype=staff");
+		$data2[] = array(1, 'Students', 'showmembers', 'institute', $my_institute->inst_id, "subtype=student");
 
 		$tabs2 = array("'member_page-1'", "'member_page-2'");
 		
@@ -256,19 +280,20 @@ function showInstituteMembersPage($my_institute, $show_last=FALSE){
 	//	[translate, label, action, type, id, extra GET arguments, render with rich text area, render tab to the right]
 // 		$data3[] = array(1, 'Add', 'addgroup', 'studentgroup', null, "target=$tab_id_prefix$nr3", true);
 // 		$tabs3[] = "'$tab_id_prefix$nr3'";
-		$teachers = Users::getSupervisors($my_institute->inst_id);
-
-	    echo '<h2>'.t('The registered supervisors and students of your institute').'</h2>';
+		echo '<h2>'.t('The registered staff and students of your institute').'</h2>';
 	    echo renderTabs($nr2, '', 'member_page-', 'institute', $data2, $my_institute->inst_id, TRUE,
-	    		//renderUsers('supervisor', '', $my_institute->inst_id, 'institute'));
-	    		renderSupervisors('', $teachers));
-	        
+	    		renderUsers('institute_admin', '', $my_institute->inst_id, 'institute', TRUE).
+	    		renderUsers('supervisor', '', $my_institute->inst_id, 'institute', TRUE));
+	    		
 	    if ($nr4 > 0){//There is more than the add tab
 		    echo sprintf('<h2>%1$s</h2>', t('Your students as divided in groups'));
 		    
 		    echo renderTabs($nr4, 'Group', $tab_id_prefix2, 'studentgroup', $data4, $id, TRUE,
 		    		($students && $students->rowCount()) ? renderStudents('', $students) :
 		    			t('There are no students yet in this group registered.'));
+	    } else {
+	    	echo "<br/>".t('There are no groups yet in this institute.'). "<a href='".
+	    	_VALS_SOC_URL."/dashboard/institute/group/administer'>".t('Create new groups'). "</a>";
 	    }
 	    ?>
 	    <script type="text/javascript">
@@ -279,15 +304,20 @@ function showInstituteMembersPage($my_institute, $show_last=FALSE){
 	
 }
 
-function showInstituteAdminPage($my_institute){	
-		$nr = 3;
-		$data = array();
-		$tabs = array();
+//Just being lazy: we can also view the institute with this function
+function showInstituteAdminPage($my_institute, $action='administer'){	
+		$nr = 1;
 		$tab_id_prefix = 'inst_page-';
+		$data = array();
+		$tabs = array("'${tab_id_prefix}1'");
+		
 		$data[] = array(2, $my_institute->name, 'view', 'institute', $my_institute->inst_id, "buttons=0");
-		$data[] = array(1, 'Delete', 'delete', 'institute', $my_institute->inst_id, '', false, 'delete');
-		$data[] = array(1, 'Edit', 'edit', 'institute', $my_institute->inst_id, '', false, 'editing');
-		$tabs = array("'${tab_id_prefix}1'", "'${tab_id_prefix}2'", "'${tab_id_prefix}3'");
+		if ($action=='administer'){
+			$data[] = array(1, 'Delete', 'delete', 'institute', $my_institute->inst_id, '', false, 'delete');$nr++;
+			$data[] = array(1, 'Edit', 'edit', 'institute', $my_institute->inst_id, '', false, 'editing');$nr++;
+			$tabs[] = "'${tab_id_prefix}2'";
+			$tabs[] = "'${tab_id_prefix}3'";
+		} 
 
 		//[number of tabs, label start, tab id start, type, data, id, render targets, active target content, active tab]
 		echo renderTabs($nr, '', $tab_id_prefix, 'institute', $data, $my_institute->inst_id, TRUE,
@@ -393,8 +423,8 @@ function showOrganisationMembersPage($organisations){
 		$first_tab_group_id = $data[0][4];
 		
 		echo renderTabs(--$tab_offset, 'Org', 'mentor_page-', 'organisation', $data, null, TRUE,
-				renderUsers('organisation_admin', '', $first_tab_group_id, 'organisation').
-				renderUsers('mentor', '', $first_tab_group_id, 'organisation'));
+				renderUsers('organisation_admin', '', $first_tab_group_id, 'organisation', TRUE).
+				renderUsers('mentor', '', $first_tab_group_id, 'organisation', TRUE));
 	
 		?>
 		<script type="text/javascript">

@@ -18,9 +18,8 @@ function vals_soc_administer_page(){
     return ob_get_clean();
 }
 
-function vals_soc_administer_entity_page(){
+function vals_soc_administer_entity_page($action='administer'){
 	ob_start();
-	$action = 'administer';
 	include(_VALS_SOC_ROOT. '/includes/module/ui/administer/blocklayout.inc');
 	return ob_get_clean();
 }
