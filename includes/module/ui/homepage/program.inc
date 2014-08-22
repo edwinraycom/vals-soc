@@ -48,6 +48,7 @@ function getTimelineEnabledMessage(){
 					.'<br/><br/>'.
 					t("Student signup period begins: ") . ' ' .
 					Timeline::getInstance()->getStudentsSignupStartDate()->format('F j, Y, g:i a');
+			return $return_args;
 			
 			break;
 		case STUDENT_SIGNUP_PERIOD:
@@ -58,7 +59,8 @@ function getTimelineEnabledMessage(){
 					.'<br/>'.
 					t("Student signup period ends: ") . ' ' .
 					Timeline::getInstance()->getStudentsSignupEndDate()->format('F j, Y, g:i a');
-
+			return $return_args;
+			
 			break;
 		case PRE_ORGS_REVIEW_APPLICATIONS_DEADLINE:
 
@@ -67,7 +69,8 @@ function getTimelineEnabledMessage(){
 					'<br/>'.
 					t("Organisations review project applications deadline: ") . ' ' .
 					Timeline::getInstance()->getOrgsReviewApplicationsDate()->format('F j, Y, g:i a');
-
+			return $return_args;
+			
 			break;
 		case PRE_PROPOSAL_MATCHED_DEADLINE:
 
@@ -77,7 +80,8 @@ function getTimelineEnabledMessage(){
 					t("Mentors and tutors deadline to match accepted projects to mentors: ") . ' ' .
 					//Timeline::getInstance()->getOrgsReviewApplicationsDate()->format('F j, Y, g:i a');
 					Timeline::getInstance()->getStudentsMatchedToMentorsDate()->format('F j, Y, g:i a');
-
+			return $return_args;
+			
 			break;
 		case PRE_STUDENTS_ANNOUNCED_DEADLINE:
 
@@ -88,7 +92,8 @@ function getTimelineEnabledMessage(){
 					'<br/>'.
 					t("Accepted Students and projects announced on: ") . ' ' .
 					Timeline::getInstance()->getAcceptedStudentsAnnouncedDate()->format('F j, Y, g:i a');
-
+			return $return_args;
+			
 			break;
 		case PRE_BONDING_PERIOD:
 			return
@@ -98,7 +103,8 @@ function getTimelineEnabledMessage(){
 					'<br/>'.
 					t("The Bonding period starts on the following date: ") .
 					Timeline::getInstance()->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
-
+			return $return_args;
+			
 			break;
 		case PRE_CODING_PERIOD:
 
@@ -108,7 +114,8 @@ function getTimelineEnabledMessage(){
 					'<br/>'.
 					t(" Coding starts on the following date: ") .
 						Timeline::getInstance()->getCodingStartDate()->format('F j, Y, g:i a');
-
+			return $return_args;
+			
 			break;
 		case PRE_SUGGESTED_CODING_END_DATE:
 			return
@@ -118,7 +125,8 @@ function getTimelineEnabledMessage(){
 					'<br/>'.
 					'<br/>'.
 				 	t("The deadline date for students to finish their work: ") . Timeline::getInstance()->getCodingEndDate()->format('F j, Y, g:i a');
-
+			return $return_args;
+			
 			break;
 		case PRE_CODING_DEADLINE:
 
@@ -127,20 +135,23 @@ function getTimelineEnabledMessage(){
 					'<br/>'.
 					'<br/>'.
 				 	t("The deadline date for students to finish their work: ") . Timeline::getInstance()->getCodingEndDate()->format('F j, Y, g:i a');
-
+			return $return_args;
+			
 			break;
 		case OUT_OF_SEASON:
 
 			$return_args[0] = t("Out of season");
 			$return_args[1] = t("The program is currently out of season.");
-
+			return $return_args;
+			
 			break;
 		case PROGRAM_INACTIVE:
 		default:
 
 			$return_args[0] = t("Program Inactive");
 			$return_args[1] = t("The program is currently inactive.");
-
+			return $return_args;
+			
 			break;
 	}
 }
