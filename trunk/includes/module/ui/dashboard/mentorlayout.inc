@@ -1,136 +1,9 @@
 <?php
 drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/module/ui/dashboard/css/dashboard.css');
+
+//Will be called at the end of this file
 function initDashboardLayout(){
-	$timeline_args = array();
-	$timeline_args['myOrganisationsVisible'] = FALSE; // a list of organisations i participate in
-	$timeline_args['manageProjectIdeasVisible'] = FALSE; // manage the project ideas?
-	$timeline_args['browseProjectIdeasVisible'] = FALSE;
-	$timeline_args['organisationMembersVisible'] = FALSE;// a list of users per org I am attached to
-	$timeline_args['connectionsVisible'] = FALSE; // communication tools with other users of the system
-	$timeline_args['proposalsVisible'] = FALSE; // submitted proposals
-	$timeline_args['projectsIamMentorForVisible'] = FALSE; // matched actual projects
-	$timeline_args['dashboardLegend'] = "";
-	$period = Timeline::getInstance()->getCurrentPeriod();
-	switch ($period) {
-		case PROGRAM_NOT_YET_STARTED:
-			//mentor starts to do things after orgs are announced
-			$timeline_args['dashboardLegend'] =
-				t("Program has not started yet.  Menu options will be available from the following date. ") . 
-					Timeline::getInstance()->getOrgsAnnouncedDate()->format('F j, Y, g:i a');
-			break;
-		case PRE_ORG_SIGNUP_PERIOD:
-		case ORG_SIGNUP_PERIOD:
-		case PRE_ORGS_ANNOUNCED_PERIOD:
-			$timeline_args['dashboardLegend'] =
-				t("Program has started.  More menu options will be available from the following date. ") .
-					Timeline::getInstance()->getOrgsAnnouncedDate()->format('F j, Y, g:i a');
-			$timeline_args['myOrganisationsVisible'] = TRUE;
-			$timeline_args['manageProjectIdeasVisible'] = TRUE; // should we also allow mentors to modify project ideas?
-			$timeline_args['browseProjectIdeasVisible'] = TRUE;
-			$timeline_args['organisationMembersVisible'] = TRUE;
-			break;
-		case POST_ORGS_ANNOUNCED_PERIOD:
-			$timeline_args['dashboardLegend'] = t("Here you can view your organisations and see the project ideas.");
-			$timeline_args['myOrganisationsVisible'] = TRUE;
-			$timeline_args['manageProjectIdeasVisible'] = TRUE; // should we also allow mentors to modify project ideas?
-			$timeline_args['browseProjectIdeasVisible'] = TRUE;
-			$timeline_args['organisationMembersVisible'] = TRUE;
-			$timeline_args['connectionsVisible'] = TRUE;
-			break;
-		case STUDENT_SIGNUP_PERIOD:
-			$timeline_args['dashboardLegend'] = t("Student signup period. Students can now submit project proposals");
-			$timeline_args['myOrganisationsVisible'] = TRUE;
-			$timeline_args['manageProjectIdeasVisible'] = TRUE;
-			$timeline_args['browseProjectIdeasVisible'] = TRUE;
-			$timeline_args['organisationMembersVisible'] = TRUE;
-			$timeline_args['connectionsVisible'] = TRUE;
-			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-			break;
-		case PRE_ORGS_REVIEW_APPLICATIONS_DEADLINE:
-			$timeline_args['dashboardLegend'] = t("Please review your project applications before the following date. ") .
-					Timeline::getInstance()->getOrgsReviewApplicationsDate()->format('F j, Y, g:i a');
-			$timeline_args['myOrganisationsVisible'] = TRUE;
-			$timeline_args['manageProjectIdeasVisible'] = TRUE;
-			$timeline_args['browseProjectIdeasVisible'] = TRUE;
-			$timeline_args['organisationMembersVisible'] = TRUE;
-			$timeline_args['connectionsVisible'] = TRUE;
-			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-			break;
-		case PRE_PROPOSAL_MATCHED_DEADLINE:
-			$timeline_args['dashboardLegend'] = t("Please ensure you have matched all students projects to mentors before the following date. ") .
-					Timeline::getInstance()->getStudentsMatchedToMentorsDate()->format('F j, Y, g:i a');
-			$timeline_args['myOrganisationsVisible'] = TRUE;
-			$timeline_args['manageProjectIdeasVisible'] = TRUE;
-			$timeline_args['browseProjectIdeasVisible'] = TRUE;
-			$timeline_args['organisationMembersVisible'] = TRUE;
-			$timeline_args['connectionsVisible'] = TRUE;
-			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-			break;
-		case PRE_STUDENTS_ANNOUNCED_DEADLINE:
-			$timeline_args['dashboardLegend'] = t("The list of students and projects will become visable to everyone after the following date. ") .
-					Timeline::getInstance()->getAcceptedStudentsAnnouncedDate()->format('F j, Y, g:i a');
-			$timeline_args['myOrganisationsVisible'] = TRUE;
-			$timeline_args['manageProjectIdeasVisible'] = TRUE;
-			$timeline_args['browseProjectIdeasVisible'] = TRUE;
-			$timeline_args['organisationMembersVisible'] = TRUE;
-			$timeline_args['connectionsVisible'] = TRUE;
-			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-			break;
-		case PRE_BONDING_PERIOD:
-			$timeline_args['dashboardLegend'] = t("The list of students and projects is now visible to other users of the system. " .
-					"The Bonding period starts on the following date. ") .
-					Timeline::getInstance()->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
-			$timeline_args['myOrganisationsVisible'] = TRUE;
-			$timeline_args['manageProjectIdeasVisible'] = TRUE;
-			$timeline_args['browseProjectIdeasVisible'] = TRUE;
-			$timeline_args['organisationMembersVisible'] = TRUE;
-			$timeline_args['connectionsVisible'] = TRUE;
-			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-			$timeline_args['projectsIamMentorForVisible'] = TRUE;
-			break;
-		case PRE_CODING_PERIOD:
-			$timeline_args['dashboardLegend'] = t("Community bonding period.  Coding starts on the following date. ") .
-					Timeline::getInstance()->getCodingStartDate()->format('F j, Y, g:i a');
-			$timeline_args['myOrganisationsVisible'] = TRUE;
-			$timeline_args['manageProjectIdeasVisible'] = TRUE;
-			$timeline_args['browseProjectIdeasVisible'] = TRUE;
-			$timeline_args['organisationMembersVisible'] = TRUE;
-			$timeline_args['connectionsVisible'] = TRUE;
-			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-			$timeline_args['projectsIamMentorForVisible'] = TRUE;
-			break;
-		case PRE_SUGGESTED_CODING_END_DATE:
-			$timeline_args['dashboardLegend'] = t("Coding period. The following is the suggested end date for coding. ") .
-					Timeline::getInstance()->getSuggestedCodingDeadline()->format('F j, Y, g:i a');
-			$timeline_args['myOrganisationsVisible'] = TRUE;
-			$timeline_args['manageProjectIdeasVisible'] = TRUE;
-			$timeline_args['browseProjectIdeasVisible'] = TRUE;
-			$timeline_args['organisationMembersVisible'] = TRUE;
-			$timeline_args['connectionsVisible'] = TRUE;
-			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-			$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
-			$timeline_args['projectsIamMentorForVisible'] = TRUE;
-			break;
-		case PRE_CODING_DEADLINE:
-			$timeline_args['dashboardLegend'] = t("Coding period. The following is the deadline date for coding. ") .
-					Timeline::getInstance()->getCodingEndDate()->format('F j, Y, g:i a');
-			$timeline_args['myOrganisationsVisible'] = TRUE;
-			$timeline_args['manageProjectIdeasVisible'] = TRUE;
-			$timeline_args['browseProjectIdeasVisible'] = TRUE;
-			$timeline_args['organisationMembersVisible'] = TRUE;
-			$timeline_args['connectionsVisible'] = TRUE;
-			$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-			$timeline_args['projectsIamMentorForVisible'] = TRUE;
-			break;
-		case OUT_OF_SEASON:
-			$timeline_args['dashboardLegend'] = t("The program is currently out of season.");
-			break;
-		case PROGRAM_INACTIVE:
-		default:
-			$timeline_args['dashboardLegend'] = t("No program currently active.");
-			break;
-	}
-	return getMentorLayout($timeline_args);
+	return getMentorLayout(Timeline::getMentorTimelineVars());
 }
 
 function getMentorLayout($timeline_args){
@@ -142,7 +15,7 @@ function getMentorLayout($timeline_args){
 			</div>
 	
 			<div class="block block-dashboard">
-				<span id="dashboardLegend">'.$timeline_args['dashboardLegend'].'</span>
+				<p id="dashboardLegend">'.$timeline_args['dashboardLegend'].'</p>
 	
 				<!-- column one -->
 				<div class="column first">

@@ -9,7 +9,7 @@ function initProgSettingsLayout(){
 			</div>
 	
 			<div class="block block-dashboard">
-				<span id="dashboardLegend"></span>
+				<p id="dashboardLegend"></p>
 	
 				<!-- column one -->
 				<div class="column first">
