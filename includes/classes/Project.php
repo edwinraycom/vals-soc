@@ -75,24 +75,25 @@ class Project extends AbstractEntity{
     	return $rows;
     }
 
-    //TODO Rewrite this function a bit: multiple returns, unclear why the user_type should be passed
     public static function getProjects($project_id='', $owner_id='', $organisations=''){
     	if ($project_id){
     		$p = self::getProjectById($project_id, FALSE, NULL);
-    		return $p ? array($p) : array();
+    		$projects = $p ? array($p) : array();
     	} elseif ($organisations) {
     		$table = tableName('project');
-    		return db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",
+    		$projects = db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",
     			array(':orgs' => $organisations))->fetchAll();
     	} elseif ($owner_id){
-    		return self::getProjectsByUser(getRole(), $owner_id);
+    		//$projects = self::getProjectsByUser_orig($role, $owner_id);
+    		$projects = self::getProjectsByUser($owner_id);
     	} else {
-    		return self::getAllProjects(NULL);
+    		$projects = self::getAllProjects(NULL);
     	}
+    	return $projects;
     }
        
     //TODO Rewrite this function a bit: multiple returns, unclear why the user_type should be passed
-    public static function getProjectsByUser($user_type, $user_id='', $organisations=''){
+    public static function getProjectsByUser_orig($user_type, $user_id='', $organisations=''){
     	global $user;
    
     	$org_admin_or_mentor = $user->uid;
@@ -128,6 +129,40 @@ class Project extends AbstractEntity{
     	}
     	
     	return $my_projects;
+	}
+	
+	public static function getProjectsByUser($user_id='', $organisations=''){
+		global $user;
+		 
+		$org_admin_or_mentor = $user->uid;
+		$user_id = $user_id ?: $org_admin_or_mentor;
+		$my_role = getRole();
+		//todo: find out whether current user is institute_admin
+		 
+		$table = tableName('project');
+		if (in_array($my_role, array('organisation_admin', 'mentor'))){
+			$my_orgs = $organisations ?: db_query("SELECT o.org_id from $table as o ".
+					"LEFT JOIN soc_User_membership as um on o.org_id = um.group_id ".
+					" WHERE um.uid = $user_id AND um.type = 'organisation'")->fetchCol();
+			if (! $my_orgs){
+				drupal_set_message(t('You have no organisation yet'), 'error');
+				return array();
+			}
+			if ($my_role == 'organisation_admin') {
+				$my_projects =
+					db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",array(':orgs' => $my_orgs))
+					->fetchAll();
+			} else {
+				$my_projects =
+					db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) AND p.owner_id = $user_id",array(':orgs' => $my_orgs))
+					->fetchAll();
+			}
+		} else {
+			drupal_set_message(t('You are not allowed to perform this action'), 'error');
+			return array();
+		}
+		 
+		return $my_projects;
 	}
 	
 	static function addProject($props){

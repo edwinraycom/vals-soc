@@ -25,7 +25,8 @@ function showProjectPage($action='', $show_last=FALSE){
 			$orgs[] = $org;
 			$orgids[] = $org->org_id;
 		}
-		$projects = Project::getProjectsByUser($role, $GLOBALS['user']->uid, $orgids);//$my_organisations->fetchCol());
+		$projects = Project::getProjectsByUser($GLOBALS['user']->uid, $orgids);//$my_organisations->fetchCol());
+		//$projects = Project::getProjectsByUser_orig($role, $GLOBALS['user']->uid, $orgids);//$my_organisations->fetchCol());
 		if (! $projects){
 			echo t('You have no project yet registered');
 			echo '<h2>'.t('Add your project').'</h2>';
