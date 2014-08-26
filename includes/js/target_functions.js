@@ -9,7 +9,7 @@ function refreshTabs(json_data, args){
 	}
 	if (arguments.length > 1 && args) {
 		type = args[0];
-		targ = (args.length > 1) ? 'msg_'+ args[1] : '';
+		targ = (args.length > 1) && args[1] ? 'msg_'+ args[1] : '';
 		handler = (args.length > 2) ? args[2] : '';
 		container = (args.length > 3) ? args[3] : 'admin_container';
 	}
@@ -22,11 +22,13 @@ function refreshTabs(json_data, args){
 		targ = 'ajax_msg';
 		alertdev('You forgot to place an error div in the content of the tab: required msg_<target> '+
 			'or it could not be found. Searched actually for '+ targ);
+	} else {
+		//targ = 'msg_'+targ;
 	}
 	
 	if (json_data && (json_data.result !== 'error')){
 		var show_action = altSub(json_data, 'show_action', 'administer');
-		var new_tab = altSub(json_data, 'new_tab', false);
+		var new_tab = altSub(json_data, 'new_tab', false) ? 1 : 0;
 		ajaxCall(handler, 'show', {type:type, show_action:show_action, new_tab: new_tab}, 
 			'handleContentAndMessage', 'html', [container, 'ajax_msg', json_data.msg]);
 	} else {

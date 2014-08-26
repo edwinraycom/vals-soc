@@ -25,40 +25,18 @@ switch ($_GET['action']){
 				showError(tt('No such type: %1$s', $type));
 		}
 	break;
-	case 'addgroup':
-		$target = altSubValue( $_GET, 'target');
-		echo '<h2>'.t('Add a group to your list of groups').'</h2>';
-
-		$form = drupal_get_form('vals_soc_studentgroup_form', null, $target);
-		$form['#action'] = url('administer/members');
-		// Process the submit button which uses ajax
-		$form['submit'] = ajax_pre_render_element($form['submit']);
-		// Build renderable array
-// 		$build = array(
-// 				'form' => $form,
-// 				'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
-// 		);
-		// Print $form
-// 		$form_to_print = drupal_render($form);//used to be build
-// 		// Print JS
-// 		//$form_to_print .= drupal_get_js();
-// 		echo $form_to_print;
-		renderForm($form, $target);
-
-	break;
 	case 'add':
 		$target = altSubValue($_POST, 'target');
 		$type = altSubValue($_POST, 'type');
-		$show_action = altSubValue($_GET, 'show_action', 'administer');
+		$show_action = getRequestVar('show_action', 'administer');//altSubValue($_GET, 'show_action', 'administer');
 		echo
 		'<h2>'.
-			(($type == 'studentgroup') ? t('Add a group to your list of groups') :
+			(($type == 'studentgroup') ? t('Add a group to your list of student groups') :
 			tt('Add your %1$s', t($type))).
-		'</h2>'; // when is this ever called for a student group? - there is a separate addgroup task above.
-		//echo "<div id='msg_$target'></div>";
+		'</h2>';
 
 		$form = drupal_get_form("vals_soc_${type}_form", null, $target, $show_action);
-		$form['#action'] = url('administer/members');
+		//TODO  Should this stay? $form['#action'] = url('dashboard/administer/members');
 		// Process the submit button which uses ajax
 		$form['submit'] = ajax_pre_render_element($form['submit']);
 		// Build renderable array
@@ -74,8 +52,7 @@ switch ($_GET['action']){
 	break;
     case 'showmembers':
     	if ($_POST['type'] == 'studentgroup'){
-            echo renderUsers('student', '', $_POST['studentgroup_id'], $_POST['type']);
-            //echo renderStudents($_POST['studentgroup_id']);
+            echo renderUsers('student', '', $_POST['id'], $_POST['type']);
         } elseif ($_POST['type'] == 'institute'){
             $type = altSubValue($_GET, 'subtype', 'all');
             if ($type == 'student'){
@@ -104,7 +81,12 @@ switch ($_GET['action']){
         }
      break;
     case 'show':
+    	$type = altSubValue($_POST, 'type', '');
     	$show_action = altSubValue($_POST, 'show_action', 'administer');
+    	if ($type && ($type = 'student_group')){
+    		$show_action = 'groups';
+    	}
+    	//$subject = getRequestVar('subject', 'no_subject');
     	$show_last = altSubValue($_POST, 'new_tab', false);
     	showRoleDependentAdminPage(getRole(), $show_action, $show_last);
     break;

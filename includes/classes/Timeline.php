@@ -149,11 +149,14 @@ class Timeline {
 		$timeline_args['managedOrganisationsVisible'] = FALSE;
 		$timeline_args['manageProjectIdeasVisible'] = FALSE;
 		$timeline_args['connectionsVisible'] = FALSE;
+		//$timeline_args['groupsVisible'] = FALSE;
 		$timeline_args['organisationMembersVisible'] = FALSE;
 		$timeline_args['proposalsVisible'] = FALSE;
 		$timeline_args['matchedProjectsVisible'] = FALSE;
 		$timeline_args['dashboardLegend'] = "";
 		$period = $timeline->getCurrentPeriod();
+		
+		$timeline_args['groupsVisible'] = $period >= ORG_SIGNUP_PERIOD;
 		switch ($period) {
 			case PROGRAM_NOT_YET_STARTED:
 				$timeline_args['dashboardLegend'] =
@@ -282,11 +285,17 @@ class Timeline {
 		$timeline_args['managedOrganisationsVisible'] = FALSE;
 		$timeline_args['manageProjectIdeasVisible'] = FALSE;
 		$timeline_args['connectionsVisible'] = FALSE;
+		
 		$timeline_args['organisationMembersVisible'] = FALSE;
 		$timeline_args['proposalsVisible'] = FALSE;
 		$timeline_args['matchedProjectsVisible'] = FALSE;
 		$timeline_args['dashboardLegend'] = "";
 		$period = $timeline->getCurrentPeriod();
+		
+		//TODO: instead of repeating the same vars for every period, most of them hold from a certain point on. As they
+// 		can be ordered synchronously as wel as numerically we can easily do some numeric equations to find the right vars
+		$timeline_args['groupsVisible'] = $period >= ORG_SIGNUP_PERIOD;
+		
 		switch ($period) {
 			case PROGRAM_NOT_YET_STARTED:
 				$timeline_args['dashboardLegend'] = 

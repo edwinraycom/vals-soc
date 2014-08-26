@@ -2,7 +2,7 @@
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after propjects.php which does the same
 
 function showRoleDependentAdminPage($role, $show_action='administer', $show_last= FALSE){
-	echo "<a href='"._VALS_SOC_URL."/dashboard'>".t('Back To Dashboard')."</a>";
+	echo "<a href='"._VALS_SOC_URL."/dashboard'>".t('Back To Dashboard')."</a><br/>";
 	switch ($role){
 		case 'administrator':
 			showAdminPage($show_action, $show_last);
@@ -41,20 +41,20 @@ function showAdminPage($show_action, $show_last=FALSE){
 	}
 	?>
 	<script type="text/javascript">
-        	   activatetabs('tab_', [<?php echo $s;?>]);
-        </script><?php
+       activatetabs('tab_', [<?php echo $s;?>]);
+    </script><?php
 }
 
 function showSupervisorPage($show_action, $show_last=FALSE){
 	//Get my institutions
 	$institutes = Groups::getGroups('institute', $GLOBALS['user']->uid);
 	if (! $institutes->rowCount()){
-		echo t('You have not registered yourself to an institute yet ');
+		echo t('You have not registered yourself to an institute yet. ');
 	} else {
 		$my_institute = $institutes->fetchObject();
 		
 		if ($show_action == 'administer'){
-			echo "determine what a supervisor should administer";//showInstituteAdminPage($my_institute);
+			echo t('You should be an admin member to edit this institute');//showInstituteAdminPage($my_institute);
 		} elseif ($show_action == 'view'){
 			showInstituteAdminPage($my_institute, $show_action);
 		} elseif ($show_action == 'members') {
@@ -93,7 +93,7 @@ function showSupervisorPage($show_action, $show_last=FALSE){
 		//$add_tab .= drupal_get_js();
 
 		$data = array();
-		$data[] = array(1, 'Add', 'addgroup', 'studentgroup', null, "target=admin_container&show_action=$show_action");
+		$data[] = array(1, 'Add', 'add', 'studentgroup', null, "target=admin_container&show_action=$show_action");
 		echo renderTabs(1, null, $tab_prefix, 'studentgroup', $data, null, TRUE, $add_tab);
 		?>
 		<script type="text/javascript">
@@ -125,7 +125,7 @@ function showSupervisorPage($show_action, $show_last=FALSE){
 			$data2[] = array(0, 'Group', 'showmembers', 'studentgroup', $group->studentgroup_id);
 		}
 
-		//$data[] = array(1, 'Add', 'addgroup', 'studentgroup', null, "target=group_page-$nr&show_action=$show_action");
+		//$data[] = array(1, 'Add', 'add', 'studentgroup', null, "target=group_page-$nr&show_action=$show_action");
 		$activating_tabs[] = "'$tab_id_prefix$nr'";
 
 		echo sprintf('<h3>%1$s</h3>', t('Your students'));
@@ -152,7 +152,7 @@ function showInstitutePage($show_action, $show_last=FALSE){
 	//Get my institutions
 	$institutes = Groups::getGroups('institute', $GLOBALS['user']->uid);
 	if (! $institutes->rowCount()){
-		echo t('You have no institute yet registered');
+		echo t('You have no institute yet registered.');
 		$add_tab = '<h2>'.t('Add your institute').'</h2>';
 		$tab_prefix = 'inst_page-';
 		$target = "${tab_prefix}1";
@@ -171,8 +171,10 @@ function showInstitutePage($show_action, $show_last=FALSE){
 	} else {
 		$my_institute = $institutes->fetchObject();
 		if ($show_action == 'administer'){
-			showInstituteAdminPage($my_institute);
+			//show_last is not relevant as we always expect max 1 institute
+			showInstituteAdminPage($my_institute, $show_action);
 		} elseif ($show_action == 'view'){
+			//show_last is not relevant as we always expect max 1 institute
 			showInstituteAdminPage($my_institute, $show_action);
 		} elseif ($show_action == 'members') {
 			showInstituteMembersPage($my_institute, $show_last);
@@ -199,7 +201,7 @@ function showInstituteGroupsAdminPage($my_institute, $show_last){
 		foreach ($groups as $group){
 			$nr3++;
 			$nr4++;
-			if ($nr3 == 1){
+			if ($nr3 == $current_tab){
 				$id = $group->studentgroup_id;
 				$my_group = $group;
 				$students = Users::getStudents($id);
@@ -212,7 +214,7 @@ function showInstituteGroupsAdminPage($my_institute, $show_last){
 		}
 		$nr3++;
 	//	[translate, label, action, type, id, extra GET arguments, render with rich text area, render tab to the right]
-		$data3[] = array(1, 'Add', 'addgroup', 'studentgroup', null, 
+		$data3[] = array(1, 'Add', 'add', 'studentgroup', null, 
 			"target=$tab_id_prefix$nr3&show_action=groups", false, 'addition');
 		$tabs3[] = "'$tab_id_prefix$nr3'";
 
@@ -220,9 +222,9 @@ function showInstituteGroupsAdminPage($my_institute, $show_last){
 	   
 	    echo renderTabs($nr3, 'Group', $tab_id_prefix, 'studentgroup', $data3, $id, TRUE,
 	    		(($nr3 > 1) ?
-	    		renderOrganisation('studentgroup', $my_group, null, "${tab_id_prefix}1"):
+	    		renderOrganisation('studentgroup', $my_group, null, "${tab_id_prefix}$current_tab"):
 	    		tt('There is no group yet. Click "%1$s" to add one.', t('Add')))
-	    				);
+	    		,$current_tab		);
 	    
 	    if ($nr4 > 0){//There is more than the add tab
 		    echo sprintf('<h2>%1$s</h2>', t('Your students as divided in groups'));
@@ -273,12 +275,15 @@ function showInstituteMembersPage($my_institute, $show_last=FALSE){
 // 			$tabs3[] = "'$tab_id_prefix$nr3'";
 // 			$data3[] = array(0, $group->name, 'view', 'studentgroup', $group->studentgroup_id);
 			
-			$tabs4[] = "'$tab_id_prefix2$nr3'";
-			$data4[] = array(0, 'Group', 'showmembers', 'studentgroup', $group->studentgroup_id);
+			$tabs4[] = "'$tab_id_prefix2$nr4'";
+			$data4[] = array(0, $group->name, 'showmembers', 'studentgroup', $group->studentgroup_id);//'Group'
 		}
+// 		$nr4++;
+// 		$tabs4[] = "'$tab_id_prefix2$nr4'";
+// 		$data4[] = array(1, 'Add', 'add', 'studentgroup', 0, 'show_action=groups', false, 'totheright');//'Group
 // 		$nr3++;
 	//	[translate, label, action, type, id, extra GET arguments, render with rich text area, render tab to the right]
-// 		$data3[] = array(1, 'Add', 'addgroup', 'studentgroup', null, "target=$tab_id_prefix$nr3", true);
+// 		$data3[] = array(1, 'Add', 'add', 'studentgroup', null, "target=$tab_id_prefix$nr3", true);
 // 		$tabs3[] = "'$tab_id_prefix$nr3'";
 		echo '<h2>'.t('The registered staff and students of your institute').'</h2>';
 	    echo renderTabs($nr2, '', 'member_page-', 'institute', $data2, $my_institute->inst_id, TRUE,
@@ -311,6 +316,7 @@ function showInstituteAdminPage($my_institute, $action='administer'){
 		$data = array();
 		$tabs = array("'${tab_id_prefix}1'");
 		
+		//we pass on the buttons=0 since we have the buttons as tabs
 		$data[] = array(2, $my_institute->name, 'view', 'institute', $my_institute->inst_id, "buttons=0");
 		if ($action=='administer'){
 			$data[] = array(1, 'Delete', 'delete', 'institute', $my_institute->inst_id, '', false, 'delete');$nr++;

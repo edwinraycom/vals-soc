@@ -16,7 +16,7 @@ class Users extends AbstractEntity{
 			$groups = db_select($table)->fields($table)->execute()->fetchAll(PDO::FETCH_ASSOC);
 		} else {
 			$groups = db_select($table)->fields($table)->condition('owner_id', $supervisor)->
-			execute()->fetchAll(PDO::FETCH_ASSOC);
+				execute()->fetchAll(PDO::FETCH_ASSOC);
 		}
 
 		return $groups;
@@ -222,7 +222,7 @@ class Users extends AbstractEntity{
 					'left join soc_names as n on u.uid=n.names_uid '.
 					"WHERE u.uid = '$id'")->fetchObject();
 		} else {
-			drupal_set_message(t('No valid identifier specified'), 'error');
+			drupal_set_message(t('No valid user identifier specified'), 'error');
 			return null;
 		}
 	}

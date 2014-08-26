@@ -62,6 +62,7 @@ function formatMemberRecordNice($record, $type, $target=''){
 			break;
 		case 'studentgroup': // studentgroups invite students
 			$member_type = 'student';
+			$parent_member_type = 'institution administrator or teacher';
 			break;
 		default: $member_type = 'user';
 	}
@@ -69,14 +70,15 @@ function formatMemberRecordNice($record, $type, $target=''){
 	$output='';
 	$output .= '';
 	$output .= '<dl class="view_record">';
+	$i_am_owner = FALSE;
 	// check to see if there is an 'owner_id field'
 	if(isset($record->owner_id)){
 		$owner_details='';
 		if(Users::getMyId() == $record->owner_id ){
 			// owner is me
 			$owner_details= t('You');
-		}
-		else{
+			$i_am_owner = TRUE;
+		} else {
 			// else owner someone else, get their details
 			$user = Users::getParticipantBasicSubset($record->owner_id);
 			if ($user){
@@ -103,40 +105,43 @@ function formatMemberRecordNice($record, $type, $target=''){
 	foreach($record as $key => $val){
 		// don't show any field ending with '_id' and do not show the codes unless you are an admin
 		if ((substr_compare($key, '_id', -strlen('_id'))!= 0) &&
-			($is_some_admin || (($key !== 'code') && ($key !== 'owner_code')))){
-			$output .=  '<dt>';
-			$output .=  ucfirst(str_replace('_', ' ', $key));
-			$output .=  '</dt>';
-			$output .=  '<span class="ui-icon ui-icon-arrowreturn-1-e"></span>';
-			$output .=  '<dd>';
-			$output .=  $val;
+			((($key !== 'code') && ($key !== 'owner_code')) || ($is_some_admin || $i_am_owner))
+			){
+			$attribute_str = '<dt>';
+			$attribute_str .=  ucfirst(str_replace('_', ' ', $key));
+			$attribute_str .=  '</dt>';
+			$attribute_str .=  '<span class="ui-icon ui-icon-arrowreturn-1-e"></span>';
+			$attribute_str .=  '<dd>';
+			$attribute_str .=  $val;
+			
 			if (($key=='code')){
-				$output .= '<br/>';
-				$output .= '<i>' . tt('You can use this code to invite a %1$s to participate.', $member_type);
+				$output .= $attribute_str.'<br/>';
+				$output .= '<i>' . tt('You can use this code to invite a %1$s to participate.', t($member_type));
 				$output .= '<br/>';
 				$output .= '<br/>';
 				$output .= tt('To sign up a %1$s for your %2$s, send them this code and direct them to '.
-						'http://vps.semesterofcode.com/user/register where they can use it to sign up.', $member_type, $type);
+						'http://vps.semesterofcode.com/user/register where they can use it to sign up.', t($member_type), t($type));
 				$output .= '<br/>';
 				$output .= '<br/>';
 				$output .= t('Alternatively click the button below to send an email containing signup instructions') . '</i>';
 				$output .= '<br/>';
 				$invite_mentor_action = "onclick='ajaxCall(\"administration\", \"inviteform\", {type: \"$type\", id: $id, path: \"\", target: \"$target\", subtype: \"$member_type\"}, \"formResult\", \"html\", \"$target\");'";
-				$output .= "<input type='button' value='".tt('Invite %1$s', $member_type)."' $invite_mentor_action/>";
-			}
-			if (($key=='owner_code')){
-				$output .= '<br/>';
-				$output .= '<i>' . tt('You can use the following code to invite a colleague to manage this %1$s together ', $type). '</i>';
+				$output .= "<input type='button' value='".tt('Invite %1$s', t($member_type))."' $invite_mentor_action/>";
+			} elseif (($key=='owner_code') && ($type != 'studentgroup')){
+				$output .= $attribute_str.'<br/>';
+				$output .= '<i>' . tt('You can use the following code to invite a colleague to manage this %1$s together ', t($type)). '</i>';
 				$output .= '<br/>';
 				$output .= '<br/>';
 				$output .= tt('To sign up a %1$s for your %2$s, send them this code and direct them to '.
-						'http://vps.semesterofcode.com/user/register where they can use it to sign up.', $parent_member_type, $type);
+						'http://vps.semesterofcode.com/user/register where they can use it to sign up.', t($parent_member_type), t($type));
 				$output .= '<br/>';
 				$output .= '<br/>';
 				$output .= t('Alternatively click the button below to send an email containing signup instructions') . '</i>';
 				$output .= '<br/>';
 				$invite_org_admin_action = "onclick='ajaxCall(\"administration\", \"inviteform\", {type: \"$type\", id: $id, path: \"\", target: \"$target\", subtype: \"$parent_member_type\"}, \"formResult\", \"html\", \"$target\");'";
-				$output .= "<input type='button' value='".tt('Invite %1$s', $parent_member_type)."' $invite_org_admin_action/>";
+				$output .= "<input type='button' value='".tt('Invite %1$s', t($parent_member_type))."' $invite_org_admin_action/>";
+			} elseif ($key!=='owner_code'){
+				$output .= $attribute_str;
 			}
 			$output .=  '</dd>';
 		}
@@ -176,7 +181,7 @@ function renderUsers($type='', $users='', $group_selection='', $group_type='', $
     $group_type = $group_type ?: 'environment';
     $type_nice = str_replace('_', ' ', $type);
     $empty_message =  $group_selection ? tt('There is no %1$s yet in this %2$s', t($type_nice), t($group_type)) :
-    tt('You have no %1$s yet.', t($type_nice));
+    tt('There are no %1$s yet.', t($type_nice));
     return formatUsersNice($users, $type, $empty_message, $show_title);
     
 }
@@ -239,7 +244,8 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
     	if ($show_buttons && user_access('vals admin register')){
 	    	$pPath=request_path();
 	    	$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"administration\"]);}'";
-	    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"formResult\", \"html\", \"$target\");'";
+	    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, ".
+	    		(($type == 'studentgroup') ? "\"$target\");'" :  "\"formResult\", \"html\", \"$target\");'");
 
 	    	$s .= "<input type='button' value='".t('edit')."' $edit_action/>";
 	    	$s .= "<input type='button' value='".t('delete')."' $delete_action/><br/><br/>";

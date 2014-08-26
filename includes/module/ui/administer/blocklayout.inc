@@ -15,5 +15,5 @@ $action = isset($action) ? $action : 'administer';?>
 <div id='ajax_msg'></div>
 
 <div id='admin_container' class='tabs_container'>
-	<?php showRoleDependentAdminPage($role, $action);?>
+	<?php showRoleDependentAdminPage($role, $action, false);?>
 </div>

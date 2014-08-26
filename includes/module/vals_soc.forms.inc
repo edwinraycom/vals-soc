@@ -233,7 +233,7 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
             condition('type', 'institute')->execute()->fetchAssoc();
         $member_inst = $member_inst_rec ? $member_inst_rec['group_id'] : 0;
        
-        if ((! $member_inst)  || $is_admin){
+        if ((! $member_inst && (($type == 'institute_admin')))  || $is_admin){
 	        //So we know the user is not in an institute yet
         	//He/she can choose between existing institutes (or leave the institute option as 'Fill in later' 
         	//and enter an own institute)
@@ -561,7 +561,7 @@ function vals_soc_studentgroup_form($form, &$form_state, $group='', $target='', 
 		'#type' => 'button',
 		'#value' => t('Cancel'),
 		'#prefix' => '&nbsp; &nbsp; &nbsp;',
-		'#attributes' => array('onClick' => 'location.reload(); return true;'),
+		'#attributes' => array('onClick' => 'location.reload(); return true;'),//TODO Handle this without page reload
 		'#post_render' => array('vals_soc_fix_submit_button'),
 	);
 	$form['#vals_soc_attached']['js'] = array(
@@ -757,9 +757,9 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 	return $form;	
 }
 
-function vals_soc_invite_form($form, &$form_state, $org='', $target='', $show_action='administer', $subtype){
+function vals_soc_invite_form($form, &$form_state, $org='', $target='', $show_action='administer', $subtype=''){
 	include_once(_VALS_SOC_ROOT. '/includes/module/vals_soc.mail.inc');
-	$message = format_invite_message($org, $subtype);
+	$message = format_invite_message($org, $subtype, ($subtype== 'student')? t('your institute'): '');
 	$form = array(
 			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
 			'#suffix' => '</div>',
@@ -774,6 +774,7 @@ function vals_soc_invite_form($form, &$form_state, $org='', $target='', $show_ac
 	$form['contact_email'] = array(
 			"#type" => "textfield",
 			'#title' => t('Email of the person to invite'),
+			'#description' => t('This can be a comma-separated list of addresses'),
 			"#size" => 100,
 			'#required' => '1',
 			"#default_value" => '',

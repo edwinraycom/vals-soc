@@ -152,21 +152,17 @@ class Groups extends AbstractEntity{
 				}
 					
 				$subtype = ($type == 'organisation') ? 'mentor' : (($type == 'institute') ? 'supervisor' : 'studentgroup');
-					
+				$code_field = ($subtype == 'studentgroup') ? 'studentgroup_id' : 'entity_id';
 				$num_deleted3 = db_delete("soc_codes")
 					->condition(
 						db_and()
-							->condition('entity_id', $id)
+							->condition($code_field, $id)
 							->condition(
 								db_or()
 									->condition('type', $subtype)
 									->condition('type', "${type}_admin")))
 					->execute();
-			/*
-			 * ts->condition(db_and()
-            ->condition('gid', $gid)
-            ->condition('realm', $realm));
-			 */
+
 				if (!$num_deleted3){
 					drupal_set_message(tt('The %1$s had no code attached.', $type), 'status');
 				}
