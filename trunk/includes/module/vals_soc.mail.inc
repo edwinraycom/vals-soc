@@ -174,10 +174,10 @@ function vals_soc_cron_email_handler($item){
 	drupal_set_message($mail_results);
 }
 
-function format_invite_message($entity, $subtype){
+function format_invite_message($entity, $subtype='', $organisation_name=''){
 	$output = '';
 	
-	$entity_name = $entity->name;
+	$entity_name = $organisation_name ? : '<i>'. $entity->name. '</i>';
 	$db_code_key = '';
 	if($subtype == 'mentor' || $subtype == 'supervisor' || $subtype == 'student'){
 		$db_code_key = 'code';
@@ -190,7 +190,7 @@ function format_invite_message($entity, $subtype){
 	$output .= t('Hello').',';
 	$output .= '<br/>';
 	$output .= '<br/>';
-	$output .= tt('You have been invited to participate in the VALS Semester of code program, as a member of the %1$s group for %2$s.', $subtype, $entity_name);
+	$output .= tt('You have been invited to participate in the VALS Semester of code program, as a %1$s of %2$s.', $subtype, $entity_name);
 	$output .= '<br/>';
 	$output .= '<br/>';
 	$output .= t('The first step is to sign up...'); 
@@ -203,14 +203,20 @@ function format_invite_message($entity, $subtype){
 		$output .= tt('Fill in your basic details and select "%1$s" as your role.', $subtype); 
 		$output .= "</li>";
 		$output .= "<li>";
-		$output .= t('Enter the following admin key: ' . $invite_key);
+		$output .= t('Enter the following unique key: ' . $invite_key);
 		$output .= "</li>";
 		$output .= "<li>";
 		$output .= t('Click "Create New Account"');
 		$output .= "</li>";
 		$output .= "<li>";
-		$output .= t('You will recieve an email with a one-time login link. Log in and set your password.');
+		$output .= t('You will recieve an email with a one-time login link.');
 		$output .= "</li>";
+		$output .= "<li>";
+		$output .= t('Follow that link, log in and set your password.');
+		$output .= "</li>";
+		
+		
+		
 	$output .= "</ul>";
 	$output .= '<br/>';
 	$output .= t('Many Thanks,');

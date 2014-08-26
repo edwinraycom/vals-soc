@@ -291,9 +291,8 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
 	 *  We assume that the admins create their organisation/institute and all the others register with a 
      * certain organisation. There seems no reason to change that later. If an organisation has two admins 
 	 * they can add themselves to an organisation/institute */
-     if ((isset($form_state['values']['institute']) && $form_state['values']['institute']) &&
-      		(($type == 'institute_admin') || ($is_admin && (($type == 'student') || ($type == 'supervisor'))))
-      		
+     if ((isset($form_state['values']['institute']) && $form_state['values']['institute']) 
+     		&& (($type == 'institute_admin') || ($is_admin && (($type == 'student') || ($type == 'supervisor'))))
     		){
       	db_query("DELETE FROM soc_user_membership WHERE uid = $uid AND type= 'institute'");
         db_insert('soc_user_membership')->fields( array(

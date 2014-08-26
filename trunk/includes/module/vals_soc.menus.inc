@@ -28,7 +28,7 @@ function vals_soc_menu_handler(){
 	$items['dashboard/institute/administer'] = getAdministerLink('dashboard/institute/administer', 'institute', false);
 	$items['dashboard/institute/view'] = getAdministerLink('dashboard/institute/view', 'institute', false);
 	// allow institutes to view supervisors/other instadmins
-	$items['dashboard/institute/members'] = getEntityMembersLink('dashboard/institute/members', 'institute');
+	$items['dashboard/institute/members'] = getEntityMembersLink('dashboard/institute/members', 'institute', false);
 	// used just for institutes to allow creation of student groups
 	$items['dashboard/institute/group/administer'] = getGroupAdministerLink('dashboard/institute/group/administer');
 	

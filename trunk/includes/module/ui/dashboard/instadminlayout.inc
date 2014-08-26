@@ -36,7 +36,7 @@ function getInstAdminLayout($timeline_args){
 		<h4>
 		<a class="dashboard-link component-link"
 		href="'.$base_url.'/dashboard/institute/members"
-		title="'.t("Members of my institution").'">'.t("Members of my institution").'</a>
+		title="'.t('Members of my institution').'">'.t('Members of my institution').'</a>
 		</h4>
 		<p>'.t("Lists of your institution members").'</p>
 		</div>
@@ -66,6 +66,23 @@ function getInstAdminLayout($timeline_args){
 				<div class="column">
 	';
 
+	if($timeline_args['groupsVisible']){
+		$output .='
+		<div class="column-entry participants">
+		<h4>
+		<a class="dashboard-link"
+		href="'.$base_url.'/dashboard/institute/group/administer"
+		title="'.t("Groups").'">'.t("Groups").'</a>
+		</h4>
+		<p>'.t("Create groups of students to manage codes and the initial supervisor-student relation.").'</p>
+		<div>
+		<!--<a href="#" title="'.t("Create Groups").'">'.t("Create and see your list of groups").'</a> |
+		<a href="#" title="'.t("Manage student groups").'">'.t("Manage student groups").'</a>-->
+		</div>
+		</div>
+		';
+	}
+	
 	if($timeline_args['manageProjectIdeasVisible']){
 		$output .='
 		<div class="column-entry org_app manage_project_ideas">
