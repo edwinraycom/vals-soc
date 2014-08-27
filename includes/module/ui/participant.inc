@@ -119,6 +119,7 @@ function formatMemberRecordNice($record, $type, $target=''){
 				$output .= '<i>' . tt('You can use this code to invite a %1$s to participate.', t($member_type));
 				$output .= '<br/>';
 				$output .= '<br/>';
+				//TODO replace this with _VAL_SOC_URL constant or so
 				$output .= tt('To sign up a %1$s for your %2$s, send them this code and direct them to '.
 						'http://vps.semesterofcode.com/user/register where they can use it to sign up.', t($member_type), t($type));
 				$output .= '<br/>';
