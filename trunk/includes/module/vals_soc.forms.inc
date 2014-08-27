@@ -320,6 +320,26 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 			"#description" => t("(If you leave this empty, we will use your account name instead)"),
 			//"#default_value" => '',
 	);
+	$current_role = getRole();
+	$no_administrator = ($current_role !== 'administrator');
+	
+	if ($no_administrator){
+		//If the admin adds users directly we do not want the following fields as these are already
+		//provided in one or another way
+	
+		$form['account']['account_type'] = array(
+				"#type" => "select",
+				"#title" => t("What is your role"),
+				"#options" => array(
+						'student' => t("Student"),
+						'supervisor' => t("Supervisor"),
+						'mentor' => t("Mentor"),
+						'organisation_admin' => t('Organisation Administrator'),
+						'institute_admin' => t('Institute Administrator'),
+				),
+				"#description" => t("Select your role in Semester of Code."),
+		);
+	}
     $institutes = db_select('soc_institutes', 'i')->fields('i', array('inst_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
     $options_institutes = array(0 => t('Fill in later'));
     foreach ($institutes as $ins){
@@ -345,24 +365,10 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 			"#options" => $options_organisation,
 			"#description" => t("(for organisation admins and mentors only)"),
 	);
-    $current_role = getRole();
-    if ($current_role !== 'administrator'){
+    
+    if ($no_administrator){
         //If the admin adds users directly we do not want the following fields as these are already 
         //provided in one or another way
-        
-        $form['account']['account_type'] = array(
-                "#type" => "select",
-                "#title" => t("What is your role"),
-                "#options" => array(
-                        'student' => t("Student"),
-                        'supervisor' => t("Supervisor"),
-                        'mentor' => t("Mentor"),
-                        'organisation_admin' => t('Organisation Administrator'),
-                        'institute_admin' => t('Institute Administrator'),
-                ),
-                "#description" => t("Select your role in Semester of Code."),
-        );
-
         $form['account']['account_key'] = array(
                 "#type" => "textfield",
                 "#title" => t("Type the key you got from the admin"),
