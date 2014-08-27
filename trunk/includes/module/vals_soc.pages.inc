@@ -109,10 +109,7 @@ function vals_soc_browse_proposals(){
 }
 
 function vals_soc_browse_my_proposals(){
-	// vals_soc_apply_projects - this function I removed as it pointed to a n non existent .inc file.
-	
-	// - there were 2 links in vals_soc.menus"; which pointed to the same function
-	/// 'vals_soc_browse_proposals()' Need to implement it or delete this & entry from vals_soc.menus
-	return "TODO";
+	ob_start();
+	module_load_include('inc', 'vals_soc', 'includes/module/ui/administer/proposals');
+	return ob_get_clean();
 }
-
