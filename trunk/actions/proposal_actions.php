@@ -5,7 +5,7 @@ module_load_include('php', 'vals_soc', 'includes/classes/Proposal');
 
 $apply_proposals = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 $browse_proposals = vals_soc_access_check('dashboard/proposals/browse') ? 1 : 0;
-$is_student = (Users::isOfType('student'));
+$is_student = (Users::isOfType(_STUDENT_TYPE));
 
 switch ($_GET['action']){
 	case 'proposal_page':

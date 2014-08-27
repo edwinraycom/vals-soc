@@ -179,7 +179,7 @@ function format_invite_message($entity, $subtype='', $organisation_name=''){
 	
 	$entity_name = $organisation_name ? : '<i>'. $entity->name. '</i>';
 	$db_code_key = '';
-	if($subtype == 'mentor' || $subtype == 'supervisor' || $subtype == 'student'){
+	if($subtype == _MENTOR_TYPE || $subtype == _SUPERVISOR_TYPE || $subtype == _STUDENT_TYPE){
 		$db_code_key = 'code';
 	}else{
 		$db_code_key = 'owner_code';

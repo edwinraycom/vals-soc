@@ -210,7 +210,7 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
 
     $role = getRole();
     //find out whether user is admin, if so: get role of the user he/she is editing
-    if ($is_admin = ($role  === 'administrator')){
+    if ($is_admin = ($role  === _ADMINISTRATOR_TYPE)){
     	$roles = $form['#user']->roles;
     	$role = getUserRoleName($roles);
     	$uid = $form['#user']->uid;
@@ -228,12 +228,12 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
     		"#description" => t("(If you leave this empty, we will use your account name instead)"),
     		"#default_value" => $name,
     );
-    if (in_array($role, array('supervisor', 'institute_admin', 'student'))){
+    if (in_array($role, array(_SUPERVISOR_TYPE, _INSTADMIN_TYPE, _STUDENT_TYPE))){
         $member_inst_rec = db_select('soc_user_membership', 'mem')->fields('mem')->condition('uid', $uid)->
-            condition('type', 'institute')->execute()->fetchAssoc();
+            condition('type', _INSTITUTE_GROUP)->execute()->fetchAssoc();
         $member_inst = $member_inst_rec ? $member_inst_rec['group_id'] : 0;
        
-        if ((! $member_inst && (($type == 'institute_admin')))  || $is_admin){
+        if ((! $member_inst && (($type == _INSTADMIN_TYPE)))  || $is_admin){
 	        //So we know the user is not in an institute yet
         	//He/she can choose between existing institutes (or leave the institute option as 'Fill in later' 
         	//and enter an own institute)
@@ -263,11 +263,11 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
 		        );
 	        }
         }
-     } elseif (in_array($role, array('organisation_admin', 'mentor'))) {
+     } elseif (in_array($role, array(_ORGADMIN_TYPE, _MENTOR_TYPE))) {
         $member_org_rec = db_select('soc_user_membership', 'mem')->fields('mem')->condition('uid', $uid)->
-            condition('type', 'organisation')->execute()->fetchAssoc();
+            condition('type', _ORGANISATION_GROUP)->execute()->fetchAssoc();
         $member_org = $member_org_rec ? $member_org_rec['group_id'] : 0;
-    	if ((! $member_org)  || $is_admin){
+    	if ((! $member_org && (($type == _ORGADMIN_TYPE)))  || $is_admin){
 	        //So we know the user is not in an organisation yet
     		//He/she can choose between existing organisations (or leave the organisation option as 
     		//'Fill in later'and enter an own organisation)
@@ -321,7 +321,7 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 			//"#default_value" => '',
 	);
 	$current_role = getRole();
-	$no_administrator = ($current_role !== 'administrator');
+	$no_administrator = ($current_role !== _ADMINISTRATOR_TYPE);
 	
 	if ($no_administrator){
 		//If the admin adds users directly we do not want the following fields as these are already
@@ -331,11 +331,11 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 				"#type" => "select",
 				"#title" => t("What is your role"),
 				"#options" => array(
-						'student' => t("Student"),
-						'supervisor' => t("Supervisor"),
-						'mentor' => t("Mentor"),
-						'organisation_admin' => t('Organisation Administrator'),
-						'institute_admin' => t('Institute Administrator'),
+						_STUDENT_TYPE => t("Student"),
+						_SUPERVISOR_TYPE => t("Supervisor"),
+						_MENTOR_TYPE => t("Mentor"),
+						_ORGADMIN_TYPE => t('Organisation Administrator'),
+						_INSTADMIN_TYPE => t('Institute Administrator'),
 				),
 				"#description" => t("Select your role in Semester of Code."),
 		);
@@ -441,7 +441,7 @@ function vals_soc_organisation_form($form, &$form_state, $org='', $target='', $s
 	);
 	$form['submit'] = array(
 			'#type' => 'submit',
-			'#attributes' => array('onclick'=> entityCall('organisation', $org, $target, $show_action)),
+			'#attributes' => array('onclick'=> entityCall(_ORGANISATION_GROUP, $org, $target, $show_action)),
 			'#value' => t('Save'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
@@ -498,7 +498,7 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='',
 	);
 	$form['submit'] = array(
 		'#type' => 'submit',
-		'#attributes' => array('onclick'=> entityCall('institute', $institute, $target, $show_action)),
+		'#attributes' => array('onclick'=> entityCall(_INSTITUTE_GROUP, $institute, $target, $show_action)),
 		'#value' => t('Save'),
 		'#post_render' => array('vals_soc_fix_submit_button'),
 	);
@@ -533,7 +533,7 @@ function vals_soc_studentgroup_form($form, &$form_state, $group='', $target='', 
 	);
 	$form['entity_type'] = array(
 		'#type' => 'hidden',
-		"#default_value" => 'studentgroup',
+		"#default_value" => _STUDENT_GROUP,
 	);
 	$form['name'] = array(
 		"#type" => "textfield",
@@ -559,7 +559,7 @@ function vals_soc_studentgroup_form($form, &$form_state, $group='', $target='', 
 // 	);
 	$form['submit'] = array(
 			'#type' => 'submit',
-			'#attributes' => array('onclick'=> entityCall('studentgroup', $group, $target, $show_action)),
+			'#attributes' => array('onclick'=> entityCall(_STUDENT_GROUP, $group, $target, $show_action)),
 			'#value' => t('Save'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
@@ -584,7 +584,7 @@ function vals_soc_project_form($form, &$form_state, $project='', $target='', $or
 			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
 			'#suffix' => '</div>',
 	);
-	$my_organisations = Groups::getGroups('organisation');
+	$my_organisations = Groups::getGroups(_ORGANISATION_GROUP);
 	$number_of_organisations = $my_organisations->rowCount();
 		//$DDDD = $my_organisations->fetchCol();
 	// now turn results into array
@@ -738,8 +738,8 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#value' => t('Save draft'),
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
-					'onclick' => 'ajaxFormCall("vals-soc-proposal-form", "student", "save",'.
-					' {id:'.$proposal_id .', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSaveResult", "json", ["'.$target.'"]);')
+					'onclick' => "ajaxFormCall('vals-soc-proposal-form', '"._STUDENT_TYPE."', 'save',".
+					" {id: $proposal_id, project_id: $project_id,  target: '$target' }, 'handleSaveResult', 'json', ['$target']);")
 			,'#post_render' => array('vals_soc_fix_submit_button')
 	);
 	$form['sumbit'] = array(
@@ -748,9 +748,10 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#value' => t('Submit proposal'),
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
-					'onclick' => 'if (confirm("'.t('Are you sure you want to submit your proposal now?').'")){'.
-					'ajaxFormCall("vals-soc-proposal-form", "student", "submit",'.
-					' {id:'.$proposal_id.', project_id: '.$project_id.',  target: "'.$target.'" }, "handleSubmitResult", "json", ["'.$target.'"]);}')
+					'onclick' => "if (confirm('".t('Are you sure you want to submit your proposal now?')."')){".
+					"ajaxFormCall('vals-soc-proposal-form', '"._STUDENT_TYPE."', 'submit',".
+					" {id: $proposal_id, project_id: $project_id,  target: '$target' }, 'handleSubmitResult', ".
+					"'json', ['$target']);}")
 			,'#post_render' => array('vals_soc_fix_submit_button')
 	);
 	$form['#vals_soc_attached']['js'] = array(
@@ -765,7 +766,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 
 function vals_soc_invite_form($form, &$form_state, $org='', $target='', $show_action='administer', $subtype=''){
 	include_once(_VALS_SOC_ROOT. '/includes/module/vals_soc.mail.inc');
-	$message = format_invite_message($org, $subtype, ($subtype== 'student')? t('your institute'): '');
+	$message = format_invite_message($org, $subtype, ($subtype== _STUDENT_TYPE)? t('your institute'): '');
 	$form = array(
 			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
 			'#suffix' => '</div>',
@@ -794,7 +795,7 @@ function vals_soc_invite_form($form, &$form_state, $org='', $target='', $show_ac
 	);
 	$form['submit'] = array(
 			'#type' => 'submit',
-			'#attributes' => array('onclick'=> entityCall('organisation', $org, $target, 'administer', 'administration', 'send_invite_email')),
+			'#attributes' => array('onclick'=> entityCall(_ORGANISATION_GROUP, $org, $target, 'administer', 'administration', 'send_invite_email')),
 			'#value' => t('Send'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);

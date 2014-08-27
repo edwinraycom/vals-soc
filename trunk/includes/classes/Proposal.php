@@ -98,7 +98,7 @@ class Proposal extends AbstractEntity{
     	$txn = db_transaction();
     	try {
     		$uid = $user->uid;
-    		if (!Users::isOfType('student', $uid)){
+    		if (!Users::isOfType(_STUDENT_TYPE, $uid)){
     			drupal_set_message(t('You must be a student to submit a proposal'), 'error');
     			return false; 
     		}
@@ -140,7 +140,7 @@ class Proposal extends AbstractEntity{
     	$txn = db_transaction();
     	try {
     		$uid = Users::getMyId();
-    		if (!Users::isOfType('student', $uid) && !Users::isAdmin()){
+    		if (!Users::isOfType(_STUDENT_TYPE, $uid) && !Users::isAdmin()){
     			drupal_set_message(t('You must be a student to submit a proposal'), 'error');
     			return FALSE;
     		}

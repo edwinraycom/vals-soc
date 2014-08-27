@@ -25,19 +25,19 @@ function vals_soc_menu_handler(){
 	$items['dashboard/members'] = getMembersLink('dashboard/members');
 	
 	//allow institutes to add/edit their institute details
-	$items['dashboard/institute/administer'] = getAdministerLink('dashboard/institute/administer', 'institute', false);
-	$items['dashboard/institute/view'] = getAdministerLink('dashboard/institute/view', 'institute', false);
+	$items['dashboard/institute/administer'] = getAdministerLink('dashboard/institute/administer', _INSTITUTE_GROUP, false);
+	$items['dashboard/institute/view'] = getAdministerLink('dashboard/institute/view', _INSTITUTE_GROUP, false);
 	// allow institutes to view supervisors/other instadmins
-	$items['dashboard/institute/members'] = getEntityMembersLink('dashboard/institute/members', 'institute', false);
+	$items['dashboard/institute/members'] = getEntityMembersLink('dashboard/institute/members', _INSTITUTE_GROUP, false);
 	// used just for institutes to allow creation of student groups
 	$items['dashboard/institute/group/administer'] = getGroupAdministerLink('dashboard/institute/group/administer');
 	
 	//allow organisations to add/edit their organisation details
-	$items['dashboard/organisation/administer'] = getAdministerLink('dashboard/organisation/administer', 'organisation');
+	$items['dashboard/organisation/administer'] = getAdministerLink('dashboard/organisation/administer', _ORGANISATION_GROUP);
 	// allow organisations to view mentors/other orgadmins
-	$items['dashboard/organisation/members'] = getEntityMembersLink('dashboard/organisation/members', 'organisation');
+	$items['dashboard/organisation/members'] = getEntityMembersLink('dashboard/organisation/members', _ORGANISATION_GROUP);
 	// allow mentors to VIEW the admin details but not add new orgs or edit like org admin can do
-	$items['dashboard/organisation/view'] = getAdministerLink('dashboard/organisation/view', 'organisation');
+	$items['dashboard/organisation/view'] = getAdministerLink('dashboard/organisation/view', _ORGANISATION_GROUP);
 	
 	// organisation actions - let users see all the announced organisations
 	//$items['dashboard/organisations/browse'] = getOrganisationBrowseLink('dashboard/organisations/browse');

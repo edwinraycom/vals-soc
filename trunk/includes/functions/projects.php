@@ -6,10 +6,10 @@ function showProjectPage($action='', $show_last=FALSE){
 
 	$role = getRole();
 	//Get my groups
-	$my_organisations = Groups::getGroups('organisation');	
+	$my_organisations = Groups::getGroups(_ORGANISATION_GROUP);	
 	if (!$my_organisations->rowCount()){
 		//There are no organisations yet for this user
-		if ($role == 'organisation_admin') {
+		if ($role == _ORGADMIN_TYPE) {
 			echo t('You have no organisation yet.').'<br/>';
 			echo "<a href='"._VALS_SOC_URL. "/dashboard/organisation/administer'>".t('Please go to the organisation register page')."</a>";
 
@@ -153,7 +153,7 @@ function showOrganisationProjects($org_nr, $projects, $organisation, $show_org_t
 			echo "<hr>";
 			
 			echo '<h2>'.t('All your projects').'</h2>';
-			echo renderTabs($nr2, 'Organisation', 'project2_page-', 'organisation', $data2, null, TRUE,
+			echo renderTabs($nr2, 'Organisation', 'project2_page-', _ORGANISATION_GROUP, $data2, null, TRUE,
 				renderProjects('', $projects));
 			?>
 			<script type="text/javascript">
@@ -209,7 +209,7 @@ function renderProject($project='', $target='', $inline=FALSE){
 	$role = getRole();
 	
 	$content ="<div class=\"totheright\">";
-	if ('student' == getRole()){
+	if (_STUDENT_TYPE == getRole()){
 		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
 		")\" value='Submit proposal for this project'/>";
 	}

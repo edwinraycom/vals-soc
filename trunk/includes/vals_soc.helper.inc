@@ -134,9 +134,9 @@ function doQuery2($q){
 
 function mapOrganisation($org){
 	switch ($org){
-		case 'studentgroup': return 'studentgroup';break;
-		case 'institute': return 'supervisor';break;
-		case 'organisation': return 'mentor';break;
+		case _STUDENT_GROUP: return _STUDENT_GROUP;break;
+		case _INSTITUTE_GROUP: return _SUPERVISOR_TYPE;break;
+		case _ORGANISATION_GROUP: return _MENTOR_TYPE;break;
 		default: return $org;
 	}
 }
@@ -173,17 +173,17 @@ function valssoc_form_get_js($form){
 
 function createRandomCode($org, $id=1 ){
 	$fixed_prefixes = array(
-			'administrator' => 1,
-			'soc' => 2,
-			'organisation_admin' => 3,
-			'institute_admin' => 4,
-			'supervisor' => 5,
-			'student' => 6,
-			//'institute_admin' => 7,
-			'organisation' => 7,
-			'institute' => 8,
-			'studentgroup' => 9,
-			'mentor' => 0
+			_ADMINISTRATOR_TYPE => 1,
+			_SOC_TYPE => 2,
+			_ORGADMIN_TYPE => 3,
+			_INSTADMIN_TYPE => 4,
+			_SUPERVISOR_TYPE => 5,
+			_STUDENT_TYPE => 6,
+			//_INSTADMIN_TYPE => 7,
+			_ORGANISATION_GROUP => 7,
+			_INSTITUTE_GROUP => 8,
+			_STUDENT_GROUP => 9,
+			_MENTOR_TYPE => 0
 
 	);
 	$int = (int) $id.$fixed_prefixes[$org];

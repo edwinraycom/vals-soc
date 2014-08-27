@@ -102,14 +102,17 @@ class Project extends AbstractEntity{
     	//todo: find out whether current user is institute_admin
      
     	$table = tableName('project');
-    	if ($user_type == 'organisation_admin') {
-    		if ($my_role != 'organisation_admin'){
+    	if ($user_type == _ORGADMIN_TYPE) {
+    		if ($my_role != _ORGADMIN_TYPE){
     			drupal_set_message(t('You are not allowed to perform this action'), 'error');
     			return array();
     		} else {
-    			$my_orgs = $organisations ?: db_query("SELECT o.org_id from $table as o ".
+    			$my_orgs = $organisations ?: 
+      				db_query(
+      					"SELECT o.org_id from $table as o ".
     					"LEFT JOIN soc_User_membership as um on o.org_id = um.group_id ".
-    					" WHERE um.uid = $user_id AND um.type = 'organisation'")->fetchCol();
+    					"WHERE um.uid = $user_id AND um.type = ':organisation'",
+      						array(':organisation' =>_ORGANISATION_GROUP))->fetchCol();
     			if ($my_orgs){
 	    			$my_projects = 
 	    				db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",
@@ -120,7 +123,7 @@ class Project extends AbstractEntity{
     			}
     		}
     	} else {
-    		if (($my_role != 'organisation_admin') && ($user_id != $org_admin_or_mentor)){
+    		if (($my_role != _ORGADMIN_TYPE) && ($user_id != $org_admin_or_mentor)){
     			drupal_set_message(t('You are not allowed to perform this action'), 'error');
     			return array();
     		}
@@ -140,15 +143,17 @@ class Project extends AbstractEntity{
 		//todo: find out whether current user is institute_admin
 		 
 		$table = tableName('project');
-		if (in_array($my_role, array('organisation_admin', 'mentor'))){
-			$my_orgs = $organisations ?: db_query("SELECT o.org_id from $table as o ".
+		if (in_array($my_role, array(_ORGADMIN_TYPE, _MENTOR_TYPE))){
+			$my_orgs = $organisations ?: db_query(
+					"SELECT o.org_id from $table as o ".
 					"LEFT JOIN soc_User_membership as um on o.org_id = um.group_id ".
-					" WHERE um.uid = $user_id AND um.type = 'organisation'")->fetchCol();
+					"WHERE um.uid = $user_id AND um.type = ':organisation'",
+      					array(':organisation' =>_ORGANISATION_GROUP))->fetchCol();
 			if (! $my_orgs){
 				drupal_set_message(t('You have no organisation yet'), 'error');
 				return array();
 			}
-			if ($my_role == 'organisation_admin') {
+			if ($my_role == _ORGADMIN_TYPE) {
 				$my_projects =
 					db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",array(':orgs' => $my_orgs))
 					->fetchAll();

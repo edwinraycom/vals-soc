@@ -55,22 +55,22 @@ function vals_soc_administer_projects_page(){
 
 function vals_soc_dashboard_overview_page(){
 	$includeFile = null;
-	if(hasRole(array('administrator'))){
+	if(hasRole(array(_ADMINISTRATOR_TYPE))){
 		$includeFile = 'includes/module/ui/dashboard/adminlayout';
 	}
-	elseif(hasRole(array('organisation_admin'))){
+	elseif(hasRole(array(_ORGADMIN_TYPE))){
 		$includeFile = 'includes/module/ui/dashboard/orgadminlayout';
 	}
-	elseif(hasRole(array('mentor'))){
+	elseif(hasRole(array(_MENTOR_TYPE))){
 		$includeFile = 'includes/module/ui/dashboard/mentorlayout';
 	}
-	elseif(hasRole(array('institute_admin'))){ // may need to update this to separate page
+	elseif(hasRole(array(_INSTADMIN_TYPE))){ // may need to update this to separate page
 		$includeFile = 'includes/module/ui/dashboard/instadminlayout';
 	}
-	elseif(hasRole(array('supervisor'))){  // may need to update this to separate page
+	elseif(hasRole(array(_SUPERVISOR_TYPE))){  // may need to update this to separate page
 		$includeFile = 'includes/module/ui/dashboard/supervisorlayout';
 	}
-	elseif(hasRole(array('student'))){
+	elseif(hasRole(array(_STUDENT_TYPE))){
 		$includeFile = 'includes/module/ui/dashboard/studentlayout';
 	}
 	ob_start();	
