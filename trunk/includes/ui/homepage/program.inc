@@ -1,5 +1,5 @@
 <?php
-drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/module/ui/dashboard/css/dashboard.css');
+drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/css/dashboard/dashboard.css');
 function getTimelineEnabledMessage(){
 	$return_args = array();
 	$period = Timeline::getInstance()->getCurrentPeriod();

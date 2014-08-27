@@ -4,7 +4,7 @@
  * Implements Drupal hook_install().
  */
 function vals_soc_install(){
-	module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.roles');	
+	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.roles');	
     drupal_install_schema('soc_projects');
     drupal_install_schema('soc_codes');
     drupal_install_schema('soc_institutes');
@@ -62,7 +62,7 @@ function vals_soc_uninstall() {
  */
 function vals_soc_schema() {
 //TODO: uncomment the function in the schema and revise the tables. During an install this function will be called
-	//module_load_include('inc', 'vals_soc', 'includes/install/vals_soc.schema');
+	//module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.schema');
 	//return vals_soc_schema_handler();
 }
 

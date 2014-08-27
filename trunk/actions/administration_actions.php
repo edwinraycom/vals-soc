@@ -1,7 +1,7 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');
-include(_VALS_SOC_ROOT.'/includes/module/ui/participant.inc');
+include(_VALS_SOC_ROOT.'/includes/functions/participants.php');
 include(_VALS_SOC_ROOT.'/includes/functions/projects.php');
 include(_VALS_SOC_ROOT.'/includes/functions/administration.php');
 
