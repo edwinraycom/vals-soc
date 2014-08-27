@@ -52,16 +52,16 @@ function formatMemberRecordNice($record, $type, $target=''){
 	$id = $record->$key_name;
 	$member_type='';
 	switch ($type){
-		case 'organisation': // organisations invite mentors
+		case _ORGANISATION_GROUP: // organisations invite mentors
 			$parent_member_type = 'organisation administrator';
-			$member_type = 'mentor';
+			$member_type = _MENTOR_TYPE;
 			break;
-		case 'institute': // institutes invite supervisors
+		case _INSTITUTE_GROUP: // institutes invite supervisors
 			$parent_member_type = 'institution administrator';
-			$member_type = 'supervisor';
+			$member_type = _SUPERVISOR_TYPE;
 			break;
-		case 'studentgroup': // studentgroups invite students
-			$member_type = 'student';
+		case _STUDENT_GROUP: // studentgroups invite students
+			$member_type = _STUDENT_TYPE;
 			$parent_member_type = 'institution administrator or teacher';
 			break;
 		default: $member_type = 'user';
@@ -128,7 +128,7 @@ function formatMemberRecordNice($record, $type, $target=''){
 				$output .= '<br/>';
 				$invite_mentor_action = "onclick='ajaxCall(\"administration\", \"inviteform\", {type: \"$type\", id: $id, path: \"\", target: \"$target\", subtype: \"$member_type\"}, \"formResult\", \"html\", \"$target\");'";
 				$output .= "<input type='button' value='".tt('Invite %1$s', t($member_type))."' $invite_mentor_action/>";
-			} elseif (($key=='owner_code') && ($type != 'studentgroup')){
+			} elseif (($key=='owner_code') && ($type != _STUDENT_GROUP)){
 				$output .= $attribute_str.'<br/>';
 				$output .= '<i>' . tt('You can use the following code to invite a colleague to manage this %1$s together ', t($type)). '</i>';
 				$output .= '<br/>';
@@ -158,7 +158,7 @@ function renderStudents($group_selection='', $students=''){
         //get all his students
         $students = Users::getAllStudents($group_selection);
     }
-    return formatUsersNice($students, 'student', t('There are no students yet'));
+    return formatUsersNice($students, _STUDENT_TYPE, t('There are no students yet'));
 }
 
 function renderSupervisors($group_selection='', $supervisors=''){
@@ -167,7 +167,7 @@ function renderSupervisors($group_selection='', $supervisors=''){
         //get all his supervisors in his/her institute
         $supervisors = Users::getSupervisors($group_selection);
     }
-    return formatUsersNice($supervisors, 'supervisor', t('There are no supervisors yet in this institute'), TRUE);
+    return formatUsersNice($supervisors, _SUPERVISOR_TYPE, t('There are no supervisors yet in this institute'), TRUE);
 }
     
 function renderUsers($type='', $users='', $group_selection='', $group_type='', $show_title=FALSE){
@@ -228,7 +228,7 @@ function renderOrganisations($type='', $organisations='', $organisation_head='',
 		$s .= "</ul>";
 		return $s;
 	} else {
-		$type = $type ?: 'studentgroup';
+		$type = $type ?: _STUDENT_GROUP;
 		return $organisation_head ? tt('You have no %1$s yet.', t($type)):
 			tt('There is no %1$s yet.', t($type));
 	}
@@ -246,7 +246,7 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
 	    	$pPath=request_path();
 	    	$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"administration\"]);}'";
 	    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, ".
-	    		(($type == 'studentgroup') ? "\"$target\");'" :  "\"formResult\", \"html\", \"$target\");'");
+	    		(($type == _STUDENT_GROUP) ? "\"$target\");'" :  "\"formResult\", \"html\", \"$target\");'");
 
 	    	$s .= "<input type='button' value='".t('edit')."' $edit_action/>";
 	    	$s .= "<input type='button' value='".t('delete')."' $delete_action/><br/><br/>";

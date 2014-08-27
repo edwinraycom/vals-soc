@@ -8,7 +8,7 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
     }
     
     //If no  errors are encountered, just return, otherwise call form_set_error
-    if ($current_role == 'administrator'){
+    if ($current_role == _ADMINISTRATOR_TYPE){
         return;
     }
     $super = t('Semester of Code Admin');
@@ -26,13 +26,13 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
     $code_entered = $form_state['values']['account_key'];
     
     //Check the student belonging to a valid group
-    if ($requested_user_type == 'student'){
+    if ($requested_user_type == _STUDENT_TYPE){
         if (! isset($form_state['values']['institute']) || $form_state['values']['institute']  == 0){
            form_set_error('institute', t('You should select your university or institute.'));
         }
         $db_and = db_and();
         $db_and->condition('code', $code_entered);
-        $db_and->condition('type', 'studentgroup');//Since we do not want a long list of groups during registration
+        $db_and->condition('type', _STUDENT_GROUP);//Since we do not want a long list of groups during registration
         //we use the institute instead and so we select not on type student, but on group
         $db_and->condition('entity_id', $form_state['values']['institute']);
         $valid_groups_cnt = db_select('soc_codes')->fields('soc_codes')->condition($db_and)->execute()->rowCount();
@@ -42,19 +42,19 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
 
         return;
     }
-   	$becomes_some_admin = (in_array($requested_user_type, array('institute_admin', 'organisation_admin', 'soc') ));
+   	$becomes_some_admin = (in_array($requested_user_type, array(_INSTADMIN_TYPE, _ORGADMIN_TYPE, _SOC_TYPE) ));
     	
     $org = 0;
-	if (in_array($requested_user_type, array('mentor', 'organisation_admin') ) && $form_state['values']['organisation']){
+	if (in_array($requested_user_type, array(_MENTOR_TYPE, _ORGADMIN_TYPE) ) && $form_state['values']['organisation']){
 		$org = $form_state['values']['organisation'];
 	}
-	if (in_array($requested_user_type, array('supervisor', 'institute_admin')) && $form_state['values']['institute']){
+	if (in_array($requested_user_type, array(_SUPERVISOR_TYPE, _INSTADMIN_TYPE)) && $form_state['values']['institute']){
 		$org = $form_state['values']['institute'];
 	}
 	if (!$org && !$becomes_some_admin){
 		//Make distinction for choosing error message
 		if ($requested_user_type == ' mentor'){
-			form_set_error('organisation', t('You should select your organisation.'));
+			form_set_error(_ORGANISATION_GROUP, t('You should select your organisation.'));
 		} else {
 			form_set_error('institute', t('You should select your university or institute.'));
 		}
@@ -90,7 +90,7 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
     } 
     $code_entered = $form_state['values']['account_key'];
     $current_role = getRole();
-    if ($current_role == 'administrator'){
+    if ($current_role == _ADMINISTRATOR_TYPE){
         $rid = $form_state['values']['roles'];//The standard Drupal form for admins to add users submits an int id
         $role = db_select('role', 'r')->fields('r')->condition('rid', $rid)->execute()->fetchAssoc();
         if ($role){
@@ -121,28 +121,28 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
 //    }
     
     
-    if ((($type == 'student') || ($type == 'supervisor') || ($type == 'institute_admin')) && ($form_state['values']['institute'])){
+    if ((($type == _STUDENT_TYPE) || ($type == _SUPERVISOR_TYPE) || ($type == _INSTADMIN_TYPE)) && ($form_state['values']['institute'])){
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
-            'type' => 'institute', 
+            'type' => _INSTITUTE_GROUP, 
             'group_id'=>$form_state['values']['institute']
             ))->execute();
         
-        if (($type == 'student')){
+        if (($type == _STUDENT_TYPE)){
            $studentgroup_ids = db_select('soc_codes')->fields('soc_codes', array('entity_id', 'studentgroup_id'))->condition('code',
-           $code_entered)->condition('type', 'studentgroup')->condition('entity_id', $form_state['values']['institute'])->execute()->fetchAssoc();
+           $code_entered)->condition('type', _STUDENT_GROUP)->condition('entity_id', $form_state['values']['institute'])->execute()->fetchAssoc();
             db_insert('soc_user_membership')->fields( array(
                 'uid'=>$uid, 
-                'type' => 'studentgroup', 
+                'type' => _STUDENT_GROUP, 
                 'group_id'=>$studentgroup_ids['studentgroup_id']
                 ))->execute();
         }
     }
     
-    if ((($type == 'organisation_admin') || ($type == 'mentor')) && ($form_state['values']['organisation'])){
+    if ((($type == _ORGADMIN_TYPE) || ($type == _MENTOR_TYPE)) && ($form_state['values']['organisation'])){
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
-            'type' => 'organisation', 
+            'type' => _ORGANISATION_GROUP, 
             'group_id'=>$form_state['values']['organisation']
             ))->execute();
     }
@@ -173,10 +173,10 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 		form_set_error('fullname', tt('The name you entered is a bit too long, Please abbreviate to a max of %1d chars', _FULL_NAME_LENGTH));
 		return;
 	}
-	if ($current_role == 'administrator'){
+	if ($current_role == _ADMINISTRATOR_TYPE){
 		return;
 	}
-	$group_type = in_array($current_role, array('supervisor', 'institute_admin', 'student')) ? 'institute': 'organisation';
+	$group_type = in_array($current_role, array(_SUPERVISOR_TYPE, _INSTADMIN_TYPE, _STUDENT_TYPE)) ? _INSTITUTE_GROUP: _ORGANISATION_GROUP;
 	
 	$my_groups = Groups::getGroups($group_type);
 	if ($my_groups->rowCount()){
@@ -189,7 +189,7 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 	$code_entered = $form_state['values']['account_key'];
 
 	//Check the student belonging to a valid group
-	if ($current_role == 'student'){
+	if ($current_role == _STUDENT_TYPE){
 		$super = t('supervisor');
 		if (! isset($form_state['values']['institute']) || $form_state['values']['institute']  == 0){
 			form_set_error('institute', t('You should select your university or institute.'));
@@ -202,7 +202,7 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 		}
 		$db_and = db_and();
 		$db_and->condition('code', $code_entered);
-		$db_and->condition('type', 'studentgroup');//Since we do not want a long list of groups during registration
+		$db_and->condition('type', _STUDENT_GROUP);//Since we do not want a long list of groups during registration
 		//we use the institute instead and so we select not on type student, but on group
 		$db_and->condition('entity_id', $form_state['values']['institute']);
 		$valid_groups_cnt = db_select('soc_codes')->fields('soc_codes')->condition($db_and)->execute()->rowCount();
@@ -213,11 +213,11 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 		return;
 	} else {
 		$org = 0;
-		if (in_array($current_role, array('mentor', 'organisation_admin') ) && $form_state['values']['organisation']){
+		if (in_array($current_role, array(_MENTOR_TYPE, _ORGADMIN_TYPE) ) && $form_state['values']['organisation']){
 			$org = $form_state['values']['organisation'];
 			$super = t('Organisation administrator');
 		}
-		if (in_array($current_role, array('supervisor', 'institute_admin')) && $form_state['values']['institute']){
+		if (in_array($current_role, array(_SUPERVISOR_TYPE, _INSTADMIN_TYPE)) && $form_state['values']['institute']){
 			$org = $form_state['values']['institute'];
 			$super = t('Institution administrator');
 		}
@@ -225,7 +225,7 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 			$db_and2 = db_and();
 			$db_and2->condition('type', $current_role);
 			$db_and2->condition('code', $code_entered);
-			if ((! in_array($current_role, array('institute_admin', 'organisation_admin', 'soc', 'administrator')))&&
+			if ((! in_array($current_role, array(_INSTADMIN_TYPE, _ORGADMIN_TYPE, _SOC_TYPE, _ADMINISTRATOR_TYPE)))&&
 					$org){
 				$db_and2->condition('entity_id', $org);
 			}
@@ -259,7 +259,7 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
     $uid = $user->uid;
     $current_role = getRole();    
     
-    if ($current_role == 'administrator'){
+    if ($current_role == _ADMINISTRATOR_TYPE){
     	$is_admin = TRUE;
         $rid = getUserRoleId($form_state['values']['roles']);
         $role = db_select('role', 'r')->fields('r')->condition('rid', $rid)->execute()->fetchAssoc();
@@ -292,23 +292,23 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
      * certain organisation. There seems no reason to change that later. If an organisation has two admins 
 	 * they can add themselves to an organisation/institute */
      if ((isset($form_state['values']['institute']) && $form_state['values']['institute']) 
-     		&& (($type == 'institute_admin') || ($is_admin && (($type == 'student') || ($type == 'supervisor'))))
+     		&& (($type == _INSTADMIN_TYPE) || ($is_admin && (($type == _STUDENT_TYPE) || ($type == _SUPERVISOR_TYPE))))
     		){
-      	db_query("DELETE FROM soc_user_membership WHERE uid = $uid AND type= 'institute'");
+      	db_query("DELETE FROM soc_user_membership WHERE uid = $uid AND type= _INSTITUTE_GROUP");
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
-            'type' => 'institute', 
+            'type' => _INSTITUTE_GROUP, 
             'group_id'=>$form_state['values']['institute']
             ))->execute();
     }
     
     //Mentors might want to change from organisation
-    if ((($type == 'organisation_admin') || ($type == 'mentor')) && 
+    if ((($type == _ORGADMIN_TYPE) || ($type == _MENTOR_TYPE)) && 
     		(isset($form_state['values']['organisation']) && $form_state['values']['organisation'])){
-    	db_query("DELETE FROM soc_user_membership WHERE uid = $uid AND type= 'organisation'");
+    	db_query("DELETE FROM soc_user_membership WHERE uid = $uid AND type= _ORGANISATION_GROUP");
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
-            'type' => 'organisation', 
+            'type' => _ORGANISATION_GROUP, 
             'group_id'=>$form_state['values']['organisation']
             ))->execute();
     }
@@ -354,7 +354,7 @@ function vals_soc_admin_messages_form_submit($form, $form_state) {
 function vals_soc_organisation_form_validate_handler(&$form, &$form_state)
 {
      $current_role = getRole();
-     if ($current_role == 'administrator' || $current_role == 'organisation_admin'){
+     if ($current_role == _ADMINISTRATOR_TYPE || $current_role == _ORGADMIN_TYPE){
          return;
      } else {
          form_set_error('', t('You have not sufficient rights to submit this form'));
@@ -378,12 +378,12 @@ function vals_soc_organisation_form_submit_handler(&$form, &$form_state)
 
       $result = $org_id && db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
-            'type' => 'organisation', 
+            'type' => _ORGANISATION_GROUP, 
             'group_id'=>$org_id,
             ))->execute();
       $result = $result && db_insert('soc_codes')->fields( array(
-          'type'=>'mentor',
-          'code' => createRandomCode('mentor', $org_id), 
+          'type'=>_MENTOR_TYPE,
+          'code' => createRandomCode(_MENTOR_TYPE, $org_id), 
           'entity_id'=> $org_id))->execute();
       if ($result) {
           drupal_set_message(t('You have succesfully added your organisation to the Semester of Code.'));
@@ -417,12 +417,12 @@ function vals_soc_institute_form_submit_handler(&$form, &$form_state)
 
       $result = $inst_id && db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
-            'type' => 'institute', 
+            'type' => _INSTITUTE_GROUP, 
             'group_id'=>$inst_id,
             ))->execute();
       $result = $result && db_insert('soc_codes')->fields( array(
-          'type'=>'supervisor',
-          'code' => createRandomCode('supervisor', $inst_id), 
+          'type'=>_SUPERVISOR_TYPE,
+          'code' => createRandomCode(_SUPERVISOR_TYPE, $inst_id), 
           'entity_id'=> $inst_id))->execute();
       if ($result) {
           drupal_set_message(t('You have succesfully added your institute to the Semester of Code.'));
@@ -444,7 +444,7 @@ function vals_soc_studentgroup_form_validate_handler(&$form, &$form_state)
     $uid = $user->uid;
     $inst_nr = db_select('soc_user_membership')->fields('soc_user_membership')->
         condition('uid', $uid)->
-        condition('type', 'institute')->
+        condition('type', _INSTITUTE_GROUP)->
         execute()->rowCount();
     if (!$inst_nr){
         $language_code = $language->prefix;//'en';
@@ -462,7 +462,7 @@ function vals_soc_studentgroup_form_submit_handler(&$form, &$form_state)
     $uid = $user->uid;
     $inst = db_select('soc_user_membership')->fields('soc_user_membership')->
         condition('uid', $uid)->
-        condition('type', 'institute')->
+        condition('type', _INSTITUTE_GROUP)->
         execute()->fetchAssoc();
     $inst_id = $inst['group_id'];
     $txn = db_transaction();
@@ -478,12 +478,12 @@ function vals_soc_studentgroup_form_submit_handler(&$form, &$form_state)
 
         $result = $studentgroup_id && db_insert('soc_user_membership')->fields(array(
                 'uid' => $uid,
-                'type' => 'studentgroup',
+                'type' => _STUDENT_GROUP,
                 'group_id' => $studentgroup_id,
             ))->execute();
         $result = $result && db_insert('soc_codes')->fields( array(
-	            'type'=>'studentgroup',
-	            'code' => createRandomCode('studentgroup', $studentgroup_id), 
+	            'type'=>_STUDENT_GROUP,
+	            'code' => createRandomCode(_STUDENT_GROUP, $studentgroup_id), 
 	            'entity_id'=> $inst_id,
 	            'studentgroup_id' =>$studentgroup_id
             ))->execute();

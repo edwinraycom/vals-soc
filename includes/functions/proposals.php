@@ -16,8 +16,8 @@ function initBrowseProposalsLayout(){
 	} else {
 		$student_section_class = '';
 		$student_id=0;
-		if(isset($_GET['student'])){
-			$student_id = $_GET['student'];
+		if(isset($_GET[_STUDENT_TYPE])){
+			$student_id = $_GET[_STUDENT_TYPE];
 		}
 		$inst_id=0;
 		if(isset($_GET['institute'])){
@@ -43,7 +43,7 @@ function initBrowseProposalsLayout(){
 	        <select id="institute" name="institute">
 	            <option <?php echo  (! $inst_id) ? 'selected="selected"': ''; ?> value="0"><?php 
 	            	echo t('All Institutes');?></option><?php
-				$result = Groups::getGroups('institute', 'all');
+				$result = Groups::getGroups(_INSTITUTE_GROUP, 'all');
 				foreach ($result as $record) {
 					$selected = ($record->inst_id == $inst_id ? 'selected="selected" ' : '');
 					echo '<option ' .$selected.'value="'.$record->inst_id.'">'.$record->name.'</option>';
@@ -52,7 +52,7 @@ function initBrowseProposalsLayout(){
 	        <select id="student" name="student">
 	            <option <?php echo  (! $student_id) ? 'selected="selected"': ''; ?> value="0"><?php 
 	            	echo t('All Students');?></option><?php
-				$result = Users::getUsers('student', ($inst_id ? 'institute': 'all'), $inst_id);
+				$result = Users::getUsers(_STUDENT_TYPE, ($inst_id ? _INSTITUTE_GROUP: 'all'), $inst_id);
 				foreach ($result as $record) {
 					$selected = ($record->uid == $student_id ? 'selected="selected" ' : '');
 					echo '<option ' .$selected.'value="'.$record->uid.'">'.$record->name.':'.$record->mail.'</option>';

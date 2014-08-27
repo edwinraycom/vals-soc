@@ -2,7 +2,7 @@
 class Institutes extends Groups {
 	public static $fields = array('inst_id', 'owner_id', 'name', 'contact_name', 'contact_email');
 	private static $instance;
-	public static $type = 'institute';
+	public static $type = _INSTITUTE_GROUP;
 	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){

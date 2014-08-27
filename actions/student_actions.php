@@ -12,7 +12,7 @@ switch ($_GET['action']){
 		$target = altSubValue( $_POST, 'target');
 		$project_id = altSubValue( $_POST, 'id');
 		$proposal_id = altSubValue( $_POST, 'proposalid', 0);
-		if (! Users::isOfType('student', $GLOBALS['user']->uid)){
+		if (! Users::isOfType(_STUDENT_TYPE, $GLOBALS['user']->uid)){
 			if (_VALS_TEST_UI_ONLY){
 				echo "!! Since you are an admin, you can test a bit. We test with user 31 under the condition that _VALS_TEST_UI_ONLY is true.";
 				$owner_id = 31;

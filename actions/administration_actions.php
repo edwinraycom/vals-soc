@@ -10,15 +10,15 @@ switch ($_GET['action']){
 	case 'list':
 		$type = altSubValue($_POST, 'type');
 		switch ($type){
-			case 'institute':
-			case 'organisation':
+			case _INSTITUTE_GROUP:
+			case _ORGANISATION_GROUP:
 			case 'project':
-			case 'studentgroup': echo renderOrganisations($type, '', 'all', $_POST['target']);break;
-			case 'supervisor':
-			case 'student':
-			case 'mentor':
-			case 'organisation_admin':
-			case 'institute_admin':
+			case _STUDENT_GROUP: echo renderOrganisations($type, '', 'all', $_POST['target']);break;
+			case _SUPERVISOR_TYPE:
+			case _STUDENT_TYPE:
+			case _MENTOR_TYPE:
+			case _ORGADMIN_TYPE:
+			case _INSTADMIN_TYPE:
 			case 'administer': echo renderUsers($type, '', 'all', '', TRUE);break;
 			default:
 				//echo tt('No such type: %1$s', $type);
@@ -31,7 +31,7 @@ switch ($_GET['action']){
 		$show_action = getRequestVar('show_action', 'administer');//altSubValue($_GET, 'show_action', 'administer');
 		echo
 		'<h2>'.
-			(($type == 'studentgroup') ? t('Add a group to your list of student groups') :
+			(($type == _STUDENT_GROUP) ? t('Add a group to your list of student groups') :
 			tt('Add your %1$s', t($type))).
 		'</h2>';
 
@@ -51,33 +51,33 @@ switch ($_GET['action']){
 		//print drupal_get_js();
 	break;
     case 'showmembers':
-    	if ($_POST['type'] == 'studentgroup'){
-            echo renderUsers('student', '', $_POST['id'], $_POST['type']);
-        } elseif ($_POST['type'] == 'institute'){
+    	if ($_POST['type'] == _STUDENT_GROUP){
+            echo renderUsers(_STUDENT_TYPE, '', $_POST['id'], $_POST['type']);
+        } elseif ($_POST['type'] == _INSTITUTE_GROUP){
             $type = altSubValue($_GET, 'subtype', 'all');
-            if ($type == 'student'){
+            if ($type == _STUDENT_TYPE){
                 echo renderStudents($_POST['id']);
-            } elseif ($type == 'supervisor'){
+            } elseif ($type == _SUPERVISOR_TYPE){
                 echo renderSupervisors($_POST['id']);
-            } elseif ($type == 'institute_admin'){
-                echo renderUsers('institute_admin', '', $_POST['id'], 'institute');
+            } elseif ($type == _INSTADMIN_TYPE){
+                echo renderUsers(_INSTADMIN_TYPE, '', $_POST['id'], _INSTITUTE_GROUP);
             } elseif ($type == 'staff'){
                 $inst_id = $_POST['id'];
-                echo renderUsers('institute_admin', '', $inst_id, 'institute', TRUE);
-	    		echo renderUsers('supervisor', '', $inst_id, 'institute', TRUE);
+                echo renderUsers(_INSTADMIN_TYPE, '', $inst_id, _INSTITUTE_GROUP, TRUE);
+	    		echo renderUsers(_SUPERVISOR_TYPE, '', $inst_id, _INSTITUTE_GROUP, TRUE);
 	    		
             } else {
             	echo tt('No such type %1$s', $type);
             }
 
-        } elseif ($_POST['type'] == 'organisation'){
+        } elseif ($_POST['type'] == _ORGANISATION_GROUP){
            $organisation_id = altSubValue($_POST, 'id', '');
            if($organisation_id == 0){
            	$organisation_id = 'all';
            }
            echo 
-			renderUsers('organisation_admin', '', $organisation_id, 'organisation', TRUE). 
-			renderUsers('mentor', '', $organisation_id, 'organisation', TRUE);
+			renderUsers(_ORGADMIN_TYPE, '', $organisation_id, _ORGANISATION_GROUP, TRUE). 
+			renderUsers(_MENTOR_TYPE, '', $organisation_id, _ORGANISATION_GROUP, TRUE);
         }
      break;
     case 'show':
@@ -106,25 +106,6 @@ switch ($_GET['action']){
     		echo renderOrganisation($type, $organisation, null, $target, $buttons);
     	}
     	break;
-// TODO    this counted on the fact that projects are viewed via this handler. We should treat it as a special case
-//remove this comment in the future
-//case 'view':
-//     	$type = altSubValue($_POST, 'type');
-//     	$id = altSubValue($_POST, 'id');
-//     	$target = altSubValue($_POST, 'target', '');
-//     	$buttons = altSubValue($_GET, 'buttons', true);
-//     	if (! ($id && $type && $target)){
-//     		die(t('There are missing arguments. Please inform the administrator of this mistake.'));
-//     	}
-//     	$is_project = ($type == 'project');
-//     	$organisation = $is_project ? Project::getProjectById($id, TRUE) : Groups::getGroup($type, $id);
-//     	if (! $organisation){
-//     		echo tt('The %1$s cannot be found', t($type));
-//     	} else {
-//      		 echo "<div id='msg_$target'></div>";
-//     		 echo $is_project ? renderProject($organisation, $target) : renderOrganisation($type, $organisation, null, $target, $buttons);
-//     	}
-//     break;
     case 'delete':
     	$type = altSubValue($_POST, 'type', '');
     	$id = altSubValue($_POST, 'id', '');
@@ -229,7 +210,7 @@ switch ($_GET['action']){
         $properties = Groups::filterPost($type, $_POST);
         if (!$id){
         	$new = true;
-        	$result = ($type == 'studentgroup') ? Groups::addStudentGroup($properties) :
+        	$result = ($type == _STUDENT_GROUP) ? Groups::addStudentGroup($properties) :
         		($type == 'project' ? Project::getInstance()->addProject($properties) : Groups::addGroup($properties, $type));
         } else {
         	$new = false;

@@ -11,7 +11,7 @@ class Users extends AbstractEntity{
 			return array();
 		}
 		//todo: find out whether current user is supervisor
-		$table = tableName('studentgroup');
+		$table = tableName(_STUDENT_GROUP);
 		if ($supervisor == 'all'){
 			$groups = db_select($table)->fields($table)->execute()->fetchAll(PDO::FETCH_ASSOC);
 		} else {
@@ -23,17 +23,17 @@ class Users extends AbstractEntity{
 	}
     public static function isAdmin()
     {
-        return self::isOfType('administrator');
+        return self::isOfType(_ADMINISTRATOR_TYPE);
     }
     
     public static function isInstituteAdmin()
     {
-    	return self::isOfType('institute_admin');
+    	return self::isOfType(_INSTADMIN_TYPE);
     }   
 
     public static function isOrganisationAdmin()
     {
-    	return self::isOfType('organisation_admin');
+    	return self::isOfType(_ORGADMIN_TYPE);
     }
     
     public static function isSomeAdmin()
@@ -44,20 +44,20 @@ class Users extends AbstractEntity{
     public static function isSuperVisor()
     {
     	global $user;
-    	return in_array('institute_admin', $user->roles) || 
-    		in_array('supervisor', $user->roles);
+    	return in_array(_INSTADMIN_TYPE, $user->roles) || 
+    		in_array(_SUPERVISOR_TYPE, $user->roles);
     }
 	
     public static function isStudent()
     {
-    	return self::isOfType('student');
+    	return self::isOfType(_STUDENT_TYPE);
     }
     
     public static function isMentor()
     {
     	global $user;
-    	return in_array('mentor', $user->roles) ||
-    	in_array('organisation_admin', $user->roles);
+    	return in_array(_MENTOR_TYPE, $user->roles) ||
+    	in_array(_ORGADMIN_TYPE, $user->roles);
     }
     
 	public static function isOfType($type, $uid=''){
@@ -89,7 +89,9 @@ class Users extends AbstractEntity{
 				"left join users as u on u.uid = g.owner_id ".
 				"left join soc_institutes as i on i.inst_id = g.inst_id ".
 				"left join users as u2 on u2.uid = $id ".
-				"WHERE um.uid = $id AND um.type = 'studentgroup' AND r.name = 'student'")->fetchObject();
+				"WHERE um.uid = $id AND um.type = ':studentgroup' AND r.name = ':student'",
+					array(':studentgroup' =>_STUDENT_GROUP,  ':student' =>_STUDENT_TYPE))
+				->fetchObject();
 		} else {
 			return null;
 		}
@@ -105,16 +107,24 @@ class Users extends AbstractEntity{
 			return array();
 		} 
 		if ($group == 'all'){
-			$students = db_query('select u.* from users as u left join users_roles as ur on u.uid=ur.uid left join role as r on r.rid=ur.rid where r.name=:role ', array(':role' => 'student'));
+			$students = db_query('select u.* from users as u left join users_roles as ur on u.uid=ur.uid left join role as r on r.rid=ur.rid where r.name=:role ', array(':role' => _STUDENT_TYPE));
 		} elseif ($group) {
-			$students = db_query("SELECT u.* from users as u left join soc_user_membership as um".
-					" on u.uid = um.uid WHERE um.type = 'studentgroup' AND um.group_id = $group AND u.uid != $supervisor ");
+			$students = db_query(
+					"SELECT u.* from users as u ".
+					"left join soc_user_membership as um on u.uid = um.uid ".
+					"WHERE um.type = ':studentgroup' AND um.group_id = $group AND u.uid != $supervisor ",
+						array(':studentgroup' => _STUDENT_GROUP));
 		} else {
-			$groups = db_query("SELECT group_id from soc_user_membership um".
-					" WHERE um.type = 'studentgroup' AND um.uid = $supervisor ")->fetchCol();
+			$groups = db_query(
+					"SELECT group_id from soc_user_membership um ".
+					"WHERE um.type = ':studentgroup' AND um.uid = $supervisor ",
+						array(':studentgroup' => _STUDENT_GROUP))->fetchCol();
 			if ($groups){
-				$students = db_query("SELECT u.* from users as u left join soc_user_membership um ".
-						"on u.uid = um.uid WHERE um.type = 'studentgroup' AND um.group_id IN (:groups) AND u.uid != $supervisor ", array(':groups' => $groups));
+				$students = db_query(
+						"SELECT u.* from users as u ".
+						"left join soc_user_membership um on u.uid = um.uid ".
+						"WHERE um.type = ':studentgroup' AND um.group_id IN (:groups) AND u.uid != $supervisor ",
+							array(':groups' => $groups, ':studentgroup' => _STUDENT_GROUP));
 			} else {
 				return NULL;
 			}
@@ -237,18 +247,21 @@ class Users extends AbstractEntity{
 	
 		if ($institute == 'all'){
 			$supervisors = db_query('select u.* from users as u left join  users_roles as ur on u.uid=ur.uid left join '.
-					'role as r on r.rid=ur.rid where r.name=:role ', array(':role' => 'student'));
+					'role as r on r.rid=ur.rid where r.name=:role ', array(':role' => _STUDENT_TYPE));
 		} else {
 			if (!$institute) {
 				//get the institute from the institute admin
-				$institute = db_query("SELECT group_id from soc_user_membership um".
-						" WHERE um.type = 'institute' AND um.uid = $institute_admin ")->fetchColumn();
+				$institute = db_query(
+						"SELECT group_id from soc_user_membership um ".
+						"WHERE um.type = ':institute' AND um.uid = $institute_admin ",
+							array(':institute' =>_INSTITUTE_GROUP))->fetchColumn();
 			}
 			if ($institute){
 				$students = db_query("SELECT u.* from users as u left join users_roles as ur ".
 						" on u.uid = ur.uid left join role as r ".
 						" on ur.rid = r.rid left join soc_user_membership as um ".
-						" on u.uid = um.uid WHERE r.name = 'student' AND um.type = 'institute' AND um.group_id = $institute ");
+						" on u.uid = um.uid WHERE r.name = ':student' AND um.type = ':institute' AND um.group_id = $institute ",
+					array(':institute' =>_INSTITUTE_GROUP,  ':student' =>_STUDENT_TYPE));
 			} else {
 				return NULL;
 			}
@@ -267,25 +280,30 @@ class Users extends AbstractEntity{
 	
 		if ($institute == 'all'){
 			$supervisors = db_query('select u.* from users as u left join  users_roles as ur on u.uid=ur.uid left join '.
-					'role as r on r.rid=ur.rid where r.name=:role ', array(':role' => 'supervisor'));
+					'role as r on r.rid=ur.rid where r.name=:role ', array(':role' => _SUPERVISOR_TYPE));
 		} elseif ($institute) {
 			$supervisors = db_query("SELECT u.* from users as u ".
 					"left join users_roles as ur  on u.uid = ur.uid ".
 					"left join role as r  on ur.rid = r.rid ".
 					"left join soc_user_membership as um on u.uid = um.uid ".
-					"WHERE r.name = 'supervisor' AND um.type = 'institute' ".
-					"AND um.group_id = $institute ");
+					"WHERE r.name = ':supervisor' AND um.type = ':institute' ".
+					"AND um.group_id = $institute ",
+					array(':institute' => _INSTITUTE_GROUP, ':supervisor'=>_SUPERVISOR_TYPE));
 		} else {
 			//get the institute from the institute_admin
-			$institute = db_query("SELECT group_id from soc_user_membership um".
-					" WHERE um.type = 'institute' AND um.uid = $institute_admin ")->fetchColumn();
+			$institute = db_query(
+					"SELECT group_id from soc_user_membership um".
+					" WHERE um.type = ':institute' AND um.uid = $institute_admin ",
+      					array(':institute' =>_INSTITUTE_GROUP))->fetchColumn();
 			if ($institute){
-				$supervisors = db_query("SELECT u.* from users as u ".
+				$supervisors = db_query(
+					"SELECT u.* from users as u ".
 					"left join soc_user_membership um on u.uid = um.uid ".
 					"left join users_roles as ur  on u.uid = ur.uid ".
 					"left join role as r  on ur.rid = r.rid ".
-					"WHERE um.type = 'institute' AND um.group_id = $institute ".
-						"AND r.name = 'supervisor' ");
+					"WHERE um.type = ':institute' AND um.group_id = $institute ".
+						"AND r.name = ':supervisor' ",
+					array(':institute' => _INSTITUTE_GROUP, ':supervisor'=>_SUPERVISOR_TYPE));
 			} else {
 				return NULL;
 			}
@@ -305,19 +323,29 @@ class Users extends AbstractEntity{
 			$mentors = db_query(
 					'select u.* from users as u '.
 					'left join users_roles as ur on u.uid=ur.uid '.
-					'left join role as r on r.rid=ur.rid '.
-					'where r.name=:role ', array(':role' => 'mentor'));
+					'left join role as r on r.rid = ur.rid '.
+					'where r.name=:role ', array(':role' => _MENTOR_TYPE));
 		} elseif ($organisation) {
 			 
-			$mentors = db_query("SELECT u.* from users as u left join soc_user_membership as um".
-					" on u.uid = um.uid WHERE um.type = 'institute' AND um.group_id = $organisation AND u.uid != $organisation_admin ");
+			$mentors = db_query(
+					"SELECT u.* from users as u ".
+					"left join soc_user_membership as um on u.uid = um.uid ".
+					" WHERE um.type = ':institute' AND um.group_id = $organisation AND ".
+					"u.uid != $organisation_admin ",
+      					array(':institute' =>_INSTITUTE_GROUP));
 		} else {
 			//get the organisation
-			$organisation = db_query("SELECT group_id from soc_user_membership um".
-					" WHERE um.type = 'organisation' AND um.uid = $organisation_admin ")->fetchColumn();
+			$organisation = db_query(
+					"SELECT group_id from soc_user_membership um ".
+					"WHERE um.type = ':organisation' AND um.uid = $organisation_admin ",
+      					array(':organisation' =>_ORGANISATION_GROUP))
+					->fetchColumn();
 			if ($organisation){
-				$mentors = db_query("SELECT u.* from users as u left join soc_user_membership um ".
-						"on u.uid = um.uid WHERE um.type = 'organisation' AND um.group_id = $organisation AND u.uid != $organisation_admin ");
+				$mentors = db_query(
+						"SELECT u.* from users as u ".
+						"left join soc_user_membership um on u.uid = um.uid ".
+						"WHERE um.type = ':organisation' AND um.group_id = $organisation AND u.uid != $organisation_admin ",
+      						array(':organisation' =>_ORGANISATION_GROUP));
 			} else {
 				return NULL;
 			}
@@ -334,21 +362,29 @@ class Users extends AbstractEntity{
 		//todo: find out whether current user is supervisor
 	
 		if ($institute == 'all'){
-			$admins = db_query('select u.* from users as u left join  users_roles as ur on u.uid=ur.uid left join '.
-					'role as r on r.rid=ur.rid where r.name=:role ', array(':role' => 'institute_admin'));
+			$admins = db_query(
+					'select u.* from users as u '.
+					'left join  users_roles as ur on u.uid=ur.uid '.
+					'left join role as r on r.rid=ur.rid '.
+					'WHERE r.name=:role ', array(':role' => _INSTADMIN_TYPE));
 		} else {
 			if (!$institute) {
-				$institute = db_query("SELECT group_id from soc_user_membership um".
-						" WHERE um.type = 'institute' AND um.uid = $institute_admin ")->fetchColumn();
+				$institute = db_query(
+						"SELECT group_id from soc_user_membership um ".
+						"WHERE um.type = ':institute' AND um.uid = $institute_admin ",
+      						array(':institute' =>_INSTITUTE_GROUP))->fetchColumn();
 			}
 			if ($institute){
 				//Get all the admins from this institute (1?: all users with role institute_admin who are member of this institute
-				$admins = db_query("SELECT u.* from users as u ".
+				$admins = db_query(
+						"SELECT u.* from users as u ".
 						" left join users_roles as ur on u.uid = ur.uid".
 						" left join role as r on ur.rid = r.rid ".
 						" left join soc_user_membership as um on u.uid = um.uid".
-						" WHERE r.name = 'institute_admin'  AND ".
-						" um.type = 'institute' AND um.group_id = $institute ");
+						" WHERE r.name = '"._INSTADMIN_TYPE."'  AND um.type = ':institute' AND ".
+						" um.group_id = $institute ",
+      						array(':institute' =>_INSTITUTE_GROUP)
+						);
 			} else {
 				return NULL;
 			}
@@ -366,19 +402,24 @@ class Users extends AbstractEntity{
 	
 		if ($organisation == 'all'){
 			$admins = db_query('select u.* from users as u left join  users_roles as ur on u.uid=ur.uid left join '.
-					'role as r on r.rid=ur.rid where r.name=:role ', array(':role' => 'organisation_admin'));
+					'role as r on r.rid=ur.rid where r.name=:role ', array(':role' => _ORGADMIN_TYPE));
 		} else {
 			if (!$organisation) {
-				$organisation = db_query("SELECT group_id from soc_user_membership um".
-						" WHERE um.type = 'organisation' AND um.uid = $organisation_admin ")->fetchColumn();
+				$organisation = db_query(
+						"SELECT group_id from soc_user_membership um ".
+						"WHERE um.type = ':organisation' AND um.uid = $organisation_admin ",
+      						array(':organisation' =>_ORGANISATION_GROUP))
+						->fetchColumn();
 			}
 			if ($organisation){
 				//Get all the admins from this organisation (1?: all users with role organisation_admin who are member of this organisation
-				$admins = db_query("SELECT u.* from users as u ".
+				$admins = db_query(
+						"SELECT u.* from users as u ".
 						" left join users_roles as ur  on u.uid = ur.uid".
-						" left join role as r on ur.rid = r.name = 'organisation_admin' rid".
+						" left join role as r on ur.rid = r.rid".
 						" left join soc_user_membership as um on u.uid = um.uid".
-						" WHERE r.um.type = 'organisation' AND um.group_id = $organisation ");
+						" WHERE r.name = ':orgadmin' AND um.type = ':organisation' AND um.group_id = $organisation ",
+      						array(':orgadmin' => _ORGADMIN_TYPE, ':organisation' =>_ORGANISATION_GROUP));
 			} else {
 				return NULL;
 			}

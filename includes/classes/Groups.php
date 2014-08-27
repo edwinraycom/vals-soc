@@ -11,8 +11,8 @@ class Groups extends AbstractEntity{
 			$groups = db_query("SELECT o.* from soc_${org_type}s as o");
 		} else {
 			$key_column = self::keyField($org_type);
-			$code_key_column = ($org_type == 'studentgroup') ? 'studentgroup_id' : 'entity_id';
-			$member_type = ($org_type == 'studentgroup') ? 'studentgroup' :(($org_type == 'organisation') ? 'mentor': 'supervisor');
+			$code_key_column = ($org_type == _STUDENT_GROUP) ? 'studentgroup_id' : 'entity_id';
+			$member_type = ($org_type == _STUDENT_GROUP) ? _STUDENT_GROUP :(($org_type == _ORGANISATION_GROUP) ? _MENTOR_TYPE: _SUPERVISOR_TYPE);
 			if ($id){
 				$sqlStr = "SELECT o.*, c.code, c2.code as owner_code from ".tableName($org_type)." as o ".
 						" left join soc_user_membership as um on o.$key_column = um.group_id ".
@@ -60,7 +60,7 @@ class Groups extends AbstractEntity{
 	}
 
 	static function isOwner($type, $id){
-		if (! in_array($type, array('studentgroup', 'institute', 'organisation', 'project', 'proposal'))){
+		if (! in_array($type, array(_STUDENT_GROUP, _INSTITUTE_GROUP, _ORGANISATION_GROUP, 'project', 'proposal'))){
 			drupal_set_message(tt('You cannot be the owner of an entity called %1$s', $type), 'error');
 			return FALSE;
 		}
@@ -76,8 +76,8 @@ class Groups extends AbstractEntity{
 	}
 	
 	static function isAssociate($type, $id){	
-		$scope_table = array('institute'=>'institute','organisation'=>'organisation',
-				'studentgroup'=>'institute', 'project' =>'organisation', 'proposal' => 'institute');
+		$scope_table = array(_INSTITUTE_GROUP=>_INSTITUTE_GROUP,_ORGANISATION_GROUP=>_ORGANISATION_GROUP,
+				_STUDENT_GROUP=>_INSTITUTE_GROUP, 'project' =>_ORGANISATION_GROUP, 'proposal' => _INSTITUTE_GROUP);
 		if (! in_array($type, array_keys($scope_table))){
 			drupal_set_message(tt('You cannot be the associate of an entity called %1$s', $type), 'error');
 			return FALSE;
@@ -101,9 +101,9 @@ class Groups extends AbstractEntity{
 		}
 		//We impose some extra role restrictions: students can only have extensive rights for their own proposals
 		//institutes and organisations can only be edited by admins
-		if ($type == 'institute'){
+		if ($type == _INSTITUTE_GROUP){
 			return Users::isInstituteAdmin(); 
-		} elseif ($type == 'organisation'){
+		} elseif ($type == _ORGANISATION_GROUP){
 			return Users::isOrganisationAdmin();
 		} elseif($type == 'proposal'){
 			return ! Users::isStudent();
@@ -151,8 +151,8 @@ class Groups extends AbstractEntity{
 					drupal_set_message(tt('The group had no members.', $type), 'status');
 				}
 					
-				$subtype = ($type == 'organisation') ? 'mentor' : (($type == 'institute') ? 'supervisor' : 'studentgroup');
-				$code_field = ($subtype == 'studentgroup') ? 'studentgroup_id' : 'entity_id';
+				$subtype = ($type == _ORGANISATION_GROUP) ? _MENTOR_TYPE : (($type == _INSTITUTE_GROUP) ? _SUPERVISOR_TYPE : _STUDENT_GROUP);
+				$code_field = ($subtype == _STUDENT_GROUP) ? 'studentgroup_id' : 'entity_id';
 				$num_deleted3 = db_delete("soc_codes")
 					->condition(
 						db_and()
@@ -228,12 +228,12 @@ class Groups extends AbstractEntity{
 		try {
 			$uid = $user->uid;
 			$props['owner_id'] = $uid;
-			if ($type == 'organisation'){
+			if ($type == _ORGANISATION_GROUP){
 				if (!isset($props['url'])) $props[ 'url'] = '';
 				if (!isset($props['description'])) $props[ 'description'] = '';
-				$subtype = 'mentor';
-			} else if ($type == 'institute'){
-				$subtype = 'supervisor';
+				$subtype = _MENTOR_TYPE;
+			} else if ($type == _INSTITUTE_GROUP){
+				$subtype = _SUPERVISOR_TYPE;
 			} else {
 				drupal_set_message(tt('This type of group cannot be added: %1$s', $type), 'error');
 				return false;
@@ -292,7 +292,7 @@ class Groups extends AbstractEntity{
 			$uid = $user->uid;
 			$institute_ids = db_select('soc_user_membership')->fields('soc_user_membership', array('group_id'))
 			->condition('uid', $uid)
-			->condition('type', 'institute')
+			->condition('type', _INSTITUTE_GROUP)
 			->execute()->fetchCol();
 			if ($institute_ids){
 				$inst_id = $institute_ids[0];
@@ -309,13 +309,13 @@ class Groups extends AbstractEntity{
 			if ($gid){
 				$result = db_insert('soc_user_membership')->fields( array(
 						'uid'=>$uid,
-						'type' => 'studentgroup',
+						'type' => _STUDENT_GROUP,
 						'group_id'=>$gid,
 				))->execute();
 				if ($result){
 					$result = $result && db_insert('soc_codes')->fields( array(
-							'type'=>'studentgroup',
-							'code' => createRandomCode('studentgroup', $gid),
+							'type'=>_STUDENT_GROUP,
+							'code' => createRandomCode(_STUDENT_GROUP, $gid),
 							'entity_id'=> $inst_id,
 							'studentgroup_id' =>$gid))->execute();
 					if (!$result){
@@ -341,9 +341,9 @@ class Groups extends AbstractEntity{
 	
 		//TODO: get the db fields from schema and move foreach out of switch
 		$fields = array(
-				'institute' => array('name', 'contact_name', 'contact_email'),
-				'organisation'=> array('name', 'contact_name', 'contact_email', 'url', 'description'),
-				'studentgroup'=> array('name', 'description'),
+				_INSTITUTE_GROUP => array('name', 'contact_name', 'contact_email'),
+				_ORGANISATION_GROUP=> array('name', 'contact_name', 'contact_email', 'url', 'description'),
+				_STUDENT_GROUP=> array('name', 'description'),
 				'project' => array('org_id', 'title', 'description', 'url', 'tags')
 		);
 		if (!$type || !isset($fields[$type])){

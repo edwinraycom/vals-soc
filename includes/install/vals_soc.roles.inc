@@ -24,7 +24,7 @@ function create_roles(){
 }
 
 function create_permissions(){
-// 	$perms['anonymous user'] = array(
+// 	$perms[_ANONYMOUS_TYPE] = array(
 // 			//'vals admin register' => TRUE,
 // 			'vals browse projects' => TRUE,
 // 			//'vals admin projects' => TRUE,
@@ -34,33 +34,33 @@ function create_permissions(){
 // 			'vals browse projects' => TRUE,
 // 			'vals admin projects' => TRUE,
 // 	);
-	$perms['soc'] = array(
+	$perms[_SOC_TYPE] = array(
 			//'vals admin register' => TRUE,
 			'vals browse projects' => TRUE,
 			//'vals admin projects' => TRUE,
 	);
-	$perms['organisation_admin'] = array(
+	$perms[_ORGADMIN_TYPE] = array(
 			'vals admin register' => TRUE,
 			'vals browse projects' => TRUE,
 			'vals admin projects' => TRUE,
 	);
-	$perms['supervisor'] = array(
+	$perms[_SUPERVISOR_TYPE] = array(
 			'vals admin register' => TRUE,
 			'vals browse projects' => TRUE,
 			//'vals admin projects' => TRUE,
 	);
-	$perms['mentor'] = array(
+	$perms[_MENTOR_TYPE] = array(
 			//'vals admin register' => TRUE,
 			'vals browse projects' => TRUE,
 			'vals admin projects' => TRUE,
 	);
-	$perms['student'] = array(
+	$perms[_STUDENT_TYPE] = array(
 			//'vals admin register' => TRUE,
 			'vals browse projects' => TRUE,
 			//'vals admin projects' => TRUE,
 			'vals apply projects' => TRUE,
 	);
-	$perms['institute_admin'] = array(
+	$perms[_INSTADMIN_TYPE] = array(
 			'vals admin register' => TRUE,
 			'vals browse projects' => TRUE,
 			'vals edit projects' => TRUE,
@@ -131,38 +131,38 @@ function create_codes(){
  */
 function get_default_roles() {
 	$roles = array();
-    $roles['administrator'] = array(
+    $roles[_ADMINISTRATOR_TYPE] = array(
 			'name' => 'Admin',
 			'weight' => '2',
 			'code' => 'BHTGSKKRWP'
 	);
     // We need the role soc for the members of the team setting up a Semester of Code
-    $roles['soc'] = array(
+    $roles[_SOC_TYPE] = array(
 			'name' => 'Semester of Code',
 			'weight' => '2',
 			'code' => 'EICUN14SOC'
 	);
-	$roles['organisation_admin'] = array(
+	$roles[_ORGADMIN_TYPE] = array(
 			'name' => 'Organisation Administrator',
 			'weight' => '3',
 			'code' => 'AHGLL765OW'
 	);
-	$roles['supervisor'] = array(
+	$roles[_SUPERVISOR_TYPE] = array(
 			'name' => 'Academic Supervisor',
 			'weight' => '4',
 			'code' => 'MNUFD783SF'
 	);
-	$roles['mentor'] = array(
+	$roles[_MENTOR_TYPE] = array(
 			'name' => 'Mentor',
 			'weight' => '5',
 			'code' => 'QTU8TR44KJ'
 	);
-	$roles['student'] = array(
+	$roles[_STUDENT_TYPE] = array(
 			'name' => 'Student',
 			'weight' => '6',
 			'code' => 'PGI99OPAQW'
 	);
-    $roles['institute_admin'] = array(
+    $roles[_INSTADMIN_TYPE] = array(
 			'name' => 'Institute Responsible',
 			'weight' => '2',
 			'code' => 'A99ODF435W'
@@ -192,12 +192,12 @@ function getRole(){
     if ($roles) {
         foreach ($roles as $rid => $name){
             if ($rid == _ANONYMOUS_ROLE ){
-                return 'anonymous user';
+                return _ANONYMOUS_TYPE;
             } elseif ($rid !== _USER_ROLE) {
                 return $name;
             }
         }
-        return 'authenticated user';
+        return _USER_TYPE;
     }
 }
 

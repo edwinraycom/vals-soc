@@ -9,9 +9,9 @@ abstract class AbstractEntity {
 
 	static function keyField($type){
 		switch ($type){
-			case 'studentgroup': return 'studentgroup_id';break;
-			case 'institute': return 'inst_id';break;
-			case 'organisation': return 'org_id';break;
+			case _STUDENT_GROUP: return 'studentgroup_id';break;
+			case _INSTITUTE_GROUP: return 'inst_id';break;
+			case _ORGANISATION_GROUP: return 'org_id';break;
 			case 'project': return 'pid';break;
 			case 'proposal': return 'proposal_id';break;
 			default: return '';
@@ -19,13 +19,13 @@ abstract class AbstractEntity {
 	}
 	static function participationGroup($type){
 		switch ($type){
-			case 'organisation_admin':
-			case 'mentor': $group = 'organisation';break;
-			case 'institute_admin':
-			case 'supervisor':
-			case 'student': $group = 'institute';break;
-// 			case 'organisation_admin':
-// 			case 'mentor': $group = 'organisation';break;
+			case _ORGADMIN_TYPE:
+			case _MENTOR_TYPE: $group = _ORGANISATION_GROUP;break;
+			case _INSTADMIN_TYPE:
+			case _SUPERVISOR_TYPE:
+			case _STUDENT_TYPE: $group = _INSTITUTE_GROUP;break;
+// 			case _ORGADMIN_TYPE:
+// 			case _MENTOR_TYPE: $group = _ORGANISATION_GROUP;break;
 			default: $group = '';
 		}
 		return $group;

@@ -52,7 +52,7 @@ function pageAccessCheck($access_string) {
 			// any user must have 'val browse projects' permission
 			if (hasPermission('vals browse projects')) {
 				// students AND unauthenticated users can only see the projects after the organisations have been announced
-				if( (hasRole(array('student')) || hasRole(array('anonymous user'))) && 
+				if( (hasRole(array(_STUDENT_TYPE)) || hasRole(array(_ANONYMOUS_TYPE))) && 
 					Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
 					return TRUE;
 				} else {
@@ -66,7 +66,7 @@ function pageAccessCheck($access_string) {
 		case 'projects/apply':
 		case 'dashboard/projects/apply':
 			// only students with 'vals apply projects' permission can apply for a project AND only during the student signup period
-			if(hasRole(array('student')) && hasPermission('vals apply projects') && Timeline::getInstance()->isStudentsSignupPeriod()){
+			if(hasRole(array(_STUDENT_TYPE)) && hasPermission('vals apply projects') && Timeline::getInstance()->isStudentsSignupPeriod()){
 				return TRUE;
 			}
 			else{
@@ -78,7 +78,7 @@ function pageAccessCheck($access_string) {
 			// any user must have 'val browse organisations' permission
 			if(hasPermission('vals browse organisations')){
 				// students AND unauthenticated users can only see the orgs after the organisations have been announced
-				if( (hasRole(array('student')) || hasRole(array('anonymous user'))) && 
+				if( (hasRole(array(_STUDENT_TYPE)) || hasRole(array(_ANONYMOUS_TYPE))) && 
 					Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
 					return TRUE;
 				} else {
@@ -89,19 +89,19 @@ function pageAccessCheck($access_string) {
 			}
 			break;
 		case 'dashboard/proposals/browse': 
-			return (! hasRole(array('anonymous user'))) && (!hasRole(array('student')));//hasPermission('vals browse proposals'); // NOTE: NO SUCH PERMISSION IN DB AT PRESENT
+			return (! hasRole(array(_ANONYMOUS_TYPE))) && (!hasRole(array(_STUDENT_TYPE)));//hasPermission('vals browse proposals'); // NOTE: NO SUCH PERMISSION IN DB AT PRESENT
 			break;
 		case 'dashboard/proposals/mine':
-			return  hasRole(array('student')); // hasPermission('vals browse proposals') && NOTE: NO SUCH PERMISSION IN DB AT PRESENT
+			return  hasRole(array(_STUDENT_TYPE)); // hasPermission('vals browse proposals') && NOTE: NO SUCH PERMISSION IN DB AT PRESENT
 			break;		
 		case 'institutes/browse':
-			 if( (hasRole(array('student')) || hasRole(array('anonymous user'))) && 
+			 if( (hasRole(array(_STUDENT_TYPE)) || hasRole(array(_ANONYMOUS_TYPE))) && 
 					Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
 					return TRUE;
 				} else {
 					// everyone else with 'vals browse projects' permission can see projects once org applications open
 				 	return (Timeline::getInstance()->organisationSignupPeriodOpened());
-				};//! hasRole(array('anonymous user'));
+				};//! hasRole(array(_ANONYMOUS_TYPE));
 		default:
 			return hasPermission($access_string);
 	}
