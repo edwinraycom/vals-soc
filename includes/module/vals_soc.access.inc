@@ -89,10 +89,10 @@ function pageAccessCheck($access_string) {
 			}
 			break;
 		case 'dashboard/proposals/browse': 
-			return (! hasRole(array(_ANONYMOUS_TYPE))) && (!hasRole(array(_STUDENT_TYPE)));//hasPermission('vals browse proposals'); // NOTE: NO SUCH PERMISSION IN DB AT PRESENT
+			return (! hasRole(array(_ANONYMOUS_TYPE))) && (!hasRole(array(_STUDENT_TYPE)));
 			break;
 		case 'dashboard/proposals/mine':
-			return  hasRole(array(_STUDENT_TYPE)); // hasPermission('vals browse proposals') && NOTE: NO SUCH PERMISSION IN DB AT PRESENT
+			return  hasRole(array(_STUDENT_TYPE));
 			break;		
 		case 'institutes/browse':
 			 if( (hasRole(array(_STUDENT_TYPE)) || hasRole(array(_ANONYMOUS_TYPE))) && 
@@ -101,7 +101,8 @@ function pageAccessCheck($access_string) {
 				} else {
 					// everyone else with 'vals browse projects' permission can see projects once org applications open
 				 	return (Timeline::getInstance()->organisationSignupPeriodOpened());
-				};//! hasRole(array(_ANONYMOUS_TYPE));
+				};
+	
 		default:
 			return hasPermission($access_string);
 	}

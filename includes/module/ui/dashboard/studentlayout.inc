@@ -69,18 +69,6 @@ function getStudentLayout($timeline_args){
 				<div class="column">
 	';
 	
-	if($timeline_args['myOrganisationsVisible']){
-		$output .='
-					<div class="column-entry adminning_organizations">
-						<h4>
-							<a class="dashboard-link component-link"
-							href="#"
-							title="'.t("My organisations").'">'.t("My organisations").'</a>
-						</h4>
-						<p>'.t("List of organisations which I participate in").'</p>
-					</div>
-		';
-	}
 	
 	if($timeline_args['myProposalsVisible']){
 		$output .='
@@ -88,7 +76,7 @@ function getStudentLayout($timeline_args){
 						<h4>
 							<a class="dashboard-link component-link"'.
 							//href="'.$base_url.'/dashboard/proposals/mine"
-							'href="#"
+							'href="'.$base_url.'/dashboard/proposals/mine"
 							title="'.t("Proposals").'">'.t("Proposals").'</a>
 						</h4>
 						<p>'.t("List of my proposals submitted").'</p>
