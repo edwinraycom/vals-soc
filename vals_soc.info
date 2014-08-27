@@ -10,4 +10,4 @@ dependencies[] = ckeditor
 dependencies[] = ctools
 configure = admin/config/vals_soc
 ; it appears files[] is only used for class loading
-; files[] = includes/vals_soc.helper.inc
+; files[] = includes/functions/helper_functions.php

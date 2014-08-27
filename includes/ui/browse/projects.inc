@@ -6,8 +6,8 @@ drupal_add_library('system','ui.widget');
 drupal_add_library('system','ui.dialog');
 drupal_add_library('system','ui.icon');
 //TODO: do we want this? test it out
-drupal_add_css(_VALS_SOC_PATH .'/includes/module/ui/tabs/tabs.css');
-drupal_add_js (_VALS_SOC_PATH .'/includes/module/ui/tabs/activatetabs.js');
+drupal_add_css(_VALS_SOC_PATH .'/includes/ui/tabs/tabs.css');
+drupal_add_js (_VALS_SOC_PATH .'/includes/ui/tabs/activatetabs.js');
 //end TODO
 drupal_add_js(_VALS_SOC_PATH .'/includes/js/ajax.js');
 drupal_add_js(_VALS_SOC_PATH .'/includes/js/target_functions.js');

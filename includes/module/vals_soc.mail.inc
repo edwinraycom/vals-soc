@@ -1,6 +1,4 @@
 <?php
-//module_load_include('inc', 'vals_soc', 'includes/vals_soc.helper');
-
 /**
  * Handle mail requests
  * @param unknown $key

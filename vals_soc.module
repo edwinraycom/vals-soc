@@ -9,8 +9,8 @@
 
 module_load_include('php', 'vals_soc', 'includes/settings/settings');
 
-include(_VALS_SOC_ROOT.'/includes/vals_soc.helper.inc');
-include(_VALS_SOC_ROOT.'/includes/install/vals_soc.roles.inc');
+include(_VALS_SOC_ROOT.'/includes/functions/helper_functions.php');
+include(_VALS_SOC_ROOT.'/includes/module/vals_soc.roles.inc');
 include(_VALS_SOC_ROOT.'/includes/classes/AbstractEntity.php');//necessary for forms
 include(_VALS_SOC_ROOT.'/includes/classes/Users.php');//necessary for access checks
 include(_VALS_SOC_ROOT.'/includes/classes/Groups.php');//necessary for forms
@@ -197,7 +197,7 @@ function vals_soc_js_alter(&$javascript) {
 }
 
 function vals_soc_css_alter(&$css) {
-	$css = drupal_add_css(_VALS_SOC_PATH . '/includes/vals_soc.css');
+	$css = drupal_add_css(_VALS_SOC_PATH . '/includes/css/vals_soc.css');
 }
 
 //***********************************************************************************

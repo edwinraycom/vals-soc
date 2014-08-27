@@ -23,7 +23,7 @@ function vals_soc_block_view_handler($delta = '') {
 			$block['subject'] = '';
 			if (user_access('access content')) {
 				ob_start();
-				module_load_include('inc', 'vals_soc', 'includes/module/ui/homepage/blocklayout');
+				module_load_include('inc', 'vals_soc', 'includes/ui/homepage/blocklayout');
 				$block['content'] = ob_get_clean();
 			}
 			return $block;
@@ -31,8 +31,7 @@ function vals_soc_block_view_handler($delta = '') {
 		case 'organise':
 			if (user_access('access content')) {
 				ob_start();
-				module_load_include('inc', 'vals_soc', 'includes/module/ui/administer/blocklayout');
-				//module_load_include('php', 'vals_soc', 'includes/module/admin');
+				module_load_include('inc', 'vals_soc', 'includes/ui/administer/blocklayout');
 				$block['content'] = ob_get_clean();
 			}
 			return $block;
