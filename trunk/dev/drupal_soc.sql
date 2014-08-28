@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS soc_proposals (
   inst_id mediumint(8) unsigned NOT NULL,
   supervisor_id mediumint(9) NOT NULL,
   pid mediumint(8) unsigned NOT NULL,
-  cv varchar(1024) NOT NULL,
+  title varchar(512) NOT NULL DEFAULT '' COMMENT 'The title of the proposal.',
   solution_short varchar(512) NOT NULL,
   solution_long varchar(1024) NOT NULL,
   modules varchar(1024) DEFAULT NULL,

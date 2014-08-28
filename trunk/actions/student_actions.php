@@ -1,7 +1,9 @@
 <?php
 include('include.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');//action:proposal,...
-include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');//action:proposal,...
+include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 
 switch ($_GET['action']){
 	case 'proposal':
@@ -14,6 +16,7 @@ switch ($_GET['action']){
 		$proposal_id = altSubValue( $_POST, 'proposalid', 0);
 		if (! Users::isOfType(_STUDENT_TYPE, $GLOBALS['user']->uid)){
 			if (_VALS_TEST_UI_ONLY){
+				//TODO: this kind of testing should go soon
 				echo "!! Since you are an admin, you can test a bit. We test with user 31 under the condition that _VALS_TEST_UI_ONLY is true.";
 				$owner_id = 31;
 			} else {

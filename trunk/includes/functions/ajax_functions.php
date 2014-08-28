@@ -1,20 +1,26 @@
 <?php
+function getDrupalMessages($type, $show_always=FALSE){
+	$msgs = drupal_get_messages($type);
+	if ($msgs){
+		if ($type){
+			$msg = implode('<br/>', $msgs[$type]);
+		} else {
+			$msg = '';
+			foreach ($msgs as $cat => $msg_arr){
+				$msg .= "$cat:".implode('<br/>', $msg_arr);
+			}
+		}
+	} else {
+		$msg = (_DEBUG && $show_always ? tt(' No %1$s messages available', $type) : '');
+	}
+	return $msg;
+}
+
 function jsonResult($result, $msg='', $type='', $args=array(), $show_always=FALSE){
 	if (!$msg){
 		//Get the messages set by drupal_set_messages, but if we pass deliberately null on, we expect no messages
-		$msgs = is_null($msg) ? '' : drupal_get_messages($type);
-		if ($msgs){
-			if ($type){
-				$msg = implode('<br/>', $msgs[$type]);
-			} else {
-				$msg = '';
-				foreach ($msgs as $cat => $msg_arr){
-					$msg .= "$cat:".implode('<br/>', $msg_arr);
-				}
-			}
-		} else {
-			$msg = (_DEBUG && $show_always ? tt(' No %1$s messages available', $type): '');
-		}
+		$msg = getDrupalMessages($type, $show_always);
+		
 	}
 	$struct = $args;
 	if ( ($result === 'error') || ($result === false) || is_null($result)) {

@@ -21,10 +21,6 @@ function renderProject(project, apply_projects){
 				"$jq('.totheright').show();"+
 				" });"+
 			"</script>";
-	} else {
-		if (debugging) {
-			content += 'zonder apply rechten';
-		}
 	}
 	
 	return content; 
@@ -128,7 +124,7 @@ function renderProposalTabs(result, labels, container){
 	for (var t=0; t < count;t++){
 		target = labels[t].tab;
 		if (target == 'edit'){
-			onclick = "\" onclick=\"ajaxCall('proposal', 'proposal_edit', {proposal_id:"+
+			onclick = "\" onclick=\"ajaxCall('proposal', 'edit', {proposal_id:"+
 				result.proposal_id+ ", target:'"+container+"'}, 'jsonFormResult', 'json', ['"+
 				container+"']);\"";
 		} else {
@@ -157,7 +153,7 @@ function renderProposalTabs(result, labels, container){
 				break;
 			case 'student': s += renderStudent(result); 
 				break;
-			case 'cv': s += (result.cv ? result.cv : ney);
+			case 'title': s += (result.title ? result.title : ney);
 				break;
 			case 'summary': s += (result.solution_short ? result.solution_short : ney);
 				break;
@@ -168,7 +164,7 @@ function renderProposalTabs(result, labels, container){
 			case 'edit': s += 'Wait please';
 			break;
 			case 'delete': s += 'Are you sure you want to delete this proposal?<br>'+
-				'<input type="button" value="Yes" onclick="ajaxCall(\'proposal\', \'proposal_delete\', '+
+				'<input type="button" value="Yes" onclick="ajaxCall(\'proposal\', \'delete\', '+
 				'{proposal_id:'+result.proposal_id+', target: \''+ container+ '\' }, \'handleDeleteResult\', \'json\', [\'content\', \'proposal\']);"/>';
 			break;
 		}

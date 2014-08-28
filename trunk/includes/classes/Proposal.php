@@ -1,11 +1,8 @@
 <?php
-include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
-include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
-
 class Proposal extends AbstractEntity{
 	
 	private static $instance; 	 	 	 	 	 	 	 	 	
-	public static $fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'solution_short', 'solution_long', 'modules', 'state',);
+	public static $fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'title', 'solution_short', 'solution_long', 'modules', 'state',);
 	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){
@@ -31,6 +28,7 @@ class Proposal extends AbstractEntity{
     		$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
     		$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid');
     		$query->leftjoin('users', 'mentor_user', 'pr.mentor_id = %alias.uid');
+    		$query->leftjoin('soc_names', 'mentor', 'pr.mentor_id = %alias.names_uid');
     		$query->fields('u1', array('mail', 'name'));
     		$query->fields('supervisor_user', array('mail', 'name'));
     		$query->fields('student', array('name'));
@@ -38,6 +36,8 @@ class Proposal extends AbstractEntity{
     		$query->fields('i', Institutes::$fields);
     		$query->fields('o', Organisations::$fields);
     		$query->fields('pr', array('title', 'description'));
+    		$query->fields('mentor_user', array('mail', 'name'));
+    		$query->fields('mentor', array('name'));
     	}
     	$proposal = $query->execute()->fetch(PDO::FETCH_OBJ);
     	return $proposal;
@@ -61,10 +61,13 @@ class Proposal extends AbstractEntity{
     	return $query->execute()->fetchAll();
     }
     
-    public static function getDefaultName($proposal_id){
-    	$proposal = self::getProposalById($proposal_id);
+    public static function getDefaultName($proposal_id , $proposal=''){
+    	if (! $proposal) {
+    		$proposal = self::getProposalById($proposal_id);
+    	}
     	$pid = $proposal->pid;
     	$title = $proposal->pr_title;
+    	return tt('Proposal for: %1$s', $title);
     }
     
     public function getProposalsRowCountBySearchCriteria($student='', $institute='', $organisation=''){
@@ -208,7 +211,7 @@ class Proposal extends AbstractEntity{
     static function filterPost(){
     	
     	//TODO: get the db fields from schema 
-    	$fields = array('name', 'cv', 'solution_short', 'solution_long', 'modules');
+    	$fields = array('title', 'solution_short', 'solution_long', 'modules');
     	
     	$input = array();
     	foreach ($fields as $prop){

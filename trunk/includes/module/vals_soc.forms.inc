@@ -681,14 +681,14 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
 			'#suffix' => '</div>',
 	);
-// 	$form['name'] = array(
-//		"#type" => "textfield",
-//		'#title' => t('Give your full name'),
-//		"#size" => 60,
-//		'#required' => '1',
-//		"#default_value" => populate($proposal, 'name'),
-//		"#description" => t("For easy communication, it is nice to have your name next to your email address"),
-// 	);
+	$form['name'] = array(
+		"#type" => "textfield",
+		'#title' => t('Give a title to your proposal'),
+		"#size" => 60,
+		'#required' => '1',
+		"#default_value" => populate($proposal, 'title'),
+		"#description" => t("For easy communication, it is nice to have a title for your proposal"),
+	);
 	$form['solution_short'] = array(
 		"#type" => "textarea",
 		'#title' => t('Give a summary of your solution'),
@@ -710,13 +710,13 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 		"#description" => t("Write the name of the library, it's url and its purpose."),
 		
 	);
-	$form['cv'] = array(
-		"#type" => "textarea",
-		'#title' => t('Describe your Curriculum Vitae'),
-		'#cols' => 50,//"#size" => 1024,
-		"#default_value" => populate($proposal, 'cv'),
-		"#description" => t("You might want to discuss with your supervisor which courses you should put on your cv."),
-	);
+// 	$form['cv'] = array(
+// 		"#type" => "textarea",
+// 		'#title' => t('Describe your Curriculum Vitae'),
+// 		'#cols' => 50,//"#size" => 1024,
+// 		"#default_value" => populate($proposal, 'cv'),
+// 		"#description" => t("You might want to discuss with your supervisor which courses you should put on your cv."),
+// 	);
 	//If we never need a stand alone form and only use ajax, remove the commented code
 	//and get common code outside
 	$form['cancel'] = array(
@@ -726,7 +726,9 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
 					'onclick' => 'if (confirm("'.t('Do you want to leave the proposal for now?').'")){'.
-						(($target != 'content') ? 'Drupal.CTools.Modal.dismiss();}':
+						(($target != 'content') ? 
+							(($target == 'admin_container') ?  'ajaxCall("proposal", "myproposal_page", "", "admin_container");}'
+									:'Drupal.CTools.Modal.dismiss();}'):
  						'ajaxCall("project", "project_page", "", "content");}')),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);

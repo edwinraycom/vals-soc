@@ -205,7 +205,7 @@ class StatelessTimeline {
 	public function isStudentsSignupPeriod(){
 		if($this->isProgramActive()){
 			$now = $this->getNow();
-			return $this->cached_student_signup_start_date <= $now  && $this->cached_student_signup_end_date >= $now();
+			return ($this->cached_student_signup_start_date <= $now)  && ($this->cached_student_signup_end_date >= $now);
 		}
 		return false;
 	}
