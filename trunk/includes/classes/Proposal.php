@@ -2,7 +2,7 @@
 class Proposal extends AbstractEntity{
 	
 	private static $instance; 	 	 	 	 	 	 	 	 	
-	public static $fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'cv', 'solution_short', 'solution_long', 'modules', 'state',);
+	public static $fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'solution_short', 'solution_long', 'modules', 'state',);
 	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){
@@ -51,6 +51,10 @@ class Proposal extends AbstractEntity{
     	}
     	
     	return $query->execute()->rowCount();
+    }
+    
+    public function getMyProposals(){
+    	return self::getProposalsBySearchCriteria($GLOBALS['user']->uid, '', '', '', 1, 1000);
     }
     
     public function getProposalsBySearchCriteria($student='', $institute='', $organisation='', $sorting='pid',

@@ -22,7 +22,9 @@ function renderProject(project, apply_projects){
 				" });"+
 			"</script>";
 	} else {
-		content += 'zonder apply rechten';
+		if (debugging) {
+			content += 'zonder apply rechten';
+		}
 	}
 	
 	return content; 

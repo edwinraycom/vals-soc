@@ -1,4 +1,73 @@
-<?php
+<?php 
+include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after administration.php which does the same
+
+function showProposalPage(){
+	//TODO check for the role of current user
+
+	$role = getRole();
+	if (!Users::isStudent()){
+		echo t('You can only see this page as a student');
+		return;
+	}
+	//Get my groups
+	$my_proposals = Proposal::getInstance()->getMyProposals();//::getGroups(_ORGANISATION_GROUP);	
+	if (!$my_proposals){
+		echo t('You have no proposal edited yet.').'<br/>';
+		echo "<a href='"._VALS_SOC_URL. "/projects/browse'>".t('Please find yourself a project')."</a>.";
+	} else {
+		showMyProposals($my_proposals);
+	}
+}
+
+function renderProposal($proposal, $target='none'){
+	//A proposal consists of: fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 
+	//'supervisor_id', 'pid', 'cv', 'solution_short', 'solution_long', 'modules', 'state',);
+	
+	return "start of ".$proposal->proposal_id;
+}
+
+function showMyProposals($proposals){
+	//$org_id = $organisation->org_id;
+	$nr = 0;
+	$tab_id_prefix = "proposal_page";
+	$data = array();
+	$activating_tabs = array();
+	//$nr_proposals = count($proposals);
+	$current_tab = 1; //($show_last && ($show_last == $org_id)) ? ($nr_proposals + 1) : 1;
+	$current_tab_id = "$tab_id_prefix$current_tab";
+	
+	//data is like: [translate, label, action, type, id, extra GET arguments, render with rich text area, render tab to the right]
+	//$data[] = array(1, 'All', 'list', 'proposal', null, "org=$org_id&inline=".($inline? 1:0));
+// 	$activating_tabs[] = "'$tab_id_prefix$nr'";
+// 	$nr++;
+// 	if ($show_org_title){
+		//echo '<h3>'.tt('Your proposals ').'</h3>';
+// 	}
+	$current_tab_content = '';
+	foreach ($proposals as $proposal){
+		$nr++;
+		if ($nr == $current_tab){
+			//$id = $proposal->pid;
+			$current_tab_content = renderProposal($proposal, $current_tab_id);
+		}
+		$activating_tabs[] = "'$tab_id_prefix$nr'";
+		$data[] = array(0, $proposal->title, 'view', 'proposal', $proposal->proposal_id);
+		
+	}
+	
+	//$data[] = array(1, 'Add', 'add', 'proposal', 0, "target=$tab_id_prefix$nr&org=$org_id", TRUE, 'right');
+	//$activating_tabs[] = "'$tab_id_prefix$nr'";
+	//If no target is sent along, the proposal views are shown inline
+	
+	
+	echo renderTabs($nr, 'Proposal', $tab_id_prefix, 'proposal', $data, 0, TRUE, $current_tab_content,
+		$current_tab, 'proposal');?>
+	<script type="text/javascript">
+		activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>], '<?php echo $current_tab_id;?>');
+	</script>
+	<?php
+}
+
 function initBrowseProposalsLayout(){
 	$org_id=0;
 	$apply_projects = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
