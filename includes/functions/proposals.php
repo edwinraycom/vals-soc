@@ -21,9 +21,13 @@ function showProposalPage(){
 
 function renderProposal($proposal, $target='none'){
 	//A proposal consists of: fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 
-	//'supervisor_id', 'pid', 'cv', 'solution_short', 'solution_long', 'modules', 'state',);
-	
-	return "start of ".$proposal->proposal_id;
+	//'supervisor_id', 'pid', 'solution_short', 'solution_long', 'modules', 'state',);
+// 	$pid = $proposal->pid;
+// 	$x = Proposal::getProposalsPerProject($pid);
+	return print_r($proposal, 1);
+	return "<div id='personalia'><ul>
+	<li>".t('Supervisor').": ".$proposal->i_name."</i>"."";
+	//start of ".$proposal->proposal_id;
 }
 
 function showMyProposals($proposals){

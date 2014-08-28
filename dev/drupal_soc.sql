@@ -24,7 +24,7 @@ CHANGE `modules` `modules` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL 
 
 -- 25-6-14
 ALTER TABLE `soc_projects` CHANGE `url` `url` VARCHAR( 1024 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '''''',
-CHANGE `mentor` `mentor` MEDIUMINT( 9 ) NOT NULL DEFAULT '0',
+CHANGE `mentor` `mentor_id` MEDIUMINT( 9 ) NOT NULL DEFAULT '0',
 CHANGE `proposal_id` `proposal_id` MEDIUMINT( 9 ) NOT NULL DEFAULT '0',
 CHANGE `tags` `tags` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT ''''''
 */
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS soc_projects (
   url varchar(1024),
   state varchar(128) DEFAULT NULL COMMENT 'The state of the project',
   org_id int(11) unsigned NOT NULL,
-  mentor mediumint(9),
+  mentor_id mediumint(9),
   proposal_id mediumint(9),
   selected tinyint(4) DEFAULT '0' COMMENT 'Whether the project is chosen by a student',
   tags varchar(255),

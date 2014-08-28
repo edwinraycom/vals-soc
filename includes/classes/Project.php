@@ -3,7 +3,7 @@ class Project extends AbstractEntity{
 	
 	private static $instance;
 	public static $fields = array('pid', 'owner_id', 'title', 'description', 'url', 'state', 
-		'org_id', 'mentor', 'proposal_id', 'selected', 'tags');
+		'org_id', 'mentor_id', 'proposal_id', 'selected', 'tags');
 	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){
@@ -30,7 +30,7 @@ class Project extends AbstractEntity{
     	$query = db_select('soc_projects', 'p')->fields('p', self::$fields)->condition('pid', $id);
     	if ($details){
     		$query->leftjoin('soc_names', 'owner', 'p.owner_id = %alias.names_uid');
-    		$query->leftjoin('soc_names', 'mentor', 'p.mentor = %alias.names_uid');
+    		$query->leftjoin('soc_names', 'mentor', 'p.mentor_id = %alias.names_uid');
     		$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
 
     		$query->fields('owner', array('name'));
@@ -184,6 +184,10 @@ class Project extends AbstractEntity{
 		try {
 			$uid = $user->uid;
 			$props['owner_id'] = $uid;
+			//TODO: for now we assume the mentor is the same as creating the project. As long as we have not built
+			//funcitonality to connect mentors to projects, this is a valid assumption
+			$props['mentor_id'] = $uid;
+			$props['state'] = 'pending';
 			$result = FALSE;
 			$query = db_insert(tableName('project'))->fields($props);
 			$id = $query->execute();

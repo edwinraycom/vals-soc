@@ -1,4 +1,7 @@
 <?php
+include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
+
 class Proposal extends AbstractEntity{
 	
 	private static $instance; 	 	 	 	 	 	 	 	 	
@@ -21,11 +24,13 @@ class Proposal extends AbstractEntity{
     	if ($details){
     		$query->leftjoin('users', 'u1', 'p.owner_id = %alias.uid');
     		$query->leftjoin('users', 'supervisor_user', 'p.supervisor_id = %alias.uid');
+    		
     		$query->leftjoin('soc_names', 'student', 'p.owner_id = %alias.names_uid');
     		$query->leftjoin('soc_names', 'supervisor', 'p.supervisor_id = %alias.names_uid');
     		$query->leftjoin('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
     		$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
     		$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid');
+    		$query->leftjoin('users', 'mentor_user', 'pr.mentor_id = %alias.uid');
     		$query->fields('u1', array('mail', 'name'));
     		$query->fields('supervisor_user', array('mail', 'name'));
     		$query->fields('student', array('name'));
@@ -36,6 +41,30 @@ class Proposal extends AbstractEntity{
     	}
     	$proposal = $query->execute()->fetch(PDO::FETCH_OBJ);
     	return $proposal;
+    }
+    
+    public static function getProposalsPerProject($project_id){
+    	$query = db_select('soc_proposals', 'p')->fields('p');
+    	$query->condition('p.pid', $project_id);
+    	
+    	$query->leftjoin('soc_names', 'student', 'p.owner_id = %alias.names_uid');
+    	$query->leftjoin('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
+    	$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
+    	$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid');
+    	$query->fields('student', array('name'));
+    	$query->fields('i', array('name'));
+    	$query->fields('o', array('name'));
+    	$query->fields('pr', array('title'));
+    	
+    	$query->orderBy('pid', 'ASC');
+    
+    	return $query->execute()->fetchAll();
+    }
+    
+    public static function getDefaultName($proposal_id){
+    	$proposal = self::getProposalById($proposal_id);
+    	$pid = $proposal->pid;
+    	$title = $proposal->pr_title;
     }
     
     public function getProposalsRowCountBySearchCriteria($student='', $institute='', $organisation=''){
