@@ -145,7 +145,7 @@ switch ($_GET['action']){
 			//$container =  $is_modal ? 'modal-content' : 'content';
 			//$before = 'toc' ;
 			//$args = array('id' => $proposal_id, 'before'=> $before, 'target'=> $container, 'replace_target'=> true);
-			$proposal = Proposal::getInstance()->getProposalById($proposal_id);
+			$proposal = Proposal::getInstance()->getProposalById($proposal_id, TRUE);
 			if (!$proposal){
 				echo errorDiv(t('This proposal does not seem to exist!'));
 				return;
