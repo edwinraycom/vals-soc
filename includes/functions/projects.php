@@ -1,7 +1,7 @@
 <?php
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after administration.php which does the same
 
-function showProjectPage($action='', $show_last=FALSE){
+function showProjectPage($show_last=FALSE){
 	//TODO check for the role of current user
 
 	$role = getRole();
@@ -211,7 +211,7 @@ function renderProject($project='', $target='', $inline=FALSE){
 	$content ="<div class=\"totheright\">";
 	if (_STUDENT_TYPE == getRole()){
 		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
-		")\" value='Submit proposal for this project'/>";
+		")\" value='.t( 'Submit proposal for this project').'/>";
 	}
 	if (Groups::isAssociate('project', $id) && !$inline){
 		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this project?')."\")){ajaxCall(\"project\", \"delete\", {type: \"$type\", id: $id, target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"project\"]);}'";

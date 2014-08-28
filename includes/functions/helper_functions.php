@@ -52,6 +52,67 @@ function getRequestVar($field, $default='', $request='all'){
 	}
 }
 
+function pretendUser(){
+	if (session_status() == PHP_SESSION_NONE) {
+	    session_start();
+	}
+	$user_id = getRequestVar('pretend', altSubValue($_SESSION, 'pretend_user', 0));
+// echo "nu is er $user_id en ".$_SESSION['pretend_user'];
+	if ($user_id){
+		if (!((isset($_SESSION['pretend_user']) &&
+			($_SESSION['pretend_user'] && ($_SESSION['pretend_user'] == $user_id))) || 
+			verifyUser($user_id))){
+			return array(0,0);
+		}
+		$same_pretend = ($_SESSION['pretend_user'] == $user_id);
+		$_SESSION['pretend_user'] = $user_id;
+		$original_user = $GLOBALS['user'];
+		$old_state = drupal_save_session();
+		//drupal_save_session(FALSE);
+		if (isset($_SESSION['pretend_user_obj']) && $_SESSION['pretend_user_obj'] &&
+				$same_pretend){
+			$GLOBALS['user'] = $_SESSION['pretend_user_obj'];
+		} else {
+			$GLOBALS['user'] = user_load($user_id);
+			$GLOBALS['user']->roles = repairRoles($GLOBALS['user']->roles);
+			$_SESSION['pretend_user_obj'] = $GLOBALS['user'];
+		}
+		return array($original_user, $old_state);
+	} else {
+		$_SESSION['pretend_user_obj'] = $_SESSION['pretend_user'] = 0;
+		return array(0,0);
+	}
+}
+
+function repairRoles($user_load_roles){
+	if ($user_load_roles){
+		$rid = getUserRoleId($user_load_roles);
+		$current_role = getUserRoleName('', '', $rid);
+		return ($rid != _USER_ROLE) ?
+			array(_USER_ROLE => _USER_TYPE, $rid => $current_role) :
+			array(_USER_ROLE => _USER_TYPE);
+		 
+	} else {
+		return array(_ANONYMOUS_ROLE => _ANONYMOUS_TYPE);
+	}
+}
+
+function restoreUser($u, $o_s){
+	if ($u){
+		$GLOABALS['user'] = $u;
+		drupal_save_session($o_s);
+	}
+}
+
+function verifyUser($user_id){
+	if ($user_id){
+		return Users::getParticipant($user_id);
+	} else {
+		$_SESSION['pretend_user'] = false;
+		return false;
+	}
+}
+
 //This function was necessary to remove the syntax error in vals_soc_mail_handler
 /*
  * Gets a system variable with variable_get which is expected to be an array with

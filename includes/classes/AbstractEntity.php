@@ -24,8 +24,6 @@ abstract class AbstractEntity {
 			case _INSTADMIN_TYPE:
 			case _SUPERVISOR_TYPE:
 			case _STUDENT_TYPE: $group = _INSTITUTE_GROUP;break;
-// 			case _ORGADMIN_TYPE:
-// 			case _MENTOR_TYPE: $group = _ORGANISATION_GROUP;break;
 			default: $group = '';
 		}
 		return $group;

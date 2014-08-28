@@ -186,38 +186,37 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 	}
 	
 
-	$code_entered = $form_state['values']['account_key'];
+	$code_entered = isset($form_state['values']['account_key']) ? $form_state['values']['account_key'] : 0;
 
 	//Check the student belonging to a valid group
 	if ($current_role == _STUDENT_TYPE){
-		$super = t('supervisor');
-		if (! isset($form_state['values']['institute']) || $form_state['values']['institute']  == 0){
-			form_set_error('institute', t('You should select your university or institute.'));
-			return;
-		}
-		//If some organisation or institute is chosen, the key should be present
-		if ((! (isset($form_state['values']['account_key']) && $form_state['values']['account_key']))){
-			form_set_error('account_key', tt('There is no key entered. Ask your %1$s'), $super);
-			return;
-		}
-		$db_and = db_and();
-		$db_and->condition('code', $code_entered);
-		$db_and->condition('type', _STUDENT_GROUP);//Since we do not want a long list of groups during registration
-		//we use the institute instead and so we select not on type student, but on group
-		$db_and->condition('entity_id', $form_state['values']['institute']);
-		$valid_groups_cnt = db_select('soc_codes')->fields('soc_codes')->condition($db_and)->execute()->rowCount();
-		if ($valid_groups_cnt == 0){
-			form_set_error('account_key', t('This is no valid key you entered. Ask your supervisor.'));
-		}
-
+// 		$super = t('supervisor');
+// 		if (! isset($form_state['values']['institute']) || $form_state['values']['institute']  == 0){
+// 			form_set_error('institute', t('You should select your university or institute.'));
+// 			return;
+// 		}
+// 		//If some organisation or institute is chosen, the key should be present
+// 		if ((! (isset($form_state['values']['account_key']) && $form_state['values']['account_key']))){
+// 			form_set_error('account_key', tt('There is no key entered. Ask your %1$s'), $super);
+// 			return;
+// 		}
+// 		$db_and = db_and();
+// 		$db_and->condition('code', $code_entered);
+// 		$db_and->condition('type', _STUDENT_GROUP);//Since we do not want a long list of groups during registration
+// 		//we use the institute instead and so we select not on type student, but on group
+// 		$db_and->condition('entity_id', $form_state['values']['institute']);
+// 		$valid_groups_cnt = db_select('soc_codes')->fields('soc_codes')->condition($db_and)->execute()->rowCount();
+// 		if ($valid_groups_cnt == 0){
+// 			form_set_error('account_key', t('This is no valid key you entered. Ask your supervisor.'));
+// 		}
 		return;
 	} else {
 		$org = 0;
-		if (in_array($current_role, array(_MENTOR_TYPE, _ORGADMIN_TYPE) ) && $form_state['values']['organisation']){
+		if (in_array($current_role, array(_MENTOR_TYPE, _ORGADMIN_TYPE) ) && isset($form_state['values']['organisation'])){
 			$org = $form_state['values']['organisation'];
 			$super = t('Organisation administrator');
 		}
-		if (in_array($current_role, array(_SUPERVISOR_TYPE, _INSTADMIN_TYPE)) && $form_state['values']['institute']){
+		if (in_array($current_role, array(_SUPERVISOR_TYPE, _INSTADMIN_TYPE)) && isset($form_state['values']['institute'])){
 			$org = $form_state['values']['institute'];
 			$super = t('Institution administrator');
 		}
@@ -257,8 +256,8 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
     global $user;
     //First get the current user
     $uid = $user->uid;
+    print_r($user);
     $current_role = getRole();    
-    
     if ($current_role == _ADMINISTRATOR_TYPE){
     	$is_admin = TRUE;
         $rid = getUserRoleId($form_state['values']['roles']);
@@ -281,6 +280,7 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
 				
 	    	$updated1 = db_query($del_query);
 	    	$updated2 = db_query($ins_query);
+	    	drupal_set_message(t('We have updated your full name.'), 'status');
 		}  catch (Exception $ex) {
 			$txn->rollback();
 			drupal_set_message(t('We could not update the profile.'). (_DEBUG?  $ex->getMessage().': '.
@@ -290,7 +290,8 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
 	/*   
 	 *  We assume that the admins create their organisation/institute and all the others register with a 
      * certain organisation. There seems no reason to change that later. If an organisation has two admins 
-	 * they can add themselves to an organisation/institute */
+	 * they can add themselves to an organisation/institute.
+	 */
      if ((isset($form_state['values']['institute']) && $form_state['values']['institute']) 
      		&& (($type == _INSTADMIN_TYPE) || ($is_admin && (($type == _STUDENT_TYPE) || ($type == _SUPERVISOR_TYPE))))
     		){

@@ -180,7 +180,7 @@ function getRoles($uid=''){
     	return $roles;
     } else {
     	 if (isset($user)){
-	        return $user->roles;
+    	 	return $user->roles;
 	    } else {
 	        return array();
 	    }
@@ -217,9 +217,9 @@ function getUserRoleId($roles='', $uid=''){
     return _USER_ROLE;
 }
 
-function getUserRoleName($roles=array(), $uid=''){
-	$role = getUserRoleId($roles, $uid);
+function getUserRoleName($roles=array(), $uid='', $role_id=''){
+	$rid = $role_id ?: getUserRoleId($roles, $uid);
 	$role_name = db_query("select r.name from role as r ".
-    		"where r.rid = $role")->fetchField();//->fetchAll();
+    		"where r.rid = $rid")->fetchField();//->fetchAll();
     return $role_name;
 }

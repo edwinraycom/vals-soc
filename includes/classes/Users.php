@@ -133,6 +133,14 @@ class Users extends AbstractEntity{
 		return $students;
 	}
 	
+	public static function getAllUsers(){
+		$query = "SELECT DISTINCT u.*,n.name as fullname, r.name as type from users as u ".
+				"left join users_roles as ur on u.uid = ur.uid ".
+				"left join role as r  on ur.rid = r.rid ".
+				"left join soc_names as n on u.uid=n.names_uid ";
+		return db_query($query);
+	}
+	
 	/*
 	 * Get Users of type member_type out of the organisation structure of type group_type, based on:
 	 * a) group_id == all => just get all students, tutors etc.

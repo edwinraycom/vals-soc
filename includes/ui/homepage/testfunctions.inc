@@ -28,6 +28,36 @@ function getTimelineTester(){
 		</div>
 ';
 }
+
+function getUserPretendTester(){
+	$users = Users::getAllUsers()->fetchAll();
+	$options = array(0 => 'No pretending');
+	foreach($users as $user){
+		if ($user->uid){
+			$options[$user->uid] = 'Name:'.$user->fullname. ", type:".$user->type;
+		}
+	}
+	
+	echo "
+	<div>
+	<h1 >Choose a user</h1>
+	<form action='' method='post'>
+	<select id='pretend' name='pretend'>";
+	foreach ($options as $uid => $name){
+		echo "<option value='$uid'>$name</option>";
+	}
+	
+	echo "
+	</select>
+	<input type='submit' value='Pretend'>
+	</form>
+	</div>";
+}
+
 if (_DEBUG){
 	getTimelineTester();
+}
+
+if (_DEBUG){
+	getUserPretendTester();
 }

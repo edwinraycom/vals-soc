@@ -1,5 +1,5 @@
 <?php
-drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/css/dashboard/dashboard.css');
+drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/css/dashboard/css/dashboard.css');
 function initInstDashboardLayout(){
 	return getInstAdminLayout(Timeline::getInstadminTimelineVars());
 }	

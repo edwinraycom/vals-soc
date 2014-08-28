@@ -78,23 +78,6 @@ switch ($_GET['action']){
 			jsonBadResult( t("No Project identifier submitted!"));
 		}
 	break;
-	//TODO It was like this (copy pasted from administration_actions; remove in future)
-// 	case 'view':
-// 		$type = altSubValue($_POST, 'type');
-// 		$id = altSubValue($_POST, 'id');
-// 		$target = altSubValue($_POST, 'target', '');
-// 		if (! ($id && $type && $target)){
-// 			die(t('There are missing arguments. Please inform the administrator of this mistake.'));
-// 		}
-// 		$is_project = ($type == 'project');
-// 		$organisation = $is_project ? Project::getProjectById($id, TRUE) : Groups::getGroup($type, $id);
-// 		if (! $organisation){
-// 			echo tt('The %1$s cannot be found', t($type));
-// 		} else {
-// 			echo "<div id='msg_$target'></div>";
-// 			echo $is_project ? renderProject($organisation, $target) : renderOrganisation($type, $organisation, null, $target);
-// 		}
-// 	break;
 	case 'view':
 		$type = 'project';
 		$id = altSubValue($_POST, 'id');
@@ -163,9 +146,8 @@ switch ($_GET['action']){
 		}
 	break;
 	case 'show':
-		$show_action = 'NOTIMPORTANTNOW';
 		$show_last = altSubValue($_POST, 'new_tab', false);
-		showProjectPage($show_action, $show_last);
+		showProjectPage($show_last);
 	break;
 	case 'edit':
 		$type = altSubValue($_POST, 'type', '');

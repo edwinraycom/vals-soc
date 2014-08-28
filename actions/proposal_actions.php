@@ -2,6 +2,7 @@
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
 
 module_load_include('php', 'vals_soc', 'includes/classes/Proposal');
+module_load_include('php', 'vals_soc', 'includes/functions/proposals');
 
 $apply_proposals = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 $browse_proposals = vals_soc_access_check('dashboard/proposals/browse') ? 1 : 0;
@@ -135,6 +136,28 @@ switch ($_GET['action']){
 			jsonBadResult(t('No proposal identifier submitted!'), 'error', $args);
 		}
 	break;
-	
+	case 'view':
+		$proposal_id = getRequestVar('id', 'post', 0);
+		$target = getRequestVar('target', 'post', 'admin_content');
+		if($proposal_id){
+			//$is_modal = ($target !== 'content');
+			//this is the case where the result is bad and we show an error msg
+			//$container =  $is_modal ? 'modal-content' : 'content';
+			//$before = 'toc' ;
+			//$args = array('id' => $proposal_id, 'before'=> $before, 'target'=> $container, 'replace_target'=> true);
+			$proposal = Proposal::getInstance()->getProposalById($proposal_id);
+			if (!$proposal){
+				echo errorDiv(t('This proposal does not seem to exist!'));
+				return;
+			}
+			if (Users::isStudent() && ! Groups::isOwner('proposal', $proposal_id)){
+				echo errorDiv(t('You can only view your own proposals!'));
+			} else {
+				echo renderProposal($proposal, $target);
+			}
+		} else {
+			echo errorDiv(t('YNo proposal identifier submitted!'));
+		}
+	break;
 	default: echo "No such action: ".$_GET['action'];
 }
