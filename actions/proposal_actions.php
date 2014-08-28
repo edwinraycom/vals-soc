@@ -1,7 +1,8 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
-
-module_load_include('php', 'vals_soc', 'includes/classes/Proposal');
+include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 module_load_include('php', 'vals_soc', 'includes/functions/proposals');
 
 $apply_proposals = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
@@ -10,9 +11,10 @@ $is_student = (Users::isOfType(_STUDENT_TYPE));
 
 switch ($_GET['action']){
 	case 'proposal_page':
-		//module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
-		module_load_include('php', 'vals_soc', 'includes/functions/proposals');
 		initBrowseProposalsLayout();
+	break;
+	case 'myproposal_page':
+		echo showMyProposalPage();
 	break;
 	case 'list_proposals':
 		try{
@@ -58,8 +60,6 @@ switch ($_GET['action']){
 			if (! ($browse_proposals || Groups::isOwner('proposal', $proposal_id) )){
 				jsonBadResult(t('You can only see your own proposals!'));
 			} else {
-				include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
-				include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
 				$proposal = Proposal::getInstance()->getProposalById($proposal_id, true);
 				jsonGoodResult($proposal);
 			}
@@ -67,22 +67,29 @@ switch ($_GET['action']){
 			jsonBadResult(t('No proposal identifier submitted!'));
 		}
 	break;
-	case 'proposal_edit':
-		$proposal_id = getRequestVar('proposal_id', 'post', null);
+	case 'edit':
+		$proposal_id = getRequestVar('proposal_id', null, 'post');
+		$result_format = getRequestVar('format', 'json', 'post');
 		if($proposal_id){
 			if (! ($browse_proposals || Groups::isOwner('proposal', $proposal_id) )){
 				jsonBadResult(t('You can only see your own proposals!'));
 			} else {
 				$target = altSubValue($_POST, 'target');
-				include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
-				include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
 				$proposal = Proposal::getInstance()->getProposalById($proposal_id, true);
 				
 				$form = drupal_get_form('vals_soc_proposal_form', $proposal, $target);
 				if ($form){
-					jsonGoodResult(renderForm($form, $target, true), $proposal, $target);
+					if ($result_format == 'json') {
+						jsonGoodResult(renderForm($form, $target, true));//, $proposal, $target
+					} else {
+						renderForm($form, $target);
+					}
 				} else {
-					jsonBadResult();
+					if ($result_format == 'json') {
+						jsonBadResult();
+					} else {
+						echo errorDiv(getDrupalMessages('error', true));
+					}
 				}
 				/* Something like this
 				 * $form = drupal_get_form("vals_soc_${type}_form", null, $target);
@@ -105,7 +112,7 @@ switch ($_GET['action']){
 			jsonBadResult(t('No proposal identifier submitted!'));
 		}
 	break;
-	case 'proposal_delete':
+	case 'delete':
 		$proposal_id = getRequestVar('proposal_id', 'post', null);
 		$target = getRequestVar('target', 'post', 'content');
 		if($proposal_id){

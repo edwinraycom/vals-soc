@@ -1,7 +1,7 @@
 <?php 
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after administration.php which does the same
 
-function showProposalPage(){
+function showMyProposalPage(){
 	//TODO check for the role of current user
 
 	$role = getRole();
@@ -19,15 +19,67 @@ function showProposalPage(){
 	}
 }
 
+function renderDefaultField($field, $obj, $alternative_field=''){
+	static $unknown = null;
+	if (! $unknown) {
+		$unknown = t('The %1$s is not known yet');	
+	}
+	if (isset($obj->$field) && $obj->$field){
+		return $obj->$field;
+	} elseif ($alternative_field && isset($obj->$alternative_field) && $obj->$alternative_field){
+		return $obj->$alternative_field;
+	} else {
+		return sprintf($unknown, t(str_replace('_', ' ', $field)));
+	}
+}
+
 function renderProposal($proposal, $target='none'){
 	//A proposal consists of: fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 
 	//'supervisor_id', 'pid', 'solution_short', 'solution_long', 'modules', 'state',);
 // 	$pid = $proposal->pid;
 // 	$x = Proposal::getProposalsPerProject($pid);
-	return print_r($proposal, 1);
-	return "<div id='personalia'><ul>
-	<li>".t('Supervisor').": ".$proposal->i_name."</i>"."";
-	//start of ".$proposal->proposal_id;
+	//return print_r($proposal, 1);
+	$propid = $proposal->proposal_id;
+	$buttons = '';
+	if (Users::isStudent() && Groups::isOwner('proposal', $propid)){
+		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this proposal?')."\")){ajaxCall(\"proposal\", \"delete\", ".
+			"{type: \proposal\", proposal_id: $propid, target: \"$target\"}, \"refreshTabs\", \"json\", [\"proposal\", \"$target\", \"proposal\"]);}'";
+		$edit_action = "onclick='ajaxCall(\"proposal\", \"edit\", {type: \"proposal\", proposal_id: $propid, target: ".
+			"\"$target\", format:\"html\"}, \"formResult\", \"html\", [\"$target\", \"proposal\"]);'";
+		$buttons .= "<input type='button' value='".t('edit')."' $edit_action/>";
+		$buttons .= "<input type='button' value='".t('delete')."' $delete_action/>";
+	}
+	return //print_r($proposal, 1).
+	"$buttons".
+	"<h1>".($proposal->title ? $proposal->title : Proposal::getDefaultName('', $proposal))."</h1>
+	
+	<div id='personalia'>
+		<ul>
+			<li>".t('Supervisor').": ".renderDefaultField('supervisor_name', $proposal, 'supervisor_user_name')."</i>".
+			"<li>".t('Mentor').": ".renderDefaultField('mentor_name', $proposal, 'mentor_user_name')."</i>".
+			"<li>".t('Student').": ".renderDefaultField('student_name', $proposal, 'name')."</i>".
+			"<li>".t('Institute').": ".renderDefaultField('i_name', $proposal)."</i>".
+			"<li>".t('Organisation').": ".renderDefaultField('o_name', $proposal)."</i>".
+		"</ul>
+	</div>".
+	"<div id='project'>
+		".t('Project').": ".$proposal->pr_title."
+	</div>".
+	"<div id='proposal_text'>
+		<h2>".t('Solution Summary')."</h2>
+		".renderDefaultField('solution_short', $proposal)."<br/>".
+		//<a href='javascript:void(0)' onclick='makeVisible(\"solution_$propid\");'>view complete proposal</a>
+		"<input type='button' value='View more' onclick='makeVisible(\"solution_$propid\");'/>
+		
+			<div id='solution_$propid' class='invisible'>
+			".renderDefaultField('solution_long', $proposal)."
+			</div>
+	</div>".
+	"<div id='modules'>
+		<h2>".t('Probable reuse of modules/software etc.')."</h2>
+		".renderDefaultField('modules', $proposal)."
+	</div>"
+	;
 }
 
 function showMyProposals($proposals){
@@ -52,7 +104,8 @@ function showMyProposals($proposals){
 		$nr++;
 		if ($nr == $current_tab){
 			//$id = $proposal->pid;
-			$current_tab_content = renderProposal($proposal, $current_tab_id);
+			$current_tab_content = renderProposal(Proposal::getInstance()->getProposalById(
+					$proposal->proposal_id, TRUE), $current_tab_id);
 		}
 		$activating_tabs[] = "'$tab_id_prefix$nr'";
 		$data[] = array(0, $proposal->title, 'view', 'proposal', $proposal->proposal_id);
