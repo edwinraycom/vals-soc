@@ -111,7 +111,7 @@ class Project extends AbstractEntity{
       				db_query(
       					"SELECT o.org_id from $table as o ".
     					"LEFT JOIN soc_User_membership as um on o.org_id = um.group_id ".
-    					"WHERE um.uid = $user_id AND um.type = ':organisation'",
+    					"WHERE um.uid = $user_id AND um.type = :organisation",
       						array(':organisation' =>_ORGANISATION_GROUP))->fetchCol();
     			if ($my_orgs){
 	    			$my_projects = 
@@ -147,7 +147,7 @@ class Project extends AbstractEntity{
 			$my_orgs = $organisations ?: db_query(
 					"SELECT o.org_id from $table as o ".
 					"LEFT JOIN soc_User_membership as um on o.org_id = um.group_id ".
-					"WHERE um.uid = $user_id AND um.type = ':organisation'",
+					"WHERE um.uid = $user_id AND um.type = :organisation",
       					array(':organisation' =>_ORGANISATION_GROUP))->fetchCol();
 			if (! $my_orgs){
 				drupal_set_message(t('You have no organisation yet'), 'error');

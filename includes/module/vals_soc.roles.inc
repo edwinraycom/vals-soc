@@ -29,7 +29,7 @@ function create_permissions(){
 // 			'vals browse projects' => TRUE,
 // 			//'vals admin projects' => TRUE,
 // 	);
-// 	$perms[' authenticated user'] = array(
+// 	$perms[_USER_TYPE] = array(
 // 			'vals admin register' => TRUE,
 // 			'vals browse projects' => TRUE,
 // 			'vals admin projects' => TRUE,

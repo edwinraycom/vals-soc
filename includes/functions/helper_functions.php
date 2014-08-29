@@ -14,9 +14,47 @@ function tableName($type){
 }
 
 function debugDbQuery($query){
-	die($query->__toString());
+	echo ($query->queryString);}
+
+function debugDbSelect($query){
+	echo(toSql($query));
 }
 
+function toSql(SelectQuery $obj) {
+
+	$_string = $obj->__toString();
+	$_conditions = $obj->conditions();
+	$_tables = $obj->getTables();
+	$_fields = $obj->getFields();
+
+	foreach($_tables as $k => $t) {
+		if(!empty($t['alias'])) {
+			$_string = str_replace('{' . $t['table'] . '}', $t['table'] . ' as', $_string);
+		}
+		else {
+			$_string = str_replace('{' . $t['table'] . '}', $t['table'], $_string);
+		}
+	}
+
+	foreach($_conditions as $k => $c) {
+		if(is_int($c['value'])) {
+			$_string = str_replace(':db_condition_placeholder_' . $k, $c['value'], $_string);
+		}
+		else {
+			$_string = str_replace(':db_condition_placeholder_' . $k, "'" . $c['value'] . "'", $_string);
+		}
+	}
+
+	//echo('<pre>');
+	//var_dump($_fields);
+	//var_dump($_conditions);
+	//var_dump($_tables);
+	//var_dump($_string);
+	//echo('</pre>');
+	//die();
+
+	return $_string;
+}
 
 function startException($error_msg){
 	throw new Exception($error_msg);
