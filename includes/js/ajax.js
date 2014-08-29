@@ -49,19 +49,21 @@ function isArray(mixed_var){
 }
 
 function Obj(name_or_object, return_dom){
+	if (typeof return_dom == 'undefined') return_dom = false;
+	
 	if (isObject(name_or_object)){
 		if (return_dom){
 			return isJquery(name_or_object) ? name_or_object[0] : name_or_object;
 		} else {
 			return name_or_object;
 		}
-	} else
-		var obj = $jq('#'+name_or_object);
-	if (obj.length == 0){
-		return false;
 	} else {
-		if (typeof return_dom == 'undefined') return_dom = false;
-		return return_dom ? obj[0] : obj;
+		var obj = $jq('#'+name_or_object);
+		if (obj.length == 0){
+			return false;
+		} else {
+			return return_dom ? obj[0] : obj;
+		}
 	}
 }
 
@@ -75,14 +77,22 @@ function createDiv(div_name, container){
 		return div;
 	} else{
 		var new_obj = document.createElement('div');
-		new_obj.setAttribute("id", div_name);
+		if (new_obj) new_obj.setAttribute("id", div_name); else console.log('kon het divje niet aanmaken');
 		var cont_obj = Obj(container, true);
 		if (cont_obj) {
 			if (arguments.length > 2 && arguments[2] !== ''){
 				//Insert before an element inside container
 				//we use the normal objects, so we ask Obj to return a dom element
+				//NOTE: if this insertBefore gives an error it is likely that the before is not a direct descendent
+				//if the container object. It might be that a nice wrapper has been inserted around the before for
+				//styling etc. So div A > div B > before with createDiv(new, A, before) fails (should be 
+				//createDiv(new, B, before))
 				var first_obj = Obj(arguments[2], true);
-				cont_obj.insertBefore(new_obj, first_obj);
+				if (first_obj){
+					cont_obj.insertBefore(new_obj, first_obj);
+				} else {
+					cont_obj.insertBefore(new_obj, cont_obj.childNodes[0]);
+				}
 			} else {
 				cont_obj.appendChild(new_obj);
 			}
@@ -111,6 +121,7 @@ function ajaxAppend(msg, container, err, before){
 		}
 		t = createDiv(container+err, cont_obj[0], before);
 	} else {
+		console.log('hierlangs met '+ container+err + ' en '+  container + ' en '+ before);
 		t = createDiv(container+err, container, before);
 	}
 

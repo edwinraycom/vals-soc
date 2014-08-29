@@ -6,6 +6,7 @@ include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 
 switch ($_GET['action']){
+	//creates a first proposal for a project
 	case 'proposal':
 		if (!vals_soc_access_check('dashboard/projects/apply')) {
 			echo errorDiv(t('You cannot apply for projects'));
@@ -27,19 +28,23 @@ switch ($_GET['action']){
 			$owner_id = $GLOBALS['user']->uid;
 		}
 		$project = Project::getProjectById($project_id);
-		echo "<h2>".t('Solution proposal for '.$project['title'])."</h2>";
 		$student_details = Users::getStudentDetails($owner_id);
+		
+		
 		if ($student_details){
 			$proposal = $proposal_id ? Proposal::getInstance()->getProposalById($proposal_id): null;
+			echo "<div id='edit_proposal' class='edit_proposal' style='border-style: solid; border-color:	rgb(153,​ 217,​ 234);padding:10px;'>
+					<h2>".tt('Create proposal for :"%1$s"',$project['title'])."</h2>";
 			echo '<h3>'.t('Student details').'</h3>';
-			echo "<div id='student_details'>".
-			sprintf('%1$s: %2$s<br/>%3$s: %4$s<br/>%5$s: %6$s<br/>', t('Name'), $student_details->student_name,
-					t('Email'), $student_details->student_mail, t('Institute'), $student_details->institute_name).
-			"<br/>Group: ".$student_details->group_name.
-			"<br/>First Supervisor: ".$student_details->supervisor_name.
-			"</div>";
+			echo "<div id='student_details' style='color:blue'>".
+			sprintf('%1$s: %2$s<br/>%3$s: %4$s<br/>%5$s: %6$s<br/>%7$s: %8$s', t('Name'), $student_details->student_name,
+					t('Email'), $student_details->student_mail, t('Institute'), $student_details->institute_name,
+					t('First supervisor'), $student_details->supervisor_name)
+			//"<br/>Group: ".$student_details->group_name.
+			."</div><hr>";
 			$form = drupal_get_form('vals_soc_proposal_form', $proposal, $target, $project_id);
 			renderForm($form, $target);
+			echo "</div>";
 		} else {
 			echo errorDiv(t('Not all details could be retrieved for you. You might not have been put in a student group. Contact your lecturer please.'));
 		}

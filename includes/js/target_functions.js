@@ -186,7 +186,7 @@ function handleSaveResult(result, args){
 	}
 	if (result){
 		if (result.result == "error") {
-			ajaxAppend(result.error, target, 'error', 'vals-soc-proposal-form');
+			ajaxAppend(result.error, target, 'error', 'edit_proposal');
 		} else {
 			if (result.result == "OK") {
 				getProposalDetail(result.id, target, result.msg);

@@ -96,13 +96,18 @@ function getProposalDetail(proposal_id, target, msg){
 				} else {
 					var content = renderProposalTabs(data2.result, tabs, 'content');
 					msg_container = 'content';
-					Obj('content').html(content);
+					if (Obj('content').html(content)) {
+						console.log('doing the tabs first?');
+						activatetabs('tab_', content_tabs);
+					};
 					tabs_present = true;
 				}
 			break ;
 			default: tabs_present = populateModal(data, renderProposalTabs, tabs);
 		}
 		if (tabs_present){
+			//TODO: these activate tabs should also been done for the modal case
+			console.log('doing the tabs second');
 			activatetabs('tab_', content_tabs);
 		}
 		if (typeof msg != 'undefined' && msg){
