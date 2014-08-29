@@ -150,7 +150,7 @@ class Proposal extends AbstractEntity{
     		$id = db_insert(tableName('proposal'))->fields($props)->execute();
     		if ($id){
     			//TODO: notify mentor???
-    			drupal_set_message('You have saved your proposal. Later you can edit it.');
+    			drupal_set_message('You have saved your proposal. Later you can continue editing it.');
     			return $id;
     		} else {
     			drupal_set_message(tt('We could not add your %1$s.', $type), 'error');
