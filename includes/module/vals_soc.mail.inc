@@ -51,6 +51,8 @@ function vals_soc_mail_handler($key, &$message, $params) {
 	}
 	if ($html_format){
 		//change header format for html formatted emails (in effect all the vals_soc emails now)
+		//So the headers below are all the same as set by the Drupal mail system except for the 
+		//content-type which is html.
 		$message['headers'] = array(
 			'MIME-Version' => '1.0',
 			'Content-Type' => 'text/html; charset=iso-8859-1; format=flowed',
@@ -62,26 +64,11 @@ function vals_soc_mail_handler($key, &$message, $params) {
 
 /**
  * Add params to a messages header
- * TODO - not quite working yet!
- * @param unknown $message
+ * @param $message the parameters for the message: array(headers, body, subject, to, ....)
  */
 function vals_soc_mail_alter_handler(&$message) {
 	//We now directly apply these header changes for the vals_soc mails only in the function
 	//vals_soc_mail_handler.
-	
-// 	$headers = array(
-// 			'MIME-Version' => '1.0',
-// 			'Content-Type' => 'text/html; charset=iso-8859-1; format=flowed',
-// 			'Content-Transfer-Encoding' => '8Bit',
-// 			'X-Mailer' => 'Drupal',
-// 		);
-// 	$headers2 = $message['headers'];
-// 	if (strpos($headers2['Content-Type'], 'plain')){
-// 		$headers['Content-Type'] = str_replace('text/html', 'text/plain', $headers['Content-Type']);
-// 	}
-// 	foreach ($headers as $key => $value) {
-// 		$message['headers'][$key] = $value;
-// 	}
 }
 
 /**

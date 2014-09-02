@@ -53,7 +53,7 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
 	}
 	if (!$org && !$becomes_some_admin){
 		//Make distinction for choosing error message
-		if ($requested_user_type == ' mentor'){
+		if ($requested_user_type == 'mentor'){
 			form_set_error(_ORGANISATION_GROUP, t('You should select your organisation.'));
 		} else {
 			form_set_error('institute', t('You should select your university or institute.'));
@@ -256,7 +256,6 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
     global $user;
     //First get the current user
     $uid = $user->uid;
-    print_r($user);
     $current_role = getRole();    
     if ($current_role == _ADMINISTRATOR_TYPE){
     	$is_admin = TRUE;
@@ -280,7 +279,7 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
 				
 	    	$updated1 = db_query($del_query);
 	    	$updated2 = db_query($ins_query);
-	    	drupal_set_message(t('We have updated your full name.'), 'status');
+	    	//drupal_set_message(t('We have updated your full name.'), 'status');
 		}  catch (Exception $ex) {
 			$txn->rollback();
 			drupal_set_message(t('We could not update the profile.'). (_DEBUG?  $ex->getMessage().': '.
@@ -292,8 +291,8 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
      * certain organisation. There seems no reason to change that later. If an organisation has two admins 
 	 * they can add themselves to an organisation/institute.
 	 */
-     if ((isset($form_state['values']['institute']) && $form_state['values']['institute']) 
-     		&& (($type == _INSTADMIN_TYPE) || ($is_admin && (($type == _STUDENT_TYPE) || ($type == _SUPERVISOR_TYPE))))
+     if ((isset($form_state['values']['institute']) && $form_state['values']['institute']) &&
+     	(($type == _INSTADMIN_TYPE) || ($is_admin && (($type == _STUDENT_TYPE) || ($type == _SUPERVISOR_TYPE))))
     		){
       	db_query("DELETE FROM soc_user_membership WHERE uid = $uid AND type= _INSTITUTE_GROUP");
         db_insert('soc_user_membership')->fields( array(
@@ -449,7 +448,6 @@ function vals_soc_studentgroup_form_validate_handler(&$form, &$form_state)
         execute()->rowCount();
     if (!$inst_nr){
         $language_code = $language->prefix;//'en';
-        //print_r(get_object_vars($language));die('dus hoe zit het nu');
         form_set_error('', t('You have not registered yourself for a specific institute. ').
             t('You can change that in your ')."<a href='$base_url/$language_code/user/$uid/edit'>".
             t('profile')."</a>");
