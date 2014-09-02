@@ -218,6 +218,7 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
     	$uid = $user->uid;
     }
    
+    //Find out the name of this user (if set)
     $name_rec = db_select('soc_names', 'name')->fields('name')->condition('names_uid', $uid)->
     	condition('type', $role)->execute()->fetchAssoc();
     $name = $name_rec ? $name_rec['name'] : $form['#user']->name;
@@ -233,7 +234,7 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
             condition('type', _INSTITUTE_GROUP)->execute()->fetchAssoc();
         $member_inst = $member_inst_rec ? $member_inst_rec['group_id'] : 0;
        
-        if ((! $member_inst && (($type == _INSTADMIN_TYPE)))  || $is_admin){
+        if ((! $member_inst && (($role == _INSTADMIN_TYPE)))  || $is_admin){
 	        //So we know the user is not in an institute yet
         	//He/she can choose between existing institutes (or leave the institute option as 'Fill in later' 
         	//and enter an own institute)
@@ -267,7 +268,7 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
         $member_org_rec = db_select('soc_user_membership', 'mem')->fields('mem')->condition('uid', $uid)->
             condition('type', _ORGANISATION_GROUP)->execute()->fetchAssoc();
         $member_org = $member_org_rec ? $member_org_rec['group_id'] : 0;
-    	if ((! $member_org && (($type == _ORGADMIN_TYPE)))  || $is_admin){
+    	if ((! $member_org && (($role == _ORGADMIN_TYPE)))  || $is_admin){
 	        //So we know the user is not in an organisation yet
     		//He/she can choose between existing organisations (or leave the organisation option as 
     		//'Fill in later'and enter an own organisation)
@@ -336,6 +337,7 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 						_MENTOR_TYPE => t("Mentor"),
 						_ORGADMIN_TYPE => t('Organisation Administrator'),
 						_INSTADMIN_TYPE => t('Institute Administrator'),
+						_SOC_TYPE => t('Virtual Alliances Consortium member'),
 				),
 				"#description" => t("Select your role in Semester of Code."),
 		);

@@ -83,7 +83,7 @@ switch ($_GET['action']){
     case 'show':
     	$type = altSubValue($_POST, 'type', '');
     	$show_action = altSubValue($_POST, 'show_action', 'administer');
-    	if ($type && ($type = 'student_group')){
+    	if ($type && ($type == 'student_group')){
     		$show_action = 'groups';
     	}
     	//$subject = getRequestVar('subject', 'no_subject');

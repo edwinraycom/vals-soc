@@ -33,5 +33,5 @@ function generateValsFrontPageLayout(){
 	echo '</div>';
 	
 }
-//die('zien we dit wel');
+
 generateValsFrontPageLayout();

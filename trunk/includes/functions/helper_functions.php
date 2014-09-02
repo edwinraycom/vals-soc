@@ -45,14 +45,6 @@ function toSql(SelectQuery $obj) {
 		}
 	}
 
-	//echo('<pre>');
-	//var_dump($_fields);
-	//var_dump($_conditions);
-	//var_dump($_tables);
-	//var_dump($_string);
-	//echo('</pre>');
-	//die();
-
 	return $_string;
 }
 
@@ -91,11 +83,14 @@ function getRequestVar($field, $default='', $request='all'){
 }
 
 function pretendUser(){
-	if (session_status() == PHP_SESSION_NONE) {
-	    session_start();
-	}
+	//the session_status function is only available from php 5.4 on. We just suppress the possible warning on 
+	//double started sessions. In fact this is harmless and php will just start the session it already had (if this is 
+	//the case, but still fires a warning. This function will and should nver be called in production, so it is not
+	//an issue there.
+	//if (session_status() == PHP_SESSION_NONE) {
+	    @session_start();
+	//}
 	$user_id = getRequestVar('pretend', altSubValue($_SESSION, 'pretend_user', 0));
-// echo "nu is er $user_id en ".$_SESSION['pretend_user'];
 	if ($user_id){
 		if (!((isset($_SESSION['pretend_user']) &&
 			($_SESSION['pretend_user'] && ($_SESSION['pretend_user'] == $user_id))) || 

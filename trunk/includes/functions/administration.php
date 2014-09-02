@@ -366,16 +366,18 @@ function showOrganisationPage($show_action, $show_last=FALSE){
         </script><?php
 	} else {
 		if ($show_action == 'administer'){
-			showOrganisationAdminPage($organisations, $show_last);
+			showOrganisationAdminPage($organisations, $show_action, $show_last);
+		} elseif ($show_action == 'view'){
+			showOrganisationAdminPage($organisations, $show_action, $show_last);
 		} elseif ($show_action == 'members') {
 			showOrganisationMembersPage($organisations);
 		} else {
-			echo tt('there is no such action possible %1$s', $show_action);
+			echo tt('There is no such action possible %1$s', $show_action);
 		}
 	}
 }
 
-function showOrganisationAdminPage($organisations, $show_last=FALSE){
+function showOrganisationAdminPage($organisations, $action='administer', $show_last=FALSE){
 	$nr = 0;
 	$data = array();
 	$tabs = array();
@@ -393,7 +395,7 @@ function showOrganisationAdminPage($organisations, $show_last=FALSE){
 		$data[] = array(2, $org->name, 'view', _ORGANISATION_GROUP, $org->org_id);
 	}
 	// check for org admin editing rights
-	if(user_access('vals admin register')){
+	if(($action == 'administer') && user_access('vals admin register')){
 		//To remove the add tab: comment the three lines below
 		$nr++;
 		$data[] = array(1, 'Add', 'add', _ORGANISATION_GROUP, null, "target=$tab_id_prefix$nr&show_action=administer", true, 'adding_to_the right');
@@ -401,7 +403,8 @@ function showOrganisationAdminPage($organisations, $show_last=FALSE){
 	}
 	echo sprintf('<h3>%1$s</h3>', t('Organisations you are involved in'));
 	echo renderTabs($nr, 'Org', $tab_id_prefix, _ORGANISATION_GROUP, $data, $id, TRUE,
-		renderOrganisation(_ORGANISATION_GROUP, $my_organisation, null, "$tab_id_prefix$current_tab"), $current_tab);
+			//$type, $organisation='', $organisation_owner='', $target='', $show_buttons=true)
+		renderOrganisation(_ORGANISATION_GROUP, $my_organisation, null, "$tab_id_prefix$current_tab", ($action == 'administer')), $current_tab);
 	?>
 	<script type="text/javascript">
 		activatetabs('tab_', [<?php echo implode(',', $tabs);?>], '<?php echo "$tab_id_prefix$current_tab";?>');
