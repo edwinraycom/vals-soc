@@ -28,7 +28,9 @@ function refreshTabs(json_data, args){
 	
 	if (json_data && (json_data.result !== 'error')){
 		var show_action = altSub(json_data, 'show_action', 'administer');
-		var new_tab = altSub(json_data, 'new_tab', false) ? 1 : 0;
+		var new_tab = altSub(json_data, 'new_tab', false);
+		if (! new_tab) new_tab = 0;
+		
 		ajaxCall(handler, 'show', {type:type, show_action:show_action, new_tab: new_tab}, 
 			'handleContentAndMessage', 'html', [container, 'ajax_msg', json_data.msg]);
 	} else {

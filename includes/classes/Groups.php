@@ -217,13 +217,13 @@ class Groups extends AbstractEntity{
 	
 	
 	static function addGroup($props, $type){
+		global $user;
+		
 		if (! $props){
 			drupal_set_message(t('Insert requested with empty (filtered) data set'), 'error');
 			return false;
 		}
-	
-		global $user;
-	//mentor GRTDWCOCI
+			
 		$txn = db_transaction();
 		try {
 			$uid = $user->uid;
@@ -270,7 +270,7 @@ class Groups extends AbstractEntity{
 				drupal_set_message(tt('We could not add your %1$s.', $type), 'error');
 			}
 	
-			return $result;
+			return $result ? $id : FALSE;
 	
 		} catch (Exception $ex) {
 			$txn->rollback();
@@ -328,7 +328,7 @@ class Groups extends AbstractEntity{
 				drupal_set_message(t('We could not add your group.'), 'error');
 			}
 	
-			return $result;
+			return $result ? $gid : FALSE;
 	
 		} catch (Exception $ex) {
 			$txn->rollback();
