@@ -819,6 +819,45 @@ function vals_soc_invite_form($form, &$form_state, $org='', $target='', $show_ac
 	return $form;
 }
 
+function vals_soc_comment_form($form, &$form_state, $comment='', $target='', $entity_id='', $entity_type){
+	$form = array(
+			//'#prefix' => "<div id='vals_soc_entity_form_wrapper_$comment'>",
+			'#prefix' => "<div id='vals_soc_entity_form_wrapper_".$comment."_".$entity_id."_".$entity_type."'>",
+			'#suffix' => '</div>',
+	);
+	$form['description'] = array(
+			"#type" => "textarea",
+			'#title' => t('Message'),
+			"#default_value" => $message,
+			'#attributes' => array(
+					'class' => array('comment-textarea'),
+			),
+	);
+	$form['submit'] = array(
+			'#type' => 'submit',
+			//'#attributes' => array('onclick'=> "ajaxFormCall('vals_soc_entity_form_wrapper_$comment form', 'comment', 'save', ".
+			'#attributes' => array('onclick'=> "ajaxFormCall('vals_soc_entity_form_wrapper_".$comment."_".$entity_id."_".$entity_type." form', 'comment', 'save', ".
+					"{parent_id: '$comment', entity_type: '$entity_type', entity_id: $entity_id, show_action:''},".
+					"'refreshSingleComment','json',['comment', '$target', 'comment', '$comment']);"),
+			'#value' => t('Post'),
+			'#post_render' => array('vals_soc_fix_submit_button'),
+	);
+	$form['cancel'] = array(
+			'#type' => 'button',
+			'#value' => t('Cancel'),
+			'#prefix' => '&nbsp; &nbsp; &nbsp;',
+			'#attributes' => array('onClick' => 'this.form.reset(); return false;'),
+			'#post_render' => array('vals_soc_fix_submit_button'),
+	);
+	$form['#vals_soc_attached']['js'] = array(
+			array(
+				'type'  => 'file',
+				'data' => '/includes/js/test_functions.js',
+			),
+	);
+	return $form;
+}
+//
 /*
 * Drupal has a nasty habit of making buttons into "submit" buttons
 * when you dont want it to.  This function sets the cancel button

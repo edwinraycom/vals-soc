@@ -146,3 +146,19 @@ CREATE TABLE IF NOT EXISTS soc_user_membership (
   group_id int(11) NOT NULL COMMENT 'The id of the organisation/institute/group etc.',
   PRIMARY KEY (mem_id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='All users are member of some organisation, either a...' AUTO_INCREMENT=37 ;
+
+--
+-- Tabelstructuur voor tabel 'soc_comments'
+--
+
+DROP TABLE IF EXISTS `soc_comments`;
+CREATE TABLE  `drupal`.`soc_comments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `parent_id` int(10) unsigned DEFAULT NULL,
+  `entity_id` int(11) unsigned NOT NULL,
+  `entity_type` varchar(128) NOT NULL,
+  `author` int(11) unsigned NOT NULL,
+  `date_posted` datetime NOT NULL,
+  `description` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
