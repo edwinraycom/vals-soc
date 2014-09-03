@@ -13,6 +13,7 @@
 
 /**
  * Root directory of Drupal installation.
+ * Copy this file to the root of your installation
  */
 define('DRUPAL_ROOT', getcwd());
 /*For some reason the server could not derive well the scheme of the url and returned something like ://<host>
@@ -28,4 +29,11 @@ $scheme = ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ?
 $base_url = $scheme. '://'.$_SERVER['HTTP_HOST']._VALS_SOC_URL;
 require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+$vals_soc_pretend_possible = _DEBUG && (Users::isAdmin() || defined('_VALS_SOC_TEST_ENV') && _VALS_SOC_TEST_ENV);
+if ($vals_soc_pretend_possible){
+	list($u, $o_state) = pretendUser();
+}
 menu_execute_active_handler();
+if ($vals_soc_pretend_possible){
+	restoreUser($u, $o_state);
+}

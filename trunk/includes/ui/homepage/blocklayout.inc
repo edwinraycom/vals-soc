@@ -6,8 +6,7 @@ function generateValsFrontPageLayout(){
 	//module_load_include('php', 'vals_soc', 'includes/classes/Timeline');
 	// use this for testing the timeline
 
-	if (_DEBUG && isset($GLOBALS['vals_soc_pretend_possible']) && 
-			$GLOBALS['vals_soc_pretend_possible']){
+	if (_DEBUG){
 		module_load_include('inc', 'vals_soc', 'includes/ui/homepage/testfunctions');
 	}
 

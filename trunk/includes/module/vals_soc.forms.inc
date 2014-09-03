@@ -648,6 +648,13 @@ function vals_soc_project_form($form, &$form_state, $project='', $target='', $or
 			//'#required' => '1',
 			"#default_value" => populate($project, 'tags')
 	);
+	$form['draft'] = array(
+			"#type" => "checkbox",
+			'#title' => populate($project, 'state', 'pending'). ' '.t('If you want you can save the project as draft, making it visible only to members of your organisation)'),
+			"#size" => 60,
+			//'#required' => '1',
+			"#default_value" => (populate($project, 'state', 'pending') == 'draft' ? TRUE : FALSE)
+	);
 	$form['submit'] = array(
 			'#type' => 'submit',
 			'#attributes' => array('onclick'=> entityCall('project', $project, $target,
