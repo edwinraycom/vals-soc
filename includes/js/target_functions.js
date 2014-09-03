@@ -65,7 +65,7 @@ function refreshSingleTab(json_data, args){
 		if (json_data && typeof json_data.error != 'undefined') {
 			ajaxError('msg_'+target, json_data.error);
 		} else {
-			alertdev('Some error occured but no message was set.');
+			alertdev('Some error occured but no "error" message was set.');
 		}
 
 	}

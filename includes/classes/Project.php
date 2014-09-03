@@ -50,8 +50,26 @@ class Project extends AbstractEntity{
     	if(isset($organisation) && $organisation !="0"){
     		$projectCount->condition('org_id', $organisation);
     	}
+    	$this->addProjectCondition($projectCount, '');
     	$projectCount->fields('soc_projects');
     	return $projectCount->execute()->rowCount();
+    }
+    
+    public static function addProjectCondition(&$query, $project_alias='p.'){
+    	$myorgs = Organisations::getMyOrganisations();
+    	if (gettype($query) == 'string') {
+    		$query .= " AND (${project_alias}state <> 'draft'".
+    			($myorgs ? " OR ${project_alias}org_id IN (".implode($myorgs, ',')."))" : ")");
+    	} else {
+    		if ($myorgs){
+	    		$query->condition(
+					db_or()
+						->condition("${project_alias}state", 'draft', '<>')
+						->condition("${project_alias}org_id", $myorgs, 'IN'));
+    		} else {
+    			$query->condition('state', 'draft', '<>');
+    		}
+    	}
     }
     
     public function getProjectsBySearchCriteria($tags, $organisation, $sorting, $startIndex, $pageSize){
@@ -64,10 +82,11 @@ class Project extends AbstractEntity{
     	if(isset($organisation) && $organisation !="0"){
     		$queryString .=	 " AND p.org_id = ".$organisation;
     	}
+    	$this->addProjectCondition($queryString);
     	$queryString .= 	 " ORDER BY " . $sorting
-    	." LIMIT " . $startIndex . "," . $pageSize . ";";
+    	." LIMIT " . $startIndex . "," . $pageSize . ";";	//die($queryString);
     	$result = db_query($queryString);
-    	
+    
     	$rows = array();
     	foreach ($result as $record) {
     		$rows[] = $record;
@@ -153,7 +172,7 @@ class Project extends AbstractEntity{
 				drupal_set_message(t('You have no organisation yet'), 'error');
 				return array();
 			}
-			if ($my_role == _ORGADMIN_TYPE) {
+			if (($my_role == _ORGADMIN_TYPE)) {
 				$my_projects =
 					db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",array(':orgs' => $my_orgs))
 					->fetchAll();
@@ -188,7 +207,9 @@ class Project extends AbstractEntity{
 			//TODO: for now we assume the mentor is the same as creating the project. As long as we have not built
 			//funcitonality to connect mentors to projects, this is a valid assumption
 			$props['mentor_id'] = $uid;
-			$props['state'] = 'pending';
+			if (!isset($props['state']) ){
+				$props['state'] = 'pending';
+			}
 			//We normalise urls: if they start with http or https we assume the user inserted a full url
 			//otherwise we assume a non-https full url
 			if (isset($props['url']) && $props['url'] && (stripos($props['url'], 'http') === FALSE)){

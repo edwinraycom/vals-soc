@@ -24,6 +24,21 @@ class Organisations extends Groups{
     	return db_select('soc_organisations')->fields('soc_organisations')->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
     
+    public static function getMyOrganisations($detail=FALSE){
+    	if ($detail){
+    		return Groups::getGroups(_ORGANISATION_GROUP);
+    	} else {
+    		$user_id = $GLOBALS['user']->uid;
+    		$table = tableName(_ORGANISATION_GROUP);
+    		$orgids = db_query(
+    			"SELECT o.org_id from $table as o ".
+    			"LEFT JOIN soc_user_membership as um on o.org_id = um.group_id ".
+    			"WHERE um.uid = $user_id AND um.type = :organisation",
+    			array(':organisation' =>_ORGANISATION_GROUP))->fetchCol();
+    	}
+    	return $orgids;	
+    }
+    
     public function getOrganisationById($id){
     	return db_select('soc_organisations')->fields('soc_organisations')->condition('org_id', $id)->execute()->fetchAll(PDO::FETCH_ASSOC);
     }

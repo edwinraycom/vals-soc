@@ -1,7 +1,7 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
 // module_load_include('php', 'vals_soc', 'includes/classes/AbstractEntity');
-// module_load_include('php', 'vals_soc', 'includes/classes/Groups');
+module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 module_load_include('php', 'vals_soc', 'includes/classes/Project');
 module_load_include('php', 'vals_soc', 'includes/functions/projects');
 module_load_include('php', 'vals_soc', 'includes/functions/ajax_functions');
@@ -120,8 +120,10 @@ switch ($_GET['action']){
 	case 'save':
 		$type = altSubValue($_POST, 'type', '');
 		$id = altSubValue($_POST, 'id', '');
+		$draft = altSubValue($_POST, 'draft', false);
 		
 		$properties = Project::getInstance()->filterPostLite(Project::getInstance()->getKeylessFields(), $_POST);
+		$properties['state'] = ($draft ? 'draft' :'pending');
 		if (!$id){
 			$new = $properties['org_id'];
 			$result = Project::getInstance()->addProject($properties);
@@ -134,7 +136,7 @@ switch ($_GET['action']){
 					'result'=>TRUE,
 					'id' => $id,
 					'type'=> $type,
-					'new_tab' => $properties['org_id'],//so we can distinguish which tab to open
+					'new_tab' => !$id ? $properties['org_id'] : 0,//so we can distinguish which tab to open
 					'msg'=>
 					($id ? tt('You succesfully changed the data of your %1$s', t($type)):
 							tt('You succesfully added your %1$s', t($type))).
