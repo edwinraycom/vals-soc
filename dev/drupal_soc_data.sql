@@ -39,6 +39,7 @@ TRUNCATE TABLE `users_roles`;
 TRUNCATE TABLE `role`;
 TRUNCATE TABLE `role_permission`;
 TRUNCATE TABLE `soc_names`;
+TRUNCATE TABLE `soc_comments`;
 
 INSERT INTO `soc_names` (`names_uid`, `type`, `name`) VALUES
 (28, 'supervisor', 'Julian Sas'),

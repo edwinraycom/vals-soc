@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS soc_user_membership (
 --
 
 DROP TABLE IF EXISTS `soc_comments`;
-CREATE TABLE  `drupal`.`soc_comments` (
+CREATE TABLE `soc_comments` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `parent_id` int(10) unsigned DEFAULT NULL,
   `entity_id` int(11) unsigned NOT NULL,
