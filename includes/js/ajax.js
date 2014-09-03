@@ -271,6 +271,10 @@ function ajaxFormCall(frm_selector, handler_type, action, data, target, type, ar
 			call_args = call_args.concat('&' + data);
 		}
 	}
+	if(handler_type == 'comment'){
+		console.log('Comment, form ' + '#' + frm_selector + " is reset");
+		$jq('#' + frm_selector)[0].reset();//reset the form for comments
+	}
 	return ajaxCall(handler_type, action, call_args, target, type, args);
 
 }

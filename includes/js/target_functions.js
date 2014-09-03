@@ -65,7 +65,63 @@ function refreshSingleTab(json_data, args){
 		} else {
 			alertdev('Some error occured but no message was set.');
 		}
-		
+
+	}
+}
+
+function refreshSingleComment(json_data, args){
+	/*
+	console.log(json_data);
+	console.log(args);
+	console.log(args[0]);
+	*/
+	
+	var target = '';
+    var type = '';
+    var handler = '';
+	if (arguments.length > 1 && args && (args.length > 2)) {
+        type = args[0];
+		target = args[1];
+		handler = args[2];
+		parent_id = args[3];
+	}
+	if (! handler){
+		alertdev('No handler supplied in target function');
+        return false;
+	}
+	//Get the id and the type
+	var id = json_data.id;
+	var type = json_data.type;
+	if (json_data && (json_data.result !== 'error')){
+		ajaxCall(handler, 'view', {id:id,type:type,target:target}, 'handlePostDOMUPdate',
+			//'html', [target, 'msg_'+target, json_data.msg, parent_id]);
+				'html', [json_data.msg, id, parent_id]);
+	} else {
+		if (json_data && typeof json_data.error != 'undefined') {
+			ajaxError('msg_'+target, json_data.error);
+		} else {
+			alertdev('Some error occured but no message was set.');
+		}
+
+	}	
+}
+
+function handlePostDOMUPdate(result, args){
+	
+	var msg_content = args[0];
+	var id = args[1];
+	var parent_id = args[2];
+	
+	console.log(result);
+	console.log(args);
+
+	if (parent_id == '0' || parent_id == ''){
+		$jq('.existing-comments-container').append(result);
+		ajaxMessage('msg_threaded-comment-wrapper-'+id, msg_content);
+	}else{
+		$jq('#threaded-comment-wrapper-'+parent_id).append(result);
+		$jq('#reply-comment-form-'+parent_id).toggle();
+		ajaxMessage('msg_threaded-comment-wrapper-'+id, msg_content);
 	}
 }
 
@@ -89,7 +145,7 @@ function jsonFormResult(data, args){
         	//replaces only the textareas inside the target
         	transform_into_rte(target);
         }
-	}     
+	}
 }
 
 function transform_into_rte(){
@@ -113,6 +169,8 @@ function handleContentAndMessage(result, args){
 		ajaxMessage(msg_target, msg_content);
 	}
 }
+
+
 
 function handleResult(result, args){
 	var target = args[0];

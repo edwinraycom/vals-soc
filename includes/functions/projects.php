@@ -226,6 +226,12 @@ function renderProject($project='', $target='', $inline=FALSE){
 		$content .= '<p>'.tt('More information can be found at %1$s', "<a href='${project['url']}'> ${project['url']}</a>"). '</p>';
 	}
 	
+	/////
+	module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
+	$content .= initComments($id, 'project');
+	
+	////
+	
 	return $content;
 }
 
