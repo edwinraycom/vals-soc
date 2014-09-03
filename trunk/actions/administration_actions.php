@@ -133,7 +133,6 @@ switch ($_GET['action']){
             		'result'=>TRUE,
             		'id' => $id,
             		'type'=> $type,
-					//'new_tab' => $new,
             		'show_action' => $show_action,
             		'msg'=> t('Email successfully sent') .
             		(_DEBUG ? showDrupalMessages(): '')
@@ -222,7 +221,7 @@ switch ($_GET['action']){
             		'result'=>TRUE,
             		'id' => $id,
             		'type'=> $type,
-					'new_tab' => $new,
+					'new_tab' => !$id ? $result : 0,
             		'show_action' => $show_action,
             		'msg'=>
             		($id ? tt('You succesfully changed the data of your %1$s', t($type)):

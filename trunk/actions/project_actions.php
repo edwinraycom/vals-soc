@@ -134,7 +134,7 @@ switch ($_GET['action']){
 					'result'=>TRUE,
 					'id' => $id,
 					'type'=> $type,
-					'new_tab' => $new,
+					'new_tab' => $properties['org_id'],//so we can distinguish which tab to open
 					'msg'=>
 					($id ? tt('You succesfully changed the data of your %1$s', t($type)):
 							tt('You succesfully added your %1$s', t($type))).

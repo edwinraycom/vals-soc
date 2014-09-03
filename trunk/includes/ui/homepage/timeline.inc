@@ -77,7 +77,7 @@ function getLayout($timeline_args, $show_countdown = true){
 		$countRemaining = t('Remaining');
 	}
 	return $outputBuf . '
-		<div id="program-map" class="block block-project-timeline block-padding">
+		<div id="program-map" class="block block-project-timeline block-padding" style="height:100%;">
 			<h4 id="title-section-program-timeline">'.t('Program Timeline').'</h4>
 			<div id="block-program-timeline-content" class="block-content">
 				<div class="block-program-timeline-new">

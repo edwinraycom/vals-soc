@@ -106,7 +106,8 @@ function showOrganisationProjects($org_nr, $projects, $organisation, $show_org_t
 	$data[] = array(1, 'Add', 'add', 'project', 0, "target=$tab_id_prefix$nr&org=$org_id", TRUE, 'right');
 	$activating_tabs[] = "'$tab_id_prefix$nr'";
 	//If no target is sent along, the project views are shown inline
-	$current_tab_content = renderProjects('', $projects, $current_tab_id, $inline);
+	$current_tab_content = (1 == $current_tab) ? renderProjects('', $projects, $current_tab_id, $inline): 
+		renderProject($my_project, $current_tab_id, false);
 	
 	echo renderTabs($nr, 'Project', $tab_id_prefix, 'project', $data, 0, TRUE, $current_tab_content,
 		$current_tab, 'project');?>

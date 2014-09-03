@@ -183,11 +183,17 @@ class Project extends AbstractEntity{
 		$txn = db_transaction();
 		try {
 			$uid = $user->uid;
+			
 			$props['owner_id'] = $uid;
 			//TODO: for now we assume the mentor is the same as creating the project. As long as we have not built
 			//funcitonality to connect mentors to projects, this is a valid assumption
 			$props['mentor_id'] = $uid;
 			$props['state'] = 'pending';
+			//We normalise urls: if they start with http or https we assume the user inserted a full url
+			//otherwise we assume a non-https full url
+			if (isset($props['url']) && $props['url'] && (stripos($props['url'], 'http') === FALSE)){
+				$props['url'] = 'http://'.$props['url'];
+			}
 			$result = FALSE;
 			$query = db_insert(tableName('project'))->fields($props);
 			$id = $query->execute();
@@ -209,6 +215,9 @@ class Project extends AbstractEntity{
 		if (!$props){
 			drupal_set_message(t('Update requested with empty data set'));
 			return false;
+		}
+		if (isset($props['url']) && $props['url'] && (stripos($props['url'], 'http') === FALSE)){
+			$props['url'] = 'http://'.$props['url'];
 		}
 		$key = self::keyField('project');
 		//Project::normaliseFormArrays($props);
