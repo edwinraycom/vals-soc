@@ -1,5 +1,8 @@
 <?php
-drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/css/dashboard/css/dashboard.css');
+drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/css/dashboard/css/dashboard.css', array(
+      'type' => 'file',
+      'group' => CSS_THEME
+    ));
 //Will be called at the end of this file
 function initDashboardLayout(){
 	return getOrgAdminLayout(Timeline::getOrgadminTimelineVars());

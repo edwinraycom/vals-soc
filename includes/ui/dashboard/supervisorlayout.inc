@@ -1,5 +1,8 @@
 <?php 
-drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/css/dashboard/css/dashboard.css');
+drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/css/dashboard/css/dashboard.css', array(
+      'type' => 'file',
+      'group' => CSS_THEME
+    ));
 function initDashboardLayout(){
 	return getSupervisorLayout(Timeline::getSupervisorTimelineVars());
 }

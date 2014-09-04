@@ -254,7 +254,7 @@ function valssoc_form_get_js($form){
 		$js = '';
 		foreach ($form['#vals_soc_attached']['js'] as $incl){
 			if ($incl['type'] == 'file'){
-				$js .= src_getJs(_VALS_SOC_FULL_URL.$incl['data']);//we assume all paths start with /
+				$js .= src_getJs(_VALS_SOC_REL_URL.$incl['data']);//we assume all paths start with /
 			} else {
 				$js .= script_getJs($incl['data']);
 			}
@@ -273,7 +273,6 @@ function createRandomCode($org, $id=1 ){
 			_INSTADMIN_TYPE => 4,
 			_SUPERVISOR_TYPE => 5,
 			_STUDENT_TYPE => 6,
-			//_INSTADMIN_TYPE => 7,
 			_ORGANISATION_GROUP => 7,
 			_INSTITUTE_GROUP => 8,
 			_STUDENT_GROUP => 9,

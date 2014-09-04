@@ -1,3 +1,4 @@
+
 html{
 	/**font-family:Verdana, Geneva, sans-serif;**/
 	}
@@ -44,6 +45,21 @@ div.messages {
      
  }
 span.lefty { padding-right:20px;}
+
+table tr th {
+    /*background: none repeat scroll 0 0 rgba(0, 0, 0, 0.51); zo was hget */
+    background: none repeat scroll 0 0 #6eb5e5;
+    border-bottom-style: none;
+}
+
+div.jtable-main-container table.jtable {
+	border: 1px solid #000;
+    border-collapse: separate;
+}
+
+div.jtable-main-container div.jtable-bottom-panel {
+	border: none;
+}
 
 /*************************************************
 	CSS for the projects views

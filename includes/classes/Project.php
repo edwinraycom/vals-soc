@@ -172,7 +172,7 @@ class Project extends AbstractEntity{
 				drupal_set_message(t('You have no organisation yet'), 'error');
 				return array();
 			}
-			if (($my_role == _ORGADMIN_TYPE)) {
+			if ((_VALS_SOC_MENTOR_ACCESS_ALL || $my_role == _ORGADMIN_TYPE)) {
 				$my_projects =
 					db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",array(':orgs' => $my_orgs))
 					->fetchAll();
