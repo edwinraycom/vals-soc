@@ -180,9 +180,10 @@ function format_invite_message($entity, $subtype='', $organisation_name=''){
 	$output .= '<br/>';
 	$output .= t('The first step is to sign up...'); 
 	$output .= '<br/>';
-	$output .= '<ul class=\'grouplist\'>';
+	$output .= '<ol class=\'grouplist\'>';
+	$server = _VALS_SOC_FULL_URL;
 		$output .= "<li>";
-		$output .= t('Go to <a href="http://vps.semesterofcode.com/user/register" target="_blank">http://vps.semesterofcode.com/user/register to register.</a>');
+		$output .= t('Go to <a href="$server/user/register" target="_blank">$server/user/register</a> to register.');
 		$output .= "</li>";
 		$output .= "<li>";
 		$output .= tt('Fill in your basic details and select "%1$s" as your role.', $subtype); 
@@ -202,7 +203,7 @@ function format_invite_message($entity, $subtype='', $organisation_name=''){
 		
 		
 		
-	$output .= "</ul>";
+	$output .= "</ol>";
 	$output .= '<br/>';
 	$output .= t('Many Thanks,');
 	$output .= '<br/>';

@@ -1,7 +1,7 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');
-include(_VALS_SOC_ROOT.'/includes/functions/participants.php');
+include(_VALS_SOC_ROOT.'/includes/functions/render_functions.php');
 include(_VALS_SOC_ROOT.'/includes/functions/projects.php');
 include(_VALS_SOC_ROOT.'/includes/functions/administration.php');
 
@@ -153,15 +153,11 @@ switch ($_GET['action']){
     		$obj = Groups::getGroup($type, $id);
     		// See http://drupal.stackexchange.com/questions/98592/ajax-processed-not-added-on-a-form-inside-a-custom-callback-my-module-deliver
     		// for additions below
-    		$originalPath = false;
+    		$form = drupal_get_form("vals_soc_invite_form", $obj, $target, '', $subtype);
     		if(isset($_POST['path'])){
-    			$originalPath = $_POST['path'];
+    			$form['#action'] = url($_POST['path']);
     		}
     		unset($_POST);
-    		$form = drupal_get_form("vals_soc_invite_form", $obj, $target, '', $subtype);
-    		if($originalPath){
-    			$form['#action'] = url($originalPath);
-    		}
     		renderForm($form, $target);
     	}
     	break;

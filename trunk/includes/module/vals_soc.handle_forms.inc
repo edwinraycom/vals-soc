@@ -12,11 +12,11 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
         return;
     }
     $super = t('Semester of Code Admin');
-    $requested_user_type = isset($form_state['values']['account_type']) ? $form_state['values']['account_type'] : 'none';
-    if ($requested_user_type == 'none'){
-    	form_set_error('account_key', t('There is no type of the account entered.'));
-    	return;
-    }
+//     $requested_user_type = isset($form_state['values']['account_type']) ? $form_state['values']['account_type'] : 'none';
+//     if ($requested_user_type == 'none'){
+//     	form_set_error('account_key', t('There is no type of the account entered.'));
+//     	return;
+//     }
     
     if (! (isset($form_state['values']['account_key']))){
         form_set_error('account_key', tt('There is no key entered. %1$s.'), $super);
@@ -24,58 +24,73 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
     }
     
     $code_entered = $form_state['values']['account_key'];
-    
-    //Check the student belonging to a valid group
-    if ($requested_user_type == _STUDENT_TYPE){
-        if (! isset($form_state['values']['institute']) || $form_state['values']['institute']  == 0){
-           form_set_error('institute', t('You should select your university or institute.'));
-        }
-        $db_and = db_and();
-        $db_and->condition('code', $code_entered);
-        $db_and->condition('type', _STUDENT_GROUP);//Since we do not want a long list of groups during registration
-        //we use the institute instead and so we select not on type student, but on group
-        $db_and->condition('entity_id', $form_state['values']['institute']);
-        $valid_groups_cnt = db_select('soc_codes')->fields('soc_codes')->condition($db_and)->execute()->rowCount();
-        if ($valid_groups_cnt == 0){
-            form_set_error('account_key', t('This is no valid key you entered. Ask your tutor.'));
-        }
 
-        return;
+    
+    $db_and = db_and();
+    $db_and->condition('code', $code_entered);
+    $code_result = db_select('soc_codes')->fields('soc_codes')->condition($db_and)->execute();
+    $valid_groups_cnt = $code_result->rowCount();
+    
+    if ($valid_groups_cnt == 0){
+    	form_set_error('account_key', t('This is no valid key you entered. Ask your tutor.'));
+    	return;
     }
-   	$becomes_some_admin = (in_array($requested_user_type, array(_INSTADMIN_TYPE, _ORGADMIN_TYPE, _SOC_TYPE) ));
+    
+    return;
+    
+    
+    
+//     //Check the student belonging to a valid group
+//     if ($requested_user_type == _STUDENT_TYPE){
+//         if (! isset($form_state['values']['institute']) || $form_state['values']['institute']  == 0){
+//            form_set_error('institute', t('You should select your university or institute.'));
+//         }
+//         $db_and = db_and();
+//         $db_and->condition('code', $code_entered);
+//         $db_and->condition('type', _STUDENT_GROUP);//Since we do not want a long list of groups during registration
+//         //we use the institute instead and so we select not on type student, but on group
+//         $db_and->condition('entity_id', $form_state['values']['institute']);
+//         $valid_groups_cnt = db_select('soc_codes')->fields('soc_codes')->condition($db_and)->execute()->rowCount();
+//         if ($valid_groups_cnt == 0){
+//             form_set_error('account_key', t('This is no valid key you entered. Ask your tutor.'));
+//         }
+
+//         return;
+//     }
+//    	$becomes_some_admin = (in_array($requested_user_type, array(_INSTADMIN_TYPE, _ORGADMIN_TYPE, _SOC_TYPE) ));
     	
-    $org = 0;
-	if (in_array($requested_user_type, array(_MENTOR_TYPE, _ORGADMIN_TYPE) ) && $form_state['values']['organisation']){
-		$org = $form_state['values']['organisation'];
-	}
-	if (in_array($requested_user_type, array(_SUPERVISOR_TYPE, _INSTADMIN_TYPE)) && $form_state['values']['institute']){
-		$org = $form_state['values']['institute'];
-	}
-	if (!$org && !$becomes_some_admin){
-		//Make distinction for choosing error message
-		if ($requested_user_type == 'mentor'){
-			form_set_error(_ORGANISATION_GROUP, t('You should select your organisation.'));
-		} else {
-			form_set_error('institute', t('You should select your university or institute.'));
-		}
-		return;
-	}
-	$db_and2 = db_and();
-    $db_and2->condition('type', $requested_user_type);
-    $db_and2->condition('code', $code_entered);
-    $db_and2->condition('entity_id', $org);
-    $found_codes = db_select('soc_codes')->fields('soc_codes')->condition($db_and2)->execute()->rowCount();
-    $possible_code_rec = db_select('soc_codes')->fields('soc_codes')->
-        condition('type', $requested_user_type)->
-        condition('entity_id', $org)->
-        execute()->fetchAssoc();
-        //->fetchAllAssoc('type', PDO::FETCH_ASSOC); returns [student=>[type=>student, code=><student_code>,....]
-    if (!$found_codes){
-       form_set_error('account_key', t('The key you typed is not correct. Ask the Semester of Code Admin.'.
-            (_DEBUG ? '<BR>'.t('In this phase, we just give you the code: ').$possible_code_rec['code']: '')));
-    } else {
-        return;
-    }
+//     $org = 0;
+// 	if (in_array($requested_user_type, array(_MENTOR_TYPE, _ORGADMIN_TYPE) ) && $form_state['values']['organisation']){
+// 		$org = $form_state['values']['organisation'];
+// 	}
+// 	if (in_array($requested_user_type, array(_SUPERVISOR_TYPE, _INSTADMIN_TYPE)) && $form_state['values']['institute']){
+// 		$org = $form_state['values']['institute'];
+// 	}
+// 	if (!$org && !$becomes_some_admin){
+// 		//Make distinction for choosing error message
+// 		if ($requested_user_type == 'mentor'){
+// 			form_set_error(_ORGANISATION_GROUP, t('You should select your organisation.'));
+// 		} else {
+// 			form_set_error('institute', t('You should select your university or institute.'));
+// 		}
+// 		return;
+// 	}
+// 	$db_and2 = db_and();
+//     $db_and2->condition('type', $requested_user_type);
+//     $db_and2->condition('code', $code_entered);
+//     $db_and2->condition('entity_id', $org);
+//     $found_codes = db_select('soc_codes')->fields('soc_codes')->condition($db_and2)->execute()->rowCount();
+//     $possible_code_rec = db_select('soc_codes')->fields('soc_codes')->
+//         condition('type', $requested_user_type)->
+//         condition('entity_id', $org)->
+//         execute()->fetchAssoc();
+//         //->fetchAllAssoc('type', PDO::FETCH_ASSOC); returns [student=>[type=>student, code=><student_code>,....]
+//     if (!$found_codes){
+//        form_set_error('account_key', t('The key you typed is not correct. Ask the Semester of Code Admin.'.
+//             (_DEBUG ? '<BR>'.t('In this phase, we just give you the code: ').$possible_code_rec['code']: '')));
+//     } else {
+//         return;
+//     }
     
 }
 
@@ -99,7 +114,18 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
             throw new Exception(t('An internal program error occured.'));
         }
     } else {
-        $type = $form_state['values']['account_type'];
+           	   	
+    	$db_and = db_and();
+    	$db_and->condition('code', $code_entered);
+    	$code_result = db_select('soc_codes')->fields('soc_codes')->condition($db_and)->execute()->fetchAssoc();
+    	
+    	$type = $code_result['type'];
+    	$entity =  $code_result['entity_id'];
+    	$studentgroup =  $code_result['studentgroup_id'];
+    	
+    	
+    	if($type == _STUDENT_GROUP) $type = _STUDENT_TYPE;
+    	    	
         $role = db_select('role', 'r')->fields('r')->condition('name', $type)->execute()->fetchAssoc();
         if ($role){
             $rid = $role['rid'];
@@ -121,29 +147,27 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
 //    }
     
     
-    if ((($type == _STUDENT_TYPE) || ($type == _SUPERVISOR_TYPE) || ($type == _INSTADMIN_TYPE)) && ($form_state['values']['institute'])){
+    if ((($type == _STUDENT_TYPE) || ($type == _SUPERVISOR_TYPE) || ($type == _INSTADMIN_TYPE))){
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => _INSTITUTE_GROUP, 
-            'group_id'=>$form_state['values']['institute']
+            'group_id'=>$entity
             ))->execute();
         
         if (($type == _STUDENT_TYPE)){
-           $studentgroup_ids = db_select('soc_codes')->fields('soc_codes', array('entity_id', 'studentgroup_id'))->condition('code',
-           $code_entered)->condition('type', _STUDENT_GROUP)->condition('entity_id', $form_state['values']['institute'])->execute()->fetchAssoc();
             db_insert('soc_user_membership')->fields( array(
                 'uid'=>$uid, 
                 'type' => _STUDENT_GROUP, 
-                'group_id'=>$studentgroup_ids['studentgroup_id']
+                'group_id'=>$studentgroup
                 ))->execute();
         }
     }
     
-    if ((($type == _ORGADMIN_TYPE) || ($type == _MENTOR_TYPE)) && ($form_state['values']['organisation'])){
+    if ((($type == _ORGADMIN_TYPE) || ($type == _MENTOR_TYPE))){
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => _ORGANISATION_GROUP, 
-            'group_id'=>$form_state['values']['organisation']
+            'group_id'=>$entity
             ))->execute();
     }
     

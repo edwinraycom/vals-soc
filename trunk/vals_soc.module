@@ -197,7 +197,10 @@ function vals_soc_js_alter(&$javascript) {
 }
 
 function vals_soc_css_alter(&$css) {
-	$css = drupal_add_css(_VALS_SOC_PATH . '/includes/css/vals_soc.css');
+	$css = drupal_add_css(_VALS_SOC_PATH . '/includes/css/vals_soc.css', array(
+      'type' => 'file',
+      'group' => CSS_THEME
+    ));
 }
 
 //***********************************************************************************

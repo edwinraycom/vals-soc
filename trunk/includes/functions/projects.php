@@ -195,7 +195,7 @@ function renderProjects($organisation_selection='', $projects='', $target='', $i
 	}
 }
 
-function renderProject($project='', $target='', $inline=FALSE){
+function renderProject($project='', $target='', $inline=FALSE, $all_can_edit=_VALS_SOC_MENTOR_ACCESS_ALL){
 	if (!$project){
 		return t('I cannot show this project. It seems empty.');
 	}
@@ -214,7 +214,7 @@ function renderProject($project='', $target='', $inline=FALSE){
 		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
 		")\" value='.t( 'Submit proposal for this project').'/>";
 	}
-	if (Groups::isAssociate('project', $id) && !$inline){
+	if (!$inline && (($all_can_edit && Groups::isAssociate('project', $id)) || Groups::isOwner('project', $id))  ){
 		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this project?')."\")){ajaxCall(\"project\", \"delete\", {type: \"$type\", id: $id, target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"project\"]);}'";
 		$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"$type\", id: $id, target: \"$target\"}, \"formResult\", \"html\", [\"$target\", \"project\"]);'";
 		$content .= "<input type='button' value='".t('edit')."' $edit_action/>";
@@ -228,8 +228,10 @@ function renderProject($project='', $target='', $inline=FALSE){
 	}
 	
 	/////
-	module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
-	$content .= initComments($id, 'project');
+	if (! $inline){
+		module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
+		$content .= initComments($id, 'project');
+	}
 	
 	////
 	
