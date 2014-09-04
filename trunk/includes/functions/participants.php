@@ -248,8 +248,8 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
 	    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, ".
 	    		(($type == _STUDENT_GROUP) ? "\"$target\");'" :  "\"formResult\", \"html\", \"$target\");'");
 
-	    	$s .= "<input type='button' value='".t('edit')."' $edit_action/>";
-	    	$s .= "<input type='button' value='".t('delete')."' $delete_action/><br/><br/>";
+	    	$s .= "<div class='totheright'><input type='button' value='".t('edit')."' $edit_action/>";
+	    	$s .= "<input type='button' value='".t('delete')."' $delete_action/></div>";
 	    	//$sub_type_user = '';
     	}
         $s .= formatMemberRecordNice($organisation, $type, $target);
