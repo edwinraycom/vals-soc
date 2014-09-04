@@ -164,7 +164,6 @@ INSERT INTO role_permission (rid, permission, module) VALUES
 (12, 'vals browse projects', 'vals_soc'), # institute_admin role
 (9, 'vals browse projects', 'vals_soc'),  # supervisor role
 (4, 'vals browse projects', 'vals_soc'),  # student role
-(1, 'vals browse projects', 'vals_soc'),  # unauthenticated users can see projects only after orgs announced
 
 (8, 'vals admin projects', 'vals_soc'), # organisation_admin role
 (5, 'vals admin projects', 'vals_soc'), # mentor role

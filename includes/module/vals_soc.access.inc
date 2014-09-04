@@ -52,7 +52,7 @@ function pageAccessCheck($access_string) {
 			// any user must have 'val browse projects' permission
 			if (hasPermission('vals browse projects')) {
 				// students AND unauthenticated users can only see the projects after the organisations have been announced
-				if( (hasRole(array(_STUDENT_TYPE)) || hasRole(array(_ANONYMOUS_TYPE))) && 
+				if(hasRole(array(_STUDENT_TYPE)) && 
 					Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
 					return TRUE;
 				} else {
