@@ -36,7 +36,6 @@ switch ($_GET['action']){
 		if (! ($id && $type && $target)){
 			die(t('There are missing arguments. Please inform the administrator of this mistake.'));
 		}
-		//$organisation = Groups::getGroup($type, $id);
 		$post = ThreadedComments::getInstance()->getPostById($id);
 		if (! $post){
 			echo tt('The post for this %1$s cannot be found', t($type));
@@ -46,6 +45,13 @@ switch ($_GET['action']){
 			//todo - fix the depth
 			echo $threaded_comments->renderSingleComment($post);
 		}
+		break;
+	case 'viewall':
+		$type = altSubValue($_GET, 'type');
+		$id = altSubValue($_GET, 'id');
+		module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
+		$content = initComments($id, $type);
+		echo $content;
 		break;
 	default: echo "No such action: ".$_GET['action'];
 }
