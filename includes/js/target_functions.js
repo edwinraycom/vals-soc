@@ -72,12 +72,6 @@ function refreshSingleTab(json_data, args){
 }
 
 function refreshSingleComment(json_data, args){
-	/*
-	console.log(json_data);
-	console.log(args);
-	console.log(args[0]);
-	*/
-	
 	var target = '';
     var type = '';
     var handler = '';
@@ -96,27 +90,30 @@ function refreshSingleComment(json_data, args){
 	var type = json_data.type;
 	if (json_data && (json_data.result !== 'error')){
 		ajaxCall(handler, 'view', {id:id,type:type,target:target}, 'handlePostDOMUPdate',
-			//'html', [target, 'msg_'+target, json_data.msg, parent_id]);
-				'html', [json_data.msg, id, parent_id]);
+				'html', [json_data.msg, id, parent_id, type, json_data.entity_id]);
 	} else {
 		if (json_data && typeof json_data.error != 'undefined') {
 			ajaxError('msg_'+target, json_data.error);
 		} else {
 			alertdev('Some error occured but no message was set.');
 		}
-
 	}	
 }
 
 function handlePostDOMUPdate(result, args){
-	
 	var msg_content = args[0];
 	var id = args[1];
 	var parent_id = args[2];
-	
-	console.log(result);
-	console.log(args);
-
+	var entity_type = args[3];
+	var entity_id = args[4];
+	// try to increment the thread count on this entity.
+	try{
+		$total_count = $jq('#comment-total-'+entity_type+"-"+entity_id);
+		$total_count.text(parseInt($total_count.text()) + 1);
+	}
+	catch(err) {
+		console.log(err);
+	}
 	if (parent_id == '0' || parent_id == ''){
 		$jq('.existing-comments-container').append(result);
 		ajaxMessage('msg_threaded-comment-wrapper-'+id, msg_content);

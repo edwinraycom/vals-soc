@@ -8,6 +8,7 @@ switch ($_GET['action']){
 	case 'save':
 		$type = altSubValue($_POST, 'entity_type', '');
 		$id = altSubValue($_POST, 'id', '');
+		$entity_id = altSubValue($_POST, 'entity_id', '');
 		$target = altSubValue($_POST, 'target', '');
 
 		$properties = ThreadedComments::getInstance()->filterPostLite(ThreadedComments::getInstance()->getKeylessFields(), $_POST);
@@ -19,15 +20,13 @@ switch ($_GET['action']){
 					'result'=>TRUE,
 					'id' => $result,
 					'type'=> $type,
-					'new_tab' => $new,
+					'entity_id' => $entity_id,
 					'msg'=> tt('You succesfully added a comment to this %1$s', t($type)). (_DEBUG ? showDrupalMessages(): '')
 			));
 		}
 		else {
 			echo jsonBadResult();
 		}
-
-
 		break;
 	case 'view':
 		$type = altSubValue($_POST, 'type');
@@ -40,9 +39,9 @@ switch ($_GET['action']){
 		if (! $post){
 			echo tt('The post for this %1$s cannot be found', t($type));
 		} else {
-
-			$threaded_comments = new ThreadUIBuilder();
-			//todo - fix the depth
+			$entity_id = $post['entity_id'];
+			$entity_type = $post['entity_type'];
+			$threaded_comments = new ThreadUIBuilder($entity_id, $entity_type);
 			echo $threaded_comments->renderSingleComment($post);
 		}
 		break;
