@@ -183,13 +183,13 @@ function format_invite_message($entity, $subtype='', $organisation_name=''){
 	$output .= '<ol class=\'grouplist\'>';
 	$server = _VALS_SOC_FULL_URL;
 		$output .= "<li>";
-		$output .= t('Go to <a href="$server/user/register" target="_blank">$server/user/register</a> to register.');
+		$output .= tt('Go to <a href="%1$s/user/register?c=%2$s" target="_blank">%1$s/user/register</a> to register.', $server, $invite_key);
 		$output .= "</li>";
 		$output .= "<li>";
 		$output .= tt('Fill in your basic details and select "%1$s" as your role.', $subtype); 
 		$output .= "</li>";
 		$output .= "<li>";
-		$output .= t('Enter the following unique key: ' . $invite_key);
+		$output .= t('Enter the following unique key if it has not been filled yet: ' . $invite_key);
 		$output .= "</li>";
 		$output .= "<li>";
 		$output .= t('Click "Create New Account"');
@@ -210,7 +210,7 @@ function format_invite_message($entity, $subtype='', $organisation_name=''){
 	$output .= t('The VALS team');
 	$output .= '<br/>';
 	$output .= '<br/>';
-	$output .= '<img src="http://vps.semesterofcode.com/sites/all/themes/media/logo.png">';
+	$output .= sprintf('<img src="%1$s/sites/all/themes/media/logo.png">', $server);
 	$output .= '<p>';
 	return $output;
 }
