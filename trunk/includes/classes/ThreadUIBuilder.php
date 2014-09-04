@@ -7,6 +7,12 @@ class ThreadUIBuilder {
 	private $entity_type;
 	private $entity_id;
 
+	
+	public function __construct($entity_id, $entity_type) {
+		$this->entity_id = $entity_id;
+		$this->entity_type = $entity_type;
+	}
+	
 	/**
 	 *
 	 * @param array $comments
@@ -20,15 +26,20 @@ class ThreadUIBuilder {
 			}
 		}
 		$count = sizeof($records);
-		$this->output .= "<div><h2 style='display:inline-block'>" . t('Comments') .
-			" (".$count.")</h2>&nbsp;<div style='display:inline-block' class='comment-toggle'>show/hide</div></div>";
+		$this->output .= "<div>";
+		$this->output .= "	<h2 style='display:inline-block'>";
+		$this->output .=  		t('Comments') . " " ;
+		$this->output .= "		(<div style='display:inline;' id='comment-total-".$this->entity_type."-".$this->entity_id."'>".$count."</div>)";
+		$this->output .= "	</h2>";
+		$this->output .= "	&nbsp;";
+		//$this->output .= "	<div style='display:inline-block' class='comment-toggle'>".t('show')."</div>";
+		$this->output .= "<input style='display:inline-block' class='comment-toggle' type='button' value='".t('show')."'/>";
+		$this->output .= "</div>";
 	}
 
 	function renderSingleComment($comment){
-		$this->entity_id = $comment['entity_id'];
-		$this->entity_type = $comment['entity_type'];
 		$this->output = '';
-		$this::format_comment($comment, $depth);
+		$this::format_comment($comment);
 		return $this->output;
 	}
 	
@@ -97,9 +108,7 @@ class ThreadUIBuilder {
 		}
 	}
 
-	public function print_comments($entity_id, $entity_type) {
-		$this->entity_id = $entity_id;
-		$this->entity_type = $entity_type;
+	public function print_comments() {
 		
 		$this->output .= '<div class="comments-parent-container">';
 		$this->output .= '	<div class="existing-comments-container">';

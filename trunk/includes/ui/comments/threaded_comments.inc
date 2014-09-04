@@ -5,9 +5,9 @@ module_load_include('php', 'vals_soc', 'includes/classes/ThreadUIBuilder');
 
 function initComments($entity_id, $entity_type){
 	$threads = ThreadedComments::getInstance()->getThreadsForEntity($entity_id, $entity_type);
-	$threaded_comments = new ThreadUIBuilder();
-	$threaded_comments->init($threads);
-	$rendered_threads = $threaded_comments->print_comments($entity_id, $entity_type);
+	$threaded_comments = new ThreadUIBuilder($entity_id, $entity_type);
+	$threaded_comments -> init($threads);
+	$rendered_threads = $threaded_comments->print_comments();
 	$post_forms =  getJsHandler();
 	return $rendered_threads . $post_forms;
 }
@@ -24,8 +24,15 @@ function getJsHandler(){
 			});
 
 			\$jq('.comment-toggle').on('click', function(e){
+				var link = \$jq(this);
 				e.preventDefault();
-				\$jq('.comments-parent-container').toggle('slow');
+				\$jq('.comments-parent-container').toggle('slow', function() {
+					if (\$jq(this).is(':visible')) {
+						link.attr('value','" . t('hide') . "');
+					} else {
+						link.attr('value','" . t('show') . "');
+					}
+				});
 			});
 
 		});
