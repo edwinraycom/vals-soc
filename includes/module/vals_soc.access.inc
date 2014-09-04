@@ -51,7 +51,7 @@ function pageAccessCheck($access_string) {
 		case 'dashboard/projects/browse':
 			// any user must have 'val browse projects' permission
 			if (hasPermission('vals browse projects')) {
-				// students AND unauthenticated users can only see the projects after the organisations have been announced
+				// students can only see the projects after the organisations have been announced
 				if(hasRole(array(_STUDENT_TYPE)) && 
 					Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
 					return TRUE;
