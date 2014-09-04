@@ -2,6 +2,15 @@ function renderProject(project, apply_projects){
 	
 	var content = "<h2>"+project.title+"</h2>";
 	content += project.description;
+	if(project.url){
+		content += "<br/><a target='_blank' href='" + project.url + "'>" + project.url + "</a>";
+	}
+	
+	// comments
+	content += "<div id=\"comments-project-"+project.pid+"\"></div>";
+	// go and get the comments asych...
+	getCommentsForEntity(project.pid, 'project','comments-project-'+project.pid);
+	//
 	if (apply_projects){
 		content +="<div class=\"totheright\" style=\"display:none\">";
 		//content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -197,6 +206,13 @@ function getProjectDetail(projectId){
 	//TODO: currently the apply projects is passed around as global. not so elegant
 	$jq.get(url,function(data,status){
 		generateAndPopulateModal(data, renderProject, window.view_settings.apply_projects);
+	});
+}
+
+function getCommentsForEntity(id, entityType, target){
+	var url = moduleUrl + "actions/comment_actions.php?action=viewall&id=" + id + "&type=" + entityType;
+	$jq.get(url,function(data,status){
+		ajaxInsert(data, target);
 	});
 }
 
