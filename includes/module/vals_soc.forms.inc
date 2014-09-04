@@ -324,7 +324,7 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 	$current_role = getRole();
 	$no_administrator = ($current_role !== _ADMINISTRATOR_TYPE);
 	
-	if ($no_administrator){
+	if (! $no_administrator){
 		//If the admin adds users directly we do not want the following fields as these are already
 		//provided in one or another way
 	
@@ -341,41 +341,43 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 				),
 				"#description" => t("Select your role in Semester of Code."),
 		);
+	
+	    $institutes = db_select('soc_institutes', 'i')->fields('i', array('inst_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
+	    $options_institutes = array(0 => t('Fill in later'));
+	    foreach ($institutes as $ins){
+	        $options_institutes[$ins['inst_id']] = $ins['name'];
+	    }
+	   
+	    $form['account']['institute'] = array(
+				"#type" => "select",
+				"#title" => t("Select the institute you are in"),
+				"#options" => $options_institutes,
+				"#description" => t("(for students and tutors only)"),
+		);
+	    
+	    $organisations = db_select('soc_organisations', 'o')->fields('o', array('org_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
+	    $options_organisation = array(0 => t('Fill in later'));
+	    foreach ($organisations as $org){
+	        $options_organisation[$org['org_id']] = $org['name'];
+	    }
+	
+	    $form['account']['organisation'] = array(
+				"#type" => "select",
+				"#title" => t("Select the organisation you are in"),
+				"#options" => $options_organisation,
+				"#description" => t("(for organisation admins and mentors only)"),
+		);
 	}
-    $institutes = db_select('soc_institutes', 'i')->fields('i', array('inst_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
-    $options_institutes = array(0 => t('Fill in later'));
-    foreach ($institutes as $ins){
-        $options_institutes[$ins['inst_id']] = $ins['name'];
-    }
-   
-    $form['account']['institute'] = array(
-			"#type" => "select",
-			"#title" => t("Select the institute you are in"),
-			"#options" => $options_institutes,
-			"#description" => t("(for students and tutors only)"),
-	);
-    
-    $organisations = db_select('soc_organisations', 'o')->fields('o', array('org_id', 'name'))->execute()->fetchAll(PDO::FETCH_ASSOC);
-    $options_organisation = array(0 => t('Fill in later'));
-    foreach ($organisations as $org){
-        $options_organisation[$org['org_id']] = $org['name'];
-    }
-
-    $form['account']['organisation'] = array(
-			"#type" => "select",
-			"#title" => t("Select the organisation you are in"),
-			"#options" => $options_organisation,
-			"#description" => t("(for organisation admins and mentors only)"),
-	);
-    
+    $url_set_code = getRequestVar('c', '', 'GET');
     if ($no_administrator){
         //If the admin adds users directly we do not want the following fields as these are already 
         //provided in one or another way
         $form['account']['account_key'] = array(
                 "#type" => "textfield",
-                "#title" => t("Type the key you got from the admin"),
+                "#title" => t("Type the key you got in the invitation"),
                 "#size" => 10,
                 "#description" => t("This code is different per role."),
+        		"#default_value" => $url_set_code,
         );
         
         $default_language = language_default()->language;
