@@ -54,7 +54,7 @@ function getStudentLayout($timeline_args){
 
 	if($timeline_args['viewProjectIdeas']){
 		$output .='
-					<div class="column-entry participants">
+					<div class="column-entry org_app projects">
 						<h4>
 							<a class="dashboard-link component-link"
 							href="'.$base_url.'/dashboard/projects/browse"

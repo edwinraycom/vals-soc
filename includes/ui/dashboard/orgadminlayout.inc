@@ -85,7 +85,7 @@ function getOrgAdminLayout($timeline_args){
 	
 	if($timeline_args['browseProjectIdeasVisible']){
 		$output .='
-					<div class="column-entry org_app manage_project_ideas">
+					<div class="column-entry projects">
 						<h4>
 							<a class="dashboard-link component-link"
 								href="'.$base_url.'/dashboard/projects/browse"
