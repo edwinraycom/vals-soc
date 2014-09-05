@@ -171,17 +171,19 @@ class Groups extends AbstractEntity{
 			drupal_set_message(tt(' We could not delete the %1$s', t($type)).(_DEBUG ? $ex->getMessage():''), 'error');
 			return FALSE;
 		}
-		$num_deleted = db_delete(tableName($type))
-		->condition(self::keyField($type), $id)
-		->execute();
+		
 		try{
-		if ($num_deleted){			
-			drupal_set_message(tt('The %1$s has been deleted.', $type), 'status');
-			return TRUE;
-		} else {
-			drupal_set_message(tt('The group seems to have been deleted already, refresh your screen to see if this is true.', $type), 'error');
-			return 0;
-		}
+			$num_deleted = db_delete(tableName($type))
+			->condition(self::keyField($type), $id)
+			->execute();
+	
+			if ($num_deleted){			
+				drupal_set_message(tt('The %1$s has been deleted.', $type), 'status');
+				return TRUE;
+			} else {
+				drupal_set_message(tt('The %1$s seems to have been deleted already, refresh your screen to see if this is true.', $type), 'error');
+				return 0;
+			}
 		} catch (Exception $e){
 			drupal_set_message(tt(' We could not delete the %1$s', t($type)).(_DEBUG ? $ex->getMessage():''), 'error');
 			return FALSE;
