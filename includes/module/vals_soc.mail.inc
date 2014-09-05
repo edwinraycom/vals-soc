@@ -170,6 +170,7 @@ function format_invite_message($entity, $subtype='', $organisation_name=''){
 		$db_code_key = 'owner_code';
 	}
 	$invite_key = $entity->$db_code_key;
+	$server = _VALS_SOC_FULL_URL;
 	
 	$output .= '<p>';
 	$output .= t('Hello').',';
@@ -181,12 +182,12 @@ function format_invite_message($entity, $subtype='', $organisation_name=''){
 	$output .= t('The first step is to sign up...'); 
 	$output .= '<br/>';
 	$output .= '<ol class=\'grouplist\'>';
-	$server = _VALS_SOC_FULL_URL;
+	
 		$output .= "<li>";
-		$output .= tt('Go to <a href="%1$s/user/register?c=%2$s" target="_blank">%1$s/user/register</a> to register.', $server, $invite_key);
+		$output .= tt('Go to <a href="%1$s/user/register/%2$s" target="_blank">%1$s/user/register/%2$s</a> to register.', $server, $invite_key);
 		$output .= "</li>";
 		$output .= "<li>";
-		$output .= tt('Fill in your basic details and select "%1$s" as your role.', $subtype); 
+		$output .= t('Fill in your basic details.'); 
 		$output .= "</li>";
 		$output .= "<li>";
 		$output .= t('Enter the following unique key if it has not been filled yet: ' . $invite_key);
@@ -200,8 +201,6 @@ function format_invite_message($entity, $subtype='', $organisation_name=''){
 		$output .= "<li>";
 		$output .= t('Follow that link, log in and set your password.');
 		$output .= "</li>";
-		
-		
 		
 	$output .= "</ol>";
 	$output .= '<br/>';

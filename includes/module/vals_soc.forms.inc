@@ -314,6 +314,10 @@ function vals_soc_form_user_profile_form_alter_handler(&$form, &$form_state) {
  * @return multitype:string number NULL
  */
 function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
+	
+	$q = explode("/",$_GET['q']);
+	$code = (isset($q[2]))?$q[2]:'';
+	
 	$form['account']['fullname'] = array(
 			"#type" => "textfield",
 			"#title" => t("What is your full name?"),
@@ -368,7 +372,7 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 				"#description" => t("(for organisation admins and mentors only)"),
 		);
 	}
-    $url_set_code = getRequestVar('c', '', 'GET');
+    $url_set_code =   $code;//getRequestVar('c', '', 'GET');
     if ($no_administrator){
         //If the admin adds users directly we do not want the following fields as these are already 
         //provided in one or another way

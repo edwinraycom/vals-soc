@@ -48,7 +48,7 @@ function initBrowseOrgsLayout($org_id=''){?>
 						title: "Organisation",
 						width: "30%",
 						display: function (data) {
-							return "<a title=\"View organisation details\" href=\"#\" onclick=\"getOrganisationDetail("+
+							return "<a title=\"View organisation details\" href=\"javascript:void(0);\" onclick=\"getOrganisationDetail("+
 								data.record.org_id+")\">"+data.record.name+"</a>";
 							},
 					},
