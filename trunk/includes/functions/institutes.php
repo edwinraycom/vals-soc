@@ -47,13 +47,11 @@ function initBrowseInstitutesLayout($inst_id=''){?>
 					name: {
 						title: "Institute",
 						width: "30%",
-						/*
-display: function (data) {
-							return "<a title=\"View institute details\" href=\"#\" onclick=\"getInstituteDetail("+
-								data.record.org_id+")\">"+data.record.name+"</a>";
+						display: function (data) {
+							return "<a title=\"View institute details\" href=\"javascript:void(0);\" onclick=\"getInstituteDetail("+
+								data.record.inst_id+")\">"+data.record.name+"</a>";
 							},
-						*/
-					}
+									}
 				},
 				/*
 recordsLoaded: function(event, data) {

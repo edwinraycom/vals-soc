@@ -287,7 +287,13 @@ function initBrowseProjectLayout($pid=''){
 				},
 				title: {
 					title: "Project title",
-					width: "40%"
+					width: "40%",
+					display: function (data) {
+						return "<a title=\"View project details\" href=\"javascript:void(0);\" onclick=\"getProjectDetail("+
+							data.record.pid+")\">" + data.record.title + "</a>";
+						},
+						create: false,
+						edit: false
 				},
 				name: {
 					title: "Organisation",
@@ -298,7 +304,9 @@ function initBrowseProjectLayout($pid=''){
 					width: "26%",
 					create: false,
 					edit: false
-				},
+				}
+				/*
+				,
 				Detail: {
 					width: "2%",
 					title: "",
@@ -309,7 +317,9 @@ function initBrowseProjectLayout($pid=''){
 						},
 					create: false,
 					edit: false
-				}<?php 
+				}
+				*/
+				<?php 
 				if ($apply_projects) {?>
 					,
 					Propose: {
@@ -325,9 +335,9 @@ function initBrowseProjectLayout($pid=''){
 					}<?php 
 				}?>
 			}
-		//	/*
-, //end fields
-			recordsLoaded: function(event, data) {
+			/*
+//this makes of each row a filter for that project
+			,recordsLoaded: function(event, data) {
 				var browse_url = baseUrl + "dashboard/projects/browse?pid=";
 				
 				$(".jtable-data-row").each(function(){
@@ -339,7 +349,7 @@ function initBrowseProjectLayout($pid=''){
 					});
 				});
 			}
-		//	*/
+			*/
 		});
 	
 	//Load project list from server on initial page load

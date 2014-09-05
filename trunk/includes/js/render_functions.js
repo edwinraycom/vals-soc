@@ -46,10 +46,19 @@ function renderOrganisation(org){
 //		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='Submit proposal for this project'/>";
 //		content +="</div>";
 //	}
-	content += "<br/><h3>(Project)site</h3><a href='"+org.url+"'>"+org.url+"</a>";
+	content += "<br/><h3>Website</h3><a href='"+org.url+"'>"+org.url+"</a>";
 	return content; 
-	
 }
+
+function renderInstitute(ins){
+	var content = "<h1>"+ins.name+"</h1>";
+	content += "<h3>Contact information</h3>"+ 
+	'<div style="padding-left:5px;">'+
+	'Name:' + ins.contact_name + '<br/>'+
+	'Email: '+ ins.contact_email + '</div>';
+	return content; 
+}
+
 function renderStudent(data){
 	var s = '<ol>';
 	s += '<li>name: '+(data.student_name ? data.student_name: data.name)+ '</li>';
@@ -204,7 +213,7 @@ function getProposalFormForProject(projectId){
 function getProjectDetail(projectId){	
 	var url = moduleUrl + "actions/project_actions.php?action=project_detail&project_id=" + projectId;
 	//TODO: currently the apply projects is passed around as global. not so elegant
-	$jq.get(url,function(data,status){
+	$jq.get(url, function(data,status){
 		generateAndPopulateModal(data, renderProject, window.view_settings.apply_projects);
 	});
 }
@@ -219,7 +228,14 @@ function getCommentsForEntity(id, entityType, target){
 function getOrganisationDetail(org_id){	
 	var url = moduleUrl + "actions/organisation_actions.php?action=organisation_detail&orgid=" + org_id;
 	$jq.get(url,function(data,status){
-		generateAndPopulateModal(data, renderOrganisation);//, window.view_settings.apply_projects
+		generateAndPopulateModal(data, renderOrganisation);
+	});
+}
+
+function getInstituteDetail(id){
+	var url = moduleUrl + "actions/institute_actions.php?action=detail&instid=" + id;
+	$jq.get(url,function(data,status){
+		generateAndPopulateModal(data, renderInstitute);
 	});
 }
 

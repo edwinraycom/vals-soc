@@ -151,14 +151,11 @@ function vals_soc_forms() {
  * @return Ambigous <multitype:string, multitype:string number NULL >
  */
 function vals_soc_form_user_register_form_alter(&$form, &$form_state) {
-	//module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.forms');
 	return vals_soc_form_user_register_form_alter_handler($form, $form_state);
 }
 
 function vals_soc_form_user_profile_form_alter(&$form, &$form_state) {
-	//module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.forms');
-	$x = vals_soc_form_user_profile_form_alter_handler($form, $form_state);
-	return $x;
+	return vals_soc_form_user_profile_form_alter_handler($form, $form_state);
 }
 
 //***********************************************************************************

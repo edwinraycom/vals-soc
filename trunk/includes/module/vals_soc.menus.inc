@@ -9,6 +9,14 @@ function vals_soc_menu_handler(){
 
 	//########################## PROGRAM SETTINGS LINKS #######################
 	$progSettings = t('Program Settings');
+	$items = array();
+	$items[_VALS_SOC_FULL_URL]   = array(
+		'title' => t('Home'),
+		'type' => MENU_NORMAL_ITEM,
+		'access callback' => TRUE,
+		'page callback' => 'drupal_goto',
+		'page arguments' => array(_VALS_SOC_FULL_URL),
+	);
 	$items['admin/config/vals-soc']  = getProgramSettingsLink('access administration pages', t('VALS Summer of code'), MENU_NORMAL_ITEM);
 	$items['admin/config/vals-soc/program_settings'] = getProgramSettingsLink('access administration pages', $progSettings, MENU_NORMAL_ITEM);
 	$items['admin/config/vals-soc/program_settings/messages'] = getEditMessagesLink('access administration pages', MENU_NORMAL_ITEM);
@@ -58,14 +66,25 @@ function vals_soc_menu_handler(){
 	$items['projects/browse'] = getProjectsBrowseLink('projects/browse');
 	
 	$items['http://semesterofcode.com/'] = array(
-		'title' => t('Information'),
+		'title' => t('About Vals'),
 		'type' => MENU_NORMAL_ITEM,
-		'access arguments' => TRUE, 
+		'access callback' => TRUE, 
 		'page callback' => 'drupal_goto',
 		'page arguments' => array('http://semesterofcode.com/')
+			
 	);
 	// open this in a new window
 	$items['http://semesterofcode.com/']['options']['attributes']['target'] = '_blank';
+	
+	
+	$items[_VALS_SOC_FULL_URL]['weight'] = 0;
+	$items['dashboard']['weight'] = 1;
+	$items['institutes/browse']['weight'] = 4;
+	$items['organisations/browse']['weight'] = 5;
+	$items['projects/browse']['weight'] = 6;
+	$items['http://semesterofcode.com/']['weight'] = 8;
+	
+	
 	
 	return $items;
 }

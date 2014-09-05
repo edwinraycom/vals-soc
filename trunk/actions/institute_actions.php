@@ -35,7 +35,7 @@ switch ($_GET['action']){
 			print json_encode($jTableResult);
 		}
 	break;
-	case 'institution_detail':
+	case 'detail':
 		if(isset($_GET['instid'])){
 			try {
 				$institutions = Institutes::getInstance()->getInstituteById($_GET['instid']);
