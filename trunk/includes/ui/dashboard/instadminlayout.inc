@@ -4,7 +4,7 @@ drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/css/dashboard/
       'group' => CSS_THEME
     ));
 function initInstDashboardLayout(){
-	return getInstAdminLayout(Timeline::getInstadminTimelineVars());
+	return getInstAdminLayout(Timeline::getInstance()->getInstadminTimelineVars());
 }	
 
 function getInstAdminLayout($timeline_args){

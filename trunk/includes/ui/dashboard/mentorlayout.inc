@@ -6,7 +6,7 @@ drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/css/dashboard/
 
 //Will be called at the end of this file
 function initDashboardLayout(){
-	return getMentorLayout(Timeline::getMentorTimelineVars());
+	return getMentorLayout(Timeline::getInstance()->getMentorTimelineVars());
 }
 
 function getMentorLayout($timeline_args){
