@@ -318,11 +318,16 @@ function showInstituteAdminPage($my_institute, $action='administer'){
 		
 		//we pass on the buttons=0 since we have the buttons as tabs
 		$data[] = array(2, $my_institute->name, 'view', _INSTITUTE_GROUP, $my_institute->inst_id, "buttons=0");
+		
+		$next_tab = 2;
 		if ($action=='administer'){
-			$data[] = array(1, 'Delete', 'delete', _INSTITUTE_GROUP, $my_institute->inst_id, '', false, 'delete');$nr++;
+			if(vals_soc_access_check('dashboard/institute/administer/add_or_delete')){
+				$data[] = array(1, 'Delete', 'delete', _INSTITUTE_GROUP, $my_institute->inst_id, '', false, 'delete');$nr++;
+				$tabs[] = "'${tab_id_prefix}$next_tab'";
+				$next_tab = 3;
+			}
 			$data[] = array(1, 'Edit', 'edit', _INSTITUTE_GROUP, $my_institute->inst_id, '', false, 'editing');$nr++;
-			$tabs[] = "'${tab_id_prefix}2'";
-			$tabs[] = "'${tab_id_prefix}3'";
+			$tabs[] = "'${tab_id_prefix}$next_tab'";
 		} 
 
 		//[number of tabs, label start, tab id start, type, data, id, render targets, active target content, active tab]
@@ -344,18 +349,7 @@ function showOrganisationPage($show_action, $show_last=FALSE){
 		$tab_prefix = 'organisation_page-';
 		$target = "${tab_prefix}1";
 		$form = drupal_get_form('vals_soc_organisation_form', '', $target);
-		/*
-		$add_tab .= drupal_render($f3);
-		*/
-// 		$form['submit'] = ajax_pre_render_element($form['submit']);
-// 		$extra_js = valssoc_form_get_js($form);
-// 		$form['#attached']['js'] = array();
-		// Print $form
-// 		$add_tab = drupal_render($form);
-// 		$add_tab .=  $extra_js;
-		
 		$add_tab = renderForm($form, $target, true);
-		
 		$data = array();
 		$data[] = array(1, 'Add', 'add', _ORGANISATION_GROUP, null, "target=admin_container&show_action=$show_action", true, 'adding_to_the right');
 		echo renderTabs(1, null, $tab_prefix, _ORGANISATION_GROUP, $data, null, TRUE, $add_tab);
@@ -394,8 +388,9 @@ function showOrganisationAdminPage($organisations, $action='administer', $show_l
 		$tabs[] = "'$tab_id_prefix$nr'";
 		$data[] = array(2, $org->name, 'view', _ORGANISATION_GROUP, $org->org_id);
 	}
+
 	// check for org admin editing rights
-	if(($action == 'administer') && user_access('vals admin register')){
+	if(($action == 'administer') && vals_soc_access_check('dashboard/organisation/administer/add_or_delete')){
 		//To remove the add tab: comment the three lines below
 		$nr++;
 		$data[] = array(1, 'Add', 'add', _ORGANISATION_GROUP, null, "target=$tab_id_prefix$nr&show_action=administer", true, 'adding_to_the right');

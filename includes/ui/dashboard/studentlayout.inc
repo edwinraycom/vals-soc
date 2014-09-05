@@ -5,7 +5,7 @@ drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/css/dashboard/
     ));
 
 function initDashboardLayout(){
-	return getStudentLayout(Timeline::getStudentTimelineVars());
+	return getStudentLayout(Timeline::getInstance()->getStudentTimelineVars());
 }
 
 function getStudentLayout($timeline_args){

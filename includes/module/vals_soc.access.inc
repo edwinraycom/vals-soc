@@ -37,6 +37,7 @@ function pageAccessCheck($access_string) {
 		case 'dashboard/organisation/members':
 			return (hasPermission('vals admin register') || hasPermission('vals admin view')) && Timeline::getInstance()->organisationSignupPeriodOpened();
 			break;
+		// The following can be accessed by 'vals admin register' once the org applications open
 		case 'dashboard/organisation/administer':
 		case 'dashboard/institute/administer':
 		case 'dashboard/institute/members':
@@ -44,6 +45,14 @@ function pageAccessCheck($access_string) {
 		case 'dashboard/institute/group/administer':
 			return hasPermission('vals admin register') && Timeline::getInstance()->organisationSignupPeriodOpened();
 			break;
+		// The following can be accessed by 'vals admin register' once the org applications open
+		// but adding/deleting entries is not allowed after the org signup period ends (edit existing only)
+		case 'dashboard/organisation/administer/add_or_delete':
+		case 'dashboard/institute/administer/add_or_delete':
+			return hasPermission('vals admin register') && Timeline::getInstance()->organisationSignupPeriodOpened()
+				&& !Timeline::getInstance()->isAfterOrganisationSignupPeriod();
+			break;
+					
 		case 'dashboard/projects/administer':
 			return hasPermission('vals admin projects') && Timeline::getInstance()->organisationSignupPeriodOpened();
 			break;

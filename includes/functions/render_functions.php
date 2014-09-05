@@ -243,12 +243,16 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
     	$s = '';
     	if ($show_buttons && user_access('vals admin register')){
 	    	$pPath=request_path();
-	    	$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"administration\"]);}'";
 	    	$edit_action = "onclick='ajaxCall(\"administration\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, ".
 	    		(($type == _STUDENT_GROUP) ? "\"$target\");'" :  "\"formResult\", \"html\", \"$target\");'");
-
-	    	$s .= "<div class='totheright'><input type='button' value='".t('edit')."' $edit_action/>";
-	    	$s .= "<input type='button' value='".t('delete')."' $delete_action/></div>";
+	    	$s .= "<div class='totheright'>";
+	    	$s .= "	<input type='button' value='".t('edit')."' $edit_action/>";
+	    	// has the org signup period ended if so user cant add/delete entries, only edit
+	    	if(vals_soc_access_check('dashboard/organisation/administer/add_or_delete')){
+	    		$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"administration\"]);}'";
+	    		$s .= "	<input type='button' value='".t('delete')."' $delete_action/>";
+	    	}
+	    	$s .= "</div>";
 	    	//$sub_type_user = '';
     	}
         $s .= formatMemberRecordNice($organisation, $type, $target);

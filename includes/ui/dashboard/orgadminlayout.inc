@@ -5,7 +5,7 @@ drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/css/dashboard/
     ));
 //Will be called at the end of this file
 function initDashboardLayout(){
-	return getOrgAdminLayout(Timeline::getOrgadminTimelineVars());
+	return getOrgAdminLayout(Timeline::getInstance()->getOrgadminTimelineVars());
 }	
 
 function getOrgAdminLayout($timeline_args){
