@@ -1,8 +1,11 @@
 <?php
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after administration.php which does the same
 
-function showProjectPage($show_last=FALSE){
+function showProjectPage($show_last=FALSE, $owner_only=''){
+
 	//TODO check for the role of current user
+
+	$owner_id = isset($owner_only) ? $GLOBALS['user']->uid : '';
 
 	$role = getRole();
 	//Get my groups
@@ -26,8 +29,9 @@ function showProjectPage($show_last=FALSE){
 			$orgids[] = $org->org_id;
 		}
 		$projects = Project::getProjectsByUser($GLOBALS['user']->uid, $orgids);//$my_organisations->fetchCol());
+		
 		//$projects = Project::getProjectsByUser_orig($role, $GLOBALS['user']->uid, $orgids);//$my_organisations->fetchCol());
-		if (! $projects){
+		if (! $projects && isset($owner_only)){
 			echo t('You have no project yet registered');
 			echo '<h2>'.t('Add your project').'</h2>';
 			
@@ -35,27 +39,9 @@ function showProjectPage($show_last=FALSE){
 			$target = "${tab_prefix}1";
 			$form = drupal_get_form("vals_soc_project_form", '', 'project_page-1');
 			$form['submit'] = ajax_pre_render_element($form['submit']);
-// 			$extra_js = valssoc_form_get_js($form);
-// 			$form['#attached']['js'] = array();
-// 			// Print $form
-// 			$add_tab = drupal_render($form);
-// 			$add_tab .=  $extra_js;
+
 			$add_tab =  renderForm($form, $target, true);
-/*
-			$form = drupal_get_form('vals_soc_project_form', '', 'project_page-1');
-			$form['#action'] = url('dashboard/projects/administer');
-			// Process the submit button which uses ajax
-			$form['submit'] = ajax_pre_render_element($form['submit']);
-			// Build renderable array
-			$build = array(
-					'form' => $form,
-					'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
-			);
-			// Print $form
-			$add_tab = drupal_render($build);
-			// Print JS
-			$add_tab .= drupal_get_js();
-*/
+
 			$data = array();
 			$data[] = array(1, 'Add', 'add', 'project', '0', "target=admin_container", true, 'adding from the right');
 			echo renderTabs(1, null, 'project_page-', 'project', $data, null, TRUE, $add_tab, 1,'project');
@@ -65,10 +51,15 @@ function showProjectPage($show_last=FALSE){
 		        	   activatetabs('tab_', ['project_page-1']);
 		        </script><?php
 		} else {
+
+			echo "<a href='"._VALS_SOC_URL. "/dashboard/projects/administer'>".t('Show all')."</a>";
+			echo " | ";
+			echo "<a href='"._VALS_SOC_URL. "/dashboard/projects/administer/mine'>".t('Show only mine')."</a>";
+
 			$org =1;
 			$show_org_title = ($my_organisations->rowCount() > 1);
 			foreach ($orgs as $organisation){
-				$projects = Project::getProjects('', '', array($organisation->org_id));
+				$projects = Project::getProjects('', $owner_id, array($organisation->org_id));
 				showOrganisationProjects($org, $projects, $organisation, $show_org_title, $show_last, TRUE);
 				$org++;
 			}
@@ -106,7 +97,7 @@ function showOrganisationProjects($org_nr, $projects, $organisation, $show_org_t
 	$data[] = array(1, 'Add', 'add', 'project', 0, "target=$tab_id_prefix$nr&org=$org_id", TRUE, 'right');
 	$activating_tabs[] = "'$tab_id_prefix$nr'";
 	//If no target is sent along, the project views are shown inline
-	$current_tab_content = (1 == $current_tab) ? renderProjects('', $projects, $current_tab_id, $inline): 
+	$current_tab_content = (1 == $current_tab) ? renderProjects('', $projects, $current_tab_id, $inline, FALSE, FALSE): 
 		renderProject($my_project, $current_tab_id, false);
 	
 	echo renderTabs($nr, 'Project', $tab_id_prefix, 'project', $data, 0, TRUE, $current_tab_content,
@@ -165,8 +156,8 @@ function showOrganisationProjects($org_nr, $projects, $organisation, $show_org_t
 		<?php
 		}
  */
-function renderProjects($organisation_selection='', $projects='', $target='', $inline=FALSE){
-	if (!$projects){
+function renderProjects($organisation_selection='', $projects='', $target='', $inline=FALSE, $reload_data=TRUE){
+	if (!$projects && $reload_data){
 		$projects = Project::getProjects('', $GLOBALS['user']->uid, $organisation_selection);
 	}
 	$target_set = ! empty($target);

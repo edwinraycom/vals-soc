@@ -53,6 +53,14 @@ function vals_soc_administer_projects_page(){
 	return ob_get_clean();
 }
 
+function vals_soc_administer_my_projects_page(){
+	ob_start();
+	$owner_only = TRUE;
+	include(_VALS_SOC_ROOT. '/includes/ui/administer/project.inc');
+	//module_load_include('inc', 'vals_soc', 'includes/ui/administer/project');
+	return ob_get_clean();
+}
+
 function vals_soc_dashboard_overview_page(){
 	$includeFile = null;
 	if(hasRole(array(_ADMINISTRATOR_TYPE))){

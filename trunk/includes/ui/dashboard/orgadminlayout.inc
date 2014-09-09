@@ -13,7 +13,7 @@ function getOrgAdminLayout($timeline_args){
 	$output ='
 		<div class="dashboard" id="main-dashboard">
 			<div class="dashboard-head">
-				<span>'.t("Main dashboard").'</span>
+				<span>'.t("Organisation Admin dashboard").'</span>
 			</div>
 		
 			<div class="block block-dashboard">
@@ -60,6 +60,10 @@ function getOrgAdminLayout($timeline_args){
 								title="'.t("Manage your project ideas").'">'.t("Manage your project ideas").'</a>
 						</h4>
 						<p>'.t("Allows you to add and amend project ideas for students.").'</p>
+							<div>
+								<a href="'.$base_url.'/dashboard/projects/administer/mine" title="Manage my projects only">Manage my projects only</a>
+								|<a href="'.$base_url.'/dashboard/projects/administer" title="Manage all organisations projects">Manage all organisations projects</a>
+							</div>
 					</div>
 		';
 	}

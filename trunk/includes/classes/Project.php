@@ -100,8 +100,15 @@ class Project extends AbstractEntity{
     		$projects = $p ? array($p) : array();
     	} elseif ($organisations) {
     		$table = tableName('project');
-    		$projects = db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",
-    			array(':orgs' => $organisations))->fetchAll();
+    		//
+    		if(!$owner_id){
+    			$projects = db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",
+    				array(':orgs' => $organisations))->fetchAll();
+    		}else{
+    			$projects = db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) AND p.owner_id IN (:uid)",
+    					array(':orgs' => $organisations, ':uid' => $owner_id))->fetchAll();
+    		}
+    		//
     	} elseif ($owner_id){
     		//$projects = self::getProjectsByUser_orig($role, $owner_id);
     		$projects = self::getProjectsByUser($owner_id);

@@ -52,6 +52,7 @@ function vals_soc_menu_handler(){
 	
 	// project actions
 	$items['dashboard/projects/administer'] = getProjectsAdministerLink('dashboard/projects/administer');
+	$items['dashboard/projects/administer/mine'] = getMyProjectsAdministerLink('dashboard/projects/administer/mine');
 	$items['dashboard/projects/browse'] = getProjectsBrowseLink('dashboard/projects/browse');
 
 	// proposal actions
@@ -259,6 +260,19 @@ function getProjectsAdministerLink($path){ //dashboard/projects/administer
 			'title' => t('Administer your projects'),
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_administer_projects_page',
+			'access callback' => 'vals_soc_access_check',
+			'access arguments' => array($path),
+			'description' => t('Administer page for projects'),
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
+	);
+}
+
+function getMyProjectsAdministerLink($path){ //dashboard/projects/administer/mine
+	return array(
+			'title' => t('Administer your projects'),
+			'type' => MENU_CALLBACK,
+			'page callback' => 'vals_soc_administer_my_projects_page',
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' => array($path),
 			'description' => t('Administer page for projects'),
