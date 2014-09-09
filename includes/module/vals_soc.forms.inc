@@ -696,7 +696,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
 			'#suffix' => '</div>',
 	);
-	$form['name'] = array(
+	$form['title'] = array(
 		"#type" => "textfield",
 		'#title' => t('Give a title to your proposal'),
 		"#size" => 60,

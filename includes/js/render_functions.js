@@ -3,7 +3,7 @@ function renderProject(project, apply_projects){
 	var content = "<h2>"+project.title+"</h2>";
 	content += project.description;
 	if(project.url){
-		content += "<br/><a target='_blank' href='" + project.url + "'>" + project.url + "</a>";
+		content += "<br/><a target='_blank' class='external' href='" + project.url + "'>" + project.url + "</a>";
 	}
 	
 	// comments
