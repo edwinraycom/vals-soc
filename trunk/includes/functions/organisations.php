@@ -56,7 +56,7 @@ function initBrowseOrgsLayout($org_id=''){?>
 						title: "More information",
 						width: "70%",
 						display: function (data) {
-							return "<a title=\"View organisation/project site\" target=\"_blank\" href=\""+data.record.url+"\" >"+data.record.url+"</a>";
+							return "<a class='external' title=\"View organisation/project site\" target=\"_blank\" href=\""+data.record.url+"\" >"+data.record.url+"</a>";
 							},
 					}
 				},
