@@ -54,6 +54,7 @@ function pageAccessCheck($access_string) {
 			break;
 					
 		case 'dashboard/projects/administer':
+		case 'dashboard/projects/administer/mine':
 			return hasPermission('vals admin projects') && Timeline::getInstance()->organisationSignupPeriodOpened();
 			break;
 		case 'projects/browse':

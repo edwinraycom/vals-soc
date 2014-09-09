@@ -11,9 +11,10 @@ include(_VALS_SOC_ROOT.'/includes/functions/projects.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');
 include(_VALS_SOC_ROOT.'/includes/functions/render_functions.php');
 
+$owner_only = isset($owner_only) ? $owner_only : NULL;
 ?>
 <div id='ajax_msg'></div>
 
 <div id='admin_container' class='tabs_container'>
-	<?php showProjectPage();?>
+	<?php showProjectPage(FALSE, $owner_only);?>
 </div>
