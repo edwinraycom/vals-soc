@@ -172,7 +172,7 @@ class Project extends AbstractEntity{
 		if (in_array($my_role, array(_ORGADMIN_TYPE, _MENTOR_TYPE))){
 			$my_orgs = $organisations ?: db_query(
 					"SELECT o.org_id from $table as o ".
-					"LEFT JOIN soc_User_membership as um on o.org_id = um.group_id ".
+					"LEFT JOIN soc_user_membership as um on o.org_id = um.group_id ".
 					"WHERE um.uid = $user_id AND um.type = :organisation",
       					array(':organisation' =>_ORGANISATION_GROUP))->fetchCol();
 			if (! $my_orgs){
