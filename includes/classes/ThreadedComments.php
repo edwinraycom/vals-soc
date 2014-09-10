@@ -34,6 +34,18 @@ class ThreadedComments extends AbstractEntity {
 		return $post;
 	}
 	*/
+	function removethreadsForEntity($entity_id, $entity_type){
+		try{
+			$num_deleted = db_delete('soc_comments')
+			->condition('entity_id', $entity_id)
+			->condition('entity_type', $entity_type)
+			->execute();
+			// fail silently if no record/s found
+		} catch (Exception $e){
+			drupal_set_message(tt(' We could not delete the %1$s', t($entity_type)).(_DEBUG ? $ex->getMessage():''), 'error');
+			return FALSE;
+		}
+	}
 	
 	function getThreadsForEntity($entity_id, $entity_type){
 		$queryString = "SELECT s.*, u.name FROM soc_comments s, users u WHERE entity_id=" . $entity_id .
