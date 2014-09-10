@@ -1,6 +1,7 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
 // module_load_include('php', 'vals_soc', 'includes/classes/AbstractEntity');
+module_load_include('php', 'vals_soc', 'includes/classes/ThreadedComments');
 module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 module_load_include('php', 'vals_soc', 'includes/classes/Project');
 module_load_include('php', 'vals_soc', 'includes/functions/projects');
@@ -190,6 +191,7 @@ switch ($_GET['action']){
     		echo jsonBadResult(t('There is no such type we can delete'));
     	} else {
     		$result = Groups::removeGroup($type, $id);
+    		ThreadedComments::getInstance()->removethreadsForEntity($id, $type);
     		echo $result ? jsonGoodResult() : jsonBadResult();
     	}
     break;
