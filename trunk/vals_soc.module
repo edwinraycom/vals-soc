@@ -37,7 +37,6 @@ function vals_soc_preprocess_page(&$vars) {
  * @return boolean
  */
 function vals_soc_access_check($access_data) {
-	if(!_DEBUG) return TRUE; // remove the ! not operator here to place all menu links without checks
 	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.access');
 	return pageAccessCheck($access_data);
 }
