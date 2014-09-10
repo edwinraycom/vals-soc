@@ -656,7 +656,7 @@ function vals_soc_project_form($form, &$form_state, $project='', $target='', $or
 	);
 	$form['draft'] = array(
 			"#type" => "checkbox",
-			'#title' => populate($project, 'state', 'pending'). ' '.t('If you want you can save the project as draft, making it visible only to members of your organisation)'),
+			'#title' => t('If you want you can save the project as draft, making it visible only to members of your organisation)'),
 			"#size" => 60,
 			//'#required' => '1',
 			"#default_value" => (populate($project, 'state', 'pending') == 'draft' ? TRUE : FALSE)
