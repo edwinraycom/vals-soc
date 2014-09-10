@@ -177,8 +177,7 @@ class Users extends AbstractEntity{
 						implode(',', $group_ids).")";
 				$members = db_query($query);
 					
-			} 
-			else {
+			} else {
 				//So the admin cannot see who are subscribed???? Used to be : return NULL;
 				$group_type = self::participationGroup($member_type);
 				$query = "SELECT DISTINCT u.*,n.name as fullname from users as u ".

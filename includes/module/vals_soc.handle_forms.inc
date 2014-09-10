@@ -12,11 +12,6 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
         return;
     }
     $super = t('Semester of Code Admin');
-//     $requested_user_type = isset($form_state['values']['account_type']) ? $form_state['values']['account_type'] : 'none';
-//     if ($requested_user_type == 'none'){
-//     	form_set_error('account_key', t('There is no type of the account entered.'));
-//     	return;
-//     }
     
     if (! (isset($form_state['values']['account_key']))){
         form_set_error('account_key', tt('There is no key entered. %1$s.'), $super);
@@ -32,129 +27,60 @@ function vals_soc_form_user_register_form_validate_handler(&$form, &$form_state)
     $valid_groups_cnt = $code_result->rowCount();
     
     if ($valid_groups_cnt == 0){
-    	form_set_error('account_key', t('This is no valid key you entered. Ask your tutor.'));
+    	form_set_error('account_key', t('This is no valid key you entered.'));
     	return;
     }
     
-    return;
-    
-    
-    
-//     //Check the student belonging to a valid group
-//     if ($requested_user_type == _STUDENT_TYPE){
-//         if (! isset($form_state['values']['institute']) || $form_state['values']['institute']  == 0){
-//            form_set_error('institute', t('You should select your university or institute.'));
-//         }
-//         $db_and = db_and();
-//         $db_and->condition('code', $code_entered);
-//         $db_and->condition('type', _STUDENT_GROUP);//Since we do not want a long list of groups during registration
-//         //we use the institute instead and so we select not on type student, but on group
-//         $db_and->condition('entity_id', $form_state['values']['institute']);
-//         $valid_groups_cnt = db_select('soc_codes')->fields('soc_codes')->condition($db_and)->execute()->rowCount();
-//         if ($valid_groups_cnt == 0){
-//             form_set_error('account_key', t('This is no valid key you entered. Ask your tutor.'));
-//         }
-
-//         return;
-//     }
-//    	$becomes_some_admin = (in_array($requested_user_type, array(_INSTADMIN_TYPE, _ORGADMIN_TYPE, _SOC_TYPE) ));
-    	
-//     $org = 0;
-// 	if (in_array($requested_user_type, array(_MENTOR_TYPE, _ORGADMIN_TYPE) ) && $form_state['values']['organisation']){
-// 		$org = $form_state['values']['organisation'];
-// 	}
-// 	if (in_array($requested_user_type, array(_SUPERVISOR_TYPE, _INSTADMIN_TYPE)) && $form_state['values']['institute']){
-// 		$org = $form_state['values']['institute'];
-// 	}
-// 	if (!$org && !$becomes_some_admin){
-// 		//Make distinction for choosing error message
-// 		if ($requested_user_type == 'mentor'){
-// 			form_set_error(_ORGANISATION_GROUP, t('You should select your organisation.'));
-// 		} else {
-// 			form_set_error('institute', t('You should select your university or institute.'));
-// 		}
-// 		return;
-// 	}
-// 	$db_and2 = db_and();
-//     $db_and2->condition('type', $requested_user_type);
-//     $db_and2->condition('code', $code_entered);
-//     $db_and2->condition('entity_id', $org);
-//     $found_codes = db_select('soc_codes')->fields('soc_codes')->condition($db_and2)->execute()->rowCount();
-//     $possible_code_rec = db_select('soc_codes')->fields('soc_codes')->
-//         condition('type', $requested_user_type)->
-//         condition('entity_id', $org)->
-//         execute()->fetchAssoc();
-//         //->fetchAllAssoc('type', PDO::FETCH_ASSOC); returns [student=>[type=>student, code=><student_code>,....]
-//     if (!$found_codes){
-//        form_set_error('account_key', t('The key you typed is not correct. Ask the Semester of Code Admin.'.
-//             (_DEBUG ? '<BR>'.t('In this phase, we just give you the code: ').$possible_code_rec['code']: '')));
-//     } else {
-//         return;
-//     }
-    
+    return;    
 }
 
 function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
-    $email = isset($form_state['values']['mail']) ? $form_state['values']['mail'] : ''; 
-   //First get the current user. As the user gets at this hook, the user is already entered in the system
-    $user = db_select('users', 'r')->fields('r')->condition('mail', $email)->execute()->fetchAssoc();
-    if ($user){
-        $uid = $user['uid'];
-    } else {
-        throw new Exception(t('An internal program error occured.'));
-    } 
-    $code_entered = $form_state['values']['account_key'];
-    $current_role = getRole();
+    $current_role = getRole();//This is the role of the current user which might be administrator
+    
+    $uid = $form_state['values']['uid'];//As admin you are registering an account (always for somebody else)
     if ($current_role == _ADMINISTRATOR_TYPE){
-        $rid = $form_state['values']['roles'];//The standard Drupal form for admins to add users submits an int id
-        $role = db_select('role', 'r')->fields('r')->condition('rid', $rid)->execute()->fetchAssoc();
-        if ($role){
-            $type = $role['name'];
-        } else {
-            throw new Exception(t('An internal program error occured.'));
-        }
+    	$type = $form_state['values']['account_type'];
+    	//$rid = $form_state['values']['roles'];//NOT TRUE !!!! The standard Drupal form for admins to add users submits an int id
+    	$entity = in_array($type, array(_STUDENT_TYPE, _INSTADMIN_TYPE, _SUPERVISOR_TYPE)) ? 
+    		altSubValue($form_state['values'], 'institute', 0) : altSubValue($form_state['values'], 'organisation', 0);
+    	$studentgroup = 0;
     } else {
-           	   	
-    	$db_and = db_and();
-    	$db_and->condition('code', $code_entered);
-    	$code_result = db_select('soc_codes')->fields('soc_codes')->condition($db_and)->execute()->fetchAssoc();
-    	
-    	$type = $code_result['type'];
-    	$entity =  $code_result['entity_id'];
-    	$studentgroup =  $code_result['studentgroup_id'];
-    	
-    	
-    	if($type == _STUDENT_GROUP) $type = _STUDENT_TYPE;
-    	    	
-        $role = db_select('role', 'r')->fields('r')->condition('name', $type)->execute()->fetchAssoc();
-        if ($role){
-            $rid = $role['rid'];
-            db_insert('users_roles')->fields( array('uid'=>$uid, 'rid'=>$rid))->execute();
-        } else {
-            throw new Exception(t('An internal program error occured.'));
-        }
+        //Get the parameters based on the code entered
+    	$code_entered = altSubValue($form_state['values'], 'account_key', 0);
+        if (!$code_entered){
+        	throw new Exception(t('An internal program error occured. '). t('No code is entered'));
+        }   	
+    	$code_result = db_select('soc_codes')->fields('soc_codes')->condition('code', $code_entered)->execute()->fetchAssoc();
+    	if ($code_result) {
+	    	$type = $code_result['type'];
+	    	$entity =  $code_result['entity_id'];
+	    	$studentgroup =  $code_result['studentgroup_id'];
+	    	if($type == _STUDENT_GROUP) $type = _STUDENT_TYPE;
+    	} else {
+    		throw new Exception(t('An internal program error occured. '). t('No valid code is entered'));
+    	}
     }
-  
+  	$role = db_select('role', 'r')->fields('r')->condition('name', $type)->execute()->fetchAssoc();
     //Insert user role and its membership to some organisation/institute
-    //
+	if ($role){
+       $rid = $role['rid'];
+       db_insert('users_roles')->fields( array('uid'=>$uid, 'rid'=>$rid))->execute();
+    } else {
+        throw new Exception(t('An internal program error occured.'). tt('Not a valid role %1$s', $type));
+    }
     //Drupal expects a language input element in the account form. If we are here, the chosen custom language 
-    //fiels has already been inserted in the user record for the new user (so we have to do nothing to achieve that).
+    //field has already been inserted in the user record for the new user (so we have to do nothing to achieve that).
      //The user table always contained a language field and is ready to accept that from the
-    //register form. If no language field is submitted, the default language will be inserted
-//    $requested_lang = trim($form_state['values']['language']);
-//    if ($user['language'] != $requested_lang){
-//        //db_update('users')->fields(array('language' => $requested_lang))->condition('uid', $uid)->execute();      
-//    }
+    //register form. If no language field is submitted, the default language will be inserted.    
     
-    
-    if ((($type == _STUDENT_TYPE) || ($type == _SUPERVISOR_TYPE) || ($type == _INSTADMIN_TYPE))){
+    if ((($type == _STUDENT_TYPE) || ($type == _SUPERVISOR_TYPE) || ($type == _INSTADMIN_TYPE)) && $entity){
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => _INSTITUTE_GROUP, 
             'group_id'=>$entity
             ))->execute();
         
-        if (($type == _STUDENT_TYPE)){
+        if (($type == _STUDENT_TYPE) && $studentgroup){
             db_insert('soc_user_membership')->fields( array(
                 'uid'=>$uid, 
                 'type' => _STUDENT_GROUP, 
@@ -163,7 +89,7 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
         }
     }
     
-    if ((($type == _ORGADMIN_TYPE) || ($type == _MENTOR_TYPE))){
+    if ((($type == _ORGADMIN_TYPE) || ($type == _MENTOR_TYPE)) && $entity){
         db_insert('soc_user_membership')->fields( array(
             'uid'=>$uid, 
             'type' => _ORGANISATION_GROUP, 
@@ -182,8 +108,8 @@ function vals_soc_form_user_register_form_submit_handler(&$form, &$form_state) {
 		}  catch (Exception $ex) {
 			$txn->rollback();
 			drupal_set_message(t('We could not update the profile.'). (_DEBUG?  $ex->getMessage().': '.
-					(isset($updated1)? $ins_query: $del_query): ''), 'error');
-		}//$updated2->getQueryString() only works if the syntax was correct, otherwise updated2 == NULL
+				(isset($updated1)? $ins_query: $del_query): ''), 'error');
+		}
     }
 }
 
@@ -285,6 +211,10 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
     $current_role = getRole();    
     if ($current_role == _ADMINISTRATOR_TYPE){
     	$is_admin = TRUE;
+    	if ($form_state['values']['uid'] != $uid){
+    		$uid = $form_state['values']['uid'];//As admin you are not changing your own account but somebody
+    		//else's account.
+    	}
         $rid = getUserRoleId($form_state['values']['roles']);
         $role = db_select('role', 'r')->fields('r')->condition('rid', $rid)->execute()->fetchAssoc();
         if ($role){
@@ -296,7 +226,6 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
     	$is_admin = FALSE;
         $type = $current_role;
     }
-
     if (isset( $form_state['values']['fullname'])){
     	$txn = db_transaction();
 		try {
@@ -318,17 +247,16 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
 	 * they can add themselves to an organisation/institute. So the only one doing this is the admin
 	 */
     if ($is_admin) {
-	    if ((isset($form_state['values']['institute']) && $form_state['values']['institute']) &&
+    	if ((isset($form_state['values']['institute']) && $form_state['values']['institute']) &&
 	     	(($type == _INSTADMIN_TYPE) || ($is_admin && (($type == _STUDENT_TYPE) || ($type == _SUPERVISOR_TYPE))))
 	    		){
-	      	db_query("DELETE FROM soc_user_membership WHERE uid = $uid AND type='"._INSTITUTE_GROUP."' ");
+	    	db_query("DELETE FROM soc_user_membership WHERE uid = $uid AND type='"._INSTITUTE_GROUP."' ");
 	        db_insert('soc_user_membership')->fields( array(
 	            'uid'=>$uid, 
 	            'type' => _INSTITUTE_GROUP, 
 	            'group_id'=>$form_state['values']['institute']
 	            ))->execute();
 	    }
-	    
 	    //Mentors might want to change from organisation
 	    if ((($type == _ORGADMIN_TYPE) || ($type == _MENTOR_TYPE)) && 
 	    		(isset($form_state['values']['organisation']) && $form_state['values']['organisation'])){

@@ -34,7 +34,7 @@ function getUserPretendTester(){
 	$options = array(0 => 'No pretending');
 	foreach($users as $user){
 		if ($user->uid){
-			$options[$user->uid] = 'Name:'.$user->fullname. ", type:".$user->type;
+			$options[$user->uid] = 'User:'. $user->name. ',  Name:'.$user->fullname. ", type:".$user->type;
 		}
 	}
 	
