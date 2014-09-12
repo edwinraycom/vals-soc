@@ -101,10 +101,10 @@ class Project extends AbstractEntity{
     	} elseif ($organisations) {
     		$table = tableName('project');
     		//
-    		if(!$owner_id){
+    		if (!$owner_id){
     			$projects = db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",
     				array(':orgs' => $organisations))->fetchAll();
-    		}else{
+    		} else {
     			$projects = db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) AND p.owner_id IN (:uid)",
     					array(':orgs' => $organisations, ':uid' => $owner_id))->fetchAll();
     		}
@@ -160,7 +160,7 @@ class Project extends AbstractEntity{
     	return $my_projects;
 	}
 	
-	public static function getProjectsByUser($user_id='', $organisations=''){
+	public static function getProjectsByUser($user_id='', $organisations='', $show_all=_VALS_SOC_MENTOR_ACCESS_ALL){
 		global $user;
 		 
 		$org_admin_or_mentor = $user->uid;
@@ -179,7 +179,7 @@ class Project extends AbstractEntity{
 				drupal_set_message(t('You have no organisation yet'), 'error');
 				return array();
 			}
-			if ((_VALS_SOC_MENTOR_ACCESS_ALL || $my_role == _ORGADMIN_TYPE)) {
+			if ($show_all || _VALS_SOC_MENTOR_ACCESS_ALL || ($my_role == _ORGADMIN_TYPE)) {
 				$my_projects =
 					db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",array(':orgs' => $my_orgs))
 					->fetchAll();

@@ -30,9 +30,14 @@ function refreshTabs(json_data, args){
 		var show_action = altSub(json_data, 'show_action', 'administer');
 		var new_tab = altSub(json_data, 'new_tab', false);
 		if (! new_tab) new_tab = 0;
-		
-		ajaxCall(handler, 'show', {type:type, show_action:show_action, new_tab: new_tab}, 
-			'handleContentAndMessage', 'html', [container, 'ajax_msg', json_data.msg]);
+		post_data = {type:type, show_action:show_action, new_tab: new_tab};
+		if (json_data.extra){
+			for (var p in json_data.extra){
+				post_data[p] = json_data.extra[p];
+			}
+		}
+		ajaxCall(handler, 'show', post_data, 'handleContentAndMessage', 'html',
+			[container, 'ajax_msg', json_data.msg]);
 	} else {
 		if (json_data && typeof json_data.error != 'undefined') {
 			ajaxError(targ, json_data.error);
@@ -64,6 +69,8 @@ function refreshSingleTab(json_data, args){
 	} else {
 		if (json_data && typeof json_data.error != 'undefined') {
 			ajaxError('msg_'+target, json_data.error);
+			$jq("#" + target + " input[type='button']").prop(
+					{'disabled': false, 'style': ""});
 		} else {
 			alertdev('Some error occured but no "error" message was set.');
 		}
