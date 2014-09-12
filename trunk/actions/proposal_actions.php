@@ -123,24 +123,24 @@ switch ($_GET['action']){
 			$args = array('id' => $proposal_id, 'before'=> $before, 'target'=> $container, 'replace_target'=> true);
 			$proposal_nr = Proposal::getInstance()->getProposalById($proposal_id);
 			if (!$proposal_nr){
-				jsonBadResult(t('This proposal was already deleted!'), 'error', $args);
+				jsonBadResult(t('This proposal was already deleted!'), $args);
 				return;
 			}
 			if (! Groups::isOwner('proposal', $proposal_id)){
-				jsonBadResult(t('You can only delete your own proposals!'), 'error', $args);
+				jsonBadResult(t('You can only delete your own proposals!'), $args);
 			} else {
 				$num_deleted = db_delete(tableName('proposal'))
 					->condition(AbstractEntity::keyField('proposal'), $proposal_id)
 					->execute();
 				if ($num_deleted){
 					$args['before'] = '';
-					jsonGoodResult(TRUE, t("You have removed this proposal"), 'status', $args);
+					jsonGoodResult(TRUE, t("You have removed this proposal"), $args);
 				} else {
-					jsonBadResult(t('We could not remove your proposal'), 'error', $args);
+					jsonBadResult(t('We could not remove your proposal'), $args);
 				}
 			}
 		} else{
-			jsonBadResult(t('No proposal identifier submitted!'), 'error', $args);
+			jsonBadResult(t('No proposal identifier submitted!'), $args);
 		}
 	break;
 	case 'view':

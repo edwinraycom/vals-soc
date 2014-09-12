@@ -7,6 +7,7 @@ module_load_include('php', 'vals_soc', 'includes/classes/Project');
 module_load_include('php', 'vals_soc', 'includes/functions/projects');
 module_load_include('php', 'vals_soc', 'includes/functions/ajax_functions');
 
+$mine = ('mine' == (array_pop(explode('/', $_SERVER['HTTP_REFERER']))));//needed for save and delete
 switch ($_GET['action']){
 	case 'project_page':
 		module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
@@ -56,9 +57,9 @@ switch ($_GET['action']){
 			$target = getRequestVar('target', null);
 			$inline = getRequestVar('inline', false);
 			$org_id = getRequestVar('org', null);
+			$mine   = getRequestVar('mine', false);
 			$organisations = $org_id ?  array($org_id) : null;
-			echo renderProjects($organisations, '', $target, $inline);//$target as thrd argument prevents showing inline
-				
+			echo renderProjects($organisations, '', $target, $inline, true, $mine);
 		}
 		catch(Exception $ex){
 			//Return error message
@@ -122,7 +123,6 @@ switch ($_GET['action']){
 		$type = altSubValue($_POST, 'type', '');
 		$id = altSubValue($_POST, 'id', '');
 		$draft = altSubValue($_POST, 'draft', false);
-		
 		$properties = Project::getInstance()->filterPostLite(Project::getInstance()->getKeylessFields(), $_POST);
 		$properties['state'] = ($draft ? 'draft' :'pending');
 		if (!$id){
@@ -133,11 +133,13 @@ switch ($_GET['action']){
 			$result = Project::getInstance()->changeProject($properties, $id);
 		}
 		if ($result){
+			
 			echo json_encode(array(
 					'result'=>TRUE,
 					'id' => $id,
 					'type'=> $type,
 					'new_tab' => !$id ? $properties['org_id'] : 0,//so we can distinguish which tab to open
+					'extra' => ($mine? array( 'mine' =>1) :''),
 					'msg'=>
 					($id ? tt('You succesfully changed the data of your %1$s', t($type)):
 							tt('You succesfully added your %1$s', t($type))).
@@ -150,7 +152,8 @@ switch ($_GET['action']){
 	break;
 	case 'show':
 		$show_last = altSubValue($_POST, 'new_tab', false);
-		showProjectPage($show_last);
+		$owner_only = altSubValue($_POST, 'mine', false);
+		showProjectPage($show_last, $owner_only);
 	break;
 	case 'edit':
 		$type = altSubValue($_POST, 'type', '');
@@ -192,7 +195,7 @@ switch ($_GET['action']){
     	} else {
     		$result = Groups::removeGroup($type, $id);
     		ThreadedComments::getInstance()->removethreadsForEntity($id, $type);
-    		echo $result ? jsonGoodResult() : jsonBadResult();
+    		echo $result ? jsonGoodResult(true, '', array('extra'=> ($mine? array( 'mine' =>1) :''))) : jsonBadResult();
     	}
     break;
 	//

@@ -1,13 +1,14 @@
 <?php
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after administration.php which does the same
 
-function showProjectPage($show_last=FALSE, $owner_only=''){
+function showProjectPage($show_last=FALSE, $owner_only=false){
 
 	//TODO check for the role of current user
-
-	$owner_id = isset($owner_only) ? $GLOBALS['user']->uid : '';
-
 	$role = getRole();
+	if (!Users::isMentor()){//true for both mentors and organisation admins. Also, they will see their own stuff only
+		echo t('You are not allowed to see the projects in this view.');
+		return;
+	}
 	//Get my groups
 	$my_organisations = Groups::getGroups(_ORGANISATION_GROUP);	
 	if (!$my_organisations->rowCount()){
@@ -22,18 +23,20 @@ function showProjectPage($show_last=FALSE, $owner_only=''){
 
 		}
 	} else {
+		$show_all = ! (bool) $owner_only;
+		$owner_id = $GLOBALS['user']->uid;
 		$orgs = array();
 		$orgids = array();
 		foreach ($my_organisations as $org){
 			$orgs[] = $org;
 			$orgids[] = $org->org_id;
 		}
-		$projects = Project::getProjectsByUser($GLOBALS['user']->uid, $orgids);//$my_organisations->fetchCol());
 		
-		//$projects = Project::getProjectsByUser_orig($role, $GLOBALS['user']->uid, $orgids);//$my_organisations->fetchCol());
-		if (! $projects && isset($owner_only)){
-			echo t('You have no project yet registered');
-			echo '<h2>'.t('Add your project').'</h2>';
+		$projects = Project::getProjectsByUser($owner_id, $orgids, $show_all);//$my_organisations->fetchCol());
+		
+		if (! $projects){
+			echo $owner_only ? t('You have no project yet registered') : t('There are no projects yet registered.');
+			echo '<h2>'.t('Add a project').'</h2>';
 			
 			$tab_prefix = 'project_page-';
 			$target = "${tab_prefix}1";
@@ -58,16 +61,17 @@ function showProjectPage($show_last=FALSE, $owner_only=''){
 
 			$org =1;
 			$show_org_title = ($my_organisations->rowCount() > 1);
+			$org_key = AbstractEntity::keyField(_ORGANISATION_GROUP);
 			foreach ($orgs as $organisation){
-				$projects = Project::getProjects('', $owner_id, array($organisation->org_id));
-				showOrganisationProjects($org, $projects, $organisation, $show_org_title, $show_last, TRUE);
+				$projects = Project::getProjectsByUser($owner_id, array($organisation->$org_key), $show_all);
+				showOrganisationProjects($org, $projects, $organisation, $show_org_title, $show_last, TRUE, $owner_only);
 				$org++;
 			}
 		}
 	}
 }
 
-function showOrganisationProjects($org_nr, $projects, $organisation, $show_org_title=TRUE, $show_last= FALSE, $inline=FALSE){
+function showOrganisationProjects($org_nr, $projects, $organisation, $show_org_title=TRUE, $show_last=FALSE, $inline=FALSE, $owner_only=FALSE){
 	$org_id = $organisation->org_id;
 	$nr = 1;
 	$tab_id_prefix = "project_page$org_nr-";
@@ -78,7 +82,7 @@ function showOrganisationProjects($org_nr, $projects, $organisation, $show_org_t
 	$current_tab_id = "$tab_id_prefix$current_tab";
 	
 	//data is like: [translate, label, action, type, id, extra GET arguments, render with rich text area, render tab to the right]
-	$data[] = array(1, 'All', 'list', 'project', null, "org=$org_id&inline=".($inline? 1:0));
+	$data[] = array(1, 'All', 'list', 'project', null, "org=$org_id&inline=".($inline? 1:0)."&mine=".($owner_only? 1:0));
 	$activating_tabs[] = "'$tab_id_prefix$nr'";
 	$nr++;
 	if ($show_org_title){
@@ -107,58 +111,10 @@ function showOrganisationProjects($org_nr, $projects, $organisation, $show_org_t
 	</script>
 	<?php
 }
-/* This was the way it was
- * 			$nr = 1;
-			$tab_id_prefix = 'project_page-';
-			$data = array();
-			$activating_tabs = array();
-			$nr_projects = count($projects);
-			$current_tab = $show_last ? $nr_projects : 1;
-			foreach ($projects as $project){
-				if ($nr == $current_tab){
-					$id = $project->pid;
-					$my_project = $project;
-				}
-				$activating_tabs[] = "'$tab_id_prefix$nr'";
-				$data[] = array(0, $project->title, 'view', 'project', $project->pid);
-				$nr++;
-			}
-	
-			$data[] = array(1, 'Add', 'add', 'project', 0, "target=$tab_id_prefix$nr", true, 'adding from the right');
-			$activating_tabs[] = "'$tab_id_prefix$nr'";
-	
-			$nr2 = 1;
-			$data2 = array();
-			// 		[translate, label, action, type, id, extra GET arguments]
-			$data2[] = array(1, 'All Projects', 'list', 'project', null);
-			$activating_tabs2 = array("'project2_page-$nr2'");
-			if ($my_organisations->rowCount() > 1){
-				foreach ($my_organisations as $organisation){
-					$nr2++;
-					$activating_tabs2[] = "'project2_page-$nr2'";
-					$data2[] = array(2, $organisation->title, 'list', 'project', $organisation->org_id);
-				}
-			}
-			echo renderTabs($nr, 'Project', $tab_id_prefix, 'project', $data, $id, TRUE,
-				renderProject($my_project, "$tab_id_prefix$current_tab"), $current_tab,'project');
-	
-			echo "<hr>";
-			
-			echo '<h2>'.t('All your projects').'</h2>';
-			echo renderTabs($nr2, 'Organisation', 'project2_page-', _ORGANISATION_GROUP, $data2, null, TRUE,
-				renderProjects('', $projects));
-			?>
-			<script type="text/javascript">
-				activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>], '<?php echo 
-					"$tab_id_prefix$current_tab";?>');
-				activatetabs('tab_', [<?php echo implode(', ', $activating_tabs2);?>], null, true);
-			</script>
-		<?php
-		}
- */
-function renderProjects($organisation_selection='', $projects='', $target='', $inline=FALSE, $reload_data=TRUE){
+
+function renderProjects($organisation_selection='', $projects='', $target='', $inline=FALSE, $reload_data=TRUE, $owner_only=FALSE){
 	if (!$projects && $reload_data){
-		$projects = Project::getProjects('', $GLOBALS['user']->uid, $organisation_selection);
+		$projects = Project::getProjects('', ($owner_only ? $GLOBALS['user']->uid: null), $organisation_selection);
 	}
 	$target_set = ! empty($target);
 	if ($projects){
@@ -218,13 +174,10 @@ function renderProject($project='', $target='', $inline=FALSE, $all_can_edit=_VA
 		$content .= '<p>'.tt('More information can be found at %1$s', "<a href='${project['url']}'> ${project['url']}</a>"). '</p>';
 	}
 	
-	/////
 	if (! $inline){
 		module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
 		$content .= initComments($id, 'project');
 	}
-	
-	////
 	
 	return $content;
 }

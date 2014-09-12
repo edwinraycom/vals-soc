@@ -115,7 +115,7 @@ switch ($_GET['action']){
     		echo jsonBadResult(t('There is no such type we can delete'));
     	} else {
     		$result = Groups::removeGroup($type, $id);
-    		echo $result ? jsonGoodResult() : jsonBadResult('', 'error', array('target'=>$target));
+    		echo $result ? jsonGoodResult() : jsonBadResult('', array('target'=>$target));
     	}
     break;
     case 'send_invite_email':

@@ -35,11 +35,11 @@ function jsonResult($result, $msg='', $type='', $args=array(), $show_always=FALS
 	echo json_encode($struct);
 }
 
-function jsonBadResult($msg='', $type='error', $args=array(), $show_always=TRUE){
+function jsonBadResult($msg='', $args=array(), $type='error', $show_always=TRUE){
 	jsonResult('error', $msg, $type, $args, $show_always);
 }
 
-function jsonGoodResult($result=TRUE, $msg='', $type='status', $args=array(), $show_always=FALSE){
+function jsonGoodResult($result=TRUE, $msg='', $args=array(), $type='status', $show_always=FALSE){
 	jsonResult($result, $msg, $type, $args, $show_always);
 }
 

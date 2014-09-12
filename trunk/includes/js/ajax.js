@@ -71,16 +71,20 @@ function isJquery(obj){
 	return obj && (typeof obj.jquery != 'undefined') && obj.jquery;
 }
 
-function createDiv(div_name, container){
-	var div = Obj(div_name);
+function createDiv(div_name, container, before, returnDom){
+	if (typeof returnDom == ' undefined') {
+		returnDom = false;
+	}
+	var div = Obj(div_name, returnDom);
 	if(div){
 		return div;
 	} else{
 		var new_obj = document.createElement('div');
-		if (new_obj) new_obj.setAttribute("id", div_name); else console.log('kon het divje niet aanmaken');
+		if (new_obj) new_obj.setAttribute("id", div_name); else console.log('could not create the div');
 		var cont_obj = Obj(container, true);
 		if (cont_obj) {
 			if (arguments.length > 2 && arguments[2] !== ''){
+				//will be the argument before
 				//Insert before an element inside container
 				//we use the normal objects, so we ask Obj to return a dom element
 				//NOTE: if this insertBefore gives an error it is likely that the before is not a direct descendent
@@ -96,7 +100,7 @@ function createDiv(div_name, container){
 			} else {
 				cont_obj.appendChild(new_obj);
 			}
-			return Obj(div_name);
+			return Obj(div_name, returnDom);
 		} else {
 			alertdev('Could not find parent object '+ container);
 			return null;
@@ -194,6 +198,14 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 	// As long as the returned val is corresponding with dataType and in time.
 	// If the success function is not speicifed, a target is necessary to show
 	// the result
+//	$jq("#admin_container input[type='button']").prop(
+//			{'disabled': true, 'style': "background-color:grey"});
+	ajax_event = ajaxCall.caller.arguments[0] || window.event ;	
+	var show_waiting = (typeof ajax_event != 'undefined');
+	if (show_waiting){
+		startWait(ajax_event, event_counter, 'admin_container');
+		//event_counter ++;//For now we assume only one waiting icon
+	}
 	if (target) {
 		if (isFunction(target)) {
 			var args = [];
@@ -204,8 +216,9 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 					args = [extra_args];
 			}
 			call.success = function(msg){
-					window[target](msg, args);
-				};
+				window[target](msg, args);
+				stopWait(1);
+			};
 		} else {
 			call.success = function(msg) {
 				if (type == 'json') {
@@ -225,6 +238,7 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 				} else {// assume text or html, we don't care: all can be valid
 					ajaxInsert(msg, target);
 				}
+				stopWait(1);
 			};
 		}
 	} else {
@@ -234,6 +248,7 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 	call.fail = function(jqXHR, textStatus, errorThrown) {
 		console.log('AjaxCall failed with some error.Redirected to its fail function with: '
 			+ errorThrown);
+		stopWait(1);
 	};
 
 	return $jq.ajax(call);
@@ -259,6 +274,14 @@ function ajaxFormCall(frm_selector, handler_type, action, data, target, type, ar
 	}
 	//We assume the form is contained in a container with an id, or just the form id is passed (if it is unique)
 	//this is possible otherwise we need a unique container (mostly the target where the form is put)
+	$jq("#" + frm_selector + " input[type='button']").prop(
+			{'disabled': true, 'style': "background-color:grey"});
+//	ajax_event = ajaxFormCall.caller.arguments[0] || window.event ;	
+//	var show_waiting = (typeof ajax_event != 'undefined');
+//	if (show_waiting){
+//		startWait(ajax_event, event_counter, frm_selector);
+//		//event_counter ++;//For now we assume only one waiting icon
+//	}
 	var call_args = $jq('#' + frm_selector).serialize();
 	if (data) {
 		if (data instanceof Object) {
@@ -275,8 +298,10 @@ function ajaxFormCall(frm_selector, handler_type, action, data, target, type, ar
 		console.log('Comment, form ' + '#' + frm_selector + " is reset");
 		$jq('#' + frm_selector)[0].reset();//reset the form for comments
 	}
-	return ajaxCall(handler_type, action, call_args, target, type, args);
-
+	if (ajaxCall(handler_type, action, call_args, target, type, args)) {
+		$jq("#" + container + " input[type='button']").prop(
+				{'disabled': false, 'style': ""});		
+	}
 }
 
 $jq(document)
@@ -309,6 +334,9 @@ $jq(document)
 						alertdev('Uncaught Error. Probably Server execution aborted by die, exit or Fatal error.\n'
 								+ jqxhr.responseText);
 					}
+					if (!(debugging)){
+						alert('Some error occurred at the server during the Ajax call. Please contact the development team to sort this out.');
+					}
 					if (!(debugging && confirm("Do you want to open a window with some extra info?")))
 						return;
 					// Test on debugging status == TRUE, TODO more depending on
@@ -339,6 +367,8 @@ $jq(document)
 										+ exception + '<br>Response:' + txt);
 						myWindow.document.close();
 						myWindow.focus();
+					} else {
+						
 					}
 				});
 

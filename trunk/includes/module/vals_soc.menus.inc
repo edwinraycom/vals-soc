@@ -270,7 +270,7 @@ function getProjectsAdministerLink($path){ //dashboard/projects/administer
 
 function getMyProjectsAdministerLink($path){ //dashboard/projects/administer/mine
 	return array(
-			'title' => t('Administer your projects'),
+			'title' => t('Administer your own projects'),
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_administer_my_projects_page',
 			'access callback' => 'vals_soc_access_check',
