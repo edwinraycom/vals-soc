@@ -94,6 +94,45 @@ class Project extends AbstractEntity{
     	return $rows;
     }
 
+    public function  getProjectsAndProposalCountByCriteriaRowCount($organisation=''){
+    	if(!$organisation){
+    		$organisation = array();
+    		$result = Organisations::getInstance()->getMyOrganisations(TRUE);
+    		foreach ($result as $record) {
+    			array_push($organisation, $record->org_id);
+    		}
+    	}
+    	$projects =  db_query("SELECT p.* from soc_projects as p WHERE p.org_id IN (:orgs) ",array(':orgs' => $organisation))->rowCount();
+    	return $projects;
+    }
+    
+    public static function getProjectsAndProposalCountByCriteria($organisation, $sorting='p.pid',
+    	$startIndex=1, $pageSize=10){
+
+    	if(!$organisation){
+    		$organisation = array();
+    		$result = Organisations::getInstance()->getMyOrganisations(TRUE);
+    		foreach ($result as $record) {
+    			array_push($organisation, $record->org_id);
+    		}
+    	}
+    	$query =" 
+    		SELECT p.pid, p.title, o.name AS org_name, COUNT(v.proposal_id) AS proposal_count
+			FROM soc_projects AS p
+			LEFT JOIN soc_proposals AS v ON ( v.pid = p.pid )
+			LEFT JOIN soc_organisations AS o ON ( p.org_id = o.org_id ) 
+			WHERE p.org_id IN (:orgs)
+			GROUP BY p.pid ";
+    	
+    	if (!$sorting){
+    		$sorting = 'pid ASC';
+    	}
+    	$query .= 	 " ORDER BY " . $sorting
+    	." LIMIT " . $startIndex . "," . $pageSize . ";";
+    	$projects = db_query($query, array(':orgs' => $organisation))->fetchAll();
+    	return $projects;
+    }
+    
     public static function getProjects($project_id='', $owner_id='', $organisations=''){
     	if ($project_id){
     		$p = self::getProjectById($project_id, FALSE, NULL);

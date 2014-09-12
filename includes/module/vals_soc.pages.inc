@@ -116,6 +116,12 @@ function vals_soc_browse_proposals(){
 	return ob_get_clean();
 }
 
+function vals_soc_browse_proposals_by_type(){
+	ob_start();
+	module_load_include('inc', 'vals_soc', 'includes/ui/browse/proposalsbytype');
+	return ob_get_clean();	
+}
+
 function vals_soc_browse_my_proposals(){
 	ob_start();
 	module_load_include('inc', 'vals_soc', 'includes/ui/administer/proposals');

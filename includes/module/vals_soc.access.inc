@@ -98,6 +98,7 @@ function pageAccessCheck($access_string) {
 				return FALSE;
 			}
 			break;
+		case 'dashboard/proposals/browsebytype':
 		case 'dashboard/proposals/browse': 
 			return (! hasRole(array(_ANONYMOUS_TYPE))) && (!hasRole(array(_STUDENT_TYPE)));
 			break;

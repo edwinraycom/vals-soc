@@ -1,5 +1,5 @@
 <?php
-@define('_DEBUG', FALSE);// Will be preemtied by the definition (set to TRUE) in the development settings, if loaded
+@define('_DEBUG', TRUE);// Will be preemtied by the definition (set to TRUE) in the development settings, if loaded
 define('_VALS_SOC_PATH', drupal_get_path('module', 'vals_soc'));
 define('_VALS_SOC_ROOT', DRUPAL_ROOT.'/'._VALS_SOC_PATH);
 variable_set('configurable_timezones', 0);

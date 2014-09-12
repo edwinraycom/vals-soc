@@ -52,6 +52,17 @@ switch ($_GET['action']){
 			print json_encode($jTableResult);
 		}
 	break;
+	case 'list_search_proposal_count':
+		$organisation=null;
+		if(isset($_POST['organisation']) && $_POST['organisation']){
+			$organisation = $_POST['organisation'];
+		}
+		//Return result to jTable
+		$recs = Project::getInstance()->getProjectsAndProposalCountByCriteria(
+				$organisation, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
+		$cnt = Project::getInstance()->getProjectsAndProposalCountByCriteriaRowCount($organisation);	
+		jsonGoodResultJT($recs, $cnt);
+	break;
 	case 'list':
 		try{
 			$target = getRequestVar('target', null);

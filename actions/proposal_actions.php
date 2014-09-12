@@ -3,6 +3,7 @@ include('include.php');//Includes the necessary bootstrapping and the ajax funct
 include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Project.php');
 module_load_include('php', 'vals_soc', 'includes/functions/proposals');
 
 $apply_proposals = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
@@ -15,6 +16,13 @@ switch ($_GET['action']){
 	break;
 	case 'myproposal_page':
 		echo showMyProposalPage();
+	break;
+	case 'render_proposals_for_id':
+		if(isset($_POST['id']) && $_POST['id']){
+			echo showProposalsForProject($_POST['id']);
+		}else{
+			echo "Unable to find proposals without project identifier";
+		}
 	break;
 	case 'list_proposals':
 		try{
@@ -38,12 +46,16 @@ switch ($_GET['action']){
 			if(isset($_POST['organisation']) && $_POST['organisation']){
 				$organisation = $_POST['organisation'];
 			}
+			$project=null;
+			if(isset($_POST['project']) && $_POST['project']){
+				$project = $_POST['project'];
+			}
 			//Return result to jTable
 			$cnt = Proposal::getInstance()->getProposalsRowCountBySearchCriteria(
-					$student, $institute, $organisation);
+					$student, $institute, $organisation, $project);
 			$recs = $cnt ? 
 						Proposal::getInstance()->getProposalsBySearchCriteria(
-							$student, $institute, $organisation, $_GET["jtSorting"], $_GET["jtStartIndex"],
+							$student, $institute, $organisation, $project, $_GET["jtSorting"], $_GET["jtStartIndex"],
 							$_GET["jtPageSize"]) :
 						array();
 			

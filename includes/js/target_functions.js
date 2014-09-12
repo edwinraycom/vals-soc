@@ -282,7 +282,11 @@ function handleSubmitResult(result, args){
 			ajaxAppend(result.error, target, 'error', 'vals-soc-proposal-form');
 		} else {
 			if (result.result == "OK") {
-				Drupal.CTools.Modal.dismiss();
+				try{
+					Drupal.CTools.Modal.dismiss();
+				}catch(err){
+					console.log(err);
+				}
 				//Right now the content div has no immediate child with an id at the top, so we let ajaxAppend
 				//find out the first child to attach a message to
 				ajaxAppend(result.msg, 'content', 'status');
