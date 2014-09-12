@@ -710,6 +710,10 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 		'#cols' => 50,//"#size" => 1024,
 		"#default_value" => populate($proposal, 'solution_short')
 	);
+	$form['solution_short_text'] = array(
+			'#markup' => '<p><i>' . 'In this section please add a brief outline of how you plan tackle the project idea. '
+				.' You will be given an opportunity to provide more detailed information below.'. '</i></p><br/>'
+	);
 	$form['solution_long'] = array(
 		"#type" => "textarea",
 		'#title' => t('Give a more detailed description of your solution'),
@@ -717,6 +721,13 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 		//"#size" => 750,
 		"#default_value" => populate($proposal, 'solution_long')
 	);
+	$form['solution_long_text'] = array(
+			'#markup' => '<p><i>' . 'In this section please add more detail to your proposal. '
+			.' You may want to add details of your design and intended strategy to tackle the problem. '
+			.' Additionally you may want to describe any third party modules you intend to utilise as part of your solution.'.
+			'</i></p><br/>'
+	);
+	/*
 	$form['modules'] = array(
 		"#type" => "textarea",
 		'#title' => t('Which extra modules and libraries will you use, if any?'),
@@ -725,6 +736,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 		"#description" => t("Write the name of the library, it's url and its purpose."),
 		
 	);
+	*/
 // 	$form['cv'] = array(
 // 		"#type" => "textarea",
 // 		'#title' => t('Describe your Curriculum Vitae'),

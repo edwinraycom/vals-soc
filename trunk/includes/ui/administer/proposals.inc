@@ -14,6 +14,7 @@ include(_VALS_SOC_ROOT.'/includes/functions/proposals.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Project.php');
 
 ?>
 <div id='ajax_msg'></div>

@@ -35,7 +35,7 @@ class Proposal extends AbstractEntity{
     		$query->fields('supervisor', array('name'));
     		$query->fields('i', Institutes::$fields);
     		$query->fields('o', Organisations::$fields);
-    		$query->fields('pr', array('title', 'description'));
+    		$query->fields('pr', array('title', 'description', 'url'));
     		$query->fields('mentor_user', array('mail', 'name'));
     		$query->fields('mentor', array('name'));
     	}
@@ -70,7 +70,7 @@ class Proposal extends AbstractEntity{
     	return tt('Proposal for: %1$s', $title);
     }
     
-    public function getProposalsRowCountBySearchCriteria($student='', $institute='', $organisation=''){
+    public function getProposalsRowCountBySearchCriteria($student='', $institute='', $organisation='', $project=''){
     	$query = db_select('soc_proposals', 'p')->fields('p');
     	if($student){
     		$query->condition('owner_id', $student);
@@ -81,15 +81,17 @@ class Proposal extends AbstractEntity{
     	if($organisation){
     		$query->condition('org_id', $organisation);
     	}
-    	
+    	if($project){
+    		$query->condition('pid', $project);
+    	}
     	return $query->execute()->rowCount();
     }
     
     public function getMyProposals(){
-    	return self::getProposalsBySearchCriteria($GLOBALS['user']->uid, '', '', '', 1, 1000);
+    	return self::getProposalsBySearchCriteria($GLOBALS['user']->uid, '', '', '', '', 1, 1000);
     }
     
-    public function getProposalsBySearchCriteria($student='', $institute='', $organisation='', $sorting='pid',
+    public function getProposalsBySearchCriteria($student='', $institute='', $organisation='', $project='', $sorting='pid',
     	$startIndex=1, $pageSize=10)
     {
     	
@@ -103,6 +105,9 @@ class Proposal extends AbstractEntity{
     	}
     	if($organisation){
     		$query->condition('p.org_id', $organisation);
+    	}
+    	if($project){
+    		$query->condition('p.pid', $project);
     	}
     	$query->leftjoin('soc_names', 'student', 'p.owner_id = %alias.names_uid');
     	$query->leftjoin('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
@@ -147,7 +152,13 @@ class Proposal extends AbstractEntity{
     		$props['supervisor_id'] = $student_details->supervisor_id ;  		
     		$props['pid'] = $project['pid'];
     		$props['state'] = 'draft' ;
-    		$id = db_insert(tableName('proposal'))->fields($props)->execute();
+    		try{
+    			// inserts where the field length is exceeded fails silently here
+    			// i.e. the date strinf is too long for the mysql field type
+    			$id = db_insert(tableName('proposal'))->fields($props)->execute();
+    		}catch(Exception $e) {
+    			drupal_set_message($e->getMessage());
+			}
     		if ($id){
     			//TODO: notify mentor???
     			drupal_set_message('You have saved your proposal. Later you can continue editing it.');

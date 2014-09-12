@@ -22,6 +22,7 @@ function getStudentLayout($timeline_args){
 				<!-- column one -->
 				<div class="column first">
 	';
+	/*
 	if($timeline_args['connectionsVisible']){
 		$output .='
 					<div class="column-entry connections_dashboard">
@@ -38,13 +39,13 @@ function getStudentLayout($timeline_args){
 					</div>
 		';
 	}
-
+*/
 	if($timeline_args['viewOrganisations']){
 		$output .='
 					<div class="column-entry participants">
 						<h4>
 							<a class="dashboard-link component-link"
-							href="'.$base_url.'/dashboard/organisations/browse"
+							href="'.$base_url.'/organisations/browse"
 							title="'.t("Browse Orgs").'">'.t("Browse organisations").'</a>
 						</h4>
 						<p>'.t("Browse the current list of Organisations").'</p>

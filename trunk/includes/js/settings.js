@@ -30,7 +30,11 @@ function setStyleById(i, p, v) {
 }
 
 function setStyleOnObject(o, p, v) {
-	o.style[p] = v;
+	try{
+		o.style[p] = v;
+	}catch(err){
+		console.log(err);
+	}
 }
 
 function startWait(event, counter, target){
@@ -57,14 +61,16 @@ function setWait(state, wait_name, x, y, target){
 }
 
 function waitingIcon(wait_name, x, y, container){
-	
-	var obj = createDiv(wait_name, container, '', true);
-	setStyleOnObject(obj, 'position', 'fixed');
-	setStyleOnObject(obj, 'zIndex', 1000);
-	setStyleOnObject(obj, 'top', (y - ajax_settings.ajax_waiting_half_width) +'px');
-	setStyleOnObject(obj, 'left',(x - ajax_settings.ajax_waiting_half_height)  +'px');
-	obj.innerHTML = ajax_settings.ajax_waiting_icon;
-	
+	try{
+		var obj = createDiv(wait_name, container, '', true);
+		setStyleOnObject(obj, 'position', 'fixed');
+		setStyleOnObject(obj, 'zIndex', 1000);
+		setStyleOnObject(obj, 'top', (y - ajax_settings.ajax_waiting_half_width) +'px');
+		setStyleOnObject(obj, 'left',(x - ajax_settings.ajax_waiting_half_height)  +'px');
+		obj.innerHTML = ajax_settings.ajax_waiting_icon;
+	}catch(err){
+		console.log(err);
+	}
 }
 ajax_settings = {
 		ajax_waiting_half_width:20,
