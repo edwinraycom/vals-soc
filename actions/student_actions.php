@@ -72,8 +72,8 @@ switch ($_GET['action']){
 					//'type'=> $type,
 					'msg'=> 
 						($id ? 
-							tt('You succesfully changed your proposal for %1$s', $project['title']):
-							tt('You succesfully added your proposal for %1$s', $project['title'])).
+							tt('You succesfully changed the draft of your proposal for %1$s', $project['title']):
+							tt('You succesfully saved a draft of your proposal for %1$s', $project['title'])).
 						(_DEBUG ? showDrupalMessages() : '')
 				));
 		} else {

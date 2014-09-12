@@ -102,7 +102,7 @@ function getProposalDetail(proposal_id, target, msg){
 				//{tab: 'cv', label: 'Cv'},
 				{tab: 'summary', label: 'Solution Summary'},
 				{tab: 'solution', label: 'Solution Description'},
-				{tab: 'project', label: 'Original Project'}
+				{tab: 'project', label: 'Project'}
 				//{tab: 'modules', label: 'Modules and Libraries'}
 			];
 	var content_tabs = ['tab_overview',
@@ -134,7 +134,10 @@ function getProposalDetail(proposal_id, target, msg){
 		var msg_container = 'modal-content';
 		var tabs_present = false;
 		switch (target){
-			case 'modal': tabs_present = generateAndPopulateModal(data, renderProposalTabs, tabs);break;
+			case 'modal':
+				tabs_present = generateAndPopulateModal(data, renderProposalTabs, tabs);
+				console.log('Creating and filling the modal window');
+			break;
 			case 'content' :
 				var data2 = jQuery.parseJSON(data);
 				if (data2.result == 'error' ){
@@ -221,8 +224,8 @@ function renderProposalTabs(result, labels, container){
 				break;
 			case 'solution': s += (result.solution_long ? result.solution_long : ney);
 				break;
-			case 'modules': s += (result.modules ? result.modules : ney);
-				break;
+//			case 'modules': s += (result.modules ? result.modules : ney);
+//				break;
 			case 'edit': s += 'Wait please';
 			break;
 			case 'delete': s += 'Are you sure you want to delete this proposal?<br>'+

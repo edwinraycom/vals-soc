@@ -253,6 +253,7 @@ function handleSaveResult(result, args){
 			ajaxAppend(result.error, target, 'error', 'edit_proposal');
 		} else {
 			if (result.result == "OK") {
+				console.log("verwacht hem hier met "+result.id + '  en '+ target + ' ook nog '+result.msg );
 				getProposalDetail(result.id, target, result.msg);
 			} else {
 				alertdev('The action did not result in error but also not in OK. succeeded??');

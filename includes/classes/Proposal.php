@@ -2,7 +2,7 @@
 class Proposal extends AbstractEntity{
 	
 	private static $instance; 	 	 	 	 	 	 	 	 	
-	public static $fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'title', 'solution_short', 'solution_long', 'modules', 'state',);
+	public static $fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'title', 'solution_short', 'solution_long', 'state',);
 	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){
@@ -96,7 +96,7 @@ class Proposal extends AbstractEntity{
     {
     	
     	$query = db_select('soc_proposals', 'p')->fields('p', array(
-    			'proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid'));
+    			'proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'title'));
     	if($student){
     		$query->condition('p.owner_id', $student);
     	}
@@ -161,7 +161,7 @@ class Proposal extends AbstractEntity{
 			}
     		if ($id){
     			//TODO: notify mentor???
-    			drupal_set_message('You have saved your proposal. Later you can continue editing it.');
+    			drupal_set_message('You have only saved your proposal. You can continue editing it later.');
     			return $id;
     		} else {
     			drupal_set_message(tt('We could not add your %1$s.', $type), 'error');
@@ -222,7 +222,7 @@ class Proposal extends AbstractEntity{
     static function filterPost(){
     	
     	//TODO: get the db fields from schema 
-    	$fields = array('title', 'solution_short', 'solution_long', 'modules');
+    	$fields = array('title', 'solution_short', 'solution_long');
     	
     	$input = array();
     	foreach ($fields as $prop){

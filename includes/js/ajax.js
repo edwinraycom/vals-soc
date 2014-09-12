@@ -203,7 +203,7 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 	ajax_event = ajaxCall.caller.arguments[0] || window.event ;	
 	var show_waiting = (typeof ajax_event != 'undefined');
 	if (show_waiting){
-		startWait(ajax_event, event_counter, 'admin_container');
+		startWait(ajax_event, event_counter, 'content');
 		//event_counter ++;//For now we assume only one waiting icon
 	}
 	if (target) {
@@ -218,6 +218,7 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 			call.success = function(msg){
 				window[target](msg, args);
 				stopWait(1);
+				return true;
 			};
 		} else {
 			call.success = function(msg) {
@@ -239,6 +240,7 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 					ajaxInsert(msg, target);
 				}
 				stopWait(1);
+				return true;
 			};
 		}
 	} else {
@@ -249,6 +251,7 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 		console.log('AjaxCall failed with some error.Redirected to its fail function with: '
 			+ errorThrown);
 		stopWait(1);
+		return false;
 	};
 
 	return $jq.ajax(call);
@@ -276,12 +279,7 @@ function ajaxFormCall(frm_selector, handler_type, action, data, target, type, ar
 	//this is possible otherwise we need a unique container (mostly the target where the form is put)
 	$jq("#" + frm_selector + " input[type='button']").prop(
 			{'disabled': true, 'style': "background-color:grey"});
-//	ajax_event = ajaxFormCall.caller.arguments[0] || window.event ;	
-//	var show_waiting = (typeof ajax_event != 'undefined');
-//	if (show_waiting){
-//		startWait(ajax_event, event_counter, frm_selector);
-//		//event_counter ++;//For now we assume only one waiting icon
-//	}
+
 	var call_args = $jq('#' + frm_selector).serialize();
 	if (data) {
 		if (data instanceof Object) {
@@ -299,7 +297,7 @@ function ajaxFormCall(frm_selector, handler_type, action, data, target, type, ar
 		$jq('#' + frm_selector)[0].reset();//reset the form for comments
 	}
 	if (ajaxCall(handler_type, action, call_args, target, type, args)) {
-		$jq("#" + container + " input[type='button']").prop(
+		$jq("#" + frm_selector + " input[type='button']").prop(
 				{'disabled': false, 'style': ""});		
 	}
 }
