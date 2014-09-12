@@ -68,6 +68,7 @@ switch ($_GET['action']){
 	break;
 	case 'proposal_detail':
 		$proposal_id = getRequestVar('proposal_id', null);
+		//TODO bepaal hier 
 		if ($proposal_id){
 			if (! ($browse_proposals || Groups::isOwner('proposal', $proposal_id) )){
 				jsonBadResult(t('You can only see your own proposals!'));

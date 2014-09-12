@@ -35,10 +35,7 @@ function renderDefaultField($field, $obj, $alternative_field=''){
 
 function renderProposal($proposal, $target='none'){
 	//A proposal consists of: fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id',
-	//'supervisor_id', 'pid', 'solution_short', 'solution_long', 'modules', 'state',);
-// 	$pid = $proposal->pid;
-// 	$x = Proposal::getProposalsPerProject($pid);
-	//return print_r($proposal, 1);
+	//'supervisor_id', 'pid', 'solution_short', 'solution_long', 'state',);
 	$propid = $proposal->proposal_id;
 	$buttons = '';
 	if (Users::isStudent() && Groups::isOwner('proposal', $propid)){
@@ -49,7 +46,7 @@ function renderProposal($proposal, $target='none'){
 		$buttons .= "<input type='button' value='".t('edit')."' $edit_action/>";
 		$buttons .= "<input type='button' value='".t('delete')."' $delete_action/>";
 	}
-	return //print_r($proposal, 1).
+	return
 	"$buttons".
 	"<h1>".($proposal->title ? $proposal->title : Proposal::getDefaultName('', $proposal))."</h1>
 
@@ -78,22 +75,14 @@ function renderProposal($proposal, $target='none'){
 }
 
 function showMyProposals($proposals){
-	//$org_id = $organisation->org_id;
 	$nr = 0;
+	$apply_projects = $apply_projects = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 	$tab_id_prefix = "proposal_page";
 	$data = array();
 	$activating_tabs = array();
-	//$nr_proposals = count($proposals);
-	$current_tab = 1; //($show_last && ($show_last == $org_id)) ? ($nr_proposals + 1) : 1;
+	$current_tab = 1;
 	$current_tab_id = "$tab_id_prefix$current_tab";
 
-	//data is like: [translate, label, action, type, id, extra GET arguments, render with rich text area, render tab to the right]
-	//$data[] = array(1, 'All', 'list', 'proposal', null, "org=$org_id&inline=".($inline? 1:0));
-// 	$activating_tabs[] = "'$tab_id_prefix$nr'";
-// 	$nr++;
-// 	if ($show_org_title){
-		//echo '<h3>'.tt('Your proposals ').'</h3>';
-// 	}
 	$current_tab_content = '';
 	foreach ($proposals as $proposal){
 		$nr++;
@@ -107,14 +96,11 @@ function showMyProposals($proposals){
 
 	}
 
-	//$data[] = array(1, 'Add', 'add', 'proposal', 0, "target=$tab_id_prefix$nr&org=$org_id", TRUE, 'right');
-	//$activating_tabs[] = "'$tab_id_prefix$nr'";
-	//If no target is sent along, the proposal views are shown inline
-
-
 	echo renderTabs($nr, 'Proposal', $tab_id_prefix, 'proposal', $data, 0, TRUE, $current_tab_content,
 		$current_tab, 'proposal');?>
-<script type="text/javascript">
+	<script type="text/javascript">
+		window.view_settings = {};
+		window.view_settings.apply_projects = <?php echo $apply_projects ? 1: 0;?>;
 		activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>], '<?php echo $current_tab_id;?>');
 	</script>
 <?php
