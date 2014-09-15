@@ -322,9 +322,13 @@ function populateModal(result, fun, arg){
 		} else {
 			content = data.result;
 		}
-
-		Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
-		Obj("modal-content").html(content);
+		try{
+			Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
+			Obj("modal-content").html(content);
+		} 
+		catch (err){
+			console.log(err);
+		}
 		return true;
 	} else {
 		console.log('Some program error occured. We could not render the result');

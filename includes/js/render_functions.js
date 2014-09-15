@@ -244,6 +244,10 @@ function getProposalsForProject(projectId){
 	ajaxCall("proposal", "render_proposals_for_id", {id: projectId, target:'content'}, "formResult", 'html', 'content');
 }
 
+function getProposalsForStudent(studentId){
+	ajaxCall("institute", "render_proposals_for_student", {id: studentId, target:'content'}, "formResult", 'html', 'content');
+}
+
 function getProposalFormForProject(projectId){
 	Drupal.CTools.Modal.dismiss();
 	//With formResult it will turn all textareas in rte fields and with handleResult, it just copies the

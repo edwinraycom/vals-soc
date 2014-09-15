@@ -90,7 +90,7 @@ function getSupervisorLayout($timeline_args){
 					<div class="column-entry proposals_submitted">
 						<h4>
 							<a class="dashboard-link component-link"
-								href="#"
+								href="'.$base_url.'/dashboard/proposals/browsebytype"
 								title="'.t("Proposals submitted within my institute").'">'.t("Proposals submitted by students from my institute").'</a>
 						</h4>
 						<p>'.t("List of proposals submitted within my institute").'</p>

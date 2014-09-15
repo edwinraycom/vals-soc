@@ -94,6 +94,60 @@ class Project extends AbstractEntity{
     	return $rows;
     }
 
+    public function  getStudentsAndProposalCountByCriteriaRowCount($group=''){
+       	if(!$group){
+    		$group = array();
+    		$result = Groups::getGroups(_STUDENT_GROUP, $GLOBALS['user']->uid);
+    		foreach ($result as $record) {
+    			array_push($group, $record->studentgroup_id);
+    		}
+    	}
+    	$role = 4;
+    	$query ="
+    		SELECT u.uid,u.name as username, sg.name as groupname,COUNT(v.proposal_id) AS proposal_count
+			FROM users AS u
+			LEFT JOIN soc_proposals AS v ON ( u.uid = v.owner_id )
+			LEFT JOIN users_roles as r ON (u.uid = r.uid)
+			LEFT JOIN soc_user_membership as m ON (u.uid = m.uid)
+			LEFT JOIN soc_studentgroups AS sg ON (sg.studentgroup_id = m.group_id)
+			WHERE sg.studentgroup_id IN (:grps) 
+    		AND sg.owner_id = ".$GLOBALS['user']->uid." 
+    		AND r.rid = ".$role."
+			GROUP BY username";
+    	$projects =  db_query($query,array(':grps' => $group))->rowCount();
+    	return $projects;
+    }
+    
+    public static function getStudentsAndProposalCountByCriteria($group, $sorting='p.pid',
+    	$startIndex=1, $pageSize=10){
+    	if(!$group){
+    		$group = array();
+    		$result = Groups::getGroups(_STUDENT_GROUP, $GLOBALS['user']->uid);
+    		foreach ($result as $record) {
+    			array_push($group, $record->studentgroup_id);
+    		}
+    	}
+    	$role = 4; 
+    	$query ="
+    		SELECT u.uid,u.name as username, sg.name as groupname,COUNT(v.proposal_id) AS proposal_count
+			FROM users AS u
+			LEFT JOIN soc_proposals AS v ON ( u.uid = v.owner_id )
+			LEFT JOIN users_roles as r ON (u.uid = r.uid)
+			LEFT JOIN soc_user_membership as m ON (u.uid = m.uid)
+			LEFT JOIN soc_studentgroups AS sg ON (sg.studentgroup_id = m.group_id)
+			WHERE sg.studentgroup_id IN (:grps) AND sg.owner_id = ".$GLOBALS['user']->uid." AND r.rid = ".$role."
+			GROUP BY username";
+
+    	if (!$sorting){
+    		$sorting = 'groupname ASC, username ASC';
+    	}
+    	$query .= 	 " ORDER BY " . $sorting
+    	." LIMIT " . $startIndex . "," . $pageSize . ";";
+    	//echo $query;
+    	$students = db_query($query, array(':grps' => $group))->fetchAll();
+    	return $students;
+    }
+    
     public function  getProjectsAndProposalCountByCriteriaRowCount($organisation=''){
     	if(!$organisation){
     		$organisation = array();
