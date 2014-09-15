@@ -40,7 +40,7 @@ function renderProposal($proposal, $target='none'){
 	$buttons = '';
 	if (Users::isStudent() && Groups::isOwner('proposal', $propid)){
 		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this proposal?')."\")){ajaxCall(\"proposal\", \"delete\", ".
-			"{type: \proposal\", proposal_id: $propid, target: \"$target\"}, \"refreshTabs\", \"json\", [\"proposal\", \"$target\", \"proposal\"]);}'";
+			"{type: \"proposal\", proposal_id: $propid, target: \"$target\"}, \"refreshTabs\", \"json\", [\"proposal\", \"$target\", \"proposal\"]);}'";
 		$edit_action = "onclick='ajaxCall(\"proposal\", \"edit\", {type: \"proposal\", proposal_id: $propid, target: ".
 			"\"$target\", format:\"html\"}, \"formResult\", \"html\", [\"$target\", \"proposal\"]);'";
 		$buttons .= "<input type='button' value='".t('edit')."' $edit_action/>";
@@ -220,7 +220,13 @@ function initBrowseProposalsLayout(){
 					owner_id: {
 						title: "Student",
 						width: "30%",
-						display: function (data){return data.record.name;}
+						display: function (data){
+							if(data.record.name){
+								return data.record.name;
+							}else{
+								return data.record.u_name;
+							}
+						}
 					},
 					inst_id: {
 						title: "Institute",
@@ -288,10 +294,15 @@ function initBrowseProposalsLayout(){
  * IN PROGRESS - NEW PROPOSAL VIEWS
  * ********************************************************/
 
-function initBrowseProposalsByTypeLayout($layout_type='org_view', $owner_only=''){
+function initBrowseProposalsByTypeLayout($owner_only=''){
+
+	$owner_id = isset($owner_only) ? $GLOBALS['user']->uid : '';
+	
+	if( hasRole(array(_ORGADMIN_TYPE)) || hasRole(array(_MENTOR_TYPE)) ){
+
 //	TODO - decide how to make the two views here - one for ORGS/MENTORS and another for INST/SUPERVISORS
 //  TODO - decide how to show ALL record & show mine only as we do in the projects view
-	$owner_id = isset($owner_only) ? $GLOBALS['user']->uid : '';
+	
 	$org_id=0;
 
 	if(isset($_GET['organisation'])){
@@ -399,9 +410,118 @@ function initBrowseProposalsByTypeLayout($layout_type='org_view', $owner_only=''
 
 			});
 		</script><?php
+		
+		}
+		else if(hasRole(array(_INSTADMIN_TYPE)) || hasRole(array(_SUPERVISOR_TYPE))){
+		
+		$studentgroup_id=0;
+
+		if(isset($_GET['group'])){
+			$studentgroup_id = $_GET['group'];
+		}
+
+		 ?>
+		 	<div class="filtering" style="width: 800px;">
+				<span id="infotext" style="margin-left: 34px"></span>
+				<form id="proposal_filter">
+			        <?php echo t('Filter by Group');?>:
+			        <?php // echo t('Organisations');?>
+			        <select id="group" name="group">
+						<option <?php echo  (! $studentgroup_id) ? 'selected="selected"': ''; ?> value="0"><?php echo t('All My Groups');?></option><?php
+						$result = Groups::getGroups(_STUDENT_GROUP, $GLOBALS['user']->uid);
+						foreach ($result as $record) {
+							$selected = ($record->studentgroup_id == $studentgroup_id ? 'selected="selected" ' : '');
+							echo '<option ' .$selected.'value="'.$record->studentgroup_id.'">'.$record->name.'</option>';
+						}?>
+					</select>
+				</form>
+			</div>
+		 	<div id="TableContainer" style="width: 800px;"></div>
+		 	<script type="text/javascript">
+		 
+		 			jQuery(document).ready(function($){
+		 				window.view_settings = {};
+		 
+		 				function loadFilteredProposals(){
+		 					$("#TableContainer").jtable("load", {
+		 						group: $("#group").val(),
+		 					});
+		 				}
+		 
+		 			    //Prepare jTable
+		 				$("#TableContainer").jtable({
+		 					paging: true,
+		 					pageSize: 10,
+		 					sorting: true,
+		 					defaultSorting: "pid ASC",
+		 					actions: {
+		 						listAction: moduleUrl + "actions/institute_actions.php?action=list_search_proposal_count_student"
+		 					},
+		 					fields: {
+		 						uid: {
+		 							key: true,
+		 	    					create: false,
+		 	    					edit: false,
+		 	    					list: false
+		 						},
+		 						username: {
+		 							title: "Student",
+		 							width: "42%",
+		 							display: function (data) {
+		 								return  data.record.username;
+		 								},
+		 						},
+		 						groupname: {
+		 							title: "Group name",
+		 							width: "42%",
+		 							display: function (data){return data.record.groupname;}
+		 						},
+		 						proposal_count : {
+		 							title: "Proposals",
+		 							width: "10%",
+		 							display: function (data){return data.record.proposal_count;}
+		 						},
+		 
+		 						proposal_view : {
+		 							width: "6%",
+		 	    					title: "View",
+		 							sorting: false,
+		 	    					display: function (data) {
+		 		    					if(data.record.proposal_count > 0){
+		 								return "<a title=\"View Proposals\" href=\"javascript:void(0);\" "+
+		 									"onclick=\"getProposalsForStudent("+data.record.uid+")\">"+
+		 										"<span class=\"ui-icon ui-icon-info\">See detail</span></a>";
+		 		    					}
+		 	    					},
+		 
+		 	    					create: false,
+		 	    					edit: false
+		 						},
+		 
+		 					},
+		 				});
+		 
+		 				//Load proposal list from server on initial page load
+		 				loadFilteredProposals();
+		 
+		 				$("#group").change(function(e) {
+		 	           		e.preventDefault();
+		 	           		loadFilteredProposals();
+		 	        	});
+		 
+		 				$("#proposal_filter").submit(function(e){
+		 					e.preventDefault();
+		 					loadFilteredProposals()
+		 				});
+		 
+		 			});
+		 		</script><?php
+		}
+		else{}
+		
 }
 
-function showProposalsForProject($project_id){  //href="'.$base_url.'/dashboard/organisation/members"
+function showProposalsForProject($project_id){
 	global $base_url;
 
 	echo '<div id="baktoprops"><a href=" '.$base_url.'/dashboard/proposals/browsebytype'.'">'.t('Back to proposals overview').'</a></div>';
@@ -439,7 +559,13 @@ function showProposalsForProject($project_id){  //href="'.$base_url.'/dashboard/
 							owner_id: {
 								title: "Student",
 								width: "30%",
-								display: function (data){return data.record.name;}
+								display: function (data){
+									if(data.record.name){
+										return data.record.name;
+									}else{
+										return data.record.u_name;
+									}
+								}
 							},
 							inst_id: {
 								title: "Institute",
@@ -453,9 +579,96 @@ function showProposalsForProject($project_id){  //href="'.$base_url.'/dashboard/
 		    					title: "Proposal details",
 								sorting: false,
 		    					display: function (data) {
-									return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
-										"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
-											"<span class=\"ui-icon ui-icon-info\">See details</span></a>";
+		    						if(data.record.state != 'published'){
+										return "Draft only";
+		    						
+									}else{
+										return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
+											"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
+												"<span class=\"ui-icon ui-icon-info\">See details</span></a>";
+									}
+		    					},
+
+		    					create: false,
+		    					edit: false
+							},
+						},
+					});
+					//Load proposal list from server on initial page load
+					loadFilteredProposals();
+				});
+			</script><?php
+}
+
+function showProposalsForStudent($student_id){
+	global $base_url;
+
+	echo '<div id="baktoprops"><a href=" '.$base_url.'/dashboard/proposals/browsebytype'.'">'.t('Back to proposals overview').'</a></div>';
+	$student = Users::getStudentDetails($student_id);
+	$s_name = $student->student_name;
+	echo '<h2>'.t('Project proposals made by \''. $s_name).'\'</h2>';
+?>
+		<div id="TableContainer" style="width: 800px;"></div>
+		<script type="text/javascript">
+	
+				jQuery(document).ready(function($){
+					window.view_settings = {};
+	
+					function loadFilteredProposals(){
+						$("#TableContainer").jtable("load", {
+							student: <?php echo $student_id?>
+						});
+					}
+	
+				    //Prepare jTable
+					$("#TableContainer").jtable({
+						paging: true,
+						pageSize: 10,
+						sorting: true,
+						defaultSorting: "pid ASC",
+						actions: {
+							listAction: moduleUrl + "actions/proposal_actions.php?action=list_proposals"
+						},
+						fields: {
+							proposal_id: {
+								key: true,
+								create: false,
+								edit: false,
+								list: false
+							},
+							pid: {
+								title: "Project",
+								width: "26%",
+								create: false,
+								edit: false,
+								display: function (data){return data.record.pr_title;}
+							},
+							o_name: {
+								title: "Organisation",
+								width: "30%",
+								display: function (data){return data.record.o_name;}
+							},
+							state: {
+								title: "Is published?",
+								width: "10%",
+								display: function (data){
+									if(data.record.state == 'published'){
+										return 'yes';
+									}else{
+										return 'no';
+									}
+								}
+							},
+							//if(data.record.state != 'published'){
+							solution_short : {
+								//width: "2%",
+		    					title: "Proposal details",
+								sorting: false,
+		    					display: function (data) {
+										return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
+											"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
+												"<span class=\"ui-icon ui-icon-info\">See details</span></a>";
+									
 		    					},
 
 		    					create: false,

@@ -179,5 +179,8 @@ switch ($_GET['action']){
 			echo errorDiv(t('YNo proposal identifier submitted!'));
 		}
 	break;
+	case 'show':
+		// THIS IS A PLACEHOLDER
+	break;
 	default: echo "No such action: ".$_GET['action'];
 }

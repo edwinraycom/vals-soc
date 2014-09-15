@@ -88,7 +88,8 @@ class Proposal extends AbstractEntity{
     }
     
     public function getMyProposals(){
-    	return self::getProposalsBySearchCriteria($GLOBALS['user']->uid, '', '', '', '', 1, 1000);
+    	// this was never returning the first record if startindex was 1.
+    	return self::getProposalsBySearchCriteria($GLOBALS['user']->uid, '', '', '', '', 0, 1000);
     }
     
     public function getProposalsBySearchCriteria($student='', $institute='', $organisation='', $project='', $sorting='pid',
@@ -96,7 +97,7 @@ class Proposal extends AbstractEntity{
     {
     	
     	$query = db_select('soc_proposals', 'p')->fields('p', array(
-    			'proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'title'));
+    			'proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'title', 'state'));
     	if($student){
     		$query->condition('p.owner_id', $student);
     	}
@@ -113,10 +114,13 @@ class Proposal extends AbstractEntity{
     	$query->leftjoin('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
     	$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
     	$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid');
+    	$query->leftjoin('users', 'u', 'p.owner_id = %alias.uid');
+    	
     	$query->fields('student', array('name'));
     	$query->fields('i', array('name'));
     	$query->fields('o', array('name'));
     	$query->fields('pr', array('title'));
+    	$query->fields('u', array('name'));
     	//We expect the jtable lib to give a sorting of the form field [ASC, DESC]
     	if ($sorting){
     		$parts = explode(' ', $sorting);
