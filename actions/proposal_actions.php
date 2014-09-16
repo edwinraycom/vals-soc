@@ -105,22 +105,6 @@ switch ($_GET['action']){
 						echo errorDiv(getDrupalMessages('error', true));
 					}
 				}
-				/* Something like this
-				 * $form = drupal_get_form("vals_soc_${type}_form", null, $target);
-				$form['#action'] = url('administer/members');
-				// Process the submit button which uses ajax
-				$form['submit'] = ajax_pre_render_element($form['submit']);
-				// Build renderable array
-				$build = array(
-					'form' => $form,
-					'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
-				);
-				// Print $form
-				print drupal_render($build);
-				// Print JS
-				print drupal_get_js();
-				 * 
-				 */
 			}
 		} else{
 			jsonBadResult(t('No proposal identifier submitted!'));

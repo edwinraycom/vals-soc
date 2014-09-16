@@ -96,9 +96,25 @@ switch ($_GET['action']){
 				$result = Proposal::updateProposal($properties, $id);
 			}
 		}
-		
 		if ($result){
-			//TODO: notify mentor, supervisor
+			// uncomment below to send out emails to mentor/supervisor once new proposal published
+			/*
+			// get either the existing proposal key
+			// or the newly inserted proposal key
+			if(is_bool($result)){
+				//already existed
+				$existed = true;
+				$key = $id;
+			}
+			else{
+				/// newly inserted
+				$existed = false;
+				$key = $result;
+			}
+			$props = Proposal::getProposalById($key, true);
+			module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
+			notify_mentor_and_supervisor_of_proposal_update($props, $existed);
+			*/
 			echo json_encode(array(
 					'result'=>'OK',
 					'id' => $id,

@@ -9,6 +9,10 @@ function vals_soc_mail_handler($key, &$message, $params) {
 	//All these messages are saved with rte textareas and so already in html format
 	$html_format = true;
 	switch($key) {
+		case 'vals_soc_notify_new_proposal':
+			$message['subject'] = $params['subject'];
+			$message['body'][] = $params['body'];
+			break;
 		case 'vals_soc_invite_new_user':
 			$message['subject'] = $params['subject'];
 			$message['body'][] = $params['body'];
@@ -157,6 +161,144 @@ function vals_soc_cron_email_handler($item){
 		$mail_results .= $item['message_type'] . ' sent!!.' .'<br/>';
 	}
 	drupal_set_message($mail_results);
+}
+
+function get_proposal_email_body($record, $is_update, $user_type){
+	//echo var_dump($record);
+	$server = _VALS_SOC_FULL_URL;
+	
+	$student_username = $record->name; //student userid
+	$student_email = $record->mail; // student mail
+	$student_institute = $record->i_name; //Institute name where student is from
+	
+	$supervisor_username = $record->supervisor_user_name;
+	$supervisor_email = $record->supervisor_user_mail;
+	
+	$mentor_username = $record->mentor_user_name;
+	$mentor_email = $record->mentor_user_mail;
+	$mentor_organisation = $record->o_name;
+	
+	$project_title = $record->pr_title; //project title
+	$proposal_title = $record->title; //proposal title
+	$proposal_synopsis = $record->solution_short;
+	
+	
+	if($user_type=='supervisor'){
+		$recipient_username = $record->supervisor_user_name;
+		if($is_update){
+			$alert .= t('An existing proposal has been updated by one of your students.');
+		}else{
+			$alert .= t('A new proposal has been published by one of your students.');
+		}
+	}else{
+		$recipient_username = $record->mentor_user_name;
+		if($is_update){
+			$alert .= t('An existing proposal has been updated for one of your projects.');
+		}else{
+			$alert .= t('A new proposal has been published for one of your projects.');
+		}
+	}
+	
+	$output .= '<p>';
+	$output .= t('Hello').' '. $recipient_username . ',';
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= $alert;
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= t('Here is an overview...');
+	$output .= '<br/>';
+	
+	$output .= "<p>";
+	$output .= "<b>" . t('Project idea') . "</b>";
+	$output .= "<br/>";
+	$output .= $project_title;
+	$output .= "</p>";
+		
+	$output .= "<p>";
+	$output .= "<b>" . t('Proposal title') . "</b>";
+	$output .= "<br/>";
+	$output .= $proposal_title;
+	$output .= "</p>";
+	
+	$output .= "<p>";
+	$output .= "<b>" . t('Proposal synopsis') . "</b>";
+	$output .= "<br/>";
+	$output .= $proposal_synopsis;
+	$output .= "</p>";
+	
+	
+	$output .= "<b>" . t('Contact details') . "</b>";
+	$output .= '<ul class=\'grouplist\'>';
+
+		$output .= "<li>";
+		$output .= t('Student username') . ": <i>" . $student_username . "</i>";
+		$output .= "</li>";
+		$output .= "<li>";
+		$output .= t('Student email') . ": <i>" . $student_email . "</i>";
+		$output .= "</li>";
+		
+		$output .= '<br/>';
+		
+		$output .= "<li>";
+		$output .= t('Student supervisors username') . ": <i>" . $supervisor_username . "</i>";
+		$output .= "</li>";
+		$output .= "<li>";
+		$output .= t('Student supervisors email') . ": <i>" . $supervisor_email . "</i>";
+		$output .= "</li>";
+		$output .= "<li>";
+		$output .= t('Students Institution') . ": <i>" . $student_institute . "</i>";
+		$output .= "</li>";
+		
+		$output .= '<br/>';
+		
+		$output .= "<li>";
+		$output .= t('Initial mentors username') . ": <i>" . $mentor_username . "</i>";
+		$output .= "</li>";
+		$output .= "<li>";
+		$output .= t('Initial mentors email') . ": <i>" . $mentor_email . "</i>";
+		$output .= "</li>";
+		$output .= "<li>";
+		$output .= t('Initial mentors Organisation') . ": <i>" . $mentor_organisation . "</i>";
+		$output .= "</li>";
+	
+	$output .= "</ul>";
+	
+	$output .= "<p>";
+	$output .= tt('Go to <a href="%1$s/dashboard" target="_blank">%1$s/dashboard</a> to view more details.', $server);
+	$output .= "</p>";
+	
+	$output .= '<br/>';
+	$output .= t('Many Thanks,');
+	$output .= '<br/>';
+	$output .= t('The VALS team');
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= sprintf('<img src="%1$s/sites/all/themes/media/logo.png">', $server);
+	$output .= '<p>';
+	return $output;
+}
+
+function notify_mentor_and_supervisor_of_proposal_update($record, $is_update){
+	// TODO - stick these onto the cron job rather than run directly here
+	
+	$subject = t('VALS Proposal Notification');
+	
+	if(isset($record->supervisor_user_mail) && isset($record->supervisor_user_name)){
+		$supervisor_body = get_proposal_email_body($record, $is_update, 'supervisor');
+		//$email1 = vals_soc_send_email('vals_soc_notify_new_proposal', 'ps7@bolton.ac.uk', NULL, $subject, $supervisor_body); //send to supervisor
+		$email1 = vals_soc_send_email('vals_soc_notify_new_proposal', $record->supervisor_user_mail, NULL, $subject, $supervisor_body); //send to supervisor
+	}else{
+		drupal_set_message(t('unable to send supervisor proposal notification email: missing email or username'));
+	}
+	
+	if(isset($record->mentor_user_mail) && isset($record->mentor_user_name)){
+		$mentor_body = get_proposal_email_body($record, $is_update, 'mentor');
+		//$email2 = vals_soc_send_email('vals_soc_notify_new_proposal', 'ps7@bolton.ac.uk', NULL, $subject, $mentor_body); // send to mentor
+		$email2 = vals_soc_send_email('vals_soc_notify_new_proposal', $record->mentor_user_mail, NULL, $subject, $mentor_body); // send to mentor
+	}else{
+		drupal_set_message(t('unable to send supervisor proposal notification email: missing email or username'));
+	}
 }
 
 function format_invite_message($entity, $subtype='', $organisation_name=''){
