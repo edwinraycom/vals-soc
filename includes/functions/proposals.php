@@ -12,7 +12,7 @@ function showMyProposalPage(){
 	//Get my groups
 	$my_proposals = Proposal::getInstance()->getMyProposals();//::getGroups(_ORGANISATION_GROUP);
 	if (!$my_proposals){
-		echo t('You have no proposal edited yet.').'<br/>';
+		echo t('You have no proposal created yet.').'<br/>';
 		echo "<a href='"._VALS_SOC_URL. "/projects/browse'>".t('Please find yourself a project')."</a>.";
 	} else {
 		showMyProposals($my_proposals);
@@ -33,14 +33,15 @@ function renderDefaultField($field, $obj, $alternative_field=''){
 	}
 }
 
-function renderProposal($proposal, $target='none'){
+function renderProposal($proposal, $target='none', $follow_action='show'){
 	//A proposal consists of: fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id',
 	//'supervisor_id', 'pid', 'solution_short', 'solution_long', 'state',);
 	$propid = $proposal->proposal_id;
 	$buttons = '';
 	if (Users::isStudent() && Groups::isOwner('proposal', $propid)){
 		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this proposal?')."\")){ajaxCall(\"proposal\", \"delete\", ".
-			"{type: \"proposal\", proposal_id: $propid, target: \"$target\"}, \"refreshTabs\", \"json\", [\"proposal\", \"$target\", \"proposal\"]);}'";
+			"{type: \"proposal\", proposal_id: $propid, target: \"$target\"}, \"refreshTabs\", \"json\", ".
+			"[\"proposal\", \"$target\", \"proposal\", \"\", \"$follow_action\"]);}'";
 		$edit_action = "onclick='ajaxCall(\"proposal\", \"edit\", {type: \"proposal\", proposal_id: $propid, target: ".
 			"\"$target\", format:\"html\"}, \"formResult\", \"html\", [\"$target\", \"proposal\"]);'";
 		$buttons .= "<input type='button' value='".t('edit')."' $edit_action/>";
@@ -94,7 +95,7 @@ function showMyProposals($proposals){
 		if ($nr == $current_tab){
 			//$id = $proposal->pid;
 			$current_tab_content = renderProposal(Proposal::getInstance()->getProposalById(
-					$proposal->proposal_id, TRUE), $current_tab_id);
+					$proposal->proposal_id, TRUE), $current_tab_id, 'myproposal_page');
 		}
 		$activating_tabs[] = "'$tab_id_prefix$nr'";
 		$data[] = array(0, $proposal->title, 'view', 'proposal', $proposal->proposal_id);
