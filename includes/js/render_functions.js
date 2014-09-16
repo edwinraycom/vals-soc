@@ -5,7 +5,7 @@ function renderProposalOverview(proposal){
 	content += '<ul>';
 	content += '	<li>';
 	content += '		This is the Overview tab, where you can also add comments to this proposal.';
-	content += '	</li>'
+	content += '	</li>';
 	content += '	<li>';
 	content += '		The \'Student Details\' tab lists both the students, the institution he/she is attending and his/her supervisor.';
 	content += '	</li>';
@@ -165,13 +165,15 @@ function getProposalDetail(proposal_id, target, msg){
 				if (data2.result == 'error' ){
 					ajaxAppend(result.error, 'content', 'error');
 				} else {
-					var content = renderProposalTabs(data2.result, tabs, 'content');
 					msg_container = 'content';
-					if (Obj('content').html(content)) {
-						console.log('doing the tabs first?');
-						tabs_present = true;
-						//activatetabs('tab_', content_tabs);
-					};
+					ajaxCall('proposal', 'view', {id: proposal_id, target:target}, target);
+//					var content = renderProposalTabs(data2.result, tabs, 'content');
+//					
+//					if (Obj(target).html(content)) {
+//						console.log('doing the tabs first?');
+//						tabs_present = true;
+//						//activatetabs('tab_', content_tabs);
+//					};
 				}
 				//TODO this case should be covered too:  tabs_present = populateModal(data, renderProposalTabs, tabs);
 		}
@@ -230,7 +232,7 @@ function renderProposalTabs(result, labels, container){
 				// was being replaced by the organisation description. The value to use
 				// from this resultset is 'pr_description' rather than 'description' which
 				// is used in the renderProject() function above
-				result.title = result.pr_title
+				result.title = result.pr_title;
 				result.description = result.pr_description;
 				result.url = result.pr_url;
 				s += renderProject(result, false);

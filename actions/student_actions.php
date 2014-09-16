@@ -55,8 +55,10 @@ switch ($_GET['action']){
 		$project = Project::getProjectById($project_id);
 		$properties = Proposal::filterPost($_POST);
 		if (!$id){
+			$new = TRUE;
 			$id = $result = Proposal::insertProposal($properties, $project_id);
 		} else {
+			$new = FALSE;
 			if (!Groups::isOwner('proposal', $id)){
 				drupal_set_message(t('You are not the owner of this proposal'), 'error');
 				$result = null;
@@ -71,9 +73,10 @@ switch ($_GET['action']){
 					'id' => $id,
 					//'type'=> $type,
 					'msg'=> 
-						($id ? 
-							tt('You succesfully changed the draft of your proposal for %1$s', $project['title']):
-							tt('You succesfully saved a draft of your proposal for %1$s', $project['title'])).
+						($new ? 
+							tt('You succesfully saved a draft of your proposal for %1$s', $project['title']):
+							tt('You succesfully changed the draft of your proposal for %1$s', $project['title'])
+						).
 						(_DEBUG ? showDrupalMessages() : '')
 				));
 		} else {

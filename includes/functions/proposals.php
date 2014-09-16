@@ -12,7 +12,7 @@ function showMyProposalPage(){
 	//Get my groups
 	$my_proposals = Proposal::getInstance()->getMyProposals();//::getGroups(_ORGANISATION_GROUP);
 	if (!$my_proposals){
-		echo t('You have no proposal created yet.').'<br/>';
+		echo t('You have no proposal at the moment.').'<br/>';
 		echo "<a href='"._VALS_SOC_URL. "/projects/browse'>".t('Please find yourself a project')."</a>.";
 	} else {
 		showMyProposals($my_proposals);
@@ -21,6 +21,7 @@ function showMyProposalPage(){
 
 function renderDefaultField($field, $obj, $alternative_field=''){
 	static $unknown = null;
+	
 	if (! $unknown) {
 		$unknown = t('The %1$s is not known yet');
 	}
