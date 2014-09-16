@@ -114,6 +114,8 @@ function is_string(arg){
 
 function ajaxAppend(msg, container, err, before){
 	var t = '';
+	var targ = container + err;
+	var new_class = "messages "+ err;
 	if (typeof before == 'undefined') {
 		var cont_obj = Obj(container);
 		if (cont_obj){
@@ -123,16 +125,16 @@ function ajaxAppend(msg, container, err, before){
 			alertdev('Could not append message to container '+ container+ '. It could not be found.');
 			return false;
 		}
-		t = createDiv(container+err, cont_obj[0], before);
+		t = createDiv(targ, cont_obj[0], before);
 	} else {
-		console.log('hierlangs met '+ container+err + ' en '+  container + ' en '+ before);
-		t = createDiv(container+err, container, before);
+		console.log('hierlangs met '+ targ + ' en '+  container + ' en '+ before);
+		t = createDiv(targ, container, before);
 	}
 
 	if (t) {
-		var msg2 = "<a href=javascript:void(0); onclick='var o = this.parentNode;$jq(o).html(\"\").removeClass(\"messages status\");'>"+
-			msg+ "</a>";
-		t.addClass('messages '+err);
+		var click = "onclick='$jq(\"#" +targ+"\").html(\"\").removeClass(\""+new_class+ "\");'";
+		var msg2 = "<span class='lefty'>"+msg + "</span><span class='close_button' "+ click+ ">X</span>";
+		t.addClass(new_class);
 		t.html(msg2);
 	}
 
@@ -144,7 +146,7 @@ function ajaxError(targ, msg) {
 		var click = "onclick='$jq(\"#" +targ+"\").html(\"\").removeClass(\"messages error\");'";
 		var msg2 = "<span class='lefty'>"+msg + "</span><span class='close_button' "+ click+ ">X</span>";
 		//var msg2 = "<a href=javascript:void(0); onclick='$jq(\"#" +targ+"\").html(\"\").removeClass(\"messages error\");'>"+
-		msg+ "</a>";
+		//msg+ "</a>";
 		if (err_target.length){
 			err_target.html(msg2);
 			err_target.addClass('messages error');
