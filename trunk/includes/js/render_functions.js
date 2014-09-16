@@ -91,8 +91,8 @@ function renderInstitute(ins){
 
 function renderStudent(data){
 	var s = '<ol>';
-	s += '<li>name: '+(data.student_name ? data.student_name: data.name)+ '</li>';
-	s += '<li>email: '+data.mail+ '</li>';
+	s += '<li>Name: '+(data.student_name ? data.student_name: data.name)+ '</li>';
+	s += '<li>Email: '+data.mail+ '</li>';
 	s += '<li>Institute: '+data.i_name+ '</li>';
 	s += '<li>Supervisor: '+(data.supervisor_name ? data.supervisor_name: data.supervisor_user_name)+ '</li>';
 	s += '<li>Supervisor email: '+data.supervisor_user_mail+ '</li>';
@@ -139,6 +139,7 @@ function getProposalDetail(proposal_id, target, msg){
 		}
 		var msg_container = 'modal-content';
 		var tabs_present = false;
+		console.log('How about the target in get details '+target);
 		switch (target){
 			case 'modal':
 				tabs_present = generateAndPopulateModal(data, renderProposalTabs, tabs);
@@ -153,12 +154,26 @@ function getProposalDetail(proposal_id, target, msg){
 					msg_container = 'content';
 					if (Obj('content').html(content)) {
 						console.log('doing the tabs first?');
-						activatetabs('tab_', content_tabs);
+						tabs_present = true;
+						//activatetabs('tab_', content_tabs);
 					};
-					tabs_present = true;
+					
 				}
 			break ;
-			default: tabs_present = populateModal(data, renderProposalTabs, tabs);
+			default: 
+				var data2 = jQuery.parseJSON(data);
+				if (data2.result == 'error' ){
+					ajaxAppend(result.error, 'content', 'error');
+				} else {
+					var content = renderProposalTabs(data2.result, tabs, 'content');
+					msg_container = 'content';
+					if (Obj('content').html(content)) {
+						console.log('doing the tabs first?');
+						tabs_present = true;
+						//activatetabs('tab_', content_tabs);
+					};
+				}
+				//TODO this case should be covered too:  tabs_present = populateModal(data, renderProposalTabs, tabs);
 		}
 		if (tabs_present){
 			//TODO: these activate tabs should also been done for the modal case
@@ -236,7 +251,8 @@ function renderProposalTabs(result, labels, container){
 			break;
 			case 'delete': s += 'Are you sure you want to delete this proposal?<br>'+
 				'<input type="button" value="Yes" onclick="ajaxCall(\'proposal\', \'delete\', '+
-				'{proposal_id:'+result.proposal_id+', target: \''+ container+ '\' }, \'handleDeleteResult\', \'json\', [\'content\', \'proposal\']);"/>';
+				'{proposal_id:'+result.proposal_id+', target: \''+ container+ '\' }, '+
+				'\'handleDeleteResult\', \'json\', [\'content\', \'proposal\', \'myproposal_page\']);"/>';
 			break;
 		}
 		s += "</div>";
