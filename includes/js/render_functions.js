@@ -19,6 +19,12 @@ function renderProposalOverview(proposal){
 	content += '		The \'Original Project\' tab is for your reference and links to the original project idea.';
 	content += '	</li>';
 	content += '</ul>';
+	// comments
+	content += "<div id=\"comments-proposal-"+proposal.proposal_id+"\"></div>";
+	// go and get the comments asynch...
+	getCommentsForEntity(proposal.proposal_id, 'proposal','comments-proposal-'+proposal.proposal_id);
+	//
+	
 	return content;
 }
 

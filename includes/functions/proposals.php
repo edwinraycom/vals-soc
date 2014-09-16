@@ -46,7 +46,7 @@ function renderProposal($proposal, $target='none'){
 		$buttons .= "<input type='button' value='".t('edit')."' $edit_action/>";
 		$buttons .= "<input type='button' value='".t('delete')."' $delete_action/>";
 	}
-	return
+	$content = 
 	"$buttons".
 	"<h1>".($proposal->title ? $proposal->title : Proposal::getDefaultName('', $proposal))."</h1>
 
@@ -72,6 +72,11 @@ function renderProposal($proposal, $target='none'){
 			".renderDefaultField('solution_long', $proposal)."
 			</div>
 	</div>";
+	
+	module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
+	$content .= initComments($propid, 'proposal');
+	return $content;
+	
 }
 
 function showMyProposals($proposals){

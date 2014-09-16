@@ -33,7 +33,7 @@ class ThreadUIBuilder {
 		$this->output .= "	</h2>";
 		$this->output .= "	&nbsp;";
 		//$this->output .= "	<div style='display:inline-block' class='comment-toggle'>".t('show')."</div>";
-		$this->output .= "<input style='display:inline-block' class='comment-toggle' type='button' value='".t('show')."'/>";
+		$this->output .= "<input style='display:inline-block' id='comment-toggle-".$this->entity_id."-".$this->entity_type."' class='comment-toggle' type='button' value='".t('show')."'/>";
 		$this->output .= "</div>";
 	}
 
@@ -110,8 +110,8 @@ class ThreadUIBuilder {
 
 	public function print_comments() {
 		
-		$this->output .= '<div class="comments-parent-container">';
-		$this->output .= '	<div class="existing-comments-container">';
+		$this->output .= '<div class="comments-parent-container" id="comments-parent-container-'.$this->entity_id.'-'.$this->entity_type.'">';
+		$this->output .= '	<div class="existing-comments-container" id="existing-comments-container-'.$this->entity_id.'-'.$this->entity_type.'">';
 		foreach ( $this->parents as $c ) {
 			$this->output .=  $this->print_parent ( $c );
 		}

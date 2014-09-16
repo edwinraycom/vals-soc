@@ -853,7 +853,7 @@ function vals_soc_comment_form($form, &$form_state, $comment='', $target='', $en
 	$form['description'] = array(
 			"#type" => "textarea",
 			'#title' => t('Message'),
-			"#default_value" => $message,
+			"#default_value" => '',
 			'#attributes' => array(
 					'class' => array('comment-textarea'),
 			),
