@@ -29,7 +29,7 @@ switch ($_GET['action']){
 		}
 		break;
 	case 'view':
-		$type = altSubValue($_POST, 'type');
+		$type = altSubValue($_POST, 'type', 'comment');
 		$id = altSubValue($_POST, 'id');
 		$target = altSubValue($_POST, 'target', '');
 		if (! ($id && $type && $target)){

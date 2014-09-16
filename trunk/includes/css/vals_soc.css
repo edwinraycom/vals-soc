@@ -10,7 +10,10 @@ html{
 .invisible {
 	display: none;
 }
-
+span.comment_author{
+	color: #2385C2;
+	font-style: italic;
+}
 div.ctools-modal-content .form-item.form-type-textarea label {
     float: none;
     width: auto;

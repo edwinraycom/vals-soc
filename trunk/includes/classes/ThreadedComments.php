@@ -20,8 +20,11 @@ class ThreadedComments extends AbstractEntity {
 	function getPostById($id, $fetch_style=PDO::FETCH_ASSOC){
 		$query = db_select('soc_comments', 'c');
 		$query->join('users', 'u', 'c.author = u.uid');
+		$query->join('users_roles', 'ur', 'c.author = ur.uid');
+		$query->join('role', 'r', 'r.rid = ur.rid');
 		$query->fields('c', self::$fields);
 		$query->fields('u',  array('name'));
+		$query->addField('r', 'name', 'type');
 		$query->condition('c.id', $id);
 		$post = $query->execute()->fetch($fetch_style);
 		return $post;
@@ -48,7 +51,10 @@ class ThreadedComments extends AbstractEntity {
 	}
 	
 	function getThreadsForEntity($entity_id, $entity_type){
-		$queryString = "SELECT s.*, u.name FROM soc_comments s, users u WHERE entity_id=" . $entity_id .
+		$queryString = "SELECT s.*, u.name, r.name AS type FROM soc_comments s, users u 
+			LEFT JOIN users_roles ur ON u.uid = ur.uid
+			LEFT JOIN role r ON ur.rid = r.rid
+			WHERE entity_id=" . $entity_id .
 			" AND entity_type='" . $entity_type . "' AND u.uid = s.author;";
 		$result = db_query($queryString)->fetchAll(PDO::FETCH_ASSOC);
 		return $result;

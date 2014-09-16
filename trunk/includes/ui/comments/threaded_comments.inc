@@ -5,9 +5,9 @@ module_load_include('php', 'vals_soc', 'includes/classes/ThreadUIBuilder');
 
 function initComments($entity_id, $entity_type){
 	$threads = ThreadedComments::getInstance()->getThreadsForEntity($entity_id, $entity_type);
-	$threaded_comments = new ThreadUIBuilder($entity_id, $entity_type);
-	$threaded_comments -> init($threads);
-	$rendered_threads = $threaded_comments->print_comments();
+	$threaded_comments_builder = new ThreadUIBuilder($entity_id, $entity_type);
+	$threaded_comments_builder -> init($threads);
+	$rendered_threads = $threaded_comments_builder->print_comments();
 	$post_forms =  getJsHandler($entity_id, $entity_type);
 	return $rendered_threads . $post_forms;
 }

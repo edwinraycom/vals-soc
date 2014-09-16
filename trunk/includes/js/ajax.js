@@ -202,7 +202,7 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 	// the result
 //	$jq("#admin_container input[type='button']").prop(
 //			{'disabled': true, 'style': "background-color:grey"});
-	ajax_event = ajaxCall.caller.arguments[0] || window.event ;	
+	ajax_event = (ajaxCall.caller && ajaxCall.caller.arguments  && ajaxCall.caller.arguments[0]) || window.event ;	
 	var show_waiting = (typeof ajax_event != 'undefined');
 	if (show_waiting){
 		startWait(ajax_event, event_counter, 'content');

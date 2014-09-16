@@ -61,10 +61,10 @@ class ThreadUIBuilder {
 		$this->output .= "	<div class='threaded-comment'>";
 		$this->output .= "	<div id='msg_threaded-comment-wrapper-".$comment['id']."'></div>";
 		$this->output .= "		<div class='threaded-comment-header'>";
-		$this->output .= "			<a href='#'>";
+		$this->output .= "			<span class='comment_author'>";//<a href='#'>";
 		$this->output .= 			$comment ['name'];
-		$this->output .= "			</a>";
-		$this->output .= "			&nbsp;-&nbsp;";
+		$this->output .= "			</span>";
+		$this->output .= "			&nbsp;(${comment['type']}) - &nbsp;";
 		$this->output .= 			$post_type;
 		$this->output .= "			&nbsp;";
 		// TODO check date
@@ -76,7 +76,7 @@ class ThreadUIBuilder {
 		$this->output .= "			<br/>";
 		$this->output .= '			<a class="reply-comment" href="">reply</a>';
 		$this->output .= "		</div>"; // end body
-		$this->output .= "	</div>"; //
+		$this->output .= "	</div>"; 
 		$this->output .= $this->getPostNewCommentForm($comment);
 	}
 
