@@ -14,7 +14,8 @@ function tableName($type){
 }
 
 function debugDbQuery($query){
-	echo ($query->queryString);}
+	echo ($query->queryString);
+}
 
 function debugDbSelect($query){
 	echo(toSql($query));
@@ -57,6 +58,14 @@ function altSubValue($arr, $field, $default=''){
 		return $arr[$field];
 	} else {
 		return $default;
+	}
+}
+
+function altPropertyValue($obj, $property, $default=''){
+	if (isset($obj->$property) && $obj->$property){
+		return $obj->$property;
+	} else {
+		return $default ? t($default) : '';
 	}
 }
 

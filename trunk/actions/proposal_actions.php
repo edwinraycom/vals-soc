@@ -124,6 +124,7 @@ switch ($_GET['action']){
 				jsonBadResult(t('This proposal was already deleted!'), $args);
 				return;
 			}
+			$title = altPropertyValue($proposal_nr, 'title');
 			if (! Groups::isOwner('proposal', $proposal_id)){
 				jsonBadResult(t('You can only delete your own proposals!'), $args);
 			} else {
@@ -134,7 +135,7 @@ switch ($_GET['action']){
 					// junk the proposal comments too
 					ThreadedComments::getInstance()->removethreadsForEntity($proposal_id, 'proposal');
 					$args['before'] = '';
-					jsonGoodResult(TRUE, t("You have removed this proposal"), $args);
+					jsonGoodResult(TRUE, tt('You have removed the proposal %1$s', $title), $args);
 				} else {
 					jsonBadResult(t('We could not remove your proposal'), $args);
 				}
@@ -160,7 +161,9 @@ switch ($_GET['action']){
 			if (Users::isStudent() && ! Groups::isOwner('proposal', $proposal_id)){
 				echo errorDiv(t('You can only view your own proposals!'));
 			} else {
-				echo renderProposal($proposal, $target);
+				//TODO: find out whether we use the proposal view only in the my proposals and if not whether this 
+				//matters: non owners have no right to delete for example and so no reason to do a followup action
+				echo renderProposal($proposal, $target, 'myproposal_page');
 			}
 		} else {
 			echo errorDiv(t('YNo proposal identifier submitted!'));
