@@ -8,11 +8,11 @@ function initComments($entity_id, $entity_type){
 	$threaded_comments = new ThreadUIBuilder($entity_id, $entity_type);
 	$threaded_comments -> init($threads);
 	$rendered_threads = $threaded_comments->print_comments();
-	$post_forms =  getJsHandler();
+	$post_forms =  getJsHandler($entity_id, $entity_type);
 	return $rendered_threads . $post_forms;
 }
 
- function getJsHandler(){
+ function getJsHandler($entity_id, $entity_type){
 	$output = '
 		<script type="text/javascript">
 		$jq(function(){	
@@ -22,12 +22,14 @@ function initComments($entity_id, $entity_type){
 				$jq(this).parent().parent().next(".reply-comment-form").toggle("slow");
 			});
 
-			$jq(".comment-toggle").on("click", function(e){
+			//$jq(".comment-toggle").on("click", function(e){
+			$jq("#comment-toggle-'.$entity_id.'-'.$entity_type.'").on("click", function(e){
 				var link = $jq(this);
 				var hideText = "'.t("hide").'";
 				var showText = "'.t("show").'";
 				e.preventDefault();
-				$jq(".comments-parent-container").toggle("slow", function() {
+				//$jq(".comments-parent-container").toggle("slow", function() {
+				$jq("#comments-parent-container-'.$entity_id.'-'.$entity_type.'").toggle("slow", function() {
 					if (link.attr("value") == showText) {
 						link.attr("value", hideText);
 					} else {

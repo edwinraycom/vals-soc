@@ -4,6 +4,7 @@ include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');
+module_load_include('php', 'vals_soc', 'includes/classes/ThreadedComments');
 module_load_include('php', 'vals_soc', 'includes/functions/proposals');
 
 $apply_proposals = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
@@ -146,6 +147,8 @@ switch ($_GET['action']){
 					->condition(AbstractEntity::keyField('proposal'), $proposal_id)
 					->execute();
 				if ($num_deleted){
+					// junk the proposal comments too
+					ThreadedComments::getInstance()->removethreadsForEntity($proposal_id, 'proposal');
 					$args['before'] = '';
 					jsonGoodResult(TRUE, t("You have removed this proposal"), $args);
 				} else {

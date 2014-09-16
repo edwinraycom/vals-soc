@@ -122,7 +122,8 @@ function handlePostDOMUPdate(result, args){
 		console.log(err);
 	}
 	if (parent_id == '0' || parent_id == ''){
-		$jq('.existing-comments-container').append(result);
+		//$jq('.existing-comments-container').append(result);
+		$jq('#existing-comments-container-'+entity_id+'-'+entity_type).append(result);
 		ajaxMessage('msg_threaded-comment-wrapper-'+id, msg_content);
 	}else{
 		$jq('#threaded-comment-wrapper-'+parent_id).append(result);
