@@ -84,7 +84,7 @@ function renderInstitute(ins){
 	var content = "<h1>"+ins.name+"</h1>";
 	content += "<h3>Contact information</h3>"+
 	'<div style="padding-left:5px;">'+
-	'Name:' + ins.contact_name + '<br/>'+
+	'Name: ' + ins.contact_name + '<br/>'+
 	'Email: '+ ins.contact_email + '</div>';
 	return content;
 }
