@@ -65,7 +65,7 @@ function renderProject(project, apply_projects){
 	return content;
 }
 
-function renderOrganisation(org){
+function renderOrganisation(org, contact_possible){
 	var content = "<h1>"+org.name+"</h1>";
 	content += "<h3>Information</h3>"+ org.description;
 //	if (apply_projects){
@@ -77,15 +77,23 @@ function renderOrganisation(org){
 //		content +="</div>";
 //	}
 	content += "<br/><h3>Website</h3><a href='"+org.url+"'>"+org.url+"</a>";
+	if (typeof contact_possible !== 'undefined' && contact_possible){
+		content += "<h3>Contact information</h3>"+
+		'<div style="padding-left:5px;">'+
+		'Name: ' + org.contact_name + '<br/>'+
+		'Email: '+ org.contact_email + '</div>';
+	}
 	return content;
 }
 
-function renderInstitute(ins){
+function renderInstitute(ins, contact_possible){
 	var content = "<h1>"+ins.name+"</h1>";
-	content += "<h3>Contact information</h3>"+
-	'<div style="padding-left:5px;">'+
-	'Name: ' + ins.contact_name + '<br/>'+
-	'Email: '+ ins.contact_email + '</div>';
+	if (typeof contact_possible !== 'undefined' && contact_possible){
+		content += "<h3>Contact information</h3>"+
+			'<div style="padding-left:5px;">'+
+				'Name: ' + ins.contact_name + '<br/>'+
+				'Email: '+ ins.contact_email + '</div>';
+	}
 	return content;
 }
 

@@ -19,7 +19,7 @@ function showProjectPage($show_last=FALSE, $owner_only=false){
 
 		} else {
 			echo t('You are not connected to any organisation yet.').'<br/>';
-			echo "<a href='"._VALS_SOC_URL. "/user'>".t('Please go to the register page')."</a>";
+			echo "<a href='"._VALS_SOC_URL. "/user/".Users::getMyId()."/edit'>".t('Please edit your account to connect')."</a>";
 
 		}
 	} else {

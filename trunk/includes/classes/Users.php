@@ -60,6 +60,12 @@ class Users extends AbstractEntity{
     	in_array(_ORGADMIN_TYPE, $user->roles);
     }
     
+    public static function isUser(){
+    	global $user;
+    	
+    	return isset($user) && isset($user->uid) && $user->uid;
+    }
+    
 	public static function isOfType($type, $uid=''){
 		global $user;
 		

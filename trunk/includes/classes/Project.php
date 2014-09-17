@@ -109,10 +109,9 @@ class Project extends AbstractEntity{
 			LEFT JOIN soc_proposals AS v ON ( u.uid = v.owner_id )
 			LEFT JOIN users_roles as r ON (u.uid = r.uid)
 			LEFT JOIN soc_user_membership as m ON (u.uid = m.uid)
-			LEFT JOIN soc_studentgroups AS sg ON (sg.studentgroup_id = m.group_id)
-			WHERE sg.studentgroup_id IN (:grps) 
-    		AND sg.owner_id = ".$GLOBALS['user']->uid." 
-    		AND r.rid = ".$role."
+			LEFT JOIN soc_studentgroups AS sg ON (sg.studentgroup_id = m.group_id)".
+			($group ? "WHERE sg.studentgroup_id IN (:grps) AND " : "WHERE ").
+			"sg.owner_id = ".$GLOBALS['user']->uid." AND r.rid = $role AND m.type = 'studentgroup'
 			GROUP BY username";
     	$projects =  db_query($query,array(':grps' => $group))->rowCount();
     	return $projects;
@@ -134,8 +133,9 @@ class Project extends AbstractEntity{
 			LEFT JOIN soc_proposals AS v ON ( u.uid = v.owner_id )
 			LEFT JOIN users_roles as r ON (u.uid = r.uid)
 			LEFT JOIN soc_user_membership as m ON (u.uid = m.uid)
-			LEFT JOIN soc_studentgroups AS sg ON (sg.studentgroup_id = m.group_id)
-			WHERE sg.studentgroup_id IN (:grps) AND sg.owner_id = ".$GLOBALS['user']->uid." AND r.rid = ".$role."
+			LEFT JOIN soc_studentgroups AS sg ON (sg.studentgroup_id = m.group_id)".
+			($group ? "WHERE sg.studentgroup_id IN (:grps) AND " : "WHERE ").
+			"sg.owner_id = ".$GLOBALS['user']->uid." AND r.rid = $role AND m.type = 'studentgroup'
 			GROUP BY username";
 
     	if (!$sorting){

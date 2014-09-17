@@ -375,15 +375,19 @@ function showOrganisationAdminPage($organisations, $action='administer', $show_l
 	$nr = 0;
 	$data = array();
 	$tabs = array();
-
+	$id = 0;
+	
 	$tab_id_prefix = 'organisation_page-';
 	$nr_orgs = $organisations->rowCount();
 	$current_tab = $show_last ? $nr_orgs : 1;
+	$current_tab_content = t('You have no organisation yet.');
 	foreach ($organisations as $org){
 		$nr++;
 		if ($nr == $current_tab){
 			$id = $org->org_id;
 			$my_organisation = $org;
+			$current_tab_content = renderOrganisation(_ORGANISATION_GROUP, $my_organisation, null, "$tab_id_prefix$current_tab", 
+				($action == 'administer'));
 		}
 		$tabs[] = "'$tab_id_prefix$nr'";
 		$data[] = array(2, $org->name, 'view', _ORGANISATION_GROUP, $org->org_id);
@@ -397,14 +401,18 @@ function showOrganisationAdminPage($organisations, $action='administer', $show_l
 		$tabs[] = "'$tab_id_prefix$nr'";
 	}
 	echo sprintf('<h3>%1$s</h3>', t('Organisations you are involved in'));
-	echo renderTabs($nr, 'Org', $tab_id_prefix, _ORGANISATION_GROUP, $data, $id, TRUE,
+	if ($nr){
+		echo renderTabs($nr, 'Org', $tab_id_prefix, _ORGANISATION_GROUP, $data, $id, TRUE, $current_tab_content
 			//$type, $organisation='', $organisation_owner='', $target='', $show_buttons=true)
-		renderOrganisation(_ORGANISATION_GROUP, $my_organisation, null, "$tab_id_prefix$current_tab", ($action == 'administer')), $current_tab);
-	?>
-	<script type="text/javascript">
-		activatetabs('tab_', [<?php echo implode(',', $tabs);?>], '<?php echo "$tab_id_prefix$current_tab";?>');
-		</script>
-	<?php
+			, $current_tab);
+		?>
+		<script type="text/javascript">
+			activatetabs('tab_', [<?php echo implode(',', $tabs);?>], '<?php echo "$tab_id_prefix$current_tab";?>');
+			</script>
+		<?php
+	} else {
+		echo $current_tab_content;
+	}
 }
 
 function showOrganisationMembersPage($organisations){
