@@ -163,7 +163,7 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 	} else {
 		//Previously it was possible to connect yourself to some org/inst via the user change form but this is only possible for admins and we a
 // 		allow them all anyway
-		/*$org = 0;
+		$org = 0;
 		if (in_array($current_role, array(_MENTOR_TYPE, _ORGADMIN_TYPE) ) && isset($form_state['values']['organisation'])){
 			$org = $form_state['values']['organisation'];
 			$super = t('Organisation administrator');
@@ -195,7 +195,7 @@ function vals_soc_form_user_profile_form_validate_handler(&$form, &$form_state){
 		} else {
 			//user changes details without connecting to an organisation or institute
 			return;
-		}*/
+		}
 	}
 
 }
@@ -242,11 +242,20 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
 		}//$updated2->getQueryString() only works if the syntax was correct, otherwise updated2 == NULL
     }
 	/*   
+	 * I am still undecided on this point. We might want users (not students) give the permission to connect to another organisation or institute
+	 * Perhaps one that was created by a colleague, the admin. If we want users to connect to more than one organisation without
+	 * being owner of those, we should leave out the delete statement. For now we assume that organisation admins can have more than
+	 * one organisation and they are the only ones capable of such a thing. Moreover: in the form definition we only show the 
+	 * org or inst field if there is not any connection yet.
+	 * 
+	 * That said, for now the code below gives the possibility to connect a person to some organisation without having to do a
+	 * re-register.
+	 * 
 	 *  We assume that the admins create their organisation/institute and all the others register with a 
      * certain organisation. There seems no reason to change that later. If an organisation has two admins 
 	 * they can add themselves to an organisation/institute. So the only one doing this is the admin
 	 */
-    if ($is_admin) {
+    if (TRUE || $is_admin) {
     	if ((isset($form_state['values']['institute']) && $form_state['values']['institute']) &&
 	     	(($type == _INSTADMIN_TYPE) || ($is_admin && (($type == _STUDENT_TYPE) || ($type == _SUPERVISOR_TYPE))))
 	    		){
