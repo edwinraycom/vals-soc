@@ -50,7 +50,8 @@ function renderProposal($proposal, $target='none', $follow_action='show'){
 	}
 	$content = 
 	"$buttons".
-	"<h1>".($proposal->title ? $proposal->title : Proposal::getDefaultName('', $proposal))."</h1>
+	"<h1>".($proposal->title ? $proposal->title : Proposal::getDefaultName('', $proposal))." (".
+		renderDefaultField('state', $proposal).")</h1>
 
 	<div id='personalia'>
 		<ul>

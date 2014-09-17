@@ -290,7 +290,7 @@ function get_proposal_email_body($record, $is_update, $user_type){
 
 function notify_mentor_and_supervisor_of_proposal_update($record, $is_update){
 	$test_email = 'ps3com@hotmail.com';
-	
+	$test_email = 'edwin@raycom.com';
 	$subject = t('VALS Proposal Notification');
 	
 	if(isset($record->supervisor_user_mail) && isset($record->supervisor_user_name)){
