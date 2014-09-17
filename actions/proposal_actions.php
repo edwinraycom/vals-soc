@@ -16,7 +16,10 @@ switch ($_GET['action']){
 		initBrowseProposalsLayout();
 	break;
 	case 'myproposal_page':
+		echo "<div id='admin_container' class='tabs_container'>";
 		echo showMyProposalPage();
+		echo "</div>";
+		// showMyProposalPage();
 	break;
 	case 'render_proposals_for_id':
 		if(isset($_POST['id']) && $_POST['id']){
@@ -166,7 +169,7 @@ switch ($_GET['action']){
 				echo renderProposal($proposal, $target, 'myproposal_page');
 			}
 		} else {
-			echo errorDiv(t('YNo proposal identifier submitted!'));
+			echo errorDiv(t('No proposal identifier submitted!'));
 		}
 	break;
 	case 'show':

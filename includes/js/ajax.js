@@ -256,7 +256,10 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 		return false;
 	};
 
-	return $jq.ajax(call);
+	$jq.when($jq.ajax(call)).done(function(a1){
+		return a1;
+	});
+	//return $jq.ajax(call);
 }
 
 function ajaxFormCall(frm_selector, handler_type, action, data, target, type, args) {
@@ -298,10 +301,14 @@ function ajaxFormCall(frm_selector, handler_type, action, data, target, type, ar
 		console.log('Comment, form ' + '#' + frm_selector + " is reset");
 		$jq('#' + frm_selector)[0].reset();//reset the form for comments
 	}
-	if (ajaxCall(handler_type, action, call_args, target, type, args)) {
+	$jq.when(ajaxCall(handler_type, action, call_args, target, type, args)).done(function(a1){
 		$jq("#" + frm_selector + " input[type='button']").prop(
-				{'disabled': false, 'style': ""});		
-	}
+			{'disabled': false, 'style': ""});
+	});
+//	if (ajaxCall(handler_type, action, call_args, target, type, args)) {
+//		$jq("#" + frm_selector + " input[type='button']").prop(
+//				{'disabled': false, 'style': ""});		
+//	}
 }
 
 $jq(document)

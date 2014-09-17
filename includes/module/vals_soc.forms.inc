@@ -767,7 +767,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#value' => t('Save draft'),
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
-					'onclick' => "ajaxFormCall('vals-soc-proposal-form', '"._STUDENT_TYPE."', 'save',".
+					'onclick' => "ajaxFormCall('vals-soc-proposal-form', 'student', 'save',".
 					" {id: $proposal_id, project_id: $project_id,  target: '$target' }, 'handleSaveResult', 'json', ['$target']);")
 			,'#post_render' => array('vals_soc_fix_submit_button')
 	);
@@ -778,7 +778,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
 					'onclick' => "if (confirm('".t('Are you sure you want to submit your proposal now?')."')){".
-					"ajaxFormCall('vals-soc-proposal-form', '"._STUDENT_TYPE."', 'submit',".
+					"ajaxFormCall('vals-soc-proposal-form', 'student', 'submit',".
 					" {id: $proposal_id, project_id: $project_id,  target: '$target' }, 'handleSubmitResult', ".
 					"'json', ['$target']);}")
 			,'#post_render' => array('vals_soc_fix_submit_button')

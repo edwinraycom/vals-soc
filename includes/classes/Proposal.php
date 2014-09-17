@@ -155,7 +155,9 @@ class Proposal extends AbstractEntity{
     		$props['inst_id'] = $student_details->inst_id ;
     		$props['supervisor_id'] = $student_details->supervisor_id ;  		
     		$props['pid'] = $project['pid'];
-    		$props['state'] = 'draft' ;
+    		if (!isset($props['state'])){
+    			$props['state'] = 'draft' ;
+    		}
     		try{
     			// inserts where the field length is exceeded fails silently here
     			// i.e. the date strinf is too long for the mysql field type
