@@ -256,10 +256,11 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 		return false;
 	};
 
-	$jq.when($jq.ajax(call)).done(function(a1){
-		return a1;
-	});
-	//return $jq.ajax(call);
+	//This seems reasonable but it looks like it does not work
+//	$jq.when($jq.ajax(call)).done(function(a1){
+//		return a1;
+//	});
+	return $jq.ajax(call);
 }
 
 function ajaxFormCall(frm_selector, handler_type, action, data, target, type, args) {
