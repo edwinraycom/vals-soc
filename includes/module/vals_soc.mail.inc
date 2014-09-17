@@ -130,19 +130,12 @@ function vals_soc_send_email($key, $to, $from, $subject, $body){
 function vals_soc_handle_cron_test_emails($to){
 	drupal_set_message(t('vals_soc_handle_cron_test_emails called'));
 	$items = array();
-	//$items[0] = array('to' => 'p.sharples@bolton.ac.uk', 'bar' => 'foo',);
-	//$items[1] = array('to' => 'ps3comps3com@googlemail.com', 'bar' => 'foo',);
-
-	//$items[0] = array('to' => 'p.sharples@bolton.ac.uk', 'message_type' => 'vals_soc_email_accepted_organisation',);
-	///$items[1] = array('to' => $to, 'message_type' => 'vals_soc_email_accepted_organisation',);";
-
 	$items[0] = array('to' => $to, 'message_type' => 'vals_soc_email_accepted_organisation');
 	$items[1] = array('to' => $to, 'message_type' => 'vals_soc_email_rejected_organisation');
 	$items[2] = array('to' => $to, 'message_type' => 'vals_soc_email_mentor_welcome');
 	$items[3] = array('to' => $to, 'message_type' => 'vals_soc_email_student_welcome');
 	$items[4] = array('to' => $to, 'message_type' => 'vals_soc_accepted_students');
-	$items[5] = array('to' => $to, 'message_type' => 'vals_soc_rejected_students');
-	
+	$items[5] = array('to' => $to, 'message_type' => 'vals_soc_rejected_students');	
 	
 	$queue = DrupalQueue::get('vals_soc_cron_email');
 	foreach($items as $item) {
@@ -153,14 +146,30 @@ function vals_soc_handle_cron_test_emails($to){
 
 // this is the callback function for all entries posted on to the
 // 'vals_soc_cron_email' queue
-function vals_soc_cron_email_handler($item){
-	drupal_set_message('TEST: vals_soc_cron_email_handler called with:'.$item['to']);
-	$mail_results='';
-	$message = drupal_mail('vals_soc', $item['message_type'], $item['to'], language_default());
-	if (!empty($message['result'])) {
-		$mail_results .= $item['message_type'] . ' sent!!.' .'<br/>';
+function vals_soc_cron_email_handler($item){ 
+	if (!isset($item['subject'])){ // system messages currently dont have subjects attached at this stage.
+		$mail_results='';
+		$message = drupal_mail('vals_soc', $item['message_type'], $item['to'], language_default());
+		if (!empty($message['result'])) {
+			$mail_results .= $item['message_type'] . ' sent!!.' .'<br/>';
+		}
+		watchdog('debug', $mail_results);
 	}
-	drupal_set_message($mail_results);
+	else{ // Preferred method for sending out mails based on events.
+		$message = drupal_mail('vals_soc', $item['key'], $item['to'], language_default(),
+				array('body' => $item['body'],
+						'subject' => $item['subject'],
+						$item['from'],
+						TRUE)
+		);
+		if (!empty($message['result'])) {
+			watchdog('debug', 'Email sent. Result: '.$message['result']);
+			return true;
+		}else{
+			watchdog('debug', 'Problem sending email.');
+			return false;
+		}
+	}
 }
 
 function get_proposal_email_body($record, $is_update, $user_type){
@@ -181,7 +190,7 @@ function get_proposal_email_body($record, $is_update, $user_type){
 	$project_title = $record->pr_title; //project title
 	$proposal_title = $record->title; //proposal title
 	$proposal_synopsis = $record->solution_short;
-	
+	$alert='';
 	
 	if($user_type=='supervisor'){
 		$recipient_username = $record->supervisor_user_name;
@@ -198,7 +207,7 @@ function get_proposal_email_body($record, $is_update, $user_type){
 			$alert .= t('A new proposal has been published for one of your projects.');
 		}
 	}
-	
+	$output='';
 	$output .= '<p>';
 	$output .= t('Hello').' '. $recipient_username . ',';
 	$output .= '<br/>';
@@ -280,24 +289,30 @@ function get_proposal_email_body($record, $is_update, $user_type){
 }
 
 function notify_mentor_and_supervisor_of_proposal_update($record, $is_update){
-	// TODO - stick these onto the cron job rather than run directly here
+	$test_email = 'ps3com@hotmail.com';
 	
 	$subject = t('VALS Proposal Notification');
 	
 	if(isset($record->supervisor_user_mail) && isset($record->supervisor_user_name)){
 		$supervisor_body = get_proposal_email_body($record, $is_update, 'supervisor');
-		//$email1 = vals_soc_send_email('vals_soc_notify_new_proposal', 'ps7@bolton.ac.uk', NULL, $subject, $supervisor_body); //send to supervisor
-		$email1 = vals_soc_send_email('vals_soc_notify_new_proposal', $record->supervisor_user_mail, NULL, $subject, $supervisor_body); //send to supervisor
+		//$items[0] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $record->supervisor_user_mail, 'from' => NULL, 'subject' => $subject, 'body' => $supervisor_body);
+		$items[0] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $test_email, 'from' => NULL, 'subject' => $subject, 'body' => $supervisor_body);
 	}else{
 		drupal_set_message(t('unable to send supervisor proposal notification email: missing email or username'));
 	}
 	
 	if(isset($record->mentor_user_mail) && isset($record->mentor_user_name)){
 		$mentor_body = get_proposal_email_body($record, $is_update, 'mentor');
-		//$email2 = vals_soc_send_email('vals_soc_notify_new_proposal', 'ps7@bolton.ac.uk', NULL, $subject, $mentor_body); // send to mentor
-		$email2 = vals_soc_send_email('vals_soc_notify_new_proposal', $record->mentor_user_mail, NULL, $subject, $mentor_body); // send to mentor
+		//$items[1] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $record->mentor_user_mail, 'from' => NULL, 'subject' => $subject, 'body' => $mentor_body);
+		$items[1] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $test_email, 'from' => NULL, 'subject' => $subject, 'body' => $mentor_body);
 	}else{
 		drupal_set_message(t('unable to send supervisor proposal notification email: missing email or username'));
+	}
+	
+	// put them on the queue....
+	$queue = DrupalQueue::get('vals_soc_cron_email');
+	foreach($items as $item) {
+		$queue->createItem($item);
 	}
 }
 
