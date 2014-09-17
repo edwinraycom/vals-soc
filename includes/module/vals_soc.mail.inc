@@ -289,22 +289,24 @@ function get_proposal_email_body($record, $is_update, $user_type){
 }
 
 function notify_mentor_and_supervisor_of_proposal_update($record, $is_update){
-	$test_email = 'ps3com@hotmail.com';
-	$test_email = 'edwin@raycom.com';
+	// TODO - fix the name missing on one of the emails
+	// TODO - load the test setting using the debug flag
+	//$test_email = 'your_test_email_address';
+	
 	$subject = t('VALS Proposal Notification');
 	
 	if(isset($record->supervisor_user_mail) && isset($record->supervisor_user_name)){
 		$supervisor_body = get_proposal_email_body($record, $is_update, 'supervisor');
-		//$items[0] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $record->supervisor_user_mail, 'from' => NULL, 'subject' => $subject, 'body' => $supervisor_body);
-		$items[0] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $test_email, 'from' => NULL, 'subject' => $subject, 'body' => $supervisor_body);
+		$items[0] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $record->supervisor_user_mail, 'from' => NULL, 'subject' => $subject, 'body' => $supervisor_body);
+		//$items[0] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $test_email, 'from' => NULL, 'subject' => $subject, 'body' => $supervisor_body);
 	}else{
 		drupal_set_message(t('unable to send supervisor proposal notification email: missing email or username'));
 	}
 	
 	if(isset($record->mentor_user_mail) && isset($record->mentor_user_name)){
 		$mentor_body = get_proposal_email_body($record, $is_update, 'mentor');
-		//$items[1] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $record->mentor_user_mail, 'from' => NULL, 'subject' => $subject, 'body' => $mentor_body);
-		$items[1] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $test_email, 'from' => NULL, 'subject' => $subject, 'body' => $mentor_body);
+		$items[1] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $record->mentor_user_mail, 'from' => NULL, 'subject' => $subject, 'body' => $mentor_body);
+		//$items[1] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $test_email, 'from' => NULL, 'subject' => $subject, 'body' => $mentor_body);
 	}else{
 		drupal_set_message(t('unable to send supervisor proposal notification email: missing email or username'));
 	}
