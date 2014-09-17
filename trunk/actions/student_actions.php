@@ -87,10 +87,11 @@ switch ($_GET['action']){
 		$id = altSubValue($_POST, 'id', '');
 		$project_id = altSubValue($_POST, 'project_id', '');
 		$project = Project::getProjectById($project_id);
+		$target = altSubValue($_POST, 'target', '');
 		$properties = Proposal::filterPost($_POST);
 		$properties['state'] = 'published';
 		if (!$id){
-			$result = Proposal::insertProposal($properties, $project_id);
+			$result = $id = Proposal::insertProposal($properties, $project_id);
 		} else {
 			if (!Groups::isOwner('proposal', $id)){
 				drupal_set_message(t('You are not the owner of this proposal'), 'error');
@@ -121,6 +122,7 @@ switch ($_GET['action']){
 			echo json_encode(array(
 					'result'=>'OK',
 					'id' => $id,
+					'target' => $target,
 					'msg'=>tt('You succesfully submitted your proposal for %1$s', $project['title']).
 						(_DEBUG ? showDrupalMessages() : '')
 			));
