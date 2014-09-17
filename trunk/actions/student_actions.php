@@ -102,7 +102,6 @@ switch ($_GET['action']){
 		}
 		if ($result){
 			// uncomment below to send out emails to mentor/supervisor once new proposal published
-			/*
 			// get either the existing proposal key
 			// or the newly inserted proposal key
 			if(is_bool($result)){
@@ -115,10 +114,13 @@ switch ($_GET['action']){
 				$existed = false;
 				$key = $result;
 			}
-			$props = Proposal::getProposalById($key, true);
-			module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
-			notify_mentor_and_supervisor_of_proposal_update($props, $existed);
-			*/
+			try {
+				$props = Proposal::getInstance()->getProposalById($key, true);
+				module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
+				notify_mentor_and_supervisor_of_proposal_update($props, $existed);
+			} catch (Exception $e) {
+				// Logged higher up or log this here somehow? TODO	
+			}
 			echo json_encode(array(
 					'result'=>'OK',
 					'id' => $id,
