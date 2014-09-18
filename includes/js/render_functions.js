@@ -316,7 +316,7 @@ function getOrganisationDetail(org_id){
 function getInstituteDetail(id){
 	var url = moduleUrl + "actions/institute_actions.php?action=detail&instid=" + id;
 	$jq.get(url,function(data,status){
-		generateAndPopulateModal(data, renderInstitute);
+		generateAndPopulateModal(data, renderInstitute, true);
 	});
 }
 
