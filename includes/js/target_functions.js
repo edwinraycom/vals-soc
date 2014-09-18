@@ -10,21 +10,13 @@ function refreshTabs(json_data, args){
 	if (arguments.length > 1 && args) {
 		type = args[0];
 		targ = (args.length > 1) && args[1] ? 'msg_'+ args[1] : '';
-		handler = (args.length > 2) ? args[2] : '';
+		handler = (args.length > 2 && args[2]) ? args[2] : type;
 		container = ((args.length > 3) && args[3]) ? args[3] : 'admin_container';
 		follow_action = ((args.length > 4) && args[4]) ? args[4] : 'show';
 	}
 	if (! handler){
 		alertdev('No handler supplied in target function');
         return false;
-	}
-	
-	if ((! targ) || ! $jq('#'+targ).length){
-		targ = 'ajax_msg';
-		alertdev('You forgot to place an error div in the content of the tab: required msg_<target> '+
-			'or it could not be found. Searched actually for '+ targ);
-	} else {
-		//targ = 'msg_'+targ;
 	}
 	
 	if (json_data && (json_data.result !== 'error')){
@@ -40,6 +32,15 @@ function refreshTabs(json_data, args){
 		ajaxCall(handler, follow_action, post_data, 'handleContentAndMessage', 'html',
 			[container, 'ajax_msg', json_data.msg]);
 	} else {
+		//We found an error. Try to show it
+		if ((! targ) || ! $jq('#'+targ).length){
+			targ = 'ajax_msg';
+			alertdev('You forgot to place an error div in the content of the tab: required msg_<target> '+
+				'or it could not be found. Searched actually for '+ targ);
+		} else {
+			//targ = 'msg_'+targ;
+		}
+		
 		if (json_data && typeof json_data.error != 'undefined') {
 			ajaxError(targ, json_data.error);
 		} else {
@@ -69,9 +70,7 @@ function refreshSingleTab(json_data, args){
 			'html', [target, 'msg_'+target, json_data.msg]);
 	} else {
 		if (json_data && typeof json_data.error != 'undefined') {
-			ajaxError('msg_'+target, json_data.error);
-			$jq("#" + target + " input[type='button']").prop(
-					{'disabled': false, 'style': ""});
+			ajaxError('msg_'+target, json_data.error);			
 		} else {
 			alertdev('Some error occured but no "error" message was set.');
 		}
@@ -268,7 +267,21 @@ function handleSaveResult(result, args){
 		} else {
 			if (result.result == "OK") {
 				console.log("verwacht hem hier met "+result.id + '  en '+ target + ' ook nog '+result.msg );
-				getProposalDetail(result.id, target, result.msg);
+				if (target == 'our_content'){
+					console.log('gaat die nieuwe doen');
+					ajaxCall('proposal', 'myproposal_page', {id: result.id, target:target, new_tab:result.id}, target);
+					ajaxMessage('ajax_msg', result.msg);
+				} else {
+					if (target == 'modal'){
+					console.log('roept om getProposalDetail');
+					getProposalDetail(result.id, target, result.msg);
+					} else {
+						console.log('doet een view');
+						ajaxCall('proposal', 'view', {id: result.id, target:target, new_tab:result.id},
+							'handleContentAndMessage', 'html', [target, 'msg_'+target, result.msg]);
+						//ajaxMessage('ajax_msg', result.msg);
+					}
+				}
 			} else {
 				alertdev('The action did not result in error but also not in OK. succeeded??');
 			}
@@ -299,7 +312,7 @@ function handleSubmitResult(result, args){
 			if (result.result == "OK") {
 				var target = result.target;
 				if (target){
-					if (target == 'content'){
+					if (target == 'our_content'){
 						ajaxCall('proposal', 'myproposal_page', {id: result.id, target:target}, target);
 					} else {
 						console.log('Replacing the following target '+ target+ ' with submitted proposal');
@@ -314,7 +327,7 @@ function handleSubmitResult(result, args){
 				}
 				//Right now the content div has no immediate child with an id at the top, so we let ajaxAppend
 				//find out the first child to attach a message to
-				ajaxAppend(result.msg, 'content', 'status');
+				ajaxAppend(result.msg, 'our_content', 'status');
 			} else {
 				alertdev('The action did not result in error but also not in OK. succeeded??');
 			}

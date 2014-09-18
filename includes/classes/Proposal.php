@@ -43,10 +43,12 @@ class Proposal extends AbstractEntity{
     	return $proposal;
     }
     
-    public static function getProposalsPerProject($project_id){
+    public static function getProposalsPerProject($project_id, $student_id=0){
     	$query = db_select('soc_proposals', 'p')->fields('p');
     	$query->condition('p.pid', $project_id);
-    	
+    	if ($student_id){
+    		$query->condition('p.owner_id', $student_id);
+    	}
     	$query->leftjoin('soc_names', 'student', 'p.owner_id = %alias.names_uid');
     	$query->leftjoin('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
     	$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');

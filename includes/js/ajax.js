@@ -136,6 +136,9 @@ function ajaxAppend(msg, container, err, before){
 		var msg2 = "<span class='lefty'>"+msg + "</span><span class='close_button' "+ click+ ">X</span>";
 		t.addClass(new_class);
 		t.html(msg2);
+		window.location = '#'+targ;
+		//t.scrollIntoView(true);Does not work
+		//t.focus();does not work either
 	}
 
 }
@@ -150,6 +153,7 @@ function ajaxError(targ, msg) {
 		if (err_target.length){
 			err_target.html(msg2);
 			err_target.addClass('messages error');
+			window.location = '#'+targ;
 		} else {
 			alertdev('Target for error '+ targ+ ' could not be found.');
 		}
@@ -158,13 +162,14 @@ function ajaxError(targ, msg) {
 
 function ajaxMessage(targ, msg) {
 	if (msg){
-		var err_target = $jq('#'+targ);
+		var msg_target = $jq('#'+targ);
 		var click = "onclick='$jq(\"#" +targ+"\").html(\"\").removeClass(\"messages status\");'";
 		var msg2 = "<span class='lefty'>"+msg + "</span><span class='close_button' "+ click+ ">X</span>";
 		//"<a href=javascript:void(0); "+ click+ ">X</a>";
-		if (err_target.length){
-			err_target.html(msg2);
-			err_target.addClass('messages status');
+		if (msg_target.length){
+			msg_target.html(msg2);
+			msg_target.addClass('messages status');
+			window.location = '#'+targ;
 		} else {
 			alertdev('Target '+ targ+ ' for the message "'+msg+'" could not be found.');
 		}
@@ -186,7 +191,30 @@ function isFunction(func){
 	}
 }
 
-function ajaxCall(handler_type, action, data, target, type, extra_args) {
+function ajaxGetMessageTarget(target, data, args){
+	var msg_target = '';
+	if (isFunction(target)){
+		if (typeof data.target != 'undefined' && data.target){
+			msg_target = 'msg_'+ data.target;
+		} else {
+			if (typeof args != 'undefined' && args){
+				if (typeof args[1] != 'undefined' && args[1]){
+					msg_target = 'msg_'+ args[1];
+				} else {
+					msg_target = 'msg_'+ args[0];
+				}
+			} else {
+				msg_target = 'ajax_msg';
+			}
+		}
+	} else {
+		msg_target = 'msg_'+ target;
+	}
+	
+	return msg_target;
+}
+
+function ajaxCall(handler_type, action, data, target, type, extra_args, extra_fun_fail, extra_fun_success) {
 	if (!type)
 		type = 'html';// possible types are html, json, xml, text, script,
 						// jsonp
@@ -205,7 +233,7 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 	ajax_event = (ajaxCall.caller && ajaxCall.caller.arguments  && ajaxCall.caller.arguments[0]) || window.event ;	
 	var show_waiting = (typeof ajax_event != 'undefined');
 	if (show_waiting){
-		startWait(ajax_event, event_counter, 'content');
+		startWait(ajax_event, event_counter, 'our_content');
 		//event_counter ++;//For now we assume only one waiting icon
 	}
 	if (target) {
@@ -220,10 +248,15 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 			call.success = function(msg){
 				window[target](msg, args);
 				stopWait(1);
+				if ((typeof extra_fun_fail == 'function') && msg.result == 'error'){
+					console.log('hier gekomen met '+typeof extra_fun_fail);
+					extra_fun_fail.call();
+				}
 				return true;
 			};
 		} else {
 			call.success = function(msg) {
+				//The way it is implemented a possible form is overwritten anyway, so no need to perform extra_fun
 				if (type == 'json') {
 					if (msg.result == "html") {
 						ajaxInsert(msg.html, target);
@@ -253,11 +286,15 @@ function ajaxCall(handler_type, action, data, target, type, extra_args) {
 		console.log('AjaxCall failed with some error.Redirected to its fail function with: '
 			+ errorThrown);
 		stopWait(1);
+		if (typeof extra_fun_fail != 'undefined' && isFunction(extra_fun_fail)){
+			console.log('hier gekomen met '+typeof extra_fun_fail);
+			extra_fun_fail.call();
+		}
 		return false;
 	};
 
 	//This seems reasonable but it looks like it does not work
-//	$jq.when($jq.ajax(call)).done(function(a1){
+//	return $jq.when($jq.ajax(call)).done(function(a1){
 //		return a1;
 //	});
 	return $jq.ajax(call);
@@ -267,15 +304,8 @@ function ajaxFormCall(frm_selector, handler_type, action, data, target, type, ar
 	CKupdate();
 	//testing is a global object with testing functions 
 	if (testing && isFunction('testing.run')){
-		var msg_target = 'msg_'+ target;
-		if (isFunction(target)){
-			if (typeof args != ' undefined' && isArray(args) && typeof args[1] != ' undefined'){
-				msg_target = 'msg_'+ args[1];
-			} else {
-				//TODO Change this: this should be some meaningfull default (if target is function it will not be)
-				msg_target = 'msg_'+ target;
-			}
-		}
+		var msg_target = ajaxGetMessageTarget(target, data, args);
+		
 		if (!testing.run(frm_selector, msg_target)) 
 			return false;
 	} else {
@@ -283,8 +313,7 @@ function ajaxFormCall(frm_selector, handler_type, action, data, target, type, ar
 	}
 	//We assume the form is contained in a container with an id, or just the form id is passed (if it is unique)
 	//this is possible otherwise we need a unique container (mostly the target where the form is put)
-	$jq("#" + frm_selector + " input[type='button']").prop(
-			{'disabled': true, 'style': "background-color:grey"});
+	ajaxDisableForm(frm_selector, 'background-color:grey');
 
 	var call_args = $jq('#' + frm_selector).serialize();
 	if (data) {
@@ -302,16 +331,27 @@ function ajaxFormCall(frm_selector, handler_type, action, data, target, type, ar
 		console.log('Comment, form ' + '#' + frm_selector + " is reset");
 		$jq('#' + frm_selector)[0].reset();//reset the form for comments
 	}
-	$jq.when(ajaxCall(handler_type, action, call_args, target, type, args)).done(function(a1){
-		$jq("#" + frm_selector + " input[type='button']").prop(
-			{'disabled': false, 'style': ""});
-	});
+	ajaxCall(handler_type, action, call_args, target, type, args, function(){ajaxEnableForm(frm_selector);});
+//	$jq.when(ajaxCall(handler_type, action, call_args, target, type, args)).done(function(a1){
+//		$jq("#" + frm_selector + " input[type='button']").prop(
+//			{'disabled': false, 'style': ""});
+//	});
+	
 //	if (ajaxCall(handler_type, action, call_args, target, type, args)) {
 //		$jq("#" + frm_selector + " input[type='button']").prop(
 //				{'disabled': false, 'style': ""});		
 //	}
 }
 
+function ajaxDisableForm(frm_selector, disable_style){
+	$jq("#" + frm_selector + " input[type='button']").prop(
+			{'disabled': true, 'style': disable_style});
+}
+
+function ajaxEnableForm(frm_selector){
+	$jq("#" + frm_selector + " input[type='button']").prop(
+			{'disabled': false, 'style': ''});
+}
 $jq(document)
 		.ajaxError(
 				function(event, jqxhr, settings, exception) {
@@ -344,9 +384,13 @@ $jq(document)
 					}
 					if (!(debugging)){
 						alert('Some error occurred at the server during the Ajax call. Please contact the development team to sort this out.');
+						
 					}
-					if (!(debugging && confirm("Do you want to open a window with some extra info?")))
+					stopWait(1);
+					if (!(debugging && confirm("Do you want to open a window with some extra info?"))){						
 						return;
+					}
+						
 					// Test on debugging status == TRUE, TODO more depending on
 					// logged in status etc
 					if (debugging) {

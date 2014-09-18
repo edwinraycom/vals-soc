@@ -15,7 +15,8 @@ function showMyProposalPage(){
 		echo t('You have no proposal at the moment.').'<br/>';
 		echo "<a href='"._VALS_SOC_URL. "/projects/browse'>".t('Please find yourself a project')."</a>.";
 	} else {
-		showMyProposals($my_proposals);
+		$current_tab = altSubValue($_POST, 'new_tab', 0);
+		showMyProposals($my_proposals, $current_tab);
 	}
 }
 
@@ -39,21 +40,23 @@ function renderProposal($proposal, $target='none', $follow_action='show'){
 	//'supervisor_id', 'pid', 'solution_short', 'solution_long', 'state',);
 	$propid = $proposal->proposal_id;
 	$buttons = '';
-	if (Users::isStudent() && Groups::isOwner('proposal', $propid)){
+	if (Users::isStudent() && Groups::isOwner('proposal', $propid) && $proposal->state != 'published'){
 		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this proposal?')."\")){ajaxCall(\"proposal\", \"delete\", ".
 			"{type: \"proposal\", proposal_id: $propid, target: \"$target\"}, \"refreshTabs\", \"json\", ".
 			"[\"proposal\", \"$target\", \"proposal\", \"\", \"$follow_action\"]);}'";
 		$edit_action = "onclick='ajaxCall(\"proposal\", \"edit\", {type: \"proposal\", proposal_id: $propid, target: ".
 			"\"$target\", format:\"html\"}, \"formResult\", \"html\", [\"$target\", \"proposal\"]);'";
-		$buttons .= "<input type='button' value='".t('edit')."' $edit_action/>";
-		$buttons .= "<input type='button' value='".t('delete')."' $delete_action/>";
+		$buttons .= "<div class='totheright' id='proposal_buttons'><input type='button' value='".t('edit')."' $edit_action/>";
+		$buttons .= "<input type='button' value='".t('delete')."' $delete_action/></div>";
 	}
 	$content = 
-	"$buttons".
+	"<div id='msg_$target'></div>
+	$buttons".
 	"<h1>".($proposal->title ? $proposal->title : Proposal::getDefaultName('', $proposal))." (".
 		renderDefaultField('state', $proposal).")</h1>
 
 	<div id='personalia'>
+	<h3>Parties involved</h3>
 		<ul>
 			<li>".t('Supervisor').": ".renderDefaultField('supervisor_name', $proposal, 'supervisor_user_name')."</i>".
 			"<li>".t('Mentor').": ".renderDefaultField('mentor_name', $proposal, 'mentor_user_name')."</i>".
@@ -66,12 +69,13 @@ function renderProposal($proposal, $target='none', $follow_action='show'){
 		".t('Project').": ".$proposal->pr_title."
 	</div>".
 	"<div id='proposal_text'>
-		<h2>".t('Solution Summary')."</h2>
+		<h3>".t('Solution Summary')."</h3>
 		".renderDefaultField('solution_short', $proposal)."<br/>".
-		//<a href='javascript:void(0)' onclick='makeVisible(\"solution_$propid\");'>view complete proposal</a>
-		"<input type='button' value='View more' onclick='makeVisible(\"solution_$propid\");'/>
-
+		"<a href='javascript:void(0)' data='off' onclick='makeVisible(\"solution_$propid\");'>".t('more')."</a>".
+		//"<input type='button' value='View more' onclick='makeVisible(\"solution_$propid\");'/>
+		"
 			<div id='solution_$propid' class='invisible'>
+			<h3>Solution</h3>
 			".renderDefaultField('solution_long', $proposal)."
 			</div>
 	</div>";
@@ -82,7 +86,7 @@ function renderProposal($proposal, $target='none', $follow_action='show'){
 	
 }
 
-function showMyProposals($proposals){
+function showMyProposals($proposals, $current_tab_propid=0){
 	$nr = 0;
 	$apply_projects = $apply_projects = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 	$tab_id_prefix = "proposal_page";
@@ -90,12 +94,14 @@ function showMyProposals($proposals){
 	$activating_tabs = array();
 	$current_tab = 1;
 	$current_tab_id = "$tab_id_prefix$current_tab";
-
 	$current_tab_content = '';
+	
 	foreach ($proposals as $proposal){
 		$nr++;
-		if ($nr == $current_tab){
+		if (((!$current_tab_propid) && $nr == 1) || ($proposal->proposal_id == $current_tab_propid)){
 			//$id = $proposal->pid;
+			$current_tab = $nr;
+			$current_tab_id = "$tab_id_prefix$current_tab";
 			$current_tab_content = renderProposal(Proposal::getInstance()->getProposalById(
 					$proposal->proposal_id, TRUE), $current_tab_id, 'myproposal_page');
 		}

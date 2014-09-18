@@ -83,7 +83,7 @@ function getStudentLayout($timeline_args){
 							'href="'.$base_url.'/dashboard/proposals/mine"
 							title="'.t("Proposals").'">'.t("Proposals").'</a>
 						</h4>
-						<p>'.t("List of my proposals submitted").'</p>
+						<p>'.t("List of my proposals").'</p>
 					</div>
 		';
 	}

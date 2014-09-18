@@ -11,7 +11,7 @@ function entityCall($type, $obj, $target, $show_action='administer', $action_han
     $id = $obj && $obj->$key ? $obj->$key : 0;
     $post_function = $id ? 'refreshSingleTab' : 'refreshTabs';
 	$call = "ajaxFormCall('vals_soc_entity_form_wrapper_$target form', '$action_handler', '$entity_action', ".
-		"{type: '$type',id: $id, show_action:'$show_action'},".
+		"{type: '$type',id: $id, show_action:'$show_action', target: '$target'},".
 		"'$post_function','json',['$type', '$target', '$action_handler']);";
 	return $call;
 }
@@ -753,10 +753,10 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
 					'onclick' => 'if (confirm("'.t('Do you want to leave the proposal for now?').'")){'.
-						(($target != 'content') ? 
+						(($target != 'our_content') ? 
 							(($target == 'admin_container') ?  'ajaxCall("proposal", "myproposal_page", "", "admin_container");}'
 									:'Drupal.CTools.Modal.dismiss();}'):
- 						'ajaxCall("project", "project_page", "", "content");}')),
+ 						'ajaxCall("project", "project_page", "", "our_content");}')),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
 	$proposal_id = ((!$proposal) ? 0 : $proposal->proposal_id);
@@ -777,7 +777,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#value' => t('Submit proposal'),
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
-					'onclick' => "if (confirm('".t('Are you sure you want to submit your proposal now?')."')){".
+					'onclick' => "if (confirm('".t('Are you sure you want to submit your proposal now? Once submitted, you cannot edit it anymore.')."')){".
 					"ajaxFormCall('vals-soc-proposal-form', 'student', 'submit',".
 					" {id: $proposal_id, project_id: $project_id,  target: '$target' }, 'handleSubmitResult', ".
 					"'json', ['$target']);}")
@@ -860,7 +860,6 @@ function vals_soc_comment_form($form, &$form_state, $comment='', $target='', $en
 	);
 	$form['submit'] = array(
 			'#type' => 'submit',
-			//'#attributes' => array('onclick'=> "ajaxFormCall('vals_soc_entity_form_wrapper_$comment form', 'comment', 'save', ".
 			'#attributes' => array('onclick'=> "ajaxFormCall('vals_soc_entity_form_wrapper_".$comment."_".$entity_id."_".$entity_type." form', 'comment', 'save', ".
 					"{parent_id: '$comment', entity_type: '$entity_type', entity_id: $entity_id, show_action:''},".
 					"'refreshSingleComment','json',['comment', '$target', 'comment', '$comment']);"),

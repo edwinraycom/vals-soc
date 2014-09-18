@@ -17,8 +17,6 @@ include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');
 
 ?>
-<div id='ajax_msg'></div>
-
-<div id='admin_container' class='tabs_container'>
-	<?php echo showMyProposalPage();?>
-</div>
+	<div id='admin_container' class='tabs_container'>
+		<?php echo showMyProposalPage();?>
+	</div>
