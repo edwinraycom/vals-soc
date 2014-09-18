@@ -56,7 +56,7 @@ switch ($_GET['action']){
         } elseif ($_POST['type'] == _INSTITUTE_GROUP){
             $type = altSubValue($_GET, 'subtype', 'all');
             if ($type == _STUDENT_TYPE){
-                echo renderStudents($_POST['id']);
+            	echo renderStudents($_POST['id']);
             } elseif ($type == _SUPERVISOR_TYPE){
                 echo renderSupervisors($_POST['id']);
             } elseif ($type == _INSTADMIN_TYPE){

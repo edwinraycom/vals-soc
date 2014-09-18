@@ -274,11 +274,12 @@ class Users extends AbstractEntity{
 							array(':institute' =>_INSTITUTE_GROUP))->fetchColumn();
 			}
 			if ($institute){
-				$students = db_query("SELECT u.* from users as u left join users_roles as ur ".
-						" on u.uid = ur.uid left join role as r ".
-						" on ur.rid = r.rid left join soc_user_membership as um ".
-						" on u.uid = um.uid WHERE r.name = :student AND um.type = :institute AND ".
-						" um.group_id = $institute ",
+				$students = db_query(
+						"SELECT u.* from users as u ".
+						" left join users_roles as ur on u.uid = ur.uid ".
+						" left join role as r on ur.rid = r.rid".
+						" left join soc_user_membership as um on u.uid = um.uid
+						 WHERE r.name = :student AND um.type = :institute AND  um.group_id = $institute",
 					array(':institute' =>_INSTITUTE_GROUP,  ':student' =>_STUDENT_TYPE));
 			} else {
 				return NULL;

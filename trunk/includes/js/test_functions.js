@@ -35,6 +35,13 @@ var testing = testing || {
 				this.msgs = ['Your form is not correct'];
 			}
 			ajaxError(msg_target, this.msgs.join("<br/>"));
+			var message_div = document.getElementById(msg_target);
+			if (message_div){
+				message_div.scrollIntoView(true);
+			} else {
+				console.log('could not find '+ msg_target);
+				alertdev('could not find '+ msg_target);
+			}
 			console.log(this.msgs.join("\n"));
 		}
 		this.msgs = [];

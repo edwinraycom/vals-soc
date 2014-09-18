@@ -22,13 +22,11 @@ function initComments($entity_id, $entity_type){
 				$jq(this).parent().parent().next(".reply-comment-form").toggle("slow");
 			});
 
-			//$jq(".comment-toggle").on("click", function(e){
 			$jq("#comment-toggle-'.$entity_id.'-'.$entity_type.'").on("click", function(e){
 				var link = $jq(this);
 				var hideText = "'.t("hide").'";
 				var showText = "'.t("show").'";
 				e.preventDefault();
-				//$jq(".comments-parent-container").toggle("slow", function() {
 				$jq("#comments-parent-container-'.$entity_id.'-'.$entity_type.'").toggle("slow", function() {
 					if (link.attr("value") == showText) {
 						link.attr("value", hideText);

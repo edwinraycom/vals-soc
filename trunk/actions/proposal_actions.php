@@ -115,11 +115,11 @@ switch ($_GET['action']){
 	break;
 	case 'delete':
 		$proposal_id = getRequestVar('proposal_id', 'post', null);
-		$target = getRequestVar('target', 'post', 'content');
+		$target = getRequestVar('target', 'post', 'our_content');
 		if($proposal_id){
-			$is_modal = ($target !== 'content');
-			//this is the case where the result is bad and we show an error msg
-			$container =  $is_modal ? 'modal-content' : 'content';
+			$is_modal = ($target !== 'our_content');
+			//we need the container where the result is bad and we show an error msg
+			$container =  $is_modal ? 'admin_container' : 'our_content';
 			$before = 'toc' ;
 			$args = array('id' => $proposal_id, 'before'=> $before, 'target'=> $container, 'replace_target'=> true);
 			$proposal_nr = Proposal::getInstance()->getProposalById($proposal_id);
@@ -128,8 +128,11 @@ switch ($_GET['action']){
 				return;
 			}
 			$title = altPropertyValue($proposal_nr, 'title');
+			$state = altPropertyValue($proposal_nr, 'state');
 			if (! Groups::isOwner('proposal', $proposal_id)){
 				jsonBadResult(t('You can only delete your own proposals!'), $args);
+			} elseif ($state == 'published') {
+				jsonBadResult(t('We could not remove your proposal: It has already been published.'), $args);
 			} else {
 				$num_deleted = db_delete(tableName('proposal'))
 					->condition(AbstractEntity::keyField('proposal'), $proposal_id)
@@ -149,11 +152,11 @@ switch ($_GET['action']){
 	break;
 	case 'view':
 		$proposal_id = getRequestVar('id', 'post', 0);
-		$target = getRequestVar('target', 'post', 'admin_content');
+		$target = getRequestVar('target', 'post', 'admin_container');
 		if($proposal_id){
-			//$is_modal = ($target !== 'content');
+			//$is_modal = ($target !== 'our_content');
 			//this is the case where the result is bad and we show an error msg
-			//$container =  $is_modal ? 'modal-content' : 'content';
+			//$container =  $is_modal ? 'modal-content' : 'our_content';
 			//$before = 'toc' ;
 			//$args = array('id' => $proposal_id, 'before'=> $before, 'target'=> $container, 'replace_target'=> true);
 			$proposal = Proposal::getInstance()->getProposalById($proposal_id, TRUE);

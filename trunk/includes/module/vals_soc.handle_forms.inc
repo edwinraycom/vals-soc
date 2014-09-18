@@ -234,12 +234,11 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
 				
 	    	$updated1 = db_query($del_query);
 	    	$updated2 = db_query($ins_query);
-	    	//drupal_set_message(t('We have updated your full name.'), 'status');
 		}  catch (Exception $ex) {
 			$txn->rollback();
 			drupal_set_message(t('We could not update the profile.'). (_DEBUG?  $ex->getMessage().': '.
 					(isset($updated1)? $ins_query: $del_query): ''), 'error');
-		}//$updated2->getQueryString() only works if the syntax was correct, otherwise updated2 == NULL
+		}
     }
 	/*   
 	 * I am still undecided on this point. We might want users (not students) give the permission to connect to another organisation or institute
@@ -259,7 +258,7 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
     	if ((isset($form_state['values']['institute']) && $form_state['values']['institute']) &&
 	     	(($type == _INSTADMIN_TYPE) || ($is_admin && (($type == _STUDENT_TYPE) || ($type == _SUPERVISOR_TYPE))))
 	    		){
-	    	db_query("DELETE FROM soc_user_membership WHERE uid = $uid AND type='"._INSTITUTE_GROUP."' ");
+	    	db_query("DELETE FROM soc_user_membership WHERE uid = $uid");
 	        db_insert('soc_user_membership')->fields( array(
 	            'uid'=>$uid, 
 	            'type' => _INSTITUTE_GROUP, 
@@ -269,7 +268,7 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
 	    //Mentors might want to change from organisation
 	    if ((($type == _ORGADMIN_TYPE) || ($type == _MENTOR_TYPE)) && 
 	    		(isset($form_state['values']['organisation']) && $form_state['values']['organisation'])){
-	    	db_query("DELETE FROM soc_user_membership WHERE uid = $uid AND type='"._ORGANISATION_GROUP."' ");
+	    	db_query("DELETE FROM soc_user_membership WHERE uid = $uid");
 	        db_insert('soc_user_membership')->fields( array(
 	            'uid'=>$uid, 
 	            'type' => _ORGANISATION_GROUP, 

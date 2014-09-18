@@ -30,10 +30,26 @@ switch ($_GET['action']){
 		$project = Project::getProjectById($project_id);
 		$student_details = Users::getStudentDetails($owner_id);
 		
-		
+		if (!$project){
+			echo errorDiv(t('This project could not be found'));
+			return;
+		}
 		if ($student_details){
-			$proposal = $proposal_id ? Proposal::getInstance()->getProposalById($proposal_id): null;
-			echo "<div id='edit_proposal' class='edit_proposal' style='border-style: solid; border-color:	rgb(153,​ 217,​ 234);padding:10px;'>
+			if (!$proposal_id){
+				$proposals = Proposal::getInstance()->getProposalsPerProject($project_id, Users::getMyId());
+				if (count($proposals) > 1){
+					//This case should not occur or very little, once we catch the case of having already a version
+					echo '<span style="color:orange;">'.
+					t('Be aware that you have more than one proposal for this project. You better delete one of them.').
+					'</span>';
+				}
+				$proposal = $proposals ? $proposals[0] : null;
+			} else {
+				$proposal = $proposal_id ? Proposal::getInstance()->getProposalById($proposal_id): null;
+			}
+		
+			
+			echo "<div id='edit_proposal' class='edit_proposal' style='border-style: solid;border-width: 1px; border-color:	rgb(153,​ 217,​ 234);padding:10px;'>
 					<h2>".tt('Create proposal for :"%1$s"',$project['title'])."</h2>";
 			echo '<h3>'.t('Student details').'</h3>';
 			echo "<div id='student_details' style='color:blue'>".
@@ -41,7 +57,7 @@ switch ($_GET['action']){
 					t('Email'), $student_details->student_mail, t('Institute'), $student_details->institute_name,
 					t('First supervisor'), $student_details->supervisor_name)
 			//"<br/>Group: ".$student_details->group_name.
-			."</div><hr>";
+				."</div><hr>";
 			$form = drupal_get_form('vals_soc_proposal_form', $proposal, $target, $project_id);
 			renderForm($form, $target);
 			echo "</div>";

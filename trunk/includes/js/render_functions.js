@@ -146,23 +146,24 @@ function getProposalDetail(proposal_id, target, msg){
 			return;
 		}
 		var msg_container = 'modal-content';
-		var tabs_present = false;
+		var tabs_created = false;
+		var before = 'toc';
 		console.log('How about the target in get details '+target);
 		switch (target){
 			case 'modal':
-				tabs_present = generateAndPopulateModal(data, renderProposalTabs, tabs);
+				tabs_created = generateAndPopulateModal(data, renderProposalTabs, tabs);
 				console.log('Creating and filling the modal window');
 			break;
-			case 'content' :
+			case 'our_content' : //this case should not occur anymore
 				var data2 = jQuery.parseJSON(data);
 				if (data2.result == 'error' ){
-					ajaxAppend(result.error, 'content', 'error');
+					ajaxAppend(result.error, 'our_content', 'error');
 				} else {
-					var content = renderProposalTabs(data2.result, tabs, 'content');
-					msg_container = 'content';
-					if (Obj('content').html(content)) {
+					var content = renderProposalTabs(data2.result, tabs, 'our_content');
+					msg_container = 'our_content';
+					if (Obj('our_content').html(content)) {
 						console.log('doing the tabs first?');
-						tabs_present = true;
+						tabs_created = true;
 						//activatetabs('tab_', content_tabs);
 					};
 					
@@ -171,28 +172,29 @@ function getProposalDetail(proposal_id, target, msg){
 			default: 
 				var data2 = jQuery.parseJSON(data);
 				if (data2.result == 'error' ){
-					ajaxAppend(result.error, 'content', 'error');
+					ajaxAppend(result.error, 'our_content', 'error');
 				} else {
-					msg_container = 'content';
+					msg_container = 'admin_container';
+					before = 'toc';//'msg_' + target;
 					ajaxCall('proposal', 'view', {id: proposal_id, target:target}, target);
-//					var content = renderProposalTabs(data2.result, tabs, 'content');
+//					var content = render  ProposalTabs(data2.result, tabs, 'our_content');
 //					
 //					if (Obj(target).html(content)) {
 //						console.log('doing the tabs first?');
-//						tabs_present = true;
+//						tabs_created = true;
 //						//activatetabs('tab_', content_tabs);
 //					};
 				}
-				//TODO this case should be covered too:  tabs_present = populateModal(data, renderProposalTabs, tabs);
+				//TODO this case should be covered too:  tabs_created = populateModal(data, renderProposalTabs, tabs);
 		}
-		if (tabs_present){
+		if (tabs_created){
 			//TODO: these activate tabs should also been done for the modal case
 			console.log('doing the tabs second');
 			console.log(content_tabs);
 			activatetabs('tab_', content_tabs);
 		}
 		if (typeof msg != 'undefined' && msg){
-      		 ajaxAppend(msg, msg_container, 'status', 'toc');
+      		 ajaxAppend(msg, msg_container, 'status', before);
       	};
 
 		});
@@ -216,7 +218,7 @@ function renderProposalTabs(result, labels, container){
 		} else {
 			onclick = '" ';
 		}
-		if (target == 'delete'){
+		if (target == 'delete' || target == 'edit'){
 			class_str = ' class="right"';
 		} else {
 			class_str = '';
@@ -262,7 +264,7 @@ function renderProposalTabs(result, labels, container){
 			case 'delete': s += 'Are you sure you want to delete this proposal?<br>'+
 				'<input type="button" value="Yes" onclick="ajaxCall(\'proposal\', \'delete\', '+
 				'{proposal_id:'+result.proposal_id+', target: \''+ container+ '\' }, '+
-				'\'handleDeleteResult\', \'json\', [\'content\', \'proposal\', \'myproposal_page\']);"/>';
+				'\'handleDeleteResult\', \'json\', [\'our_content\', \'proposal\', \'myproposal_page\']);"/>';
 			break;
 		}
 		s += "</div>";
@@ -273,11 +275,11 @@ function renderProposalTabs(result, labels, container){
 }
 
 function getProposalsForProject(projectId){
-	ajaxCall("proposal", "render_proposals_for_id", {id: projectId, target:'content'}, "formResult", 'html', 'content');
+	ajaxCall("proposal", "render_proposals_for_id", {id: projectId, target:'our_content'}, "formResult", 'html', 'our_content');
 }
 
 function getProposalsForStudent(studentId){
-	ajaxCall("institute", "render_proposals_for_student", {id: studentId, target:'content'}, "formResult", 'html', 'content');
+	ajaxCall("institute", "render_proposals_for_student", {id: studentId, target:'our_content'}, "formResult", 'html', 'our_content');
 }
 
 function getProposalFormForProject(projectId){
@@ -288,7 +290,7 @@ function getProposalFormForProject(projectId){
 	//   ajaxCall(module, action, data, handleResult, json, args)
 	//   ajaxCall(module, action, data, target, html)
 	//Note that formResult and jsonFormResult store the call in the target and convert the textareas
-	ajaxCall("student", "proposal", {id: projectId, target:'content'}, "formResult", 'html', 'content');
+	ajaxCall("student", "proposal", {id: projectId, target: 'our_content'}, "formResult", 'html', 'our_content');
 }
 
 function getProjectDetail(projectId){
