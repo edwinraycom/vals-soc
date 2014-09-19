@@ -57,7 +57,7 @@ function getTimelineEnabledMessage(){
 		case STUDENT_SIGNUP_PERIOD:
 
 			$return_args[0] = t("Student signup period"). " " . Timeline::getInstance()->getStudentsSignupStartDate()->format('F j, Y, g:i a');
-			$return_args[1] = t("Mentors should now invite students into their own student groups by sending them an email containing their groups activation code. ".
+			$return_args[1] = t("Academic supervisors should now invite students to participate by sending them an email containing their groups activation code. ".
 					" They can then browse the project ideas.")
 					.'<br/>'.
 					t("Student signup period ends: ") . ' ' .
