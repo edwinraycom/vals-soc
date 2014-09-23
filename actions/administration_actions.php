@@ -124,8 +124,14 @@ switch ($_GET['action']){
     	$email = altSubValue($_POST, 'contact_email', '');
     	$subject = altSubValue($_POST, 'subject', '');
     	$body = altSubValue($_POST, 'description', '');
-    	$item = array('key' => 'vals_soc_invite_new_user', 'to' => $email, 'from' => NULL, 'subject' => $subject, 'body' => $body);
-    	$result = vals_soc_send_emails_cron($item);
+    	$item[0] = array('key' => 'vals_soc_invite_new_user', 'to' => $email, 'from' => NULL, 'subject' => $subject, 'body' => $body);
+    	try{
+    		vals_soc_send_emails_cron($item);
+    		$result = TRUE;
+    	}
+    	catch(Exception $err){
+    		$result = FALSE;
+    	}
     	//$result = vals_soc_send_emails_now($item);
     	$id = altSubValue($_POST, 'id', '');
     	$show_action = altSubValue($_POST, 'show_action', '');
