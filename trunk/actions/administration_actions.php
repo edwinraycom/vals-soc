@@ -65,7 +65,7 @@ switch ($_GET['action']){
                 $inst_id = $_POST['id'];
                 echo renderUsers(_INSTADMIN_TYPE, '', $inst_id, _INSTITUTE_GROUP, TRUE);
 	    		echo renderUsers(_SUPERVISOR_TYPE, '', $inst_id, _INSTITUTE_GROUP, TRUE);
-	    		
+
             } else {
             	echo tt('No such type %1$s', $type);
             }
@@ -75,8 +75,8 @@ switch ($_GET['action']){
            if($organisation_id == 0){
            	$organisation_id = 'all';
            }
-           echo 
-			renderUsers(_ORGADMIN_TYPE, '', $organisation_id, _ORGANISATION_GROUP, TRUE). 
+           echo
+			renderUsers(_ORGADMIN_TYPE, '', $organisation_id, _ORGANISATION_GROUP, TRUE).
 			renderUsers(_MENTOR_TYPE, '', $organisation_id, _ORGANISATION_GROUP, TRUE);
         }
      break;
@@ -119,15 +119,17 @@ switch ($_GET['action']){
     	}
     break;
     case 'send_invite_email':
-    	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');	
+    	module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
     	$type = altSubValue($_POST, 'type', '');
     	$email = altSubValue($_POST, 'contact_email', '');
     	$subject = altSubValue($_POST, 'subject', '');
     	$body = altSubValue($_POST, 'description', '');
-		$result = vals_soc_send_email('vals_soc_invite_new_user', $email, NULL, $subject, $body);
+    	$item = array('key' => 'vals_soc_invite_new_user', 'to' => $email, 'from' => NULL, 'subject' => $subject, 'body' => $body);
+    	$result = vals_soc_send_emails_cron($item);
+    	//$result = vals_soc_send_emails_now($item);
     	$id = altSubValue($_POST, 'id', '');
     	$show_action = altSubValue($_POST, 'show_action', '');
-    	
+
 		if ($result){
             echo json_encode(array(
             		'result'=>TRUE,
@@ -136,7 +138,7 @@ switch ($_GET['action']){
             		'show_action' => $show_action,
             		'msg'=> t('Email successfully sent') .
             		(_DEBUG ? showDrupalMessages(): '')
-            		
+
             		));
         } else {
         	echo jsonBadResult();
