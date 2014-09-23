@@ -1,7 +1,17 @@
-var debugging = true;
+<?php
+define('DRUPAL_ROOT', realpath(getcwd().'/../../../../../..'));
+include(DRUPAL_ROOT.'/initial.php');//Needed to derive the _VALS_SOC_URL which will be '' or '/vals'
+$scheme = ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? 'https': 'http');
+$base_url = $scheme. '://'.$_SERVER['HTTP_HOST']._VALS_SOC_URL; //This seems to be necessary to get to the user object: see
+require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
+drupal_bootstrap(DRUPAL_BOOTSTRAP_SESSION);
+
+echo "var base_url = '".$_SESSION['site_settings'][0]."/';\n";
+echo "var moduleUrl = baseUrl + 'sites/all/modules/vals_soc/';\n";
+echo "var logged_in = ".($_SESSION['site_settings'][1] ? 1 :0).";\n";
+echo "var debugging = ".($_SESSION['site_settings'][2] ? 'true' : 'false').";\n";
+?>
 var console_Jquery_migrate_warnings_silent = true;
-var baseUrl = '/vals/';
-var moduleUrl = baseUrl + 'sites/all/modules/vals_soc/';
 var event_counter = 1;
 
 //Some settings for ajax calls
