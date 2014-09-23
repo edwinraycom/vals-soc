@@ -134,7 +134,7 @@ function get_proposal_email_body($record, $is_update, $user_type){
  * @param string $organisation_name
  * @return string
  */
-function format_invite_message($entity, $subtype='', $organisation_name=''){
+function get_invite_email_body($entity, $subtype='', $organisation_name=''){
 	$output = '';
 
 	$entity_name = $organisation_name ? : '<i>'. $entity->name. '</i>';

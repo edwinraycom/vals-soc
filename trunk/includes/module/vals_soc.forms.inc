@@ -794,8 +794,8 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 }
 
 function vals_soc_invite_form($form, &$form_state, $org='', $target='', $show_action='administer', $subtype=''){
-	include_once(_VALS_SOC_ROOT. '/includes/module/vals_soc.mail.inc');
-	$message = format_invite_message($org, $subtype, ($subtype== _STUDENT_TYPE)? t('your institute'): '');
+	include_once(_VALS_SOC_ROOT. '/includes/module/vals_soc.mail_messages.inc');
+	$message = get_invite_email_body($org, $subtype, ($subtype== _STUDENT_TYPE)? t('your institute'): '');
 	$form = array(
 			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
 			'#suffix' => '</div>',
