@@ -8,7 +8,7 @@ module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail_messages')
  *			  vals_soc_send_emails_cron($items)
  *
  * Example of what an $item is...
- * $item = array('key' => 'vals_soc_invite_new_user', 'to' => $email, 'from' => NULL, 'subject' => $subject, 'body' => $body);
+ * $item[0] = array('key' => 'vals_soc_invite_new_user', 'to' => $email, 'from' => NULL, 'subject' => $subject, 'body' => $body);
  * when $from is null, the system admin emails address is used
  */
 function vals_soc_send_single_email_now($item){
@@ -41,8 +41,10 @@ function vals_soc_send_single_email_now($item){
  * Use this function to send an array of emails immediately,
  * Do not use when the user is waiting for a response in the UI.
  *
- * Example of what an $item is...
- * $item = array('key' => 'vals_soc_invite_new_user', 'to' => $email, 'from' => NULL, 'subject' => $subject, 'body' => $body);
+ * Example of what an $items are...
+ * $items[0] = array('key' => 'vals_soc_invite_new_user', 'to' => $email, 'from' => NULL, 'subject' => $subject, 'body' => $body);
+ * $items[1] = array('key' => 'vals_soc_invite_new_user', 'to' => $email2, 'from' => NULL, 'subject' => $subject, 'body' => $body);
+ * etc....
  * when $from is null, the system admin emails address is used
  */
 function vals_soc_send_emails_now($items){
@@ -56,8 +58,10 @@ function vals_soc_send_emails_now($items){
  * queue which means they will be sent later.
  * Use this function when the UI has called for an email to sent
  *
- * Example of what an $item is...
- * $item = array('key' => 'vals_soc_invite_new_user', 'to' => $email, 'from' => NULL, 'subject' => $subject, 'body' => $body);
+ * Example of what an $items are...
+ * $items[0] = array('key' => 'vals_soc_invite_new_user', 'to' => $email, 'from' => NULL, 'subject' => $subject, 'body' => $body);
+ * $items[1] = array('key' => 'vals_soc_invite_new_user', 'to' => $email2, 'from' => NULL, 'subject' => $subject, 'body' => $body);
+ * etc....
  * when $from is null, the system admin emails address is used
  */
 function vals_soc_send_emails_cron($items){
