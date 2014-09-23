@@ -7,7 +7,7 @@ require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_SESSION);
 
 echo "var base_url = '".$_SESSION['site_settings'][0]."/';\n";
-echo "var moduleUrl = baseUrl + 'sites/all/modules/vals_soc/';\n";
+echo "var moduleUrl = base_url + 'sites/all/modules/vals_soc/';\n";
 echo "var logged_in = ".($_SESSION['site_settings'][1] ? 1 :0).";\n";
 echo "var debugging = ".($_SESSION['site_settings'][2] ? 'true' : 'false').";\n";
 ?>
