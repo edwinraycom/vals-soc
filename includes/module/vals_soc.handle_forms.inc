@@ -306,11 +306,11 @@ function vals_soc_admin_messages_form_submit($form, $form_state) {
 		// A test here to email via queues and cron
 		if ($form_state['values']['vals_messages_test_cron_email']==1){
 			drupal_set_message(t('Sending queued test emails to ').  $form_state['values']['vals_messages_test_email'] ."");
-			vals_soc_handle_cron_test_emails($form_state['values']['vals_messages_test_email']);
+			vals_soc_handle_test_emails($form_state['values']['vals_messages_test_email'], TRUE);
 		}
 		else{
 			drupal_set_message(t('Sending NON queued test emails to ').  $form_state['values']['vals_messages_test_email'] ."");
-			vals_soc_handle_test_emails($form_state['values']['vals_messages_test_email']);
+			vals_soc_handle_test_emails($form_state['values']['vals_messages_test_email'], FALSE);
 		}
 	}
 }
