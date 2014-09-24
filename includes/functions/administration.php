@@ -108,28 +108,30 @@ function showInstitutePage($show_action, $show_last=FALSE){
 function showInstituteGroupsAdminPage($my_institute, $show_last){
 	
 		$id = 0;
-		$nr3 = $nr4 = 0;
-		$data3 = $tabs3= $data4 = $tabs4 = array();
-		
+		$nr3 = 0;
+		//$nr3 = $nr4 = 0;
+		$data3 = $tabs3 = array();
+		//$data3 = $tabs3 = $data4 = $tabs4 = array();
 		$groups = Groups::getGroups(_STUDENT_GROUP, $GLOBALS['user']->uid);
 		
 		$tab_id_prefix = 'group_page-';
-		$tab_id_prefix2 = 'group2_page-';
+		//$tab_id_prefix2 = 'group2_page-';
 		$nr_groups = $groups->rowCount();
+		$translate = ($nr_groups >3) ? 0 : 2;
 		$current_tab = $show_last ? $nr_groups : 1;
 		foreach ($groups as $group){
 			$nr3++;
-			$nr4++;
+			//$nr4++;
 			if ($nr3 == $current_tab){
 				$id = $group->studentgroup_id;
 				$my_group = $group;
-				$students = Users::getStudents($id);
+				//$students = Users::getStudents($id);
 			}
 			$tabs3[] = "'$tab_id_prefix$nr3'";
-			$data3[] = array(2, $group->name, 'view', _STUDENT_GROUP, $group->studentgroup_id);
+			$data3[] = array($translate, $group->name, 'view', _STUDENT_GROUP, $group->studentgroup_id);
 			
-			$tabs4[] = "'$tab_id_prefix2$nr3'";
-			$data4[] = array(2, $group->name, 'showmembers', _STUDENT_GROUP, $group->studentgroup_id);
+			//$tabs4[] = "'$tab_id_prefix2$nr3'";
+			//$data4[] = array($translate, $group->name, 'showmembers', _STUDENT_GROUP, $group->studentgroup_id);
 		}
 		$nr3++;
 	//	[translate, label, action, type, id, extra GET arguments, render with rich text area, render tab to the right]
@@ -141,21 +143,21 @@ function showInstituteGroupsAdminPage($my_institute, $show_last){
 	   
 	    echo renderTabs($nr3, 'Group', $tab_id_prefix, _STUDENT_GROUP, $data3, $id, TRUE,
 	    		(($nr3 > 1) ?
-	    		renderOrganisation(_STUDENT_GROUP, $my_group, null, "${tab_id_prefix}$current_tab"):
-	    		tt('There is no group yet. Click "%1$s" to add one.', t('Add')))
-	    		,$current_tab		);
+	    			renderOrganisation(_STUDENT_GROUP, $my_group, null, "${tab_id_prefix}$current_tab"):
+	    			tt('There is no group yet. Click "%1$s" to add one.', t('Add'))),
+	    		$current_tab);
 	    
-	    if ($nr4 > 0){//There is more than the add tab
+	    /* if ($nr4 > 0){//There is more than the add tab
 		    echo sprintf('<h2>%1$s</h2>', t('Your students as divided in groups'));
 		    
 		    echo renderTabs($nr4, 'Group', $tab_id_prefix2, _STUDENT_GROUP, $data4, $id, TRUE,
 		    		renderStudents('', $students));
-	    }
+	    } */
 	    ?>
 	    <script type="text/javascript">
 			activatetabs('tab_', [<?php echo implode(', ', $tabs3);?>], '<?php echo 
 					"$tab_id_prefix$current_tab";?>');
-			activatetabs('tab_', [<?php echo implode(', ', $tabs4);?>], null, true);
+			//activatetabs('tab_', [<?php //echo implode(', ', $tabs4);?>], null, true);
 		</script>
 	    <?php
 }

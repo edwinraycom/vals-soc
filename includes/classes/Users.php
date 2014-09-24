@@ -114,14 +114,16 @@ class Users extends AbstractEntity{
 		} 
 		if ($group == 'all'){
 			$students = db_query(
-				'select u.* from users as u '.
+				'select u.*, n.name as fullname from users as u '.
 				'left join users_roles as ur on u.uid=ur.uid '.
 				'left join role as r on r.rid=ur.rid '.
+				"left join soc_names as n on u.uid=n.names_uid ".
 				'where r.name=:role ', array(':role' => _STUDENT_TYPE));
 		} elseif ($group) {
 			$students = db_query(
-					"SELECT u.* from users as u ".
+					"SELECT u.*, n.name as fullname from users as u ".
 					"left join soc_user_membership as um on u.uid = um.uid ".
+					"left join soc_names as n on u.uid=n.names_uid ".
 					"WHERE um.type = :studentgroup AND um.group_id = $group AND u.uid != $supervisor ",
 						array(':studentgroup' => _STUDENT_GROUP));
 		} else {
@@ -131,8 +133,9 @@ class Users extends AbstractEntity{
 						array(':studentgroup' => _STUDENT_GROUP))->fetchCol();
 			if ($groups){
 				$students = db_query(
-						"SELECT u.* from users as u ".
+						"SELECT u.*, n.name as fullname from users as u ".
 						"left join soc_user_membership um on u.uid = um.uid ".
+						"left join soc_names as n on u.uid=n.names_uid ".
 						"WHERE um.type = :studentgroup AND um.group_id IN (:groups) AND u.uid != $supervisor ",
 							array(':groups' => $groups, ':studentgroup' => _STUDENT_GROUP));
 			} else {

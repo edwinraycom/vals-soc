@@ -256,6 +256,11 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
 	    	//$sub_type_user = '';
     	}
         $s .= formatMemberRecordNice($organisation, $type, $target);
+        if ($type == _STUDENT_GROUP){
+        	$s .= "<h2>".t('Members'). "</h2>";
+        	$students = Users::getStudents($id);
+        	$s .= renderStudents('', $students);
+        }
         return $s;
     } else {
         return tt('You have no %1$s registered yet', $type);
