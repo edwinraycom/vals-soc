@@ -166,12 +166,13 @@ function showInstituteMembersPage($my_institute, $show_last=FALSE){
 
 		
 		$nr2 = 2;
+		$tab_id_prefix2 = 'member_page-';
 		$data2 = array();
 // 		 [translate, label, action, type, id, extra GET arguments, render with rich text area, render tab to the right]
 		$data2[] = array(1, 'Staff', 'showmembers', _INSTITUTE_GROUP, $my_institute->inst_id, "subtype=staff");
 		$data2[] = array(1, 'Students', 'showmembers', _INSTITUTE_GROUP, $my_institute->inst_id, "subtype=student");
 
-		$tabs2 = array("'member_page-1'", "'member_page-2'");
+		$tabs2 = array("'${tab_id_prefix2}1'", "'${tab_id_prefix2}2'");
 		
 		$id = 0;
 // 		$nr3 = 0;
@@ -181,23 +182,24 @@ function showInstituteMembersPage($my_institute, $show_last=FALSE){
 		$groups = Groups::getGroups(_STUDENT_GROUP, $GLOBALS['user']->uid);
 		
 // 		$tab_id_prefix = 'group_page-';
-		$tab_id_prefix2 = 'group2_page-';
+		
 		//$nr_groups = $groups->rowCount();
 		//$current_tab = $show_last ? $nr_groups : 1;
 		$current_tab = 1;
 		foreach ($groups as $group){
 			//$nr3++;
-			$nr4++;
-			if ($nr4 == $current_tab){
-				$id = $group->studentgroup_id;
-				$my_group = $group;
-				$students = Users::getStudents($id);
-			}
+			$nr2++;
+// 			if ($nr4 == $current_tab){
+// 				$id = $group->studentgroup_id;
+// 				$my_group = $group;
+// 				$students = Users::getStudents($id);
+// 			}
 // 			$tabs3[] = "'$tab_id_prefix$nr3'";
 // 			$data3[] = array(0, $group->name, 'view', _STUDENT_GROUP, $group->studentgroup_id);
-			
-			$tabs4[] = "'$tab_id_prefix2$nr4'";
-			$data4[] = array(0, $group->name, 'showmembers', _STUDENT_GROUP, $group->studentgroup_id);//'Group'
+			$tabs2[] = "'$tab_id_prefix2$nr2'";
+			$data2[] = array(0, $group->name, 'showmembers', _STUDENT_GROUP, $group->studentgroup_id);//'Group'
+// 			$tabs4[] = "'$tab_id_prefix2$nr4'";
+// 			$data4[] = array(0, $group->name, 'showmembers', _STUDENT_GROUP, $group->studentgroup_id);//'Group'
 		}
 // 		$nr4++;
 // 		$tabs4[] = "'$tab_id_prefix2$nr4'";
@@ -207,11 +209,11 @@ function showInstituteMembersPage($my_institute, $show_last=FALSE){
 // 		$data3[] = array(1, 'Add', 'add', _STUDENT_GROUP, null, "target=$tab_id_prefix$nr3", true);
 // 		$tabs3[] = "'$tab_id_prefix$nr3'";
 		echo '<h2>'.t('The registered staff and students of your institute').'</h2>';
-	    echo renderTabs($nr2, '', 'member_page-', _INSTITUTE_GROUP, $data2, $my_institute->inst_id, TRUE,
+	    echo renderTabs($nr2, t('Group'), 'member_page-', _INSTITUTE_GROUP, $data2, $my_institute->inst_id, TRUE,
 	    		renderUsers(_INSTADMIN_TYPE, '', $my_institute->inst_id, _INSTITUTE_GROUP, TRUE).
 	    		renderUsers(_SUPERVISOR_TYPE, '', $my_institute->inst_id, _INSTITUTE_GROUP, TRUE));
 	    		
-	    if ($nr4 > 0){//There is more than the add tab
+	    /* if ($nr4 > 0){//There is more than the add tab
 		    echo sprintf('<h2>%1$s</h2>', t('Your students as divided in groups'));
 		    
 		    echo renderTabs($nr4, 'Group', $tab_id_prefix2, _STUDENT_GROUP, $data4, $id, TRUE,
@@ -220,7 +222,7 @@ function showInstituteMembersPage($my_institute, $show_last=FALSE){
 	    } else {
 	    	echo "<br/>".t('There are no groups yet in this institute.'). "<a href='".
 	    	_VALS_SOC_URL."/dashboard/institute/group/administer'>".t('Create new groups'). "</a>";
-	    }
+	    } */
 	    ?>
 	    <script type="text/javascript">
 			activatetabs('tab_', [<?php echo implode(', ', $tabs2);?>]);
