@@ -27,14 +27,14 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $id=0,
 		?>
 		<li<?php echo $tab_class;?>><a href="#tab_<?php echo $target;?>" <?php
 		//title, the tab is either: translated (arg=1), a numbered prefix (arg=0) or left as it is (arg <> 0,1
-		if ($data[$t][0] == 1){
-			$link_text = t($data[$t][1]);
-			$title = "";
-		} elseif ($data[$t][0] == 0) {
+		if ($data[$t][0] == 0) {//labels: 0
 			$link_text = "$label_start $label_nr";
 			$label_nr++;
 			$title = " title = '".$data[$t][1]."' ";
-		} else {
+		} elseif ($data[$t][0] == 1){//translate 1
+			$link_text = t($data[$t][1]);
+			$title = "";
+		} else {//unmodified 2
 			$link_text = $data[$t][1];
 			$title = "";
 		}
