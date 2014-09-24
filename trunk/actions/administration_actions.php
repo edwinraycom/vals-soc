@@ -83,10 +83,12 @@ switch ($_GET['action']){
     case 'show':
     	$type = altSubValue($_POST, 'type', '');
     	$show_action = altSubValue($_POST, 'show_action', 'administer');
-    	if ($type && ($type == 'student_group')){
-    		$show_action = 'groups';
+    	if ($type && ($type == _INSTITUTE_GROUP)){
+    		$derived = deriveTypeAndAction();
+    		if ($derived['type'] == 'group'){
+    			$show_action = 'groups';
+    		}
     	}
-    	//$subject = getRequestVar('subject', 'no_subject');
     	$show_last = altSubValue($_POST, 'new_tab', false);
     	showRoleDependentAdminPage(getRole(), $show_action, $show_last);
     break;
@@ -154,6 +156,12 @@ switch ($_GET['action']){
     	$type = altSubValue($_POST, 'type', '');
     	$subtype = altSubValue($_POST, 'subtype', '');
     	$id = altSubValue($_POST, 'id', '');
+    	//HIer afleiden
+    	$derived = deriveTypeAndAction();
+    	if ($derived['type']!== $type){
+    		$after = $type;
+    	}
+    	$after = altSubValue($_POST, 'show_action', 'administer');
     	$target = altSubValue($_POST, 'target', '');
     	if (! isValidOrganisationType($type) ) {//for convenience we have made a project an organisationtype as well //TODO: make this better
     		echo t('There is no such type you can invite people to :'.$type);
@@ -161,11 +169,11 @@ switch ($_GET['action']){
     		$obj = Groups::getGroup($type, $id);
     		// See http://drupal.stackexchange.com/questions/98592/ajax-processed-not-added-on-a-form-inside-a-custom-callback-my-module-deliver
     		// for additions below
-    		$form = drupal_get_form("vals_soc_invite_form", $obj, $target, '', $subtype);
-    		if(isset($_POST['path'])){
-    			$form['#action'] = url($_POST['path']);
-    		}
-    		unset($_POST);
+    		$form = drupal_get_form("vals_soc_invite_form", $obj, $target, $after, $type, $subtype);
+//     		if(isset($_POST['path'])){
+//     			$form['#action'] = url($_POST['path']);
+//     		}
+    		//unset($_POST);
     		renderForm($form, $target);
     	}
     	break;

@@ -75,7 +75,7 @@ function deriveTypeAndAction($derive_type=true){
 	$derived = array('show_action'=> $action);
 	if ($derive_type){
 		$type = array_pop($current_path);
-		$derived['type'] = 'DEZE WEG';// $type;
+		$derived['type'] = $type;
 	}
 	return $derived;
 

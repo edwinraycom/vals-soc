@@ -62,7 +62,7 @@ function refreshSingleTab(json_data, args){
 		alertdev('No handler supplied in target function');
         return false;
 	}
-	//Get the id and the type
+	//Get the id and the type at first from the 
 	var id = json_data.id;
 	var type = json_data.type;
 	if (json_data && (json_data.result !== 'error')){
