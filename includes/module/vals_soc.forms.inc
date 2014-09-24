@@ -8,7 +8,7 @@ function populate($obj, $prop, $default=''){
 
 function entityCall($type, $obj, $target, $show_action='administer', $action_handler='administration', $entity_action='save'){
 	$key = AbstractEntity::keyField($type);
-    $id = $obj && $obj->$key ? $obj->$key : 0;
+	$id = $obj && $obj->$key ? $obj->$key : 0;
     $post_function = $id ? 'refreshSingleTab' : 'refreshTabs';
 	$call = "ajaxFormCall('vals_soc_entity_form_wrapper_$target form', '$action_handler', '$entity_action', ".
 		"{type: '$type',id: $id, show_action:'$show_action', target: '$target'},".
@@ -793,9 +793,10 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 	return $form;	
 }
 
-function vals_soc_invite_form($form, &$form_state, $org='', $target='', $show_action='administer', $subtype=''){
+function vals_soc_invite_form($form, &$form_state, $org='', $target='', $show_action='administer', $type, $subtype=''){
 	include_once(_VALS_SOC_ROOT. '/includes/module/vals_soc.mail_messages.inc');
 	$message = get_invite_email_body($org, $subtype, ($subtype== _STUDENT_TYPE)? t('your institute'): '');
+	
 	$form = array(
 			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
 			'#suffix' => '</div>',
@@ -824,7 +825,7 @@ function vals_soc_invite_form($form, &$form_state, $org='', $target='', $show_ac
 	);
 	$form['submit'] = array(
 			'#type' => 'submit',
-			'#attributes' => array('onclick'=> entityCall(_ORGANISATION_GROUP, $org, $target, 'administer', 'administration', 'send_invite_email')),
+			'#attributes' => array('onclick'=> entityCall($type, $org, $target, $show_action, 'administration', 'send_invite_email')),
 			'#value' => t('Send'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
