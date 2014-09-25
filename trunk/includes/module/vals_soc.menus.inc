@@ -56,9 +56,12 @@ function vals_soc_menu_handler(){
 	$items['dashboard/projects/browse'] = getProjectsBrowseLink('dashboard/projects/browse');
 
 	// proposal actions
-	$items['dashboard/proposals/browse'] = getProposalsBrowseLink('dashboard/proposals/browse'); // browse all proposals
-	$items['dashboard/proposals/mine'] = getMyProposalBrowseLink('dashboard/proposals/mine'); //browse only my proposals
-	$items['dashboard/proposals/browsebytype'] = getProposalsBrowseByTypeLink('dashboard/proposals/browsebytype'); // browse all proposals
+	$items['dashboard/proposals/browse'] = getProposalsBrowseLink('dashboard/proposals/browse'); // browse all proposals - not used yet - might be part of admin view at some stage
+	
+	$items['dashboard/proposals/mine'] = getMyProposalBrowseLink('dashboard/proposals/mine'); //browse only my proposals - student view
+	
+	$items['dashboard/proposals/browsebytype'] = getProposalsBrowseByTypeLink('dashboard/proposals/browsebytype'); // browse all proposals 
+	$items['dashboard/proposals/browsebytype/mine'] = getMyProposalsBrowseByTypeLink('dashboard/proposals/browsebytype/mine'); // browse all proposals belonging to my projects only
 	
 	//########################## TOP LEVEL LINKS ##############################
 	// These are usually used when we want unauthenticated users to view something not via the dashboard
@@ -380,6 +383,19 @@ function getProposalsBrowseByTypeLink($path){ //dashboard/proposals/browsebytype
 			'title' => t('Proposals'),
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_browse_proposals_by_type',
+			'access callback' => 'vals_soc_access_check',
+			'access arguments' =>  array($path),
+			'description' => 'Proposal page',
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
+	);
+}
+
+function getMyProposalsBrowseByTypeLink($path){ //dashboard/proposals/browsebytype/mine
+	return array(
+			'title' => t('Proposals'),
+			'type' => MENU_CALLBACK,
+			'page callback' => 'vals_soc_browse_my_proposals_by_type',
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' =>  array($path),
 			'description' => 'Proposal page',

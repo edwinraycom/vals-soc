@@ -78,6 +78,10 @@ switch ($_GET['action']){
 				jsonBadResult(t('You can only see your own proposals!'));
 			} else {
 				$proposal = Proposal::getInstance()->getProposalById($proposal_id, true);
+				$project_id = $proposal->pid;
+				// is this person the project owner?
+				$is_project_owner = Groups::isOwner('project', $project_id);
+				$proposal->is_project_owner = $is_project_owner;
 				jsonGoodResult($proposal);
 			}
 		} else {

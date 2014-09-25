@@ -64,7 +64,7 @@ function getMentorLayout($timeline_args){
 						<p>'.t("Allows you to add and amend project ideas for students.").'</p>
 							<div>
 								<a href="'.$base_url.'/dashboard/projects/administer/mine" title="Manage my projects only">Manage my projects only</a>
-								|<a href="'.$base_url.'/dashboard/projects/administer" title="Manage all organisations projects">Manage all organisations projects</a>&nbsp;(Limited access)
+								|<a href="'.$base_url.'/dashboard/projects/administer" title="Manage all my organisations projects">Manage all my organisations projects</a>&nbsp;(Limited access)
 							</div>
 					</div>
 		';
@@ -109,6 +109,10 @@ function getMentorLayout($timeline_args){
 								title="'.t("Proposals submitted to my organisations").'">'.t("Proposals submitted to my organisations").'</a>
 						</h4>
 						<p>'.t("List of proposals submitted to my organisations").'</p>
+						<div>
+							<a href="'.$base_url.'/dashboard/proposals/browsebytype/mine" title="Manage my proposals only">Manage my proposals only</a>
+							|<a href="'.$base_url.'/dashboard/proposals/browsebytype" title="Manage all my organisations proposals">Manage all my organisations proposals</a>&nbsp;(Limited access)
+						</div>
 					</div>
 		';
 	}
