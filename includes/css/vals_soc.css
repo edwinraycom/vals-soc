@@ -377,3 +377,10 @@ a.external {
 	overflow-y:auto;/*resets IE*/
 	overflow-x:hidden;/*resets IE*/
 }
+
+.prop-mini-form-wrapper {
+	border: 1px solid black;
+	padding:12px;
+	margin-top:8px;
+	margin-bottom:8px;
+} 

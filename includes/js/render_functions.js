@@ -1,3 +1,128 @@
+
+function chooseProposalForProject(project_id, proposal_id, is_final){
+	var content = '';
+	if(is_final){
+		content += 'Note: This is final and irreversible.\n';
+		content += '\n';
+		content += '1. If instead, you want to only mark this proposal as your preferred one and still have the ability to change at a ';
+		content += 'later date, then press \'cancel\' and choose \'Accept interim\' instead.\n';
+		content += '2. This proposal will become accepted for this project idea.\n';
+		content += '3. The student and his/her supervisor will be informed by email that you have decided to select this proposal.\n';
+		content += '4. This will mean all other proposals are rejected. \n';
+		content += '5. All other candidate proposals will be informed by email that their proposal has now been rejected ';
+		content += 'and that you have chosen another proposal as your choice of solution.';
+	}
+	else{
+		content += 'Note: This is not a final decision.\n';
+		content += '\n';
+		content += '1. If instead, you want to mark this proposal as your final choice, then press \'cancel\' and choose \'Accept final\' instead.\n';
+		content += '2. This proposal will be flagged in the system as your interim choice for this project idea.\n';
+		content += '3. You may change from this proposal to another one if a student writes a proposal which you prefer over this one. \n';
+		content += '4. The Student and his/her supervisor will be informed by email that you have decided to select (as interim) this proposal.\n';
+		content += '5. This will mean all other proposals for this project are still valid in the system. \n';
+		content += '6. Other students will not know which candidate proposal you have chosen in the interim, ';
+		content += 'but they will recieve an email to let them know it is not their own, meaning they still have a chance if they improve it.';
+	}
+	if (confirm(content)) {
+		var url = moduleUrl + "actions/project_actions.php?action=mark_proposal";
+		$jq.post(url, {'proposal_id': proposal_id, 'project_id' : project_id, 'is_final' : is_final}, function(data,status){
+			if(!is_final){
+				ajaxInsert(data, 'proposal-intrim-markup-'+proposal_id+'-button');
+			}
+			else{
+				ajaxInsert(data, 'proposal-final-markup-'+proposal_id+'-button');
+				$jq('#proposal-intrim-markup-'+proposal_id).hide();//disable this button if final
+			}
+		});
+	}
+}
+
+function getAcceptProposalIntrimMarkup(proposal, option){
+	var content ="";
+	content += '	<div>';
+	content += '		'+option+' Click the button below to select this proposal as your preferred interim solution.';
+	content += '		<br/>';
+	content += '		<br/>';
+	content += '		<div id="proposal-intrim-markup-'+proposal.proposal_id+'-button">';
+	content += '			<input style="margin-left:20px" type=\"button\" value=\"\Accept interim" onclick=\"chooseProposalForProject('+proposal.pid+','+ proposal.proposal_id+', 0);\"/>';
+	content += '			<br/>';
+	content += '		</div>';
+	content += '	</div>';
+	return content;
+}
+
+function getAcceptProposalFinalMarkup(proposal, option){
+	var content ="";
+	content += '	<div>';
+	content += '		'+option+' Click the button below to accept this proposal as your final chosen solution.';
+	content += '		<br/>';
+	content += '		<br/>';
+	content += '		<div id="proposal-final-markup-'+proposal.proposal_id+'-button">';
+	content += '			<input style="margin-left:20px" type=\"button\" value=\"\Accept final" onclick=\"chooseProposalForProject('+proposal.pid+','+ proposal.proposal_id+', 1);\"/>';
+	content += '			<br/>';
+	content += '		</div>';
+	content += '	</div>';
+	return content;
+}
+
+function renderProposalStatus(proposal){
+	var content = "<h2>"+proposal.pr_title+"</h2>";
+	content += 'Submitted by student \'' + (proposal.student_name ? proposal.student_name: proposal.name) + '\'';
+	content += '<br/>';
+	content += '<br/>';
+
+	if(proposal.selected == 1 && proposal.pr_proposal_id == proposal.proposal_id){
+		content += (proposal.is_project_owner ? 
+				'You have selected this proposal as your final choice of solution for your project idea. You cannot change this.' : 
+				'The project mentor selected this proposal as the final choice of solution for this project idea.');
+	}
+	else{
+		if(proposal.selected == 1 && proposal.pr_proposal_id != proposal.proposal_id){
+			content += (proposal.is_project_owner ? 
+					'You have already selected another proposal as your final choice of solution for your project idea. You cannot change this.' :
+					'The project mentor selected another proposal as the final choice of solution for this project idea.');
+		}
+		else if(proposal.selected == 0 && proposal.pr_proposal_id == proposal.proposal_id){
+			if(proposal.is_project_owner){
+				content += 'You have selected this proposal as your preferred interim choice of solution for your project idea. ';
+				content += 'This is not final and you may change it to another proposal before the end of the student signup period.';
+			}else{
+				content += 'The project owner selected this proposal as the preferred interim choice of solution for this project idea. ';
+				content += 'This is not final and the owner may change to another proposal before the end of the student signup period.';
+			}
+			
+			if(proposal.is_project_owner){
+				content += '<div class="prop-mini-form-wrapper" id="proposal-final-markup-'+proposal.proposal_id+'">';
+				content += 		getAcceptProposalFinalMarkup(proposal, '');
+				content += '</div>';
+			}
+		}
+		else{
+			if(proposal.pr_proposal_id != null){
+				content += (proposal.is_project_owner ? 'You have already selected another proposal as your preferred choice of solution for your project idea.' :
+				'The project mentor has selected another proposal as the preferred interim choice of solution for this project idea.');
+			}else{
+				content += (proposal.is_project_owner ? 'You haven\'t yet selected a proposal as your preferred choice of solution for your project idea.' :
+				'The project mentor hasn\'t yet selected a proposal as the preferred interim choice of solution for this project idea.');
+			}
+			if(proposal.is_project_owner){
+				content += '<div><br/>';
+				content += '	<div>You have the following two choices</div>';
+				content += '	<br/>';
+				content += '	<div class="prop-mini-form-wrapper" id="proposal-intrim-markup-'+proposal.proposal_id+'">';
+				content += 			getAcceptProposalIntrimMarkup(proposal, '1.');
+				content += '	</div>';
+				content += '	<div class="prop-mini-form-wrapper" id="proposal-final-markup-'+proposal.proposal_id+'">';
+				content += 			getAcceptProposalFinalMarkup(proposal, '2.');
+				content += '	</div>';
+				content += '</div>';
+			}
+		}
+	}
+
+	return content;
+}
+
 function renderProposalOverview(proposal){
 	var content = "<h2>"+proposal.title+"</h2>";
 	content += 'Submitted by student \'' + (proposal.student_name ? proposal.student_name: proposal.name) + '\'';
@@ -16,8 +141,17 @@ function renderProposalOverview(proposal){
 	content += '		The \'Solution Description\' tab is where the student was asked to provide a more detailed description of the solution.';
 	content += '	</li>';
 	content += '	<li>';
-	content += '		The \'Original Project\' tab is for your reference and links to the original project idea.';
+	content += '		The \'Project\' tab is for your reference and links to the original project idea.';
 	content += '	</li>';
+	content += '	<li>';
+	
+	if(proposal.is_project_owner){
+		content += '		The \'Status\' tab is to allow you to set the proposals current status.';
+	}else{
+		content += '		The \'Status\' tab is to allow you to view the proposals current status.';		
+	}
+	content += '	</li>';
+
 	content += '</ul>';
 	// comments
 	content += "<div id=\"comments-proposal-"+proposal.proposal_id+"\"></div>";
@@ -155,7 +289,8 @@ function getProposalDetail(proposal_id, target, msg){
 				//{tab: 'cv', label: 'Cv'},
 				{tab: 'summary', label: 'Solution Summary'},
 				{tab: 'solution', label: 'Solution Description'},
-				{tab: 'project', label: 'Project'}
+				{tab: 'project', label: 'Project'},
+				{tab: 'status', label: 'Status'}
 				//{tab: 'modules', label: 'Modules and Libraries'}
 			];
 	var content_tabs = ['tab_overview',
@@ -163,6 +298,7 @@ function getProposalDetail(proposal_id, target, msg){
 	                    //'tab_cv',
 	                     'tab_summary', 'tab_solution'
 	                     ,'tab_project'
+	                     ,'tab_status'
 				      	//,'tab_modules'
 	                    ];
 	var url = moduleUrl + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" +
@@ -295,6 +431,8 @@ function renderProposalTabs(result, labels, container){
 			case 'summary': s += (result.solution_short ? result.solution_short : ney);
 				break;
 			case 'solution': s += (result.solution_long ? result.solution_long : ney);
+				break;
+			case 'status': s += renderProposalStatus(result);
 				break;
 //			case 'modules': s += (result.modules ? result.modules : ney);
 //				break;

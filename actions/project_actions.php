@@ -138,13 +138,17 @@ switch ($_GET['action']){
 	break;
 	case 'list_search_proposal_count':
 		$organisation=null;
+		$owner_id = null;
 		if(isset($_POST['organisation']) && $_POST['organisation']){
 			$organisation = $_POST['organisation'];
 		}
+		if(isset($_GET['mine_only']) && $_GET['mine_only']){
+			$owner_id = Users::getMyId();
+		}
 		//Return result to jTable
 		$recs = Project::getInstance()->getProjectsAndProposalCountByCriteria(
-				$organisation, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
-		$cnt = Project::getInstance()->getProjectsAndProposalCountByCriteriaRowCount($organisation);	
+				$organisation, $owner_id, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
+		$cnt = Project::getInstance()->getProjectsAndProposalCountByCriteriaRowCount($organisation, $owner_id);	
 		jsonGoodResultJT($recs, $cnt);
 	break;
 	case 'list':
@@ -322,6 +326,66 @@ switch ($_GET['action']){
     		echo $result ? jsonGoodResult(true, '', array('extra'=> ($mine? array( 'mine' =>1) :''))) : jsonBadResult();
     	}
     break;
+    case 'mark_proposal':
+    	$proposal_id = getRequestVar('proposal_id', 'post', 0);
+    	$project_id = getRequestVar('project_id', 'post', 0);
+    	$is_final = getRequestVar('is_final', 'post', 0);
+    	
+    	if (!$project_id){
+    		echo t('The project could not be found');
+    		return;
+    	}
+    	if (!$proposal_id){
+    		echo t('The proposal could not be found');
+    		return;
+    	}
+    	if (!$is_final){
+    		$is_final = 0;
+    	}
+    	// only allow project owner to update its selected & proposal_id fields - Do we need to allow org_admins to do this too? 
+    	if(!Groups::isOwner('project', $project_id)){
+    		echo t('Only the project owner can update its proposal status.');
+    		return;
+    	}
+    	
+    	// Get the projects current proposal id and state (if set)
+    	$project = Project::getProjectById($project_id, FALSE, NULL);
+    	$old_proposal = $project->proposal_id;// probably dont need this now
+    	$was_selected = $project->selected;
+    	
+    	$selected_prev_set = false;
+    	if($was_selected == 1){
+    		$selected_prev_set = true;
+    	}
+
+    	if($is_final == 0){// set to interim
+    		// EMAIL - new proposal student & supervisor - 'your proposal has been marked as preferred by the project owner for project xyz....this can change..'
+    		// EMAIL - all other students proposals - 'A proposal has been marked as preferred by the project owner. Unfortunately it is not your proposal.....this can change..'
+    	}
+    	else if($is_final == 1){// set to final
+    		// EMAIL - new proposal student & supervisor - 'your proposal has been accepted by the project owner for project xyz....'
+    		// EMAIL - all other rejected students proposals - 'your proposal has been declined by the project owner for project xyz....'
+    	}
+    	
+    	if(!$selected_prev_set){
+    	// update the project
+    		$props['proposal_id'] = $proposal_id;
+    		$props['selected'] = $is_final;
+    		$result = Project::changeProject($props, $project_id);
+    		//send message back giving status & success message
+    		if ($result){
+    			echo t('Changes successfully made');
+    		} 
+    		else{
+    			echo t('There was a problem updating your project preferences.');
+    		}
+    	}
+    	else{
+    		// send message back saying mentor has already made his decision & can't change it
+    		//echo '$proposal_id='.$proposal_id.':'.'$project_id='.$project_id.':'.'$is_final='.$is_final;
+    		echo t('You already have chosen a final proposal for this project, you cannot change it now.');
+    	}
+    	break;
 	//
 	default: echo "No such action: ".$_GET['action'];
 }

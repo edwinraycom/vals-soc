@@ -150,7 +150,7 @@ class Project extends AbstractEntity{
     	return $students;
     }
     
-    public function  getProjectsAndProposalCountByCriteriaRowCount($organisation=''){
+    public function  getProjectsAndProposalCountByCriteriaRowCount($organisation='', $owner_id=''){
     	if(!$organisation){
     		$organisation = array();
     		$result = Organisations::getInstance()->getMyOrganisations(TRUE);
@@ -158,11 +158,15 @@ class Project extends AbstractEntity{
     			array_push($organisation, $record->org_id);
     		}
     	}
-    	$projects =  db_query("SELECT p.* from soc_projects as p WHERE p.org_id IN (:orgs) ",array(':orgs' => $organisation))->rowCount();
+    	$query = "SELECT p.* from soc_projects as p WHERE p.org_id IN (:orgs) ";
+    	if($owner_id){
+    		$query .= "AND p.owner_id = " . $owner_id;
+    	}
+    	$projects =  db_query($query, array(':orgs' => $organisation))->rowCount();
     	return $projects;
     }
     
-    public static function getProjectsAndProposalCountByCriteria($organisation, $sorting='p.pid',
+    public static function getProjectsAndProposalCountByCriteria($organisation, $owner_id='', $sorting='p.pid',
     	$startIndex=1, $pageSize=10){
 
     	if(!$organisation){
@@ -177,8 +181,13 @@ class Project extends AbstractEntity{
 			FROM soc_projects AS p
 			LEFT JOIN soc_proposals AS v ON ( v.pid = p.pid )
 			LEFT JOIN soc_organisations AS o ON ( p.org_id = o.org_id ) 
-			WHERE p.org_id IN (:orgs)
-			GROUP BY p.pid ";
+			WHERE p.org_id IN (:orgs) ";
+    	
+    	if($owner_id){
+    		$query .= "AND p.owner_id = " . $owner_id . " ";
+    	}
+    	
+		$query .= 	 "GROUP BY p.pid ";
     	
     	if (!$sorting){
     		$sorting = 'pid ASC';

@@ -159,6 +159,15 @@ function vals_soc_browse_proposals_by_type(){
 	return ob_get_clean();	
 }
 
+function vals_soc_browse_my_proposals_by_type(){
+	ob_start();
+	vals_soc_content_start();
+	$owner_only = TRUE;
+	include(_VALS_SOC_ROOT. '/includes/ui/browse/proposalsbytype.inc');
+	vals_soc_content_end();
+	return ob_get_clean();
+}
+
 function vals_soc_browse_my_proposals(){
 	ob_start();
 	vals_soc_content_start();

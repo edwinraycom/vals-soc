@@ -35,10 +35,11 @@ class Proposal extends AbstractEntity{
     		$query->fields('supervisor', array('name'));
     		$query->fields('i', Institutes::$fields);
     		$query->fields('o', Organisations::$fields);
-    		$query->fields('pr', array('title', 'description', 'url'));
+    		$query->fields('pr', array('title', 'description', 'url', 'owner_id', 'proposal_id', 'selected'));
     		$query->fields('mentor_user', array('mail', 'name'));
     		$query->fields('mentor', array('name'));
     	}
+    	//echo $query;
     	$proposal = $query->execute()->fetch(PDO::FETCH_OBJ);
     	return $proposal;
     }
@@ -121,7 +122,7 @@ class Proposal extends AbstractEntity{
     	$query->fields('student', array('name'));
     	$query->fields('i', array('name'));
     	$query->fields('o', array('name'));
-    	$query->fields('pr', array('title'));
+    	$query->fields('pr', array('title', 'proposal_id', 'selected'));
     	$query->fields('u', array('name'));
     	//We expect the jtable lib to give a sorting of the form field [ASC, DESC]
     	if ($sorting){

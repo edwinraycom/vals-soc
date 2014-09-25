@@ -308,123 +308,119 @@ function initBrowseProposalsLayout(){
  * IN PROGRESS - NEW PROPOSAL VIEWS
  * ********************************************************/
 
-function initBrowseProposalsByTypeLayout($owner_only=''){
+function initBrowseProposalsByTypeLayout($owner_only=false){
 
-	$owner_id = isset($owner_only) ? $GLOBALS['user']->uid : '';
-	
+	// ORG ADMIN & MENTOR VIEWS
 	if( hasRole(array(_ORGADMIN_TYPE)) || hasRole(array(_MENTOR_TYPE)) ){
 
-//	TODO - decide how to make the two views here - one for ORGS/MENTORS and another for INST/SUPERVISORS
-//  TODO - decide how to show ALL record & show mine only as we do in the projects view
+		$only_mine_query = (bool) $owner_only ? '&mine_only=true' : '';
+
+		$org_id=0;
+		if(isset($_GET['organisation'])){
+			$org_id = $_GET['organisation'];
+		}
 	
-	$org_id=0;
-
-	if(isset($_GET['organisation'])){
-		$org_id = $_GET['organisation'];
-	}
-/*
-	echo "<a href='"._VALS_SOC_URL. "/dashboard/projects/administer'>".t('Show all')."</a>";
-	echo " | ";
-	echo "<a href='"._VALS_SOC_URL. "/dashboard/projects/administer/mine'>".t('Show only mine')."</a>";
-*/
-	?>
-	<div class="filtering" style="width: 800px;">
-		<span id="infotext" style="margin-left: 34px"></span>
-		<form id="proposal_filter">
-	        <?php echo t('Filter by Organisation');?>:
-	        <?php // echo t('Organisations');?>
-	        <select id="organisation" name="organisation">
-				<option <?php echo  (! $org_id) ? 'selected="selected"': ''; ?> value="0"><?php echo t('All My Organisations');?></option><?php
-				$result = Organisations::getInstance()->getMyOrganisations(TRUE);
-				foreach ($result as $record) {
-					$selected = ($record->org_id == $org_id ? 'selected="selected" ' : '');
-					echo '<option ' .$selected.'value="'.$record->org_id.'">'.$record->name.'</option>';
-				}?>
-			</select>
-		</form>
-	</div>
-	<div id="TableContainer" style="width: 800px;"></div>
-	<script type="text/javascript">
-
-			jQuery(document).ready(function($){
-				window.view_settings = {};
-
-				function loadFilteredProposals(){
-					$("#TableContainer").jtable("load", {
-						organisation: $("#organisation").val(),
+		echo "<a href='"._VALS_SOC_URL. "/dashboard/proposals/browsebytype'>".t('Show all')."</a>";
+		echo " | ";
+		echo "<a href='"._VALS_SOC_URL. "/dashboard/proposals/browsebytype/mine'>".t('Show only mine')."</a>";
+	
+		?>
+		<div class="filtering" style="width: 800px;">
+			<span id="infotext" style="margin-left: 34px"></span>
+			<form id="proposal_filter">
+		        <?php echo t('Filter by Organisation');?>:
+		        <?php // echo t('Organisations');?>
+		        <select id="organisation" name="organisation">
+					<option <?php echo  (! $org_id) ? 'selected="selected"': ''; ?> value="0"><?php echo t('All My Organisations');?></option><?php
+					$result = Organisations::getInstance()->getMyOrganisations(TRUE);
+					foreach ($result as $record) {
+						$selected = ($record->org_id == $org_id ? 'selected="selected" ' : '');
+						echo '<option ' .$selected.'value="'.$record->org_id.'">'.$record->name.'</option>';
+					}?>
+				</select>
+			</form>
+		</div>
+		<div id="TableContainer" style="width: 800px;"></div>
+		<script type="text/javascript">
+	
+				jQuery(document).ready(function($){
+					window.view_settings = {};
+	
+					function loadFilteredProposals(){
+						$("#TableContainer").jtable("load", {
+							organisation: $("#organisation").val(),
+						});
+					}
+	
+				    //Prepare jTable
+					$("#TableContainer").jtable({
+						paging: true,
+						pageSize: 10,
+						sorting: true,
+						defaultSorting: "pid ASC",
+						actions: {
+							listAction: moduleUrl + "actions/project_actions.php?action=list_search_proposal_count<?php echo $only_mine_query;?>"
+						},
+						fields: {
+							pid: {
+								key: true,
+		    					create: false,
+		    					edit: false,
+		    					list: false
+							},
+							title: {
+								title: "Project",
+								width: "49%",
+								display: function (data) {
+									return "<a title=\"View project details\" href=\"javascript:void(0);\" onclick=\"getProjectDetail("+data.record.pid+")\">"
+											+ data.record.title+"</a>";
+									},
+							},
+							org_name: {
+								title: "Organisation",
+								width: "35%",
+								display: function (data){return data.record.org_name;}
+							},
+							proposal_count : {
+								title: "Proposals",
+								width: "10%",
+								display: function (data){return data.record.proposal_count;}
+							},
+	
+							proposal_view : {
+								width: "6%",
+		    					title: "View",
+								sorting: false,
+		    					display: function (data) {
+			    					if(data.record.proposal_count > 0){
+									return "<a title=\"View Proposals\" href=\"javascript:void(0);\" "+
+										"onclick=\"getProposalsForProject("+data.record.pid+")\">"+
+											"<span class=\"ui-icon ui-icon-info\">See detail</span></a>";
+			    					}
+		    					},
+	
+		    					create: false,
+		    					edit: false
+							},
+	
+						},
 					});
-				}
-
-			    //Prepare jTable
-				$("#TableContainer").jtable({
-					paging: true,
-					pageSize: 10,
-					sorting: true,
-					defaultSorting: "pid ASC",
-					actions: {
-						listAction: moduleUrl + "actions/project_actions.php?action=list_search_proposal_count"
-					},
-					fields: {
-						pid: {
-							key: true,
-	    					create: false,
-	    					edit: false,
-	    					list: false
-						},
-						title: {
-							title: "Project",
-							width: "49%",
-							display: function (data) {
-								return "<a title=\"View project details\" href=\"javascript:void(0);\" onclick=\"getProjectDetail("+data.record.pid+")\">"
-										+ data.record.title+"</a>";
-								},
-						},
-						org_name: {
-							title: "Organisation",
-							width: "35%",
-							display: function (data){return data.record.org_name;}
-						},
-						proposal_count : {
-							title: "Proposals",
-							width: "10%",
-							display: function (data){return data.record.proposal_count;}
-						},
-
-						proposal_view : {
-							width: "6%",
-	    					title: "View",
-							sorting: false,
-	    					display: function (data) {
-		    					if(data.record.proposal_count > 0){
-								return "<a title=\"View Proposals\" href=\"javascript:void(0);\" "+
-									"onclick=\"getProposalsForProject("+data.record.pid+")\">"+
-										"<span class=\"ui-icon ui-icon-info\">See detail</span></a>";
-		    					}
-	    					},
-
-	    					create: false,
-	    					edit: false
-						},
-
-					},
+	
+					//Load proposal list from server on initial page load
+					loadFilteredProposals();
+	
+					$("#organisation").change(function(e) {
+		           		e.preventDefault();
+		           		loadFilteredProposals();
+		        	});
+	
+					$("#proposal_filter").submit(function(e){
+						e.preventDefault();
+						loadFilteredProposals()
+					});
+	
 				});
-
-				//Load proposal list from server on initial page load
-				loadFilteredProposals();
-
-				$("#organisation").change(function(e) {
-	           		e.preventDefault();
-	           		loadFilteredProposals();
-	        	});
-
-				$("#proposal_filter").submit(function(e){
-					e.preventDefault();
-					loadFilteredProposals()
-				});
-
-			});
-		</script><?php
-		
+			</script><?php
 		}
 		else if(hasRole(array(_INSTADMIN_TYPE)) || hasRole(array(_SUPERVISOR_TYPE))){
 		
@@ -574,11 +570,16 @@ function showProposalsForProject($project_id){
 								title: "Student",
 								width: "30%",
 								display: function (data){
+									var uname_text ='';
 									if(data.record.name){
-										return data.record.name;
+										uname_text = data.record.name;
 									}else{
-										return data.record.u_name;
+										uname_text = data.record.u_name;
 									}
+									if(data.record.proposal_id == data.record.pr_proposal_id){
+										uname_text += "&nbsp;<span style=\"float:left;display:inline;\" class=\"ui-icon ui-icon-link\" title=\"You have chosen this proposal for your project idea.\">&nbsp;</span>";
+									}
+									return uname_text;
 								}
 							},
 							inst_id: {
