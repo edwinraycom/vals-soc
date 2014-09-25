@@ -140,7 +140,6 @@ function showInstituteGroupsAdminPage($my_institute, $show_last){
 		$tabs3[] = "'$tab_id_prefix$nr3'";
 
 	    echo '<h2>'.t('The student groups of your institute').'</h2>';
-	   
 	    echo renderTabs($nr3, 'Group', $tab_id_prefix, _STUDENT_GROUP, $data3, $id, TRUE,
 	    		(($nr3 > 1) ?
 	    			renderOrganisation(_STUDENT_GROUP, $my_group, null, "${tab_id_prefix}$current_tab"):

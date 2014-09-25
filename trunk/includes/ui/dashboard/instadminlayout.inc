@@ -46,7 +46,7 @@ function getInstAdminLayout($timeline_args){
 		';
 	}
 	
-	if($timeline_args['connectionsVisible']){
+/* 	if($timeline_args['connectionsVisible']){
 		$output .='
 					<div class="column-entry connections_dashboard">
 						<h4>
@@ -61,7 +61,7 @@ function getInstAdminLayout($timeline_args){
 						</div>
 					</div>
 		';
-	}
+	} */
 	
 	$output .='	
 				</div>

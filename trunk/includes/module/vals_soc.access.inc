@@ -52,7 +52,9 @@ function pageAccessCheck($access_string) {
 			return hasPermission('vals admin register') && Timeline::getInstance()->organisationSignupPeriodOpened()
 				&& !Timeline::getInstance()->isAfterOrganisationSignupPeriod();
 			break;
-					
+		case 'dashboard/studentgroup/administer/add_or_delete':
+			return hasPermission('vals admin register') && Timeline::getInstance()->isStudentsSignupPeriod();
+			break;
 		case 'dashboard/projects/administer':
 		case 'dashboard/projects/administer/mine':
 			return hasPermission('vals admin projects') && Timeline::getInstance()->organisationSignupPeriodOpened();

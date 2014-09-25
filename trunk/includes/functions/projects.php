@@ -43,7 +43,7 @@ function showProjectPage($show_last=FALSE, $owner_only=false){
 			$form = drupal_get_form("vals_soc_project_form", '', 'project_page-1');
 			$form['submit'] = ajax_pre_render_element($form['submit']);
 
-			$add_tab =  renderForm($form, $target, true);
+			$add_tab = renderForm($form, $target, true);
 
 			$data = array();
 			$data[] = array(1, 'Add', 'add', 'project', '0', "target=admin_container", true, 'adding from the right');

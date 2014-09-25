@@ -248,7 +248,7 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
 	    	$s .= "<div class='totheright'>";
 	    	$s .= "	<input type='button' value='".t('edit')."' $edit_action/>";
 	    	// has the org signup period ended if so user cant add/delete entries, only edit
-	    	if(vals_soc_access_check('dashboard/organisation/administer/add_or_delete')){
+	    	if(vals_soc_access_check("dashboard/$type/administer/add_or_delete")){
 	    		$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"administration\"]);}'";
 	    		$s .= "	<input type='button' value='".t('delete')."' $delete_action/>";
 	    	}

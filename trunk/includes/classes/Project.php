@@ -56,6 +56,7 @@ class Project extends AbstractEntity{
     }
     
     public static function addProjectCondition(&$query, $project_alias='p.'){
+    	//we want to deliver all the non-draft projects except for the owner (or colleagues) of these projects
     	$myorgs = Organisations::getMyOrganisations();
     	if (gettype($query) == 'string') {
     		$query .= " AND (${project_alias}state <> 'draft'".
@@ -73,9 +74,10 @@ class Project extends AbstractEntity{
     }
     
     public function getProjectsBySearchCriteria($tags, $organisation, $sorting, $startIndex, $pageSize){
-    	$queryString = "SELECT p.pid, p.title, o.name, p.description, p.tags"
-    			." FROM soc_projects p, soc_organisations o"
-    			." WHERE p.org_id = o.org_id";
+    	$queryString = "SELECT p.pid, p.title, p.description, p.tags, o.name"
+    			." FROM soc_projects p
+    			   LEFT JOIN soc_organisations o on p.org_id = o.org_id"
+    			." WHERE 1=1 ";
     	if(isset($tags)){
     		$queryString .=	 " AND tags LIKE '%".$tags."%'";
     	}

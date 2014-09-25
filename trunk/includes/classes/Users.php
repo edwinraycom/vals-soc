@@ -82,6 +82,25 @@ class Users extends AbstractEntity{
 		return $user->uid;
 	}
 	
+	public static function getMyName(){
+		global $user;
+		if (isset($user->uid)){
+			$id = $user->uid;
+			$u = db_query(
+					"SELECT u.name, n.name as full_name ".
+					"from users as u ".
+					"left join soc_names as n on u.uid = n.names_uid ".
+					"WHERE u.uid = $id")
+					->fetchObject();
+			if ($u->full_name){
+				return $u->full_name;
+			} else {
+				return $u->name;
+			}
+		}
+		return $user->uid;
+	}
+	
 	public static function getStudentDetails($id){
 		if ($id){
 		return db_query(
@@ -266,8 +285,11 @@ class Users extends AbstractEntity{
 		//todo: find out whether current user is institute_admin
 	
 		if ($institute == 'all'){
-			$supervisors = db_query('select u.* from users as u left join  users_roles as ur on u.uid=ur.uid left join '.
-					'role as r on r.rid=ur.rid where r.name=:role ', array(':role' => _STUDENT_TYPE));
+			$supervisors = db_query('select u.*,n.name as fullname from users as u '.
+					'left join  users_roles as ur on u.uid=ur.uid '.
+					'left join role as r on r.rid=ur.rid '.
+					'left join soc_names as n on u.uid=n.names_uid '.
+					'where r.name=:role ', array(':role' => _STUDENT_TYPE));
 		} else {
 			if (!$institute) {
 				//get the institute from the institute admin
@@ -278,11 +300,12 @@ class Users extends AbstractEntity{
 			}
 			if ($institute){
 				$students = db_query(
-						"SELECT u.* from users as u ".
+						"SELECT u.*,n.name as fullname from users as u ".
 						" left join users_roles as ur on u.uid = ur.uid ".
 						" left join role as r on ur.rid = r.rid".
-						" left join soc_user_membership as um on u.uid = um.uid
-						 WHERE r.name = :student AND um.type = :institute AND  um.group_id = $institute",
+						" left join soc_user_membership as um on u.uid = um.uid".
+						' left join soc_names as n on u.uid=n.names_uid '.
+						 "WHERE r.name = :student AND um.type = :institute AND  um.group_id = $institute",
 					array(':institute' =>_INSTITUTE_GROUP,  ':student' =>_STUDENT_TYPE));
 			} else {
 				return NULL;

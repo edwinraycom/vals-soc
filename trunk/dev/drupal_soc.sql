@@ -30,7 +30,17 @@ CHANGE `tags` `tags` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci N
 */
 -- use vals_vps;
 
+--New since 24 sept 2014
+CREATE TABLE IF NOT EXISTS `soc_supervisor_rates` (
+  `rate_id` int(11) NOT NULL AUTO_INCREMENT,
+  `pid` int(11) NOT NULL,
+  `rate` tinyint(4) NOT NULL,
+  `uid` int(11) NOT NULL,
+  PRIMARY KEY (`rec_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
+
+--end
 CREATE TABLE IF NOT EXISTS `soc_names` (
   `names_uid` int(11) NOT NULL,
   `type` varchar(32) NOT NULL,
