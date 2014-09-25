@@ -54,12 +54,12 @@ switch ($_GET['action']){
     	if ($_POST['type'] == _STUDENT_GROUP){
             echo renderUsers(_STUDENT_TYPE, '', $_POST['id'], $_POST['type']);
         } elseif ($_POST['type'] == _INSTITUTE_GROUP){
-            $type = altSubValue($_GET, 'subtype', 'all');
-            if ($type == _STUDENT_TYPE){
+            $subtype = altSubValue($_GET, 'subtype', 'all');
+            if ($subtype == _STUDENT_TYPE){
             	echo renderStudents($_POST['id']);
-            } elseif ($type == _SUPERVISOR_TYPE){
+            } elseif ($subtype == _SUPERVISOR_TYPE){
                 echo renderSupervisors($_POST['id']);
-            } elseif ($type == _INSTADMIN_TYPE){
+            } elseif ($subtype == _INSTADMIN_TYPE){
                 echo renderUsers(_INSTADMIN_TYPE, '', $_POST['id'], _INSTITUTE_GROUP);
             } elseif ($type == 'staff'){
                 $inst_id = $_POST['id'];
@@ -67,7 +67,7 @@ switch ($_GET['action']){
 	    		echo renderUsers(_SUPERVISOR_TYPE, '', $inst_id, _INSTITUTE_GROUP, TRUE);
 
             } else {
-            	echo tt('No such type %1$s', $type);
+            	echo tt('No such type %1$s', $subtype);
             }
 
         } elseif ($_POST['type'] == _ORGANISATION_GROUP){
@@ -126,15 +126,19 @@ switch ($_GET['action']){
     	$email = altSubValue($_POST, 'contact_email', '');
     	$subject = altSubValue($_POST, 'subject', '');
     	$body = altSubValue($_POST, 'description', '');
-    	$item[0] = array('key' => 'vals_soc_invite_new_user', 'to' => $email, 'from' => NULL, 'subject' => $subject, 'body' => $body);
+    	$items = array(array('key' => 'vals_soc_invite_new_user', 'to' => $email, 'from' => NULL, 'subject' => $subject,
+    		'body' => $body));
     	try{
-    		vals_soc_send_emails_cron($item);
+    		vals_soc_send_emails_cron($items);
+    		//$result = vals_soc_send_emails_now($items);
     		$result = TRUE;
+    		$msg = t('Email successfully sent') . (_DEBUG ? showDrupalMessages(): '');
     	}
     	catch(Exception $err){
     		$result = FALSE;
+    		$msg = t('Email could not be sent') . (_DEBUG ? $err->getMessage().showDrupalMessages() : '');
     	}
-    	//$result = vals_soc_send_emails_now($item);
+    	
     	$id = altSubValue($_POST, 'id', '');
     	$show_action = altSubValue($_POST, 'show_action', '');
 
@@ -144,12 +148,10 @@ switch ($_GET['action']){
             		'id' => $id,
             		'type'=> $type,
             		'show_action' => $show_action,
-            		'msg'=> t('Email successfully sent') .
-            		(_DEBUG ? showDrupalMessages(): '')
-
-            		));
+            		'msg'=> $msg
+            	));
         } else {
-        	echo jsonBadResult();
+        	echo jsonBadResult($msg);
         }
     break;
     case 'inviteform':

@@ -25,8 +25,10 @@ function vals_soc_send_single_email_now($item){
 				array('body' => $item['body'],
 						'subject' => $item['subject'],
 						$item['from'],
-						TRUE)
+						TRUE,
+						'plain'=> isset($item['plain']) ? $item['plain']: false)
 		);
+		
 		if (!empty($message['result'])) {
 			watchdog('debug', 'Email sent. Result: '.$message['result']);
 			return true;
@@ -48,9 +50,20 @@ function vals_soc_send_single_email_now($item){
  * when $from is null, the system admin emails address is used
  */
 function vals_soc_send_emails_now($items){
+	$result = TRUE;
+	//The smtp module has the nasty habit of ouputting messages directly
+	ob_start();
 	foreach($items as $item) {
-		vals_soc_send_single_email_now($item);
+		if (! vals_soc_send_single_email_now($item)){
+			$result = FALSE;
+			drupal_set_message(tt('Could not send mail to: "%1$s"', $item['to']), 'error');
+		}
 	}
+	$messages = ob_get_clean();
+// 	if (!$result){
+// 		drupal_set_message($messages, 'error');
+// 	}
+	return $result;
 }
 
 /**
@@ -96,6 +109,9 @@ function vals_soc_cron_email_handler($item){
  */
 function vals_soc_mail_handler($key, &$message, $params) {
 	//All these messages are saved with rte textareas and so already in html format
+	//We expect all drupal_mail calls or vals_soc_cron_email_handler, or vals_soc_send_emails_cron calls to be with
+	//items having a 'subject', 'body', 'to' field as a minimum. Optional are key and from. From will be the system 
+	//return address (variable_get('system_mail')) and the key is only important to create a body here.
 	$html_format = true;
 	switch($key) {
 		case 'vals_soc_notify_new_proposal':
@@ -138,7 +154,15 @@ function vals_soc_mail_handler($key, &$message, $params) {
 			$message['body'][] = variableGetFromStruct('vals_rejected_students_message', 'value');
 			break;
 		default:
-			$html_format = false;
+			if ($message['module'] == 'vals_soc'){
+				$message['subject'] = $params['subject'];
+				$message['body'][] = $params['body'];
+				if (isset($params['plain']) && $params['plain']){
+					$html_format = false;
+				}
+			} else {
+				$html_format = false;
+			}
 		break;
 	}
 	if ($html_format){
@@ -151,6 +175,7 @@ function vals_soc_mail_handler($key, &$message, $params) {
 			'Content-Transfer-Encoding' => '8Bit',
 			'X-Mailer' => 'Drupal',
 		);
+		
 	}
 }
 
@@ -169,7 +194,7 @@ function notify_mentor_and_supervisor_of_proposal_update($record, $is_update){
 	//$test_email = 'your_test_email_address';
 
 	$subject = t('VALS Proposal Notification');
-
+	$items = array();
 	if(isset($record->supervisor_user_mail) && isset($record->supervisor_user_name)){
 		$supervisor_body = get_proposal_email_body($record, $is_update, 'supervisor');
 		$items[0] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $record->supervisor_user_mail, 'from' => NULL, 'subject' => $subject, 'body' => $supervisor_body);

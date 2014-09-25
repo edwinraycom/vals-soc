@@ -10,6 +10,11 @@ html{
 .invisible {
 	display: none;
 }
+
+label {
+	display: inline; /*in system.theme.css it is set to block */
+}
+
 span.comment_author{
 	color: #2385C2;
 	font-style: italic;
@@ -29,6 +34,12 @@ input[type=button]  {
 	margin-right:auto;
 	text-align: right ; 
 }
+
+.centerbottom {
+	text-align:center;
+	/* TODO: something here to make the div appear at the bottom */
+}
+
 /* necessary to get the close button relative to the messages box */
 div.messages {
 	position:relative;

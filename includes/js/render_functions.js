@@ -29,40 +29,79 @@ function renderProposalOverview(proposal){
 }
 
 function renderProject(project, apply_projects){
-
+	var navigation = true;
 	var content = "<h2>"+project.title+"</h2>";
 	content += project.description;
 	if(project.url){
 		content += "<br/><a target='_blank' class='external' href='" + project.url + "'>" + project.url + "</a>";
 	}
 
+	content += "<h2>Your Opinion</h2>"+ 
+		renderRecommendation(project.pid);
+	content += "<br/>";
+	content += renderSupervisorLike(project.pid, 1);
 	// comments
 	content += "<div id=\"comments-project-"+project.pid+"\"></div>";
 	// go and get the comments asych...
 	getCommentsForEntity(project.pid, 'project','comments-project-'+project.pid);
-	//
 	if (apply_projects){
-		content +="<div class=\"totheright\" style=\"display:none\">";
+		content +="<div class=\"totheright\">";//style=\"display:none\"
 		//content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 
 		//content +="<br/><br/><input id='vals-btn-cancel' type='button' onclick=\"Drupal.CTools.Modal.dismiss()\" value='Cancel' />";
 		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='Submit proposal for this project'/>";
 		content +="</div>";
 
-		content +=
-			"<script type='text/javascript'>"+
-				"$jq.get( url('language','translate'), { words: ['Cancel','Submit proposal for this project'] }, function(result) {"+
-				"if(result){"+
-					"var parsed = JSON.parse(result);"+
-					//"$jq('#vals-btn-cancel').prop('value', parsed[0]);"+
-					"$jq('#vals-btn-submit-proposal').prop('value', parsed[1]);"+
-				"}"+
-				"$jq('.totheright').show();"+
-				" });"+
-			"</script>";
+//		content +=
+//			"<script type='text/javascript'>"+
+//				"$jq.get( url('language','translate'), { words: ['Cancel','Submit proposal for this project'] }, function(result) {"+
+//				"if(result){"+
+//					"var parsed = JSON.parse(result);"+
+//					//"$jq('#vals-btn-cancel').prop('value', parsed[0]);"+
+//					"$jq('#vals-btn-submit-proposal').prop('value', parsed[1]);"+
+//				"}"+
+//				"$jq('.totheright').show();"+
+//				" });"+
+//			"</script>";
 	}
+	if (navigation){
+		if (typeof project.nav != 'undefined'){
+			content +="<div class=\"centerbottom\">";//style=\"display:none\"
+			//content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 
+			//content +="<br/><br/><input id='vals-btn-cancel' type='button' onclick=\"Drupal.CTools.Modal.dismiss()\" value='Cancel' />";
+			content += (project.nav.prev_pid ? 
+					"<input id='vals-btn-prev' type='button' onclick='ajaxCall(\"project\", " +
+					"\"project_detail\", {project_id: "+project.nav.prev_pid+", index: "+project.nav.prev_nr+"}" +
+					", \"populateModal\", \"json\", [renderProject, "+apply_projects+", 1]);' " +//3rd arg is true denoting that result will be parsed arg to populate fun
+					" value='Prev'/>": "") +
+					(project.nav.next_pid ? "<input id='vals-btn-next' type='button' onclick='ajaxCall(\"project\", " +
+					"\"project_detail\", {project_id: "+project.nav.next_pid+", index: "+project.nav.next_nr+"}" +
+					", \"populateModal\", \"json\", [renderProject, "+apply_projects+", 1]);' " +//3rd arg is true denoting that result will be parsed arg to populate fun
+					" value='Next'/>": "");
+			content +="</div>";	
+		}
+	}
 	return content;
+}
+
+function renderRecommendation(pid){
+	return "<div id='recommend_msg'></div>"+
+		"Recommend this project to: <input type='text' id='recommend_email' name='recommend_email'/>"+
+		"<input type='button' value='Recommend' onclick='ajaxCall(\"project\", \"recommend\", {id: "+ 
+			pid+ ", email: $jq(\"#recommend_email\").val()}, \"recommend_msg\");' />";
+}
+
+function renderSupervisorLike(pid, current){
+	return "Could you or do you want to be the supervisor for this project for one of this institutes students?<br>"+
+	"<label><input type='radio' value='-1' id='project_like_1' name='project_like' "+ 
+		((-1 == current)? 'checked="checked"': '') + "/> Not for me </label>&nbsp;" +
+	"<label><input type='radio' value=0 id='project_like0' name='project_like' "+ 
+		((0 == current)? 'checked="checked"': '') + "/> Maybe </label>&nbsp;" +	
+	"<label><input type='radio' value=1 id='project_like1' name='project_like' "+ 
+		((1 == current)? 'checked="checked"': '') + "/> Would suit me </label>&nbsp;<input type='button' value='Save Preference' onclick='ajaxCall(\"project\", \"rate\", {id: "+ pid+
+		", rate: $jq(\"input:radio[name=project_like]:checked\").val()}, \"recommend_msg\");'/>"
+		;
 }
 
 function renderOrganisation(org, contact_possible){
@@ -188,7 +227,7 @@ function getProposalDetail(proposal_id, target, msg){
 				//TODO this case should be covered too:  tabs_created = populateModal(data, renderProposalTabs, tabs);
 		}
 		if (tabs_created){
-			//TODO: these activate tabs should also been done for the modal case
+			//TODO: these activate tabs should be done for the case where tabs are created
 			console.log('doing the tabs second');
 			console.log(content_tabs);
 			activatetabs('tab_', content_tabs);

@@ -13,6 +13,85 @@ switch ($_GET['action']){
 		module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 		initBrowseProjectLayout();
 	break;
+	case 'recommend':
+		if (!(Users::isSuperVisor()|| Users::isInstituteAdmin() ||_DEBUG)){
+			echo t('You can only rate a project as staff member of an institute.');
+			return;
+		}
+		$mails = array();
+		$id = getRequestVar('id');
+		$mail = array('from' => $GLOBALS['user']->mail);
+		$mail['body'] = tt('Hello,')."\n\n".
+				tt('I would like to recommend the following project to you: %1$s',
+						_VALS_SOC_FULL_URL."/projects/browse?pid=9$id."). "\n\n".
+						t('Kind regards,')."\n\n".
+						Users::getMyName();
+		$mail['subject'] = t('Recommendation from your supervisor');
+		$mail['plain'] = true;
+		
+		$email = str_replace(' ', '', getRequestVar('email'));
+		
+		//TODO: remove this later. FYI both smtp module and mail can handle comma separated mail recipient lists. If one of 
+		//those is invalid, the others are sent, but as I thought I had to use vals_soc_send_emails_now for multiple messages
+		//one of them is sent with invalid address and so the following buggy message (punctuation and content) is shown: 
+		//'Invalid address: testingnonsensYou must provide at least one recipient email address. '
+		//this is a bad message for a user sending a list of users one email. Better is to send one mail with multiple recipiendt
+		//and let smtp or php mail sort out that one of those is incorrect. Last try now: 1. send one mail with smtp where one 
+		//address is wrong, 2. sending with php mail and one incorrect address.
+		//REsult: for 1, since there are other valid addresses: the invalid one is ignored completely: test: have one nonsens address only
+		//That gives: the result true and no messages. 
+		//Moreover: all the mail addressses are visible to all the recipients!
+		//So we choose to send all emails apart and then to hide the messages from drupal and produce our own.
+		//It is a bit inefficient, but ok. A valid email address in smtp is when: 
+		
+		$emails = explode(',', $email);
+		if (count($emails) > 1){
+			$no = 0;
+			foreach ($emails as $email){
+				if ($email) {
+					$mails[] = $mail;
+					$mails[$no]['to'] = $email;
+					$no++;
+				}
+			}
+		} else {
+			$mails[] = $mail;
+			$mails[0]['to'] = $email;
+		}
+		
+// 		$mail['to'] = $email;//NEW
+// 		$mails[] = $mail;//NEW
+		module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
+		if (vals_soc_send_emails_now($mails)) {
+			echo successDiv(t('You sent your recommendation(s)'));
+		} else {
+			echo errorDiv(t('Something wrong with sending your recommendation(s): ').getDrupalMessages('error'));
+		}
+		break;
+	case 'rate':
+		//do something
+		if (!(Users::isSuperVisor()|| _DEBUG)){
+			echo t('You can only rate a project as supervisor.');
+			return;
+		}
+		$rate = getRequestVar('rate');
+		$id = getRequestVar('id');
+		$table = tableName('supervisor_rate');
+		$result = FALSE;
+		$num_deleted = db_delete($table)
+			->condition('pid', $id)
+			->condition('uid', $GLOBALS['user']->uid)
+			->execute();
+		if ($num_deleted !== FALSE){
+			$result = db_insert($table)
+				->fields(array('pid'=> $id,
+					'uid'=>$GLOBALS['user']->uid,
+					'rate'=>$rate))
+				->execute();
+		}
+		echo $result ? t('You have marked this project succesfully'): t('Something went wrong with the project rating.');
+
+		break;
 	case 'list_search':
 		try{
 			$tags=null;
@@ -42,6 +121,11 @@ switch ($_GET['action']){
 				$jTableResult['Records'] = Project::getInstance()->getProjectsBySearchCriteria($tags,
 						$organisation, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
 			}
+			//Save it for navigation
+			$_SESSION['lists']['projects'] = array();
+			$_SESSION['lists']['projects']['nr'] = count($jTableResult['Records']);
+			$_SESSION['lists']['projects']['list'] = $jTableResult['Records'];
+			$_SESSION['lists']['projects']['current'] = -1;
 			print json_encode($jTableResult);
 		}
 		catch(Exception $ex){
@@ -78,17 +162,46 @@ switch ($_GET['action']){
 		}
 		break;
 	case 'project_detail':
-		$project_id=null;
-		if(isset($_GET['project_id'])){
+		$project_id = getRequestVar('project_id', null);
+		$project = null;
+		if($project_id){
 			try {
-				$project = Project::getProjectById($_GET['project_id']);
+				if (isset($_SESSION['lists']['projects']) && $_SESSION['lists']['projects']){
+					$current = getRequestVar('current',-1);
+					if ($current >=0){
+						$project = $_SESSION['lists']['projects']['list'][$current];
+					} else {
+						$current = 0;
+						foreach($_SESSION['lists']['projects']['list'] as $project_from_list){
+							if ($project_from_list->pid == $project_id){
+								$project = objectToArray($project_from_list);
+								$_SESSION['lists']['projects']['list']['current'] = $current;
+								$next_nr = $current < ($_SESSION['lists']['projects']['nr'] -1) ? $current + 1 : FALSE;
+								$next_pid = $next_nr ? $_SESSION['lists']['projects']['list'][$next_nr]->pid : FALSE;
+								$prev_nr = ($current > 0) ? ($current - 1) : FALSE;
+								$prev_pid = ($prev_nr !== FALSE) ? $_SESSION['lists']['projects']['list'][$prev_nr]->pid : FALSE;
+								$project['nav'] = array(
+									'next_pid' =>  $next_pid,
+									'next_nr' => $next_nr,
+									'prev_pid' =>  $prev_pid,
+									'prev_nr' => $prev_nr,
+								);
+								break;
+							}
+							$current++;
+						}
+					}
+				}
+				if (!$project){
+					 $project = Project::getProjectById($project_id);
+				}
 				jsonGoodResult($project);
 			} catch (Exception $e){
 				jsonBadResult($e->getMessage());
 			}
 		}
 		else{
-			jsonBadResult( t("No Project identifier submitted!"));
+			jsonBadResult( t("No valid project identifier submitted!"));
 		}
 	break;
 	case 'view':

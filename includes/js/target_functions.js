@@ -338,22 +338,29 @@ function handleSubmitResult(result, args){
 
 }
 
-function populateModal(result, fun, arg){
+function populateModal(result, args){
 	// TODO : work more on the formatting
 	// and add other fields from DB
-	try{
-		var data = jQuery.parseJSON(result);
-	} catch (err){
-		console.log('Some program error occured. We could not render the result');
-		Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
-		if (debugging){
-			Obj("modal-content").html("<div class='messages error'>"+result+ "</div>");
-		} else {
-			Obj("modal-content").html("<div class='messages error'>Some program error occured. Could not parse result.</div>");
+	if ((typeof args[2] != 'undefined') && args[2] ){
+		//The result will be a js object already parsed
+		var data = result;
+	} else {
+		try{
+			var data = jQuery.parseJSON(result);
+		} catch (err){
+			console.log('Some program error occured. We could not render the result');
+			Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
+			if (debugging){
+				Obj("modal-content").html("<div class='messages error'>"+result+ "</div>");
+			} else {
+				Obj("modal-content").html("<div class='messages error'>Some program error occured. Could not parse result.</div>");
+			}
 		}
 	}
 	if (data && data.result !== 'error'){
 		var content = '';
+		var fun = args[0];
+		var arg = (typeof args[1] != 'undefined') ? args[1] : null;
 		if (typeof fun == 'function'){
 			content = fun(data.result, arg);
 		} else {
@@ -362,8 +369,7 @@ function populateModal(result, fun, arg){
 		try{
 			Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
 			Obj("modal-content").html(content);
-		} 
-		catch (err){
+		} catch (err){
 			console.log(err);
 		}
 		return true;
@@ -382,7 +388,7 @@ function generateAndPopulateModal(result, fun, arg){
 	// TODO : work more on the formatting
 	// and add other fields from DB
 	Drupal.CTools.Modal.show();
-	var return_result = populateModal(result, fun, arg);
+	var return_result = populateModal(result, [fun, arg]);
 	Drupal.attachBehaviors();
 	return return_result;
 }
