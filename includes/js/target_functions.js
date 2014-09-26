@@ -360,9 +360,10 @@ function populateModal(result, args){
 	if (data && data.result !== 'error'){
 		var content = '';
 		var fun = args[0];
-		var arg = (typeof args[1] != 'undefined') ? args[1] : null;
+		var arg1 = (typeof args[1] != 'undefined') ? args[1] : null;
+		console.log('show type of data '+typeof data.result);
 		if (typeof fun == 'function'){
-			content = fun(data.result, arg);
+			content = fun(data.result, arg1);
 		} else {
 			content = data.result;
 		}
@@ -384,11 +385,11 @@ function populateModal(result, args){
 	};
 }
 
-function generateAndPopulateModal(result, fun, arg){
+function generateAndPopulateModal(result, fun, arg1){
 	// TODO : work more on the formatting
 	// and add other fields from DB
 	Drupal.CTools.Modal.show();
-	var return_result = populateModal(result, [fun, arg]);
+	var return_result = populateModal(result, [fun, arg1]);
 	Drupal.attachBehaviors();
 	return return_result;
 }

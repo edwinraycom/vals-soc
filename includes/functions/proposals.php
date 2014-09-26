@@ -89,6 +89,7 @@ function renderProposal($proposal, $target='none', $follow_action='show'){
 function showMyProposals($proposals, $current_tab_propid=0){
 	$nr = 0;
 	$apply_projects = $apply_projects = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
+	$rate_projects = Users::isSuperVisor();
 	$tab_id_prefix = "proposal_page";
 	$data = array();
 	$activating_tabs = array();
@@ -115,6 +116,7 @@ function showMyProposals($proposals, $current_tab_propid=0){
 	<script type="text/javascript">
 		window.view_settings = {};
 		window.view_settings.apply_projects = <?php echo $apply_projects ? 1: 0;?>;
+		window.view_settings.rate_projects  = <?php echo $rate_projects  ? 1: 0;?>;
 		activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>], '<?php echo $current_tab_id;?>');
 	</script>
 <?php
@@ -123,6 +125,7 @@ function showMyProposals($proposals, $current_tab_propid=0){
 function initBrowseProposalsLayout(){
 	$org_id=0;
 	$apply_projects = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
+	$rate_projects = Users::isSuperVisor();
 	$browse_proposals = vals_soc_access_check('dashboard/proposals/browse') ? 1 : 0;
 	$proposal_tabs = array();
 	if(isset($_GET['organisation'])){
@@ -193,7 +196,7 @@ function initBrowseProposalsLayout(){
 			//to the path
 			window.view_settings = {};
 			window.view_settings.apply_projects = <?php echo $apply_projects ? 1: 0;?>;
-
+			window.view_settings.rate_projects  = <?php echo $rate_projects  ? 1: 0;?>;
 
 			function loadFilteredProposals(){
 				$("#TableContainer").jtable("load", {
