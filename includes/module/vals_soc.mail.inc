@@ -114,6 +114,10 @@ function vals_soc_mail_handler($key, &$message, $params) {
 	//return address (variable_get('system_mail')) and the key is only important to create a body here.
 	$html_format = true;
 	switch($key) {
+		case 'vals_soc_notify_project_status_change':
+			$message['subject'] = $params['subject'];
+			$message['body'][] = $params['body'];
+			break;
 		case 'vals_soc_notify_new_proposal':
 			$message['subject'] = $params['subject'];
 			$message['body'][] = $params['body'];
@@ -188,25 +192,55 @@ function vals_soc_mail_alter_handler(&$message) {
 	//vals_soc_mail_handler.
 }
 
+/**
+ * Emails anybody who has put a proposal forward for a project, when the mentor sets a particular
+ * proposal to preferred or sets it finally chosen. (Both the student & his/her supervisor receives the email)
+ * as well as any rejected/not preferred proposal owners/supervisors
+ * @param unknown $all_proposals
+ * @param unknown $successful_proposal_id
+ * @param unknown $is_final
+ */
+function notify_students_and_supervisors_of_project_status_update($all_proposals, $successful_proposal_id, $is_final){
+	$items = array();
+	$number_of_emails_count = 0;
+	$subject = t('VALS Notification: A propsective mentor has set a proposal status for a project');
+	foreach($all_proposals as $proposal) {
+		if($proposal->proposal_id != $successful_proposal_id){
+			// unsuccessful ones
+			$message_body_student = get_project_status_update_email_body($proposal, $is_final, true, false);
+			$message_body_supervisor = get_project_status_update_email_body($proposal, $is_final, false, false);
+		}
+		else{
+			// the successful one
+			$message_body_student = get_project_status_update_email_body($proposal, $is_final, true, true);
+			$message_body_supervisor = get_project_status_update_email_body($proposal, $is_final, false, true);
+		}
+		$student_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mail);
+		$supervisor_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->supervisor_user_mail);
+		$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_project_status_change', 'to' => $student_recipient, 'from' => NULL, 'subject' => $subject, 'body' => $message_body_student);
+		$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_project_status_change', 'to' => $supervisor_recipient, 'from' => NULL, 'subject' => $subject, 'body' => $message_body_supervisor);
+
+	}
+	
+	vals_soc_send_emails_cron($items);
+}
+
 function notify_mentor_and_supervisor_of_proposal_update($record, $is_update){
 	// TODO - fix the name missing on one of the emails
-	// TODO - load the test setting using the debug flag
-	//$test_email = 'your_test_email_address';
-
 	$subject = t('VALS Proposal Notification');
 	$items = array();
 	if(isset($record->supervisor_user_mail) && isset($record->supervisor_user_name)){
 		$supervisor_body = get_proposal_email_body($record, $is_update, 'supervisor');
-		$items[0] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $record->supervisor_user_mail, 'from' => NULL, 'subject' => $subject, 'body' => $supervisor_body);
-		//$items[0] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $test_email, 'from' => NULL, 'subject' => $subject, 'body' => $supervisor_body);
+		$recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $record->supervisor_user_mail);
+		$items[0] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $recipient, 'from' => NULL, 'subject' => $subject, 'body' => $supervisor_body);
 	}else{
 		drupal_set_message(t('unable to send supervisor proposal notification email: missing email or username'));
 	}
 
 	if(isset($record->mentor_user_mail) && isset($record->mentor_user_name)){
 		$mentor_body = get_proposal_email_body($record, $is_update, 'mentor');
-		$items[1] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $record->mentor_user_mail, 'from' => NULL, 'subject' => $subject, 'body' => $mentor_body);
-		//$items[1] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $test_email, 'from' => NULL, 'subject' => $subject, 'body' => $mentor_body);
+		$recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $record->mentor_user_mail);
+		$items[1] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $recipient, 'from' => NULL, 'subject' => $subject, 'body' => $mentor_body);
 	}else{
 		drupal_set_message(t('unable to send supervisor proposal notification email: missing email or username'));
 	}

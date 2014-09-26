@@ -4,6 +4,7 @@ include('include.php');//Includes the necessary bootstrapping and the ajax funct
 module_load_include('php', 'vals_soc', 'includes/classes/ThreadedComments');
 module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 module_load_include('php', 'vals_soc', 'includes/classes/Project');
+module_load_include('php', 'vals_soc', 'includes/classes/Proposal');
 module_load_include('php', 'vals_soc', 'includes/functions/projects');
 module_load_include('php', 'vals_soc', 'includes/functions/ajax_functions');
 
@@ -358,15 +359,6 @@ switch ($_GET['action']){
     		$selected_prev_set = true;
     	}
 
-    	if($is_final == 0){// set to interim
-    		// EMAIL - new proposal student & supervisor - 'your proposal has been marked as preferred by the project owner for project xyz....this can change..'
-    		// EMAIL - all other students proposals - 'A proposal has been marked as preferred by the project owner. Unfortunately it is not your proposal.....this can change..'
-    	}
-    	else if($is_final == 1){// set to final
-    		// EMAIL - new proposal student & supervisor - 'your proposal has been accepted by the project owner for project xyz....'
-    		// EMAIL - all other rejected students proposals - 'your proposal has been declined by the project owner for project xyz....'
-    	}
-    	
     	if(!$selected_prev_set){
     	// update the project
     		$props['proposal_id'] = $proposal_id;
@@ -374,7 +366,11 @@ switch ($_GET['action']){
     		$result = Project::changeProject($props, $project_id);
     		//send message back giving status & success message
     		if ($result){
-    			echo t('Changes successfully made');
+    			// fire our emails
+    			$all_proposals_for_this_project = Proposal::getProposalsPerProject($project_id, null, true);
+    			module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
+    			notify_students_and_supervisors_of_project_status_update($all_proposals_for_this_project, $proposal_id, $is_final);
+    			echo t('Changes successfully made.');
     		} 
     		else{
     			echo t('There was a problem updating your project preferences.');
@@ -382,7 +378,6 @@ switch ($_GET['action']){
     	}
     	else{
     		// send message back saying mentor has already made his decision & can't change it
-    		//echo '$proposal_id='.$proposal_id.':'.'$project_id='.$project_id.':'.'$is_final='.$is_final;
     		echo t('You already have chosen a final proposal for this project, you cannot change it now.');
     	}
     	break;

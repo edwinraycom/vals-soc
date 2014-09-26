@@ -188,3 +188,167 @@ function get_invite_email_body($entity, $subtype='', $organisation_name=''){
 	$output .= '<p>';
 	return $output;
 }
+
+
+function get_project_status_update_email_body($record, $is_final, $is_student, $is_successful){
+	$output = '';
+	$server = _VALS_SOC_FULL_URL;
+	
+	$student_username = $record->name; //student userid
+	$student_email = $record->mail; // student mail
+	$student_institute = $record->i_name; //Institute name where student is from
+	
+	$supervisor_username = $record->supervisor_user_name;
+	$supervisor_email = $record->supervisor_user_mail;
+	
+	$mentor_username = $record->mentor_user_name;
+	$mentor_email = $record->mentor_user_mail;
+	$mentor_organisation = $record->o_name;
+	
+	$project_title = $record->pr_title; //project title
+	$proposal_title = $record->title; //proposal title
+	$proposal_synopsis = $record->solution_short;
+	$alert='';
+	
+	if(!$is_student){ // supervisor 
+		$recipient_username = $record->supervisor_user_name;
+		if($is_final && !$is_successful){
+			$alert .= t('One of your students has previously made a proposal to the project idea below. '.
+					'The owner of that project has however decided to mark another students proposal as their FINAL choice. '.
+					'This decision is final and so unfortunately your students proposal has been declined. '. 
+					'This gives you both advance warning in case you wish to submit another proposal for another project idea before the end of the student signup period. ');
+		}
+		else if(!$is_final && !$is_successful){
+			$alert .= t('One of your students has previously made a proposal to the project idea below. '.
+					'The owner of that project has however decided to mark another students proposal as his/her preferred interim one at this time. '.
+					'This decision is NOT final however and the owner may in the future decide to change this to another students proposal. '. 
+					'This gives your student an opportunity to revise and/or restructure his/her proposal if they wish to do so. '.
+					'This also gives you both advance warning in case you wish to submit another proposal for another project idea before the end of the student signup period. '.
+					'If the project owners decision does become final, you will be informed by email.');
+		}
+		else if($is_final && $is_successful){
+			$alert .= t('One of your students has previously made a proposal to the project idea below. '.
+					'The owner of that project has decided to mark your students proposal as their FINAL choice. '.
+					'This decision is final and so your students proposal is the accepted solution for this project idea. ');
+		}
+		else if(!$is_final && $is_successful){
+			$alert .= t('One of your students has previously made a proposal to the project idea below. '.
+					'The owner of that project has decided to mark your students proposal as his/her preferred interim one at this time. '.
+					'This decision is NOT final however and the owner may in the future decide to change this to another students proposal. '.
+					'If the project owners decision does become final or he/she changes their preferred interim proposal, you will be informed by email.');
+		}
+	}
+	else{// student 
+		$recipient_username = $record->name;
+		if($is_final && !$is_successful){
+			$alert .= t('You have previously made a proposal to the project idea below. '.
+					'The owner of that project has however decided to mark another students proposal as their FINAL choice. '.
+					'This decision is final and so unfortunately your proposal has been declined. '. 
+					'This gives you advance warning in case you wish to submit another proposal for another project idea before the end of the student signup period. ');
+		}
+		else if(!$is_final && !$is_successful){
+			$alert .= t('You have previously made a proposal to the project idea below. '.
+					'The owner of that project has however decided to mark another students proposal as his/her interim preferred one at this time. '.
+					'This decision is NOT final however and the owner may in the future decide to change this to another students proposal. '. 
+					'This gives you an opportunity to revise and/or restructure your proposal if you wish to do so. '.
+					'This also gives you advance warning in case you wish to submit another proposal for another project idea before the end of the student signup period. '.
+					'If the project owners decision does become final, you will be informed by email.');
+		}
+		else if($is_final && $is_successful){
+			$alert .= t('You have previously made a proposal to the project idea below. '.
+					'The owner of that project has decided to mark your proposal as their FINAL choice. '.
+					'This decision is final and so your proposal is the accepted solution for this project idea. ');
+		}
+		else if(!$is_final && $is_successful){
+			$alert .= t('You have previously made a proposal to the project idea below. '.
+					'The owner of that project has decided to mark your proposal as his/her preferred interim one at this time. '.
+					'This decision is NOT final however and the owner may in the future decide to change this to another students proposal. '.
+					'If the project owners decision does become final or he/she changes their preferred interim proposal, you will be informed by email.');
+		}
+	}
+	$output='';
+	$output .= '<p>';
+	$output .= t('Hello').' '. $recipient_username . ',';
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= $alert;
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$text= '';
+	if(!$is_student){
+		$text='students ';
+	}
+	$output .= t('For information, here is an overview of your '.$text . 'submitted proposal...');
+	$output .= '<br/>';
+	
+	$output .= "<p>";
+	$output .= "<b>" . t('Project idea') . "</b>";
+	$output .= "<br/>";
+	$output .= $project_title;
+	$output .= "</p>";
+	
+	$output .= "<p>";
+	$output .= "<b>" . t('Proposal title') . "</b>";
+	$output .= "<br/>";
+	$output .= $proposal_title;
+	$output .= "</p>";
+	
+	$output .= "<p>";
+	$output .= "<b>" . t('Proposal synopsis') . "</b>";
+	$output .= "<br/>";
+	$output .= $proposal_synopsis;
+	$output .= "</p>";
+	
+	
+	$output .= "<b>" . t('Contact details') . "</b>";
+	$output .= '<ul class=\'grouplist\'>';
+	
+	$output .= "<li>";
+	$output .= t('Student username') . ": <i>" . $student_username . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Student email') . ": <i>" . $student_email . "</i>";
+	$output .= "</li>";
+	
+	$output .= '<br/>';
+	
+	$output .= "<li>";
+	$output .= t('Student supervisors username') . ": <i>" . $supervisor_username . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Student supervisors email') . ": <i>" . $supervisor_email . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Students Institution') . ": <i>" . $student_institute . "</i>";
+	$output .= "</li>";
+	
+	$output .= '<br/>';
+	
+	$output .= "<li>";
+	$output .= t('Initial mentors username') . ": <i>" . $mentor_username . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Initial mentors email') . ": <i>" . $mentor_email . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Initial mentors Organisation') . ": <i>" . $mentor_organisation . "</i>";
+	$output .= "</li>";
+	
+	$output .= "</ul>";
+	
+	$output .= "<p>";
+	$output .= tt('Go to <a href="%1$s/dashboard" target="_blank">%1$s/dashboard</a> to view more details.', $server);
+	$output .= "</p>";
+	
+	$output .= '<br/>';
+	$output .= t('Many Thanks,');
+	$output .= '<br/>';
+	$output .= t('The VALS team');
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= sprintf('<img src="%1$s/sites/all/themes/media/logo.png">', $server);
+	$output .= '<p>';
+	//
+
+	return $output;
+}

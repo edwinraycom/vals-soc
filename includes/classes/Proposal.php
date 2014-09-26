@@ -44,8 +44,8 @@ class Proposal extends AbstractEntity{
     	return $proposal;
     }
     
-    public static function getProposalsPerProject($project_id, $student_id=0){
-    	$query = db_select('soc_proposals', 'p')->fields('p');
+    public static function getProposalsPerProject($project_id, $student_id=0, $details=false){
+    	$query = db_select('soc_proposals', 'p')->fields('p', self::$fields);
     	$query->condition('p.pid', $project_id);
     	if ($student_id){
     		$query->condition('p.owner_id', $student_id);
@@ -54,6 +54,16 @@ class Proposal extends AbstractEntity{
     	$query->leftjoin('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
     	$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
     	$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid');
+    	if($details){// details gets the supervisor and student names & email addresses also
+    		$query->leftjoin('users', 'mentor_user', 'pr.mentor_id = %alias.uid');
+    		$query->leftjoin('soc_names', 'mentor', 'pr.mentor_id = %alias.names_uid');
+    		$query->leftjoin('users', 'u1', 'p.owner_id = %alias.uid');
+    		$query->leftjoin('users', 'supervisor_user', 'p.supervisor_id = %alias.uid');
+    		$query->fields('u1', array('mail', 'name'));
+    		$query->fields('supervisor_user', array('mail', 'name'));
+    		$query->fields('mentor_user', array('mail', 'name'));
+    		$query->fields('mentor', array('name'));
+    	}
     	$query->fields('student', array('name'));
     	$query->fields('i', array('name'));
     	$query->fields('o', array('name'));
