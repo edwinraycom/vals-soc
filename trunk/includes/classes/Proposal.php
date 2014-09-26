@@ -241,7 +241,7 @@ class Proposal extends AbstractEntity{
     static function filterPost(){
     	
     	//TODO: get the db fields from schema 
-    	$fields = array('title', 'solution_short', 'solution_long');
+    	$fields = array('title', 'solution_short', 'solution_long', 'supervisor_id');
     	
     	$input = array();
     	foreach ($fields as $prop){

@@ -14,6 +14,8 @@ echo "var debugging = ".($_SESSION['site_settings'][2] ? 'true' : 'false').";\n"
 var console_Jquery_migrate_warnings_silent = true;
 var event_counter = 1;
 
+/* TODO: we placed these functions here for the time being. Should have a separate file actually */
+
 //Some settings for ajax calls
 function getMouseXY(e) {
 	

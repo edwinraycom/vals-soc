@@ -161,19 +161,31 @@ function renderProposalOverview(proposal){
 	
 	return content;
 }
-
+/*
+ * This function is called to render the project retrieved with an ajax call to project_detail always
+ */
 function renderProject(project, apply_projects){
 	var navigation = true;
 	var content = "<h2>"+project.title+"</h2>";
+	var rate_projects = window.view_settings.rate_projects;
 	content += project.description;
 	if(project.url){
 		content += "<br/><a target='_blank' class='external' href='" + project.url + "'>" + project.url + "</a>";
 	}
-
-	content += "<h2>Your Opinion</h2>"+ 
-		renderRecommendation(project.pid);
-	content += "<br/>";
-	content += renderSupervisorLike(project.pid, 1);
+	console.log("hoe zit het met rating "+rate_projects);
+	if ((typeof rate_projects != 'undefined') && rate_projects){
+		if (typeof project.rating != 'undefined') {
+			rate = project.rating;
+			console.log(' hij was gedefinieerd');
+		} else {
+			rate = 0;
+			console.log(' hij was NIET gedefinieerd');
+		}
+		content += "<h2>Your Opinion</h2>"+ 
+			renderRecommendation(project.pid);
+		content += "<br/>";
+		content += renderSupervisorLike(project.pid, rate);
+	}
 	// comments
 	content += "<div id=\"comments-project-"+project.pid+"\"></div>";
 	// go and get the comments asych...
@@ -467,14 +479,15 @@ function getProposalFormForProject(projectId){
 	//   ajaxCall(module, action, data, handleResult, json, args)
 	//   ajaxCall(module, action, data, target, html)
 	//Note that formResult and jsonFormResult store the call in the target and convert the textareas
-	ajaxCall("student", "proposal", {id: projectId, target: 'our_content'}, "formResult", 'html', 'our_content');
+	ajaxCall('proposal', 'proposal_form', {id: projectId, target: 'our_content'}, "formResult", 'html', 'our_content');
 }
 
 function getProjectDetail(projectId){
 	var url = moduleUrl + "actions/project_actions.php?action=project_detail&project_id=" + projectId;
 	//TODO: currently the apply projects is passed around as global. not so elegant
 	$jq.get(url, function(data,status){
-		generateAndPopulateModal(data, renderProject, window.view_settings.apply_projects);
+		generateAndPopulateModal(data, renderProject, window.view_settings.apply_projects,
+			window.view_settings.rate_projects);
 	});
 }
 

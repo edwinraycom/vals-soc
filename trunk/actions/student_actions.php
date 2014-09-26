@@ -58,7 +58,13 @@ switch ($_GET['action']){
 					t('First supervisor'), $student_details->supervisor_name)
 			//"<br/>Group: ".$student_details->group_name.
 				."</div><hr>";
-			$form = drupal_get_form('vals_soc_proposal_form', $proposal, $target, $project_id);
+			$possible_supervisors = db_query("SELECT R.uid, U.name, N.name as full_name FROM ".tableName('supervisor_rate'). " R ".
+					" LEFT JOIN soc_names N on R.uid = N.names_uid ".
+					" LEFT JOIN users U on R.uid = U.uid ".
+					" WHERE R.pid = $project_id" 
+					//." AND R.type = 'supervisor'"
+					)->fetchAll();
+			$form = drupal_get_form('vals_soc_proposal_form', $proposal, $target, $project_id, $possible_supervisors);
 			renderForm($form, $target);
 			echo "</div>";
 		} else {

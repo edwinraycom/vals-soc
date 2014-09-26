@@ -15,7 +15,7 @@ switch ($_GET['action']){
 		initBrowseProjectLayout();
 	break;
 	case 'recommend':
-		if (!(Users::isSuperVisor()|| Users::isInstituteAdmin() ||_DEBUG)){
+		if (!(Users::isSuperVisor() ||_DEBUG)){
 			echo t('You can only rate a project as staff member of an institute.');
 			return;
 		}
@@ -199,6 +199,11 @@ switch ($_GET['action']){
 				}
 				if (!$project){
 					 $project = Project::getProjectById($project_id);
+				}
+				if (Users::isSuperVisor()){
+					$project['rate'] = Project::getRating($project_id, Users::getMyId());
+				} else {
+					$project['rate'] = -2;
 				}
 				jsonGoodResult($project);
 			} catch (Exception $e){

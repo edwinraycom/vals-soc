@@ -188,6 +188,7 @@ function initBrowseProjectLayout($pid=''){
 		$org_id = $_GET['organisation'];
 	}
 	$apply_projects = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
+	$rate_projects = Users::isSuperVisor();
 	?>
 	<div class="filtering" id="browse_projects">
 		<span id="infotext" style="margin-left: 34px"></span>
@@ -211,6 +212,7 @@ function initBrowseProjectLayout($pid=''){
 
 		window.view_settings = {};
 		window.view_settings.apply_projects = <?php echo $apply_projects ? 1: 0;?>;
+		window.view_settings.rate_projects  = <?php echo $rate_projects  ? 1: 0;?>;
 	
 		//Prepare jTable
 		$("#ProjectTableContainer").jtable({

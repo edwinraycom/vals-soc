@@ -299,6 +299,26 @@ class Project extends AbstractEntity{
 		 
 		return $my_projects;
 	}
+	static function getInterestedSupervisors($project_id){
+		return db_query("SELECT R.uid, U.name, N.name as full_name FROM ".
+				tableName('supervisor_rate'). " R ".
+				" LEFT JOIN soc_names N on R.uid = N.names_uid ".
+				" LEFT JOIN users U on R.uid = U.uid ".
+				" WHERE R.pid = $project_id"
+				//." AND R.type = 'supervisor'"
+			. " AND R.rate >= 0"
+		)->fetchAll();
+	}
+	
+	static function getRating($project_id, $user_id){
+		$rating = db_query("SELECT R.rate FROM ".
+				tableName('supervisor_rate'). " R ".
+				" WHERE R.pid = $project_id AND R.uid = $user_id "
+				//." AND ( R.type = 'supervisor' OR R.type = 'institute_admin') "
+				//. " AND R.rate >= 0"
+		)->fetchObject();
+		return $rating ? $rating->rate : -2;
+	}
 	
 	static function addProject($props){
 		if (! $props){

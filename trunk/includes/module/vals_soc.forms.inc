@@ -684,7 +684,7 @@ function vals_soc_project_form($form, &$form_state, $project='', $target='', $or
 	return $form;
 }
 
-function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $project_id=''){
+function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $project_id='', $possible_supervisors=''){
 	$project_id = $proposal ? $proposal->pid : $project_id;
 	if (! $project_id){
 		drupal_set_message(
@@ -704,6 +704,21 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 		"#default_value" => populate($proposal, 'title'),
 		"#description" => t("For easy communication, it is nice to have a title for your proposal"),
 	);
+	$options = array(0 => t('Choose later'));
+	if ($possible_supervisors){
+		foreach ($possible_supervisors as $super_obj) {
+			$options[$super_obj->uid] = ($super_obj->full_name ?: $super_obj->name);
+		}
+	}
+	$form['supervisor_id'] = array(
+			"#type" => "select",
+			'#title' => t('Choose a supervisor for this project'),
+			"#options" => $options,
+			'#required' => '0',
+			"#default_value" => populate($proposal, 'supervisor'),
+			"#description" => t("You can also choose a supervisor later. The supervisors in this list have voted that they are willing to be supervisor for this project"),
+	);
+	
 	$form['solution_short'] = array(
 		"#type" => "textarea",
 		'#title' => t('Give a summary of your solution'),
@@ -767,7 +782,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#value' => t('Save draft'),
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
-					'onclick' => "ajaxFormCall('vals-soc-proposal-form', 'student', 'save',".
+					'onclick' => "ajaxFormCall('vals-soc-proposal-form', 'proposal', 'save',".
 					" {id: $proposal_id, project_id: $project_id,  target: '$target' }, 'handleSaveResult', 'json', ['$target']);")
 			,'#post_render' => array('vals_soc_fix_submit_button')
 	);
@@ -778,7 +793,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
 					'onclick' => "if (confirm('".t('Are you sure you want to submit your proposal now? Once submitted, you cannot edit it anymore.')."')){".
-					"ajaxFormCall('vals-soc-proposal-form', 'student', 'submit',".
+					"ajaxFormCall('vals-soc-proposal-form', 'proposal', 'submit',".
 					" {id: $proposal_id, project_id: $project_id,  target: '$target' }, 'handleSubmitResult', ".
 					"'json', ['$target']);}")
 			,'#post_render' => array('vals_soc_fix_submit_button')
