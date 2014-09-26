@@ -74,7 +74,7 @@ function waitingIcon(wait_name, x, y, container){
 	try{
 		var obj = createDiv(wait_name, container, '', true);
 		setStyleOnObject(obj, 'position', 'fixed');
-		setStyleOnObject(obj, 'zIndex', 1000);
+		setStyleOnObject(obj, 'zIndex', 1002);
 		setStyleOnObject(obj, 'top', (y - ajax_settings.ajax_waiting_half_width) +'px');
 		setStyleOnObject(obj, 'left',(x - ajax_settings.ajax_waiting_half_height)  +'px');
 		obj.innerHTML = ajax_settings.ajax_waiting_icon;
