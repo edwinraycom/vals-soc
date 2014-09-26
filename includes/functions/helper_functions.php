@@ -172,7 +172,14 @@ function variableGetFromStruct($var, $field, $default='')
 }
 
 function src_getJs($src){
-	return "<script type='text/javascript' src='$src'></script>";
+	static $included_srcs = array();
+	
+	if (isset($included_srcs[$src])){
+		return "";
+	} else {
+		$included_srcs[$src] = TRUE;
+		return "<script type='text/javascript' src='$src'></script>";
+	}
 }
 
 function script_getJs($script){
