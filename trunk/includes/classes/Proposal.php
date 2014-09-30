@@ -74,6 +74,40 @@ class Proposal extends AbstractEntity{
     	return $query->execute()->fetchAll();
     }
     
+    public static function getProposalsPerOrganisations($org_id, $state='draft',$details=false){
+//     	if (! is_array($org_ids)){
+//     		$org_ids = array($org_ids);
+//     	}
+    	$query = db_select('soc_proposals', 'p')->fields('p', self::$fields);
+    	$query->addExpression('Count(p.pid)', 'nr_proposals');
+    	$query->condition('p.org_id', $org_id);
+    	if ($state){
+    		$query->condition('p.state', $state);
+    	}
+    	$query->leftjoin('soc_names', 'student', 'p.owner_id = %alias.names_uid');
+    	$query->leftjoin('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
+    	$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
+    	$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid');
+    	if($details){// details gets the supervisor and student names & email addresses also
+    		$query->leftjoin('users', 'mentor_user', 'pr.mentor_id = %alias.uid');
+    		$query->leftjoin('soc_names', 'mentor', 'pr.mentor_id = %alias.names_uid');
+    		$query->leftjoin('users', 'u1', 'p.owner_id = %alias.uid');
+    		$query->leftjoin('users', 'supervisor_user', 'p.supervisor_id = %alias.uid');
+    		$query->fields('u1', array('mail', 'name'));
+    		$query->fields('supervisor_user', array('mail', 'name'));
+    		$query->fields('mentor_user', array('mail', 'name'));
+    		$query->fields('mentor', array('name'));
+    	}
+    	$query->fields('student', array('name'));
+    	$query->fields('i', array('name'));
+    	$query->fields('o', array('name'));
+    	$query->fields('pr', array('title'));
+    	 
+    	$query->orderBy('pid', 'ASC');
+    
+    	return $query->execute()->fetchAll();
+    }
+    
     public static function getDefaultName($proposal_id , $proposal=''){
     	if (! $proposal) {
     		$proposal = self::getProposalById($proposal_id);

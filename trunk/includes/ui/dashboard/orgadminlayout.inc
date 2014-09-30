@@ -69,9 +69,6 @@ function getOrgAdminLayout($timeline_args){
 	}
 	
 	if(TRUE || $timeline_args['manageProjectIdeasVisible']){//TODO: the statistics can be seen by all
-		$manage1 = t('Manage my own projects');
-		$manage2 = t('Manage all my organisations projects');
-		
 		$output .="
 		<div class='column-entry org_app shipment_tracking'>
 		<h4>
@@ -80,10 +77,7 @@ function getOrgAdminLayout($timeline_args){
 			title='".t('Overview of proposals, number of students etc.')."'>".t('Overview')."</a>
 		</h4>
 		<p>".t('Shows activity on proposals for your organisation, number of students etc.')."</p>
-		<div>
-		<a href='$base_url/dashboard/projects/administer/mine' title='$manage1'>$manage1</a>
-		|<a href='$base_url/dashboard/projects/administer' title='$manage2'>$manage2</a>
-		</div>
+		
 		</div>
 		";
 	}
