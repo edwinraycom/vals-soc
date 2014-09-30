@@ -3,19 +3,48 @@ include('include.php');
 module_load_include('php', 'vals_soc', 'includes/functions/ajax_functions');
 module_load_include('php', 'vals_soc', 'includes/classes/ThreadedComments');
 module_load_include('php', 'vals_soc', 'includes/classes/ThreadUIBuilder');
+module_load_include('php', 'vals_soc', 'includes/classes/Project');
+module_load_include('php', 'vals_soc', 'includes/classes/Proposal');
+module_load_include('php', 'vals_soc', 'includes/classes/Institutes');
+module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 
 switch ($_GET['action']){
 	case 'save':
+		global $user;
 		$type = altSubValue($_POST, 'entity_type', '');
 		$id = altSubValue($_POST, 'id', '');
 		$entity_id = altSubValue($_POST, 'entity_id', '');
 		$target = altSubValue($_POST, 'target', '');
 
 		$properties = ThreadedComments::getInstance()->filterPostLite(ThreadedComments::getInstance()->getKeylessFields(), $_POST);
+		$properties['author'] = $user->uid;
 		$result = ThreadedComments::getInstance()->addComment($properties);
 		$new = false;
 
 		if ($result){
+			// get all the threads
+			$thread_details = ThreadedComments::getInstance()->getThreadsForEntity($entity_id, $type);
+			// decide which entity it is and get the owner details & description etc
+			if($type=='project'){
+				$entity_details = Project::getInstance()->getProjectById($entity_id, true);
+				$fire_emails = true;
+			}
+			else if($type=='proposal'){
+				$entity_details = objectToArray(Proposal::getInstance()->getProposalById($entity_id, true));
+				$fire_emails = true;
+			}
+			else{
+				// for now nothing - only have projects & proposal comments 
+				$fire_emails = false;
+			}
+			// send emails out...
+			if($fire_emails){
+				$properties['name'] = $user->name;
+				$properties['mail'] = $user->mail;
+				module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
+				notify_all_of_new_comment($entity_details, $thread_details, $properties);
+			}
+			
 			echo json_encode(array(
 					'result'=>TRUE,
 					'id' => $result,
