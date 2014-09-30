@@ -352,3 +352,50 @@ function get_project_status_update_email_body($record, $is_final, $is_student, $
 
 	return $output;
 }
+
+function get_new_comment_email_body($entity_details, $properties, $recipient_username){
+	$output = '';
+	$server = _VALS_SOC_FULL_URL;
+	
+	$type = $properties['entity_type'];
+	$message =  $properties['description'];
+	$sender_name = $properties['name'];
+	$sender_mail = $properties['mail'];
+	
+	$title = $entity_details['title']; //entity title
+	$owner_name = $entity_details['name'];
+	$owner_mail = $entity_details['mail'];
+	
+	$legend = tt('A new message was posted for the following %1$s', $type);
+ 	$legend .= '<br/><br/>';
+ 	$legend .= '<i>'. $title . '</i>';
+ 	
+	$output .= t('Hello').' '. $recipient_username . ',';
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= $legend;
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= $message;
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= t('Message posted by') .' '.  $sender_name .' (' . $sender_mail. ')';
+	$output .= '<br/>';
+	$output .= tt('Owner of %1$s', $type) .' '.  $owner_name .' (' . $owner_mail. ')';
+	$output .= '<br/>';
+	$output .= '<br/>';
+	
+	$output .= "<p>";
+	$output .= tt('Go to <a href="%1$s/dashboard" target="_blank">%1$s/dashboard</a> to view more details.', $server);
+	$output .= "</p>";
+	
+	$output .= '<br/>';
+	$output .= t('Many Thanks,');
+	$output .= '<br/>';
+	$output .= t('The VALS team');
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= sprintf('<img src="%1$s/sites/all/themes/media/logo.png">', $server);
+	$output .= '<p>';
+	return $output;
+}

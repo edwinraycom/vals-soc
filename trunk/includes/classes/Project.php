@@ -29,10 +29,12 @@ class Project extends AbstractEntity{
     public static function getProjectById($id, $details= false, $fetch_style=PDO::FETCH_ASSOC){
     	$query = db_select('soc_projects', 'p')->fields('p', self::$fields)->condition('pid', $id);
     	if ($details){
+    		$query->leftjoin('users', 'u1', 'p.owner_id = %alias.uid');
     		$query->leftjoin('soc_names', 'owner', 'p.owner_id = %alias.names_uid');
     		$query->leftjoin('soc_names', 'mentor', 'p.mentor_id = %alias.names_uid');
     		$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
 
+    		$query->fields('u1', array('mail', 'name'));
     		$query->fields('owner', array('name'));
     		$query->fields('mentor', array('name'));
     		$query->fields('o', array('name'));

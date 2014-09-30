@@ -32,7 +32,6 @@ class ThreadUIBuilder {
 		$this->output .= "		(<div style='display:inline;' id='comment-total-".$this->entity_type."-".$this->entity_id."'>".$count."</div>)";
 		$this->output .= "	</h2>";
 		$this->output .= "	&nbsp;";
-		//$this->output .= "	<div style='display:inline-block' class='comment-toggle'>".t('show')."</div>";
 		$this->output .= "<input style='display:inline-block' id='comment-toggle-".$this->entity_id."-".$this->entity_type."' class='comment-toggle' type='button' value='".t('show')."'/>";
 		$this->output .= "</div>";
 	}
@@ -51,7 +50,7 @@ class ThreadUIBuilder {
 	private function format_comment($comment) {
 		if (isset($comment ['parent_id'])){
 			$class_display = 'threaded-comment-wrapper';
-			$post_type= t('Replied on');;
+			$post_type= t('Replied on');
 		}
 		else{
 			$class_display = 'initial-threaded-comment-wrapper';
@@ -80,7 +79,6 @@ class ThreadUIBuilder {
 		$this->output .= $this->getPostNewCommentForm($comment);
 	}
 
-	//function getPostNewCommentForm($parent_id){
 	function getPostNewCommentForm($comment){
 		$css = '';
 		$handler = $comment['id']; // is it???
@@ -90,7 +88,6 @@ class ThreadUIBuilder {
 		}
 		$target='threaded-comment-wrapper-'.$handler;
 		$output = '<div id="reply-comment-form-'.$handler.'" class="reply-comment-form'.$css.' threaded-comment-wrapper'.$css.'">';
-		//$form = drupal_get_form("vals_soc_comment_form", $handler, $target, $this->entity_id, $this->entity_type);
 		$form = drupal_get_form("vals_soc_comment_form", $handler, $target, $this->entity_id, $this->entity_type);
 		$output .= renderForm($form, $target, true);
 		

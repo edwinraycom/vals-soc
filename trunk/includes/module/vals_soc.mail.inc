@@ -114,6 +114,10 @@ function vals_soc_mail_handler($key, &$message, $params) {
 	//return address (variable_get('system_mail')) and the key is only important to create a body here.
 	$html_format = true;
 	switch($key) {
+		case 'vals_soc_notify_new_comment':
+			$message['subject'] = $params['subject'];
+			$message['body'][] = $params['body'];
+			break;
 		case 'vals_soc_notify_project_status_change':
 			$message['subject'] = $params['subject'];
 			$message['body'][] = $params['body'];
@@ -190,6 +194,51 @@ function vals_soc_mail_handler($key, &$message, $params) {
 function vals_soc_mail_alter_handler(&$message) {
 	//We now directly apply these header changes for the vals_soc mails only in the function
 	//vals_soc_mail_handler.
+}
+
+/**
+ * Email Notifies ALL people who are owner or have commented previously on an entity (project/proposal)
+ * that a new comment has beeen added by someone.
+ * @param unknown $entity_details
+ * @param unknown $thread_details
+ * @param unknown $properties
+ */
+function notify_all_of_new_comment($entity_details, $thread_details, $properties){
+	/*
+	echo '<br/>****************entity_details*************************<br/>';
+	echo var_dump($entity_details);
+	echo '<br/>****************thread_details*************************<br/>';
+	echo var_dump($thread_details);
+	echo '<br/>****************properties*************************<br/>';
+	echo var_dump($properties);
+	*/
+	
+	
+	$items = array();
+	$number_of_emails_count = 0;
+	$subject = tt('VALS Notification: New comment added to your %1$s', $properties['entity_type']);
+	
+	$owner_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $entity_details['mail']);
+	$recipients = array();
+	array_push($recipients, $entity_details['mail']); // push the owners mail in first
+	$message_body_owner = get_new_comment_email_body($entity_details, $properties, $entity_details['name']);
+	$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_new_comment', 'to' => $owner_recipient, 'from' => NULL, 
+			'subject' => $subject, 'body' => $message_body_owner);
+	
+	
+	$subject = tt('VALS Notification: New comment added to a %1$s you have previously commented on', $properties['entity_type']);
+	foreach($thread_details as $thread_detail){
+		// make sure we only send one email per user
+		if (!in_array($thread_detail['mail'], $recipients)){
+			array_push($recipients, $thread_detail['mail']);
+			$participant_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $thread_detail['mail']);
+			$message_body = get_new_comment_email_body($entity_details, $properties, $thread_detail['name']);
+			$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_new_comment', 'to' => $participant_recipient, 'from' => NULL, 
+					'subject' => $subject, 'body' => $message_body);
+		}
+	}
+	vals_soc_send_emails_cron($items);
+	
 }
 
 /**

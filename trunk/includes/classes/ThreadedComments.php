@@ -29,14 +29,7 @@ class ThreadedComments extends AbstractEntity {
 		$post = $query->execute()->fetch($fetch_style);
 		return $post;
 	}
-	/*
-	function getPostById($id){
-		$queryString = "SELECT s.*, u.name FROM soc_comments s, users u WHERE u.uid = s.author" .
-		" AND s.id = ".$id .";";
-		$post = db_query($queryString)->fetchAll(PDO::FETCH_ASSOC);
-		return $post;
-	}
-	*/
+
 	function removethreadsForEntity($entity_id, $entity_type){
 		try{
 			$num_deleted = db_delete('soc_comments')
@@ -51,7 +44,7 @@ class ThreadedComments extends AbstractEntity {
 	}
 	
 	function getThreadsForEntity($entity_id, $entity_type){
-		$queryString = "SELECT s.*, u.name, r.name AS type FROM soc_comments s, users u 
+		$queryString = "SELECT s.*, u.name, u.mail, r.name AS type FROM soc_comments s, users u 
 			LEFT JOIN users_roles ur ON u.uid = ur.uid
 			LEFT JOIN role r ON ur.rid = r.rid
 			WHERE entity_id=" . $entity_id .
@@ -67,11 +60,11 @@ class ThreadedComments extends AbstractEntity {
 		}
 
 		
-		global $user;
+		//global $user;
 		$txn = db_transaction();
 		try {
-			$uid = $user->uid;
-			$props['author'] = $uid;
+			//$uid = $user->uid;
+			//$props['author'] = $uid;
 			$now = new DateTime();
 			$props['date_posted'] = $now->format('Y-m-d H:i:s');
 			// check for top level posts with an empty parent & set it to mysql null.
