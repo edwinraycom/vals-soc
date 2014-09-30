@@ -223,6 +223,16 @@ function tt($str){
 	return call_user_func_array('sprintf', $args);
 }
 
+function t_type($type){
+	switch ($type){
+		case _INSTITUTE_GROUP: return t('institute');break;
+		case _ORGANISATION_GROUP: return t('organisation');break;
+		case _STUDENT_GROUP: return t('studentgroup');break;
+		case 'project': return t('project'); break;
+		default: return $type;
+	}
+}
+
 function objectToArray($o) {
 	$a = array();
 	foreach ($o as $k => $v) 

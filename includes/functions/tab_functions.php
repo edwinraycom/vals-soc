@@ -19,7 +19,7 @@ function renderTabs($count, $tab_label, $target_label, $type, $data, $id=0,
 			$tab_class =  ' class="right"';
 			if ($data[$t][7] == 'delete'){
 				$delete_tab = true;
-				$pre = "if (confirm('".tt('Are you sure you want to delete this %1$s', t($type))."')){";
+				$pre = "if (confirm('".tt('Are you sure you want to delete this %1$s', t_type($type))."')){";
 				$post= "} else { Obj('$target').html('". t('You canceled the delete request')."')}";
 			}
 		}

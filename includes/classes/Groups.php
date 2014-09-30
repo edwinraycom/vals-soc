@@ -127,7 +127,7 @@ class Groups extends AbstractEntity{
 	
 	static function removeGroup($type, $id){
 		if (!isValidOrganisationType($type)){
-			drupal_set_message(tt('This (%1$s) is not something you can remove.', t($type)), 'error');
+			drupal_set_message(tt('This (%1$s) is not something you can remove.', t_type($type)), 'error');
 			return FALSE;	
 		}
 		if (! self::isOwner($type, $id)){
@@ -137,7 +137,7 @@ class Groups extends AbstractEntity{
 	
 		if (self::hasMembers($type, $id)){
 			drupal_set_message(tt('There are already members in this %1$s. You can still edit the %1$s though.',
-					t($type)), 'error');
+					t_type($type)), 'error');
 			return FALSE;
 		}
 		
@@ -168,7 +168,7 @@ class Groups extends AbstractEntity{
 				}
 			}
 		} catch (Exception $e){
-			drupal_set_message(tt(' We could not delete the %1$s', t($type)).(_DEBUG ? $ex->getMessage():''), 'error');
+			drupal_set_message(tt(' We could not delete the %1$s', t_type($type)).(_DEBUG ? $ex->getMessage():''), 'error');
 			return FALSE;
 		}
 		
@@ -185,7 +185,7 @@ class Groups extends AbstractEntity{
 				return 0;
 			}
 		} catch (Exception $e){
-			drupal_set_message(tt(' We could not delete the %1$s', t($type)).(_DEBUG ? $ex->getMessage():''), 'error');
+			drupal_set_message(tt(' We could not delete the %1$s', t_type($type)).(_DEBUG ? $ex->getMessage():''), 'error');
 			return FALSE;
 		}
 	}
@@ -339,7 +339,7 @@ class Groups extends AbstractEntity{
 		return FALSE;
 	}
 	
-	static function filterPost($type){
+	static function filterPost_type($type){
 	
 		//TODO: get the db fields from schema and move foreach out of switch
 		$fields = array(

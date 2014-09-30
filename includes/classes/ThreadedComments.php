@@ -45,7 +45,7 @@ class ThreadedComments extends AbstractEntity {
 			->execute();
 			// fail silently if no record/s found
 		} catch (Exception $e){
-			drupal_set_message(tt(' We could not delete the %1$s', t($entity_type)).(_DEBUG ? $ex->getMessage():''), 'error');
+			drupal_set_message(tt(' We could not delete the comments for this %1$s', t_type($entity_type)).(_DEBUG ? $ex->getMessage():''), 'error');
 			return FALSE;
 		}
 	}

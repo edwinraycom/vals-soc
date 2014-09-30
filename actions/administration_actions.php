@@ -32,7 +32,7 @@ switch ($_GET['action']){
 		echo
 		'<h2>'.
 			(($type == _STUDENT_GROUP) ? t('Add a group to your list of student groups') :
-			tt('Add your %1$s', t($type))).
+			tt('Add your %1$s', t_type($type))).
 		'</h2>';
 
 		$form = drupal_get_form("vals_soc_${type}_form", null, $target, $show_action);
@@ -102,7 +102,7 @@ switch ($_GET['action']){
     	}
     	$organisation = Groups::getGroup($type, $id);
     	if (! $organisation){
-    		echo tt('The %1$s cannot be found', t($type));
+    		echo tt('The %1$s cannot be found', t_type($type));
     	} else {
     		echo "<div id='msg_$target'></div>";
     		echo renderOrganisation($type, $organisation, null, $target, $buttons);
@@ -166,7 +166,7 @@ switch ($_GET['action']){
     	$after = altSubValue($_POST, 'show_action', 'administer');
     	$target = altSubValue($_POST, 'target', '');
     	if (! isValidOrganisationType($type) ) {//for convenience we have made a project an organisationtype as well //TODO: make this better
-    		echo t('There is no such type you can invite people to :'.$type);
+    		echo tt('There is no such type you can invite people to : %1$s', $type);
     	} else {
     		$obj = Groups::getGroup($type, $id);
     		// See http://drupal.stackexchange.com/questions/98592/ajax-processed-not-added-on-a-form-inside-a-custom-callback-my-module-deliver
@@ -184,7 +184,7 @@ switch ($_GET['action']){
         $id = altSubValue($_POST, 'id', '');
         $target = altSubValue($_POST, 'target', '');
         if (! isValidOrganisationType($type) ) {//for convenience we have made a project an organisationtype as well //TODO: make this better
-        	echo t('There is no such type to edit :'.$type);
+        	echo tt('There is no such type to edit : %1$s', $type);
         } else {
         	$obj = Groups::getGroup($type, $id);
         	// See http://drupal.stackexchange.com/questions/98592/ajax-processed-not-added-on-a-form-inside-a-custom-callback-my-module-deliver
@@ -238,8 +238,8 @@ switch ($_GET['action']){
 					'new_tab' => !$id ? $result : 0,
             		'show_action' => $show_action,
             		'msg'=>
-            		($id ? tt('You succesfully changed the data of your %1$s', t($type)):
-            			   tt('You succesfully added your %1$s', t($type))).
+            		($id ? tt('You succesfully changed the data of your %1$s', t_type($type)):
+            			   tt('You succesfully added your %1$s', t_type($type))).
             		(_DEBUG ? showDrupalMessages(): '')
             		));
         } else {

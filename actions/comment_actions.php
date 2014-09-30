@@ -21,7 +21,7 @@ switch ($_GET['action']){
 					'id' => $result,
 					'type'=> $type,
 					'entity_id' => $entity_id,
-					'msg'=> tt('You succesfully added a comment to this %1$s', t($type)). (_DEBUG ? showDrupalMessages(): '')
+					'msg'=> tt('You succesfully added a comment to this %1$s', t_type($type)). (_DEBUG ? showDrupalMessages(): '')
 			));
 		}
 		else {
@@ -37,7 +37,7 @@ switch ($_GET['action']){
 		}
 		$post = ThreadedComments::getInstance()->getPostById($id);
 		if (! $post){
-			echo tt('The post for this %1$s cannot be found', t($type));
+			echo tt('The post for this %1$s cannot be found', t_type($type));
 		} else {
 			$entity_id = $post['entity_id'];
 			$entity_type = $post['entity_type'];

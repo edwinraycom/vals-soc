@@ -275,8 +275,8 @@ switch ($_GET['action']){
 					'new_tab' => !$id ? $properties['org_id'] : 0,//so we can distinguish which tab to open
 					'extra' => ($mine? array( 'mine' =>1) :''),
 					'msg'=>
-					($id ? tt('You succesfully changed the data of your %1$s', t($type)):
-							tt('You succesfully added your %1$s', t($type))).
+					($id ? tt('You succesfully changed the data of your %1$s', t_type($type)):
+							tt('You succesfully added your %1$s', t_type($type))).
 					(_DEBUG ? showDrupalMessages(): '')
 			));
 		}

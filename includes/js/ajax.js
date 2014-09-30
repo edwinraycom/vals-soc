@@ -249,7 +249,6 @@ function ajaxCall(handler_type, action, data, target, type, extra_args, extra_fu
 				window[target](msg, args);
 				stopWait(1);
 				if ((typeof extra_fun_fail == 'function') && msg.result == 'error'){
-					console.log('hier gekomen met '+typeof extra_fun_fail);
 					extra_fun_fail.call();
 				}
 				return true;

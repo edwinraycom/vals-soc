@@ -2,26 +2,28 @@
 function chooseProposalForProject(project_id, proposal_id, is_final){
 	var content = '';
 	if(is_final){
-		content += 'Note: This is final and irreversible.\n';
-		content += '\n';
-		content += '1. If instead, you want to only mark this proposal as your preferred one and still have the ability to change at a ';
-		content += 'later date, then press \'cancel\' and choose \'Accept interim\' instead.\n';
-		content += '2. This proposal will become accepted for this project idea.\n';
-		content += '3. The student and his/her supervisor will be informed by email that you have decided to select this proposal.\n';
-		content += '4. This will mean all other proposals are rejected. \n';
-		content += '5. All other candidate proposals will be informed by email that their proposal has now been rejected ';
-		content += 'and that you have chosen another proposal as your choice of solution.';
+		content += Drupal.t('Note: This is final and irreversible.');
+		content += '\n\n<ol>';
+		content += '<li>'+ Drupal.t('If instead, you want to only mark this proposal as your preferred one and still have the ability to change at a ')+ 
+			Drupal.t('later date, then press \'cancel\' and choose "Accept interim" instead.') + '</i>';
+		content += '<li>'+ Drupal.t('This proposal will become accepted for this project idea.')+ '</i>';
+		content += '<li>'+ Drupal.t('The student and his/her supervisor will be informed by email that you have decided to select this proposal.')+ '</i>';
+		content += '<li>'+ Drupal.t('This will mean all other proposals are rejected.')+ '</i>';
+		content += '<li>'+ Drupal.t('All other candidate proposals will be informed by email that their proposal has now been rejected ')+ 
+			Drupal.t('and that you have chosen another proposal as your choice of solution.') + '</i>';
+		content += '\n</ol>';
 	}
 	else{
-		content += 'Note: This is not a final decision.\n';
-		content += '\n';
-		content += '1. If instead, you want to mark this proposal as your final choice, then press \'cancel\' and choose \'Accept final\' instead.\n';
-		content += '2. This proposal will be flagged in the system as your interim choice for this project idea.\n';
-		content += '3. You may change from this proposal to another one if a student writes a proposal which you prefer over this one. \n';
-		content += '4. The Student and his/her supervisor will be informed by email that you have decided to select (as interim) this proposal.\n';
-		content += '5. This will mean all other proposals for this project are still valid in the system. \n';
-		content += '6. Other students will not know which candidate proposal you have chosen in the interim, ';
-		content += 'but they will recieve an email to let them know it is not their own, meaning they still have a chance if they improve it.';
+		content += Drupal.t('Note: This is not a final decision.');
+		content += '\n\n<ol>';
+		content += '<li>'+ Drupal.t('If instead, you want to mark this proposal as your final choice, then press "cancel" and choose "Accept final" instead.')+ '</i>';
+		content += '<li>'+ Drupal.t('This proposal will be flagged in the system as your interim choice for this project idea.')+ '</i>';
+		content += '<li>'+ Drupal.t('You may change from this proposal to another one if a student writes a proposal which you prefer over this one. ')+ '</i>';
+		content += '<li>'+ Drupal.t('The Student and his/her supervisor will be informed by email that you have decided to select (as interim) this proposal.')+ '</i>';
+		content += '<li>'+ Drupal.t('This will mean all other proposals for this project are still valid in the system. ')+ '</i>';
+		content += '<li>'+ Drupal.t('Other students will not know which candidate proposal you have chosen in the interim, ') + 
+			Drupal.t('but they will recieve an email to let them know it is not their own, meaning they still have a chance if they improve it.')+ '</i>';
+		content += '\n</ol>';
 	}
 	if (confirm(content)) {
 		var url = moduleUrl + "actions/project_actions.php?action=mark_proposal";
@@ -40,11 +42,11 @@ function chooseProposalForProject(project_id, proposal_id, is_final){
 function getAcceptProposalIntrimMarkup(proposal, option){
 	var content ="";
 	content += '	<div>';
-	content += '		'+option+' Click the button below to select this proposal as your preferred interim solution.';
+	content += '		'+option+ Drupal.t(' Click the button below to select this proposal as your preferred interim solution.');
 	content += '		<br/>';
 	content += '		<br/>';
 	content += '		<div id="proposal-intrim-markup-'+proposal.proposal_id+'-button">';
-	content += '			<input style="margin-left:20px" type=\"button\" value=\"\Accept interim" onclick=\"chooseProposalForProject('+proposal.pid+','+ proposal.proposal_id+', 0);\"/>';
+	content += '			<input style="margin-left:20px" type=\"button\" value=\"'+ Drupal.t('Accept interim') + '\" onclick=\"chooseProposalForProject('+proposal.pid+','+ proposal.proposal_id+', 0);\"/>';
 	content += '			<br/>';
 	content += '		</div>';
 	content += '	</div>';
@@ -54,11 +56,11 @@ function getAcceptProposalIntrimMarkup(proposal, option){
 function getAcceptProposalFinalMarkup(proposal, option){
 	var content ="";
 	content += '	<div>';
-	content += '		'+option+' Click the button below to accept this proposal as your final chosen solution.';
+	content += '		'+option+ Drupal.t(' Click the button below to accept this proposal as your final chosen solution.');
 	content += '		<br/>';
 	content += '		<br/>';
 	content += '		<div id="proposal-final-markup-'+proposal.proposal_id+'-button">';
-	content += '			<input style="margin-left:20px" type=\"button\" value=\"\Accept final" onclick=\"chooseProposalForProject('+proposal.pid+','+ proposal.proposal_id+', 1);\"/>';
+	content += '			<input style="margin-left:20px" type=\"button\" value=\"'+ Drupal.t('Accept final') + '" onclick=\"chooseProposalForProject('+proposal.pid+','+ proposal.proposal_id+', 1);\"/>';
 	content += '			<br/>';
 	content += '		</div>';
 	content += '	</div>';
@@ -67,28 +69,28 @@ function getAcceptProposalFinalMarkup(proposal, option){
 
 function renderProposalStatus(proposal){
 	var content = "<h2>"+proposal.pr_title+"</h2>";
-	content += 'Submitted by student \'' + (proposal.student_name ? proposal.student_name: proposal.name) + '\'';
+	content += Drupal.t('Submitted by student') + " '" + (proposal.student_name ? proposal.student_name: proposal.name) + "'";
 	content += '<br/>';
 	content += '<br/>';
 
 	if(proposal.selected == 1 && proposal.pr_proposal_id == proposal.proposal_id){
 		content += (proposal.is_project_owner ? 
-				'You have selected this proposal as your final choice of solution for your project idea. You cannot change this.' : 
-				'The project mentor selected this proposal as the final choice of solution for this project idea.');
+				Drupal.t('You have selected this proposal as your final choice of solution for your project idea. You cannot change this.') : 
+				Drupal.t('The project mentor selected this proposal as the final choice of solution for this project idea.'));
 	}
 	else{
 		if(proposal.selected == 1 && proposal.pr_proposal_id != proposal.proposal_id){
 			content += (proposal.is_project_owner ? 
-					'You have already selected another proposal as your final choice of solution for your project idea. You cannot change this.' :
-					'The project mentor selected another proposal as the final choice of solution for this project idea.');
+					Drupal.t('You have already selected another proposal as your final choice of solution for your project idea. You cannot change this.') :
+					Drupal.t('The project mentor selected another proposal as the final choice of solution for this project idea.'));
 		}
 		else if(proposal.selected == 0 && proposal.pr_proposal_id == proposal.proposal_id){
 			if(proposal.is_project_owner){
-				content += 'You have selected this proposal as your preferred interim choice of solution for your project idea. ';
-				content += 'This is not final and you may change it to another proposal before the end of the student signup period.';
+				content += Drupal.t('You have selected this proposal as your preferred interim choice of solution for your project idea. ');
+				content += Drupal.t('This is not final and you may change it to another proposal before the end of the student signup period.');
 			}else{
-				content += 'The project owner selected this proposal as the preferred interim choice of solution for this project idea. ';
-				content += 'This is not final and the owner may change to another proposal before the end of the student signup period.';
+				content += Drupal.t('The project owner selected this proposal as the preferred interim choice of solution for this project idea. ');
+				content += Drupal.t('This is not final and the owner may change to another proposal before the end of the student signup period.');
 			}
 			
 			if(proposal.is_project_owner){
@@ -99,15 +101,15 @@ function renderProposalStatus(proposal){
 		}
 		else{
 			if(proposal.pr_proposal_id != null){
-				content += (proposal.is_project_owner ? 'You have already selected another proposal as your preferred choice of solution for your project idea.' :
-				'The project mentor has selected another proposal as the preferred interim choice of solution for this project idea.');
+				content += (proposal.is_project_owner ? Drupal.t('You have already selected another proposal as your preferred choice of solution for your project idea.') :
+				Drupal.t('The project mentor has selected another proposal as the preferred interim choice of solution for this project idea.'));
 			}else{
-				content += (proposal.is_project_owner ? 'You haven\'t yet selected a proposal as your preferred choice of solution for your project idea.' :
-				'The project mentor hasn\'t yet selected a proposal as the preferred interim choice of solution for this project idea.');
+				content += (proposal.is_project_owner ? Drupal.t('You haven\'t yet selected a proposal as your preferred choice of solution for your project idea.') :
+				Drupal.t('The project mentor has\'nt yet selected a proposal as the preferred interim choice of solution for this project idea.'));
 			}
 			if(proposal.is_project_owner){
 				content += '<div><br/>';
-				content += '	<div>You have the following two choices</div>';
+				content += '	<div>'+ Drupal.t('You have the following two choices')+ '</div>';
 				content += '	<br/>';
 				content += '	<div class="prop-mini-form-wrapper" id="proposal-intrim-markup-'+proposal.proposal_id+'">';
 				content += 			getAcceptProposalIntrimMarkup(proposal, '1.');
@@ -125,30 +127,30 @@ function renderProposalStatus(proposal){
 
 function renderProposalOverview(proposal){
 	var content = "<h2>"+proposal.title+"</h2>";
-	content += 'Submitted by student \'' + (proposal.student_name ? proposal.student_name: proposal.name) + '\'';
+	content += Drupal.t('Submitted by student') + " '" + (proposal.student_name ? proposal.student_name: proposal.name) + '\'';
 	content += '<br/>';
 	content += '<ul>';
 	content += '	<li>';
-	content += '		This is the Overview tab, where you can also add comments to this proposal.';
+	content += '		'+ Drupal.t('This is the Overview tab, where you can also add comments to this proposal.');
 	content += '	</li>';
 	content += '	<li>';
-	content += '		The \'Student Details\' tab lists both the students, the institution he/she is attending and his/her supervisor.';
+	content += '		'+ Drupal.t('The "Student Details" tab lists both the students, the institution he/she is attending and his/her supervisor.');
 	content += '	</li>';
 	content += '	<li>';
-	content += '	The \'Solution Summary\' tab is where the student was asked to provide a brief synopsis of the solution.';
+	content += '	'+ Drupal.t('The "Solution Summary" tab is where the student was asked to provide a brief synopsis of the solution.');
 	content += '	</li>';
 	content += '	<li>';
-	content += '		The \'Solution Description\' tab is where the student was asked to provide a more detailed description of the solution.';
+	content += '		'+ Drupal.t('The "Solution Description" tab is where the student was asked to provide a more detailed description of the solution.');
 	content += '	</li>';
 	content += '	<li>';
-	content += '		The \'Project\' tab is for your reference and links to the original project idea.';
+	content += '		'+ Drupal.t('The "Project" tab is for your reference and links to the original project idea.');
 	content += '	</li>';
 	content += '	<li>';
 	
 	if(proposal.is_project_owner){
-		content += '		The \'Status\' tab is to allow you to set the proposals current status.';
+		content += '		'+ Drupal.t('The "Status" tab is to allow you to set the proposals current status.');
 	}else{
-		content += '		The \'Status\' tab is to allow you to view the proposals current status.';		
+		content += '		'+ Drupal.t('The "Status" tab is to allow you to view the proposals current status.');		
 	}
 	content += '	</li>';
 
@@ -172,16 +174,13 @@ function renderProject(project, apply_projects){
 	if(project.url){
 		content += "<br/><a target='_blank' class='external' href='" + project.url + "'>" + project.url + "</a>";
 	}
-	console.log("hoe zit het met rating "+rate_projects);
 	if ((typeof rate_projects != 'undefined') && rate_projects){
 		if (typeof project.rate != 'undefined') {
 			rate = project.rate;
-			console.log(' hij was gedefinieerd');
 		} else {
 			rate = -2;
-			console.log(' hij was NIET gedefinieerd');
 		}
-		content += "<h2>Your Opinion</h2>"+ 
+		content += "<h2>"+ Drupal.t('Your Opinion')+ "</h2>"+ 
 			renderRecommendation(project.pid);
 		content += "<br/>";
 		content += renderSupervisorLike(project.pid, rate);
@@ -195,7 +194,7 @@ function renderProject(project, apply_projects){
 		//content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 
 		//content +="<br/><br/><input id='vals-btn-cancel' type='button' onclick=\"Drupal.CTools.Modal.dismiss()\" value='Cancel' />";
-		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='Submit proposal for this project'/>";
+		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='"+ Drupal.t('Create proposal for this project')+ "'/>";
 		content +="</div>";
 
 //		content +=
@@ -212,47 +211,44 @@ function renderProject(project, apply_projects){
 	}
 	if (navigation){
 		if (typeof project.nav != 'undefined'){
-			content +="<div class=\"centerbottom\">";//style=\"display:none\"
-			//content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-
-			//content +="<br/><br/><input id='vals-btn-cancel' type='button' onclick=\"Drupal.CTools.Modal.dismiss()\" value='Cancel' />";
+			content +="<div class=\"centerbottom\">";
 			content += (project.nav.prev_pid ? 
 					"<input id='vals-btn-prev' type='button' onclick='ajaxCall(\"project\", " +
 					"\"project_detail\", {project_id: "+project.nav.prev_pid+", index: "+project.nav.prev_nr+"}" +
 					", \"populateModal\", \"json\", [renderProject, "+apply_projects+", 1]);' " +//3rd arg is true denoting that result will be parsed arg to populate fun
-					" value='Prev'/>": "") +
+					" value='"+ Drupal.t('Prev')+ "'/>": "") +
 					(project.nav.next_pid ? "<input id='vals-btn-next' type='button' onclick='ajaxCall(\"project\", " +
 					"\"project_detail\", {project_id: "+project.nav.next_pid+", index: "+project.nav.next_nr+"}" +
 					", \"populateModal\", \"json\", [renderProject, "+apply_projects+", 1]);' " +//3rd arg is true denoting that result will be parsed arg to populate fun
-					" value='Next'/>": "");
+					" value='"+ Drupal.t('Next')+ "'/>": "");
 			content +="</div>";	
-		}
+		};
 	}
 	return content;
 }
 
 function renderRecommendation(pid){
 	return "<div id='recommend_msg'></div>"+
-		"Recommend this project to: <input type='text' id='recommend_email' name='recommend_email'/>"+
-		"<input type='button' value='Recommend' onclick='ajaxCall(\"project\", \"recommend\", {id: "+ 
+		Drupal.t('Recommend this project to:')+ "<input type='text' id='recommend_email' name='recommend_email'/>"+
+		"<input type='button' value='"+ Drupal.t('Recommend')+ "' onclick='ajaxCall(\"project\", \"recommend\", {id: "+ 
 			pid+ ", email: $jq(\"#recommend_email\").val()}, \"recommend_msg\");' />";
 }
 
 function renderSupervisorLike(pid, current){
-	return "Could you or do you want to be the supervisor for this project for one of this institutes students?<br>"+
+	return Drupal.t('Could you or do you want to be the supervisor for this project for one of this institutes students?')+ "<br>"+
 	"<label><input type='radio' value='-1' id='project_like_1' name='project_like' "+ 
-		((-1 == current)? 'checked="checked"': '') + "/> Not for me </label>&nbsp;" +
+		((-1 == current)? 'checked="checked"': '') + "/>"+  Drupal.t('Not for me') +"</label>&nbsp;" +
 	"<label><input type='radio' value=0 id='project_like0' name='project_like' "+ 
-		((0 == current)? 'checked="checked"': '') + "/> Maybe </label>&nbsp;" +	
+		((0 == current)? 'checked="checked"': '') + "/>"+ Drupal.t('Maybe') +"</label>&nbsp;" +	
 	"<label><input type='radio' value=1 id='project_like1' name='project_like' "+ 
-		((1 == current)? 'checked="checked"': '') + "/> Would suit me </label>&nbsp;<input type='button' value='Save Preference' onclick='ajaxCall(\"project\", \"rate\", {id: "+ pid+
+		((1 == current)? 'checked="checked"': '') + "/>"+ Drupal.t('Would suit me')+"</label>&nbsp;<input type='button' value='Save Preference' onclick='ajaxCall(\"project\", \"rate\", {id: "+ pid+
 		", rate: $jq(\"input:radio[name=project_like]:checked\").val()}, \"recommend_msg\");'/>"
 		;
 }
 
 function renderOrganisation(org, contact_possible){
 	var content = "<h1>"+org.name+"</h1>";
-	content += "<h3>Information</h3>"+ org.description;
+	content += "<h3>"+ Drupal.t('Information')+"</h3>"+ org.description;
 //	if (apply_projects){
 //		content +="<div class=\"totheright\" style=\"display:none\">";
 //		//content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -261,12 +257,12 @@ function renderOrganisation(org, contact_possible){
 //		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='Submit proposal for this project'/>";
 //		content +="</div>";
 //	}
-	content += "<br/><h3>Website</h3><a href='"+org.url+"'>"+org.url+"</a>";
+	content += "<br/><h3>"+ Drupal.t('Website')+"</h3><a href='"+org.url+"'>"+org.url+"</a>";
 	if (typeof contact_possible !== 'undefined' && contact_possible){
-		content += "<h3>Contact information</h3>"+
+		content += "<h3>"+ Drupal.t('Contact information')+"</h3>"+
 		'<div style="padding-left:5px;">'+
-		'Name: ' + org.contact_name + '<br/>'+
-		'Email: '+ org.contact_email + '</div>';
+		Drupal.t('Name: ') + org.contact_name + '<br/>'+
+		Drupal.t('Email: ') + org.contact_email + '</div>';
 	}
 	return content;
 }
@@ -274,21 +270,21 @@ function renderOrganisation(org, contact_possible){
 function renderInstitute(ins, contact_possible){
 	var content = "<h1>"+ins.name+"</h1>";
 	if (typeof contact_possible !== 'undefined' && contact_possible){
-		content += "<h3>Contact information</h3>"+
+		content += "<h3>"+ Drupal.t('Contact information')+"</h3>"+
 			'<div style="padding-left:5px;">'+
-				'Name: ' + ins.contact_name + '<br/>'+
-				'Email: '+ ins.contact_email + '</div>';
+				Drupal.t('Name: ') + ins.contact_name + '<br/>'+
+				Drupal.t('Email: ') + ins.contact_email + '</div>';
 	}
 	return content;
 }
 
 function renderStudent(data){
 	var s = '<ol>';
-	s += '<li>Name: '+(data.student_name ? data.student_name: data.name)+ '</li>';
-	s += '<li>Email: '+data.mail+ '</li>';
-	s += '<li>Institute: '+data.i_name+ '</li>';
-	s += '<li>Supervisor: '+(data.supervisor_name ? data.supervisor_name: data.supervisor_user_name)+ '</li>';
-	s += '<li>Supervisor email: '+data.supervisor_user_mail+ '</li>';
+	s += '<li>'+ Drupal.t('Name: ') +(data.student_name ? data.student_name: data.name)+ '</li>';
+	s += '<li>'+ Drupal.t('Email: ') + data.mail+ '</li>';
+	s += '<li>'+ Drupal.t('Institute: ') + data.i_name+ '</li>';
+	s += '<li>'+ Drupal.t('Supervisor: ') + (data.supervisor_name ? data.supervisor_name: data.supervisor_user_name)+ '</li>';
+	s += '<li>'+ Drupal.t('Supervisor email: ') + data.supervisor_user_mail+ '</li>';
 	s += '</ol>';
 	return s;
 }
@@ -296,13 +292,13 @@ function renderStudent(data){
 /*This function renders the proposal as tabs and places it also in the right target */
 function getProposalDetail(proposal_id, target, msg){
 	var tabs = [
-	            {tab: 'overview', label: 'Overview'},
-				{tab: 'student', label: 'Student Details'},
+	            {tab: 'overview', label: Drupal.t('Overview')},
+				{tab: 'student', label: Drupal.t('Student Details')},
 				//{tab: 'cv', label: 'Cv'},
-				{tab: 'summary', label: 'Solution Summary'},
-				{tab: 'solution', label: 'Solution Description'},
-				{tab: 'project', label: 'Project'},
-				{tab: 'status', label: 'Status'}
+				{tab: 'summary', label: Drupal.t('Solution Summary')},
+				{tab: 'solution', label: Drupal.t('Solution Description')},
+				{tab: 'project', label: Drupal.t('Project')},
+				{tab: 'status', label: Drupal.t('Status')}
 				//{tab: 'modules', label: 'Modules and Libraries'}
 			];
 	var content_tabs = ['tab_overview',
@@ -317,9 +313,9 @@ function getProposalDetail(proposal_id, target, msg){
 		proposal_id;
 
   	if (window.view_settings.apply_projects){
-  		tabs.push({tab: 'edit', label: 'Edit'});
+  		tabs.push({tab: 'edit', label: Drupal.t('Edit')});
 		content_tabs.push('tab_edit');
-		tabs.push({tab: 'delete', label: 'Delete'});
+		tabs.push({tab: 'delete', label: Drupal.t('Delete')});
 		content_tabs.push('tab_delete');
 	}
 
@@ -329,13 +325,12 @@ function getProposalDetail(proposal_id, target, msg){
 	//Get the details and render with renderProposalTabs
 	$jq.get(url, function (data,status){
 		if (data.result == 'error'){
-			alert('Could not retrieve well the saved data');
+			alert(Drupal.t('Could not retrieve well the saved data'));
 			return;
 		}
 		var msg_container = 'modal-content';
 		var tabs_created = false;
 		var before = 'toc';
-		console.log('How about the target in get details '+target);
 		switch (target){
 			case 'modal':
 				tabs_created = generateAndPopulateModal(data, renderProposalTabs, tabs);
@@ -416,8 +411,8 @@ function renderProposalTabs(result, labels, container){
 	}
 	s += '</ol>';
 	s += '<div class="tabs_container">';
-	//TODO: translate this
-	var ney = 'Nothing entered yet';
+
+	var ney = Drupal.t('Nothing entered yet');
 	for (var t=0; t < count;t++){
 		target = labels[t].tab;
 		s += '<div id="tab_'+ target + '" class="content">';
@@ -448,10 +443,10 @@ function renderProposalTabs(result, labels, container){
 				break;
 //			case 'modules': s += (result.modules ? result.modules : ney);
 //				break;
-			case 'edit': s += 'Wait please';
+			case 'edit': s += Drupal.t('Wait please');
 			break;
-			case 'delete': s += 'Are you sure you want to delete this proposal?<br>'+
-				'<input type="button" value="Yes" onclick="ajaxCall(\'proposal\', \'delete\', '+
+			case 'delete': s += Drupal.t('Are you sure you want to delete this proposal?<br>')+
+				'<input type="button" value="' + Drupal.t('Yes') +'" onclick="ajaxCall(\'proposal\', \'delete\', '+
 				'{proposal_id:'+result.proposal_id+', target: \''+ container+ '\' }, '+
 				'\'handleDeleteResult\', \'json\', [\'our_content\', \'proposal\', \'myproposal_page\']);"/>';
 			break;
