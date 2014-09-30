@@ -6,8 +6,8 @@ include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 
 switch ($_GET['action']){
-	//creates a first proposal for a project
-	case 'proposal':
+	//Moved the student_actions to proposal_actions. We keep this file for student actions only. At the moment there are none
+/*	case 'proposal':
 		if (!vals_soc_access_check('dashboard/projects/apply')) {
 			echo errorDiv(t('You cannot apply for projects'));
 			break;
@@ -155,6 +155,6 @@ switch ($_GET['action']){
 		}
 	
 	
-		break;
+		break;*/
 	default: echo "No such action: ".$_GET['action'];
 	}
