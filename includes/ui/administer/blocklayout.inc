@@ -15,7 +15,6 @@ include(_VALS_SOC_ROOT.'/includes/functions/render_functions.php');
 //$GLOBALS['user'] = user_load(30,  TRUE);
 $role = getRole();
 $action = isset($action) ? $action : 'administer';?>
-	<div id='admin_container' class='tabs_container'>
-		<?php showRoleDependentAdminPage($role, $action, false);?>
-	</div>
+<div id='admin_container' class='tabs_container'>
+	<?php showRoleDependentAdminPage($role, $action, false);?>
 </div>

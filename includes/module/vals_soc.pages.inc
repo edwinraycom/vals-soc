@@ -55,6 +55,15 @@ function vals_soc_members_page(){
 	return ob_get_clean();
 }
 
+function vals_soc_overview_page(){
+	ob_start();
+	vals_soc_content_start();
+	$action = 'overview';
+	include(_VALS_SOC_ROOT. '/includes/ui/administer/blocklayout.inc');
+	vals_soc_content_end();
+	return ob_get_clean();
+}
+
 function vals_soc_administer_groupspage(){
 	ob_start();
 	vals_soc_content_start();

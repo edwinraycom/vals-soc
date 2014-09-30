@@ -29,8 +29,8 @@ function vals_soc_menu_handler(){
 	$items['dashboard/program_settings/messages'] = getEditMessagesLink('access administration pages', MENU_CALLBACK);
 	$items['dashboard/program_settings/timeline'] = getEditTimelineLink('access administration pages', MENU_CALLBACK);
 
-	// This is the organisation, institution and studentgroup admin form link
 	$items['dashboard/members'] = getMembersLink('dashboard/members');
+	$items['dashboard/overview'] = getOverviewLink('dashboard/overview');
 	
 	//allow institutes to add/edit their institute details
 	$items['dashboard/institute/administer'] = getAdministerLink('dashboard/institute/administer', _INSTITUTE_GROUP, false);
@@ -201,6 +201,19 @@ function getMembersLink($path){ //dashboard/members
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' => array($path),
 			'description' => t('Administer page'),
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
+	);
+}
+
+function getOverviewLink($path){ //dashboard/members
+	return array(
+			'title' => t('Overview'),
+			'type' => MENU_CALLBACK,
+			'page callback' => 'vals_soc_overview_page',
+			'access callback' => 'vals_soc_access_check',
+			'access arguments' => array($path),
+			'description' => t('Overview page'),
 			'file' => 'vals_soc.pages.inc',
 			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);

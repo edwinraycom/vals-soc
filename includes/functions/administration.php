@@ -61,6 +61,8 @@ function showSupervisorPage($show_action, $show_last=FALSE){
 			showInstituteMembersPage($my_institute, $show_last);
 		} elseif ($show_action == 'groups'){
 			showInstituteGroupsAdminPage($my_institute, $show_last);
+		} elseif ($show_action == 'overview'){
+			echo "deze institute pagina voor supervisors";//showInstituteGroupsAdminPage($my_institute, $show_last);
 		} else {
 			echo tt('there is no such action possible %1$s', $show_action);	
 		}
@@ -99,6 +101,8 @@ function showInstitutePage($show_action, $show_last=FALSE){
 			showInstituteMembersPage($my_institute, $show_last);
 		} elseif ($show_action == 'groups'){
 			showInstituteGroupsAdminPage($my_institute, $show_last);
+		} elseif ($show_action == 'overview'){
+			echo "deze institute pagina";//showInstituteGroupsAdminPage($my_institute, $show_last);
 		} else {
 			echo tt('there is no such action possible %1$s', $show_action);	
 		}
@@ -287,6 +291,8 @@ function showOrganisationPage($show_action, $show_last=FALSE){
 			showOrganisationAdminPage($organisations, $show_action, $show_last);
 		} elseif ($show_action == 'members') {
 			showOrganisationMembersPage($organisations);
+		} elseif ($show_action == 'overview'){
+			echo "deze org pagina";//showInstituteGroupsAdminPage($my_institute, $show_last);
 		} else {
 			echo tt('There is no such action possible %1$s', $show_action);
 		}

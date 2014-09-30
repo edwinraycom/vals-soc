@@ -178,9 +178,9 @@ function renderUsers($type='', $users='', $group_selection='', $group_type='', $
         }
     }
     
-    $group_type = $group_type ?: 'environment';
+    $group_type = $group_type ? t_type($group_type): t('environment');
     $type_nice = str_replace('_', ' ', $type);
-    $empty_message =  $group_selection ? tt('There is no %1$s yet in this %2$s', t($type_nice), t($group_type)) :
+    $empty_message =  $group_selection ? tt('There is no %1$s yet in this %2$s', t($type_nice), $group_type) :
     tt('There are no %1$s yet.', t($type_nice));
     return formatUsersNice($users, $type, $empty_message, $show_title);
     
