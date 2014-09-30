@@ -177,7 +177,19 @@ function handleContentAndMessage(result, args){
 	}
 }
 
-
+//Gets content and waits for content to be placed to handle the messages which target is inside the new content
+function handleMessage(result, args){
+	var target = args[0];
+	if (result){
+		if (result.result == "error") {
+			ajaxError(target, result.error);
+		} else {
+			ajaxMessage(target, result.msg);
+		}
+	} else {
+		alertdev('Not a valid result');
+	}
+}
 
 function handleResult(result, args){
 	var target = args[0];
