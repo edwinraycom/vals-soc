@@ -265,18 +265,18 @@
 
   Timeline.prototype.toReadableTimeRange = function (from_in_ms, to_in_ms) {
     var MONTH_NAMES = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"
+      Drupal.t('January'),
+      Drupal.t('February'),
+      Drupal.t('March'),
+      Drupal.t('April'),
+      Drupal.t('May'),
+      Drupal.t('June'),
+      Drupal.t('July'),
+      Drupal.t('August'),
+      Drupal.t('September'),
+      Drupal.t('October'),
+      Drupal.t('November'),
+      Drupal.t('December')
     ];
 
     var date_from = new Date(from_in_ms);

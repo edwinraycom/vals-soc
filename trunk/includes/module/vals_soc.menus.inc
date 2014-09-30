@@ -212,8 +212,8 @@ function getAdministerLink($path, $type, $plural=true){//$items['dashboard/insti
 	$plural_str = $plural ? '(s)':'';
 	 
 	return array(
-			'title' => ($action == 'view') ? tt('View your %1$s'.$plural_str, t($type)) : tt('%1$s your %2$s'.$plural_str, 
-					ucfirst(t($action)), t($type)),
+			'title' => ($action == 'view') ? tt('View your %1$s'.$plural_str, t_type($type)) : tt('%1$s your %2$s'.$plural_str, 
+					ucfirst(t($action)), t_type($type)),
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_administer_entity_page',
 			'page arguments' => array($action),
@@ -228,7 +228,7 @@ function getAdministerLink($path, $type, $plural=true){//$items['dashboard/insti
 function getEntityMembersLink($path, $type, $plural=true){ //'dashboard/institute/members'
 	$plural_str = $plural ? '(s)':'';
 	return array(
-			'title' => tt('Overview of the members of your %1$s', t($type)).$plural_str,
+			'title' => tt('Overview of the members of your %1$s', t_type($type)).$plural_str,
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_members_page',
 			'access callback' => 'vals_soc_access_check',

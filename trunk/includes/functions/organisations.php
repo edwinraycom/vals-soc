@@ -45,7 +45,7 @@ function initBrowseOrgsLayout($org_id=''){?>
 						list: false
 					},
 					name: {
-						title: "Organisation",
+						title: Drupal.t('Organisation'),
 						width: "30%",
 						display: function (data) {
 							return "<a title=\"View organisation details\" href=\"javascript:void(0);\" onclick=\"getOrganisationDetail("+
@@ -53,7 +53,7 @@ function initBrowseOrgsLayout($org_id=''){?>
 							},
 					},
 					url:{
-						title: "More information",
+						title: Drupal.t('More information'),
 						width: "70%",
 						display: function (data) {
 							return "<a class='external' title=\"View organisation/project site\" target=\"_blank\" href=\""+data.record.url+"\" >"+data.record.url+"</a>";

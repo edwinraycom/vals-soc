@@ -89,7 +89,7 @@ function formatMemberRecordNice($record, $type, $target=''){
 					$owner_details = $user->name . ' (' . $user->mail . ')';
 				}
 			} else {
-				$owner_details = tt('We could not find the owner of this %1$s', t($type));
+				$owner_details = tt('We could not find the owner of this %1$s', t_type($type));
 			}
 		}
 		$output .=  '<dt>';
@@ -120,7 +120,7 @@ function formatMemberRecordNice($record, $type, $target=''){
 				$output .= '<br/>';
 				$output .= '<br/>';
 				$output .= tt('To sign up a %1$s for your %2$s, send them this code and direct them to '.
-						$server.'/user/register where they can use it to sign up.', t($member_type), t($type));
+						$server.'/user/register where they can use it to sign up.', t($member_type), t_type($type));
 				$output .= '<br/>';
 				$output .= '<br/>';
 				$output .= t('Alternatively click the button below to send an email containing signup instructions') . '</i>';
@@ -129,11 +129,11 @@ function formatMemberRecordNice($record, $type, $target=''){
 				$output .= "<input type='button' value='".tt('Invite %1$s', t($member_type))."' $invite_mentor_action/>";
 			} elseif (($key=='owner_code') && ($type != _STUDENT_GROUP)){
 				$output .= $attribute_str.'<br/>';
-				$output .= '<i>' . tt('You can use the following code to invite a colleague to manage this %1$s together ', t($type)). '</i>';
+				$output .= '<i>' . tt('You can use the following code to invite a colleague to manage this %1$s together ', t_type($type)). '</i>';
 				$output .= '<br/>';
 				$output .= '<br/>';
 				$output .= tt('To sign up a %1$s for your %2$s, send them this code and direct them to '.
-						$server.'/user/register where they can use it to sign up.', t($parent_member_type), t($type));
+						$server.'/user/register where they can use it to sign up.', t($parent_member_type), t_type($type));
 				$output .= '<br/>';
 				$output .= '<br/>';
 				$output .= t('Alternatively click the button below to send an email containing signup instructions') . '</i>';
@@ -228,8 +228,8 @@ function renderOrganisations($type='', $organisations='', $organisation_head='',
 		return $s;
 	} else {
 		$type = $type ?: _STUDENT_GROUP;
-		return $organisation_head ? tt('You have no %1$s yet.', t($type)):
-			tt('There is no %1$s yet.', t($type));
+		return $organisation_head ? tt('You have no %1$s yet.', t_type($type)):
+			tt('There is no %1$s yet.', t_type($type));
 	}
 }
 
@@ -249,7 +249,7 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
 	    	$s .= "	<input type='button' value='".t('edit')."' $edit_action/>";
 	    	// has the org signup period ended if so user cant add/delete entries, only edit
 	    	if(vals_soc_access_check("dashboard/$type/administer/add_or_delete")){
-	    		$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"administration\"]);}'";
+	    		$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t_type($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"administration\"]);}'";
 	    		$s .= "	<input type='button' value='".t('delete')."' $delete_action/>";
 	    	}
 	    	$s .= "</div>";

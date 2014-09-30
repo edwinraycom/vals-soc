@@ -45,7 +45,7 @@ function initBrowseInstitutesLayout($inst_id=''){?>
 						list: false
 					},
 					name: {
-						title: "Institute",
+						title: Drupal.t('Institute'),
 						width: "30%",
 						display: function (data) {
 							return "<a title=\"View institute details\" href=\"javascript:void(0);\" onclick=\"getInstituteDetail("+
