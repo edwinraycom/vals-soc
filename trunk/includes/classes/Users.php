@@ -184,17 +184,18 @@ class Users extends AbstractEntity{
 
 		$group_head = $user->uid;
 		//todo: find out whether current user is indeed head of the group
-
+		
+		$group_type = $group_type ?: self::participationGroup($member_type);
  		if ($group_id == 'all'){
  			// updated to ensure we only retrieve users that belong to
  			// one of the logged in users 'soc_user_membership ' groups. 
  			// For example, this was originally retrieving ALL mentors, 
  			// inc ones not in any of the current users organisations
-			$group_ids = db_query(
+			$group_ids = Users::isAdmin() ? null : db_query(
 					"SELECT group_id from soc_user_membership t".
-					" WHERE t.uid = $group_head ")
+					" WHERE t.uid = $group_head AND t.type = '$group_type' ")
 					->fetchCol();
-			if ($group_ids){
+			if ($group_ids){				 
 				//So we know which groups and of which type membertype should be member
 				$query = "SELECT DISTINCT u.*,n.name as fullname from users as u ".
 						"left join users_roles as ur on u.uid = ur.uid ".
@@ -204,10 +205,8 @@ class Users extends AbstractEntity{
 						"WHERE r.name = '$member_type' AND um.type = '$group_type' AND um.group_id IN (".
 						implode(',', $group_ids).")";
 				$members = db_query($query);
-					
 			} else {
 				//So the admin cannot see who are subscribed???? Used to be : return NULL;
-				$group_type = self::participationGroup($member_type);
 				$query = "SELECT DISTINCT u.*,n.name as fullname from users as u ".
 						"left join users_roles as ur on u.uid = ur.uid ".
 						"left join role as r  on ur.rid = r.rid ".
