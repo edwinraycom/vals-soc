@@ -24,7 +24,7 @@ switch ($_GET['action']){
 		$mail = array('from' => $GLOBALS['user']->mail);
 		$mail['body'] = tt('Hello,')."\n\n".
 				tt('I would like to recommend the following project to you: %1$s',
-						_VALS_SOC_FULL_URL."/projects/browse?pid=9$id."). "\n\n".
+						_VALS_SOC_FULL_URL."/projects/browse?pid=$id."). "\n\n".
 						t('Kind regards,')."\n\n".
 						Users::getMyName();
 		$mail['subject'] = t('Recommendation from your supervisor');
@@ -90,7 +90,8 @@ switch ($_GET['action']){
 					'rate'=>$rate))
 				->execute();
 		}
-		echo $result ? t('You have marked this project succesfully'): t('Something went wrong with the project rating.');
+		echo $result ? jsonGoodResult(TRUE, t('You have marked this project succesfully')) : 
+			jsonBadResult(t('Something went wrong with the project rating.'));
 
 		break;
 	case 'list_search':

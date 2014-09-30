@@ -229,7 +229,7 @@ function renderProject(project, apply_projects){
 
 function renderRecommendation(pid){
 	return "<div id='recommend_msg'></div>"+
-		Drupal.t('Recommend this project to:')+ "<input type='text' id='recommend_email' name='recommend_email'/>"+
+		Drupal.t('Recommend this project to:')+ "&nbsp;<input type='text' id='recommend_email' name='recommend_email'/>"+
 		"<input type='button' value='"+ Drupal.t('Recommend')+ "' onclick='ajaxCall(\"project\", \"recommend\", {id: "+ 
 			pid+ ", email: $jq(\"#recommend_email\").val()}, \"recommend_msg\");' />";
 }
@@ -241,8 +241,8 @@ function renderSupervisorLike(pid, current){
 	"<label><input type='radio' value=0 id='project_like0' name='project_like' "+ 
 		((0 == current)? 'checked="checked"': '') + "/>"+ Drupal.t('Maybe') +"</label>&nbsp;" +	
 	"<label><input type='radio' value=1 id='project_like1' name='project_like' "+ 
-		((1 == current)? 'checked="checked"': '') + "/>"+ Drupal.t('Would suit me')+"</label>&nbsp;<input type='button' value='Save Preference' onclick='ajaxCall(\"project\", \"rate\", {id: "+ pid+
-		", rate: $jq(\"input:radio[name=project_like]:checked\").val()}, \"recommend_msg\");'/>"
+		((1 == current)? 'checked="checked"': '') + "/>"+ Drupal.t('Would suit me')+"</label>&nbsp;<input type='button' value='"+ Drupal.t('Save Preference') + "' onclick='ajaxCall(\"project\", \"rate\", {id: "+ pid+
+		", rate: $jq(\"input:radio[name=project_like]:checked\").val()}, \"handleMessage\", \"json\", [\"recommend_msg\"]);'/>"
 		;
 }
 
