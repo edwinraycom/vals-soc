@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `soc_supervisor_rates` (
   `pid` int(11) NOT NULL,
   `rate` tinyint(4) NOT NULL,
   `uid` int(11) NOT NULL,
-  PRIMARY KEY (`rec_id`)
+  PRIMARY KEY (`rate_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 
