@@ -46,6 +46,22 @@ function getInstAdminLayout($timeline_args){
 		';
 	}
 	
+	if($timeline_args['groupsVisible']){
+		$output .='
+		<div class="column-entry participants">
+		<h4>
+		<a class="dashboard-link"
+		href="'.$base_url.'/dashboard/institute/group/administer"
+		title="'.t("Groups").'">'.t("Groups").'</a>
+		</h4>
+		<p>'.t("Create groups of students to manage codes and the initial supervisor-student relation.").'</p>
+		<div>
+		<!--<a href="#" title="'.t("Create Groups").'">'.t("Create and see your list of groups").'</a> |
+		<a href="#" title="'.t("Manage student groups").'">'.t("Manage student groups").'</a>-->
+		</div>
+		</div>
+		';
+	}
 /* 	if($timeline_args['connectionsVisible']){
 		$output .='
 					<div class="column-entry connections_dashboard">
@@ -69,21 +85,20 @@ function getInstAdminLayout($timeline_args){
 				<div class="column">
 	';
 
-	if($timeline_args['groupsVisible']){
-		$output .='
-		<div class="column-entry participants">
+	
+	
+	if(TRUE || $timeline_args['manageProjectIdeasVisible']){//TODO: the statistics can be seen by all
+		$output .="
+		<div class='column-entry org_app shipment_tracking'>
 		<h4>
-		<a class="dashboard-link"
-		href="'.$base_url.'/dashboard/institute/group/administer"
-		title="'.t("Groups").'">'.t("Groups").'</a>
-		</h4>
-		<p>'.t("Create groups of students to manage codes and the initial supervisor-student relation.").'</p>
-		<div>
-		<!--<a href="#" title="'.t("Create Groups").'">'.t("Create and see your list of groups").'</a> |
-		<a href="#" title="'.t("Manage student groups").'">'.t("Manage student groups").'</a>-->
-		</div>
-		</div>
-		';
+		<a class='dashboard-link component-link'
+		href='$base_url/dashboard/overview'
+		title='".t('Overview of proposals, number of students etc.')."'>".t('Overview')."</a>
+				</h4>
+				<p>".t('Shows activity on proposals made within your institute, number of students etc.')."</p>
+	
+				</div>
+				";
 	}
 	
 	if($timeline_args['manageProjectIdeasVisible']){

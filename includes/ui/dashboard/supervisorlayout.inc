@@ -48,13 +48,6 @@ function getSupervisorLayout($timeline_args){
 		';
 	}
 	
-	
-	
-	$output .='	
-				</div>
-				<!-- column two -->
-				<div class="column">
-	';
 	if($timeline_args['groupsVisible']){
 		$output .='
 		<div class="column-entry participants">
@@ -66,12 +59,33 @@ function getSupervisorLayout($timeline_args){
 		<p>'.t("Create groups of students to manage codes and the initial supervisor-student relation.").'</p>
 		<div>
 		<!--<a href="#" title="'.t("Create Groups").'">'.t("Create and see your list of groups").'</a> |
-		 <a href="#" title="'.t("Manage student groups").'">'.t("Manage student groups").'</a>-->
+		<a href="#" title="'.t("Manage student groups").'">'.t("Manage student groups").'</a>-->
 		</div>
 		</div>
 		';
 	}
 	
+	
+	$output .='	
+				</div>
+				<!-- column two -->
+				<div class="column">
+	';
+
+	
+	if(TRUE || $timeline_args['manageProjectIdeasVisible']){//TODO: the statistics can be seen by all
+		$output .="
+		<div class='column-entry org_app shipment_tracking'>
+		<h4>
+		<a class='dashboard-link component-link'
+		href='$base_url/dashboard/overview'
+		title='".t('Overview of proposals, number of students etc.')."'>".t('Overview')."</a>
+				</h4>
+				<p>".t('Shows activity on proposals made within your institute, number of students etc.')."</p>
+	
+				</div>
+				";
+	}
 	if($timeline_args['manageProjectIdeasVisible']){
 		$output .='
 		<div class="column-entry org_app projects">

@@ -70,6 +70,20 @@ function getMentorLayout($timeline_args){
 		';
 	}
 	
+	if(TRUE || $timeline_args['manageProjectIdeasVisible']){//TODO: the statistics can be seen by all
+		$output .="
+		<div class='column-entry org_app shipment_tracking'>
+		<h4>
+		<a class='dashboard-link component-link'
+		href='$base_url/dashboard/overview'
+		title='".t('Overview of proposals, number of students etc.')."'>".t('Overview')."</a>
+				</h4>
+				<p>".t('Shows activity on proposals for your organisation, number of students etc.')."</p>
+	
+				</div>
+				";
+	}
+	
 	$output .='
 				</div>
 				<!-- column two -->

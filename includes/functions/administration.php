@@ -292,10 +292,22 @@ function showOrganisationPage($show_action, $show_last=FALSE){
 		} elseif ($show_action == 'members') {
 			showOrganisationMembersPage($organisations);
 		} elseif ($show_action == 'overview'){
-			echo "deze org pagina";//showInstituteGroupsAdminPage($my_institute, $show_last);
+			showOrganisationOverviewPage($organisations);//showInstituteGroupsAdminPage($my_institute, $show_last);
 		} else {
 			echo tt('There is no such action possible %1$s', $show_action);
 		}
+	}
+}
+function showOrganisationOverviewPage($organisations){
+	include_once(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
+	if ($organisations->rowCount() == 1) {
+		$org_id = $organisations->fetchObject()->org_id;
+		$nr_proposals_draft = count(Proposal::getProposalsPerOrganisations($org_id));
+		$nr_proposals_final = count(Proposal::getProposalsPerOrganisations($org_id, 'published'));
+		echo "<b>".t("Proposals in draft:")."</b>&nbsp; $nr_proposals_draft<br>";
+		echo "<b>".t("Proposals submitted:")."</b>&nbsp; $nr_proposals_final<br>";
+	} else {
+		echo "er zijn meeerdere";
 	}
 }
 

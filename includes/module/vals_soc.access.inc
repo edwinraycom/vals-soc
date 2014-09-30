@@ -31,6 +31,9 @@ function pageAccessCheck($access_string) {
 		case 'dashboard/members':
 			return hasPermission('vals admin register') && Timeline::getInstance()->organisationSignupPeriodOpened();
 			break;
+		case 'dashboard/overview':
+			return ! Users::isStudent();
+			break;
 		case 'dashboard/organisation/view':
 			return hasPermission('vals admin view') && Timeline::getInstance()->organisationSignupPeriodOpened();
 			break;
