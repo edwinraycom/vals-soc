@@ -174,11 +174,11 @@ function renderProject(project, apply_projects){
 	}
 	console.log("hoe zit het met rating "+rate_projects);
 	if ((typeof rate_projects != 'undefined') && rate_projects){
-		if (typeof project.rating != 'undefined') {
-			rate = project.rating;
+		if (typeof project.rate != 'undefined') {
+			rate = project.rate;
 			console.log(' hij was gedefinieerd');
 		} else {
-			rate = 0;
+			rate = -2;
 			console.log(' hij was NIET gedefinieerd');
 		}
 		content += "<h2>Your Opinion</h2>"+ 
