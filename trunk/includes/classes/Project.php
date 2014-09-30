@@ -204,7 +204,6 @@ class Project extends AbstractEntity{
     		$projects = $p ? array($p) : array();
     	} elseif ($organisations) {
     		$table = tableName('project');
-    		//
     		if (!$owner_id){
     			$projects = db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",
     				array(':orgs' => $organisations))->fetchAll();
@@ -212,9 +211,7 @@ class Project extends AbstractEntity{
     			$projects = db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) AND p.owner_id IN (:uid)",
     					array(':orgs' => $organisations, ':uid' => $owner_id))->fetchAll();
     		}
-    		//
     	} elseif ($owner_id){
-    		//$projects = self::getProjectsByUser_orig($role, $owner_id);
     		$projects = self::getProjectsByUser($owner_id);
     	} else {
     		$projects = self::getAllProjects(NULL);
@@ -270,8 +267,7 @@ class Project extends AbstractEntity{
 		$org_admin_or_mentor = $user->uid;
 		$user_id = $user_id ?: $org_admin_or_mentor;
 		$my_role = getRole();
-		//todo: find out whether current user is institute_admin
-		 
+		
 		$table = tableName('project');
 		if (in_array($my_role, array(_ORGADMIN_TYPE, _MENTOR_TYPE))){
 			$my_orgs = $organisations ?: db_query(
@@ -280,14 +276,17 @@ class Project extends AbstractEntity{
 					"WHERE um.uid = $user_id AND um.type = :organisation",
       					array(':organisation' =>_ORGANISATION_GROUP))->fetchCol();
 			if (! $my_orgs){
+				//echo 'deze';
 				drupal_set_message(t('You have no organisation yet'), 'error');
 				return array();
 			}
-			if ($show_all || _VALS_SOC_MENTOR_ACCESS_ALL || ($my_role == _ORGADMIN_TYPE)) {
+			if ($show_all && (_VALS_SOC_MENTOR_ACCESS_ALL || ($my_role == _ORGADMIN_TYPE))) {
+				//echo 'die';
 				$my_projects =
 					db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",array(':orgs' => $my_orgs))
 					->fetchAll();
 			} else {
+				//echo 'dat';
 				$my_projects =
 					db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) AND p.owner_id = $user_id",array(':orgs' => $my_orgs))
 					->fetchAll();
@@ -296,7 +295,6 @@ class Project extends AbstractEntity{
 			drupal_set_message(t('You are not allowed to perform this action'), 'error');
 			return array();
 		}
-		 
 		return $my_projects;
 	}
 	static function getInterestedSupervisors($project_id){

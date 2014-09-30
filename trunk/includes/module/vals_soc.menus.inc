@@ -261,12 +261,12 @@ function getGroupAdministerLink($path){//$items['dashboard/institute/group/admin
  */
 function getProjectsAdministerLink($path){ //dashboard/projects/administer
 	return array(
-			'title' => t('Administer your projects'),
+			'title' => t('Administer projects'),
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_administer_projects_page',
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' => array($path),
-			'description' => t('Administer page for projects'),
+			'description' => t('Administer page for projects of your organisations'),
 			'file' => 'vals_soc.pages.inc',
 			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
@@ -274,7 +274,7 @@ function getProjectsAdministerLink($path){ //dashboard/projects/administer
 
 function getMyProjectsAdministerLink($path){ //dashboard/projects/administer/mine
 	return array(
-			'title' => t('Administer your own projects'),
+			'title' => t('Administer your projects'),
 			'type' => MENU_CALLBACK,
 			'page callback' => 'vals_soc_administer_my_projects_page',
 			'access callback' => 'vals_soc_access_check',

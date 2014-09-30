@@ -31,7 +31,6 @@ function showProjectPage($show_last=FALSE, $owner_only=false){
 			$orgs[] = $org;
 			$orgids[] = $org->org_id;
 		}
-		
 		$projects = Project::getProjectsByUser($owner_id, $orgids, $show_all);//$my_organisations->fetchCol());
 		
 		if (! $projects){
