@@ -715,7 +715,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#title' => t('Choose a supervisor for this project'),
 			"#options" => $options,
 			'#required' => '0',
-			"#default_value" => populate($proposal, 'supervisor'),
+			"#default_value" => populate($proposal, 'supervisor_id'),
 			"#description" => t("You can also choose a supervisor later. The supervisors in this list have voted that they are willing to be supervisor for this project"),
 	);
 	

@@ -195,29 +195,35 @@ class Proposal extends AbstractEntity{
     			return false; 
     		}
     		$project = Project::getProjectById($project_id);
-    		
     		$student_details = Users::getStudentDetails($uid);
+    		
     		$props['owner_id'] = $uid;
     		$props['org_id'] = $project['org_id'];
     		$props['inst_id'] = $student_details->inst_id ;
-    		$props['supervisor_id'] = $student_details->supervisor_id ;  		
+    		$props['supervisor_id'] = altSubValue($props, 'supervisor_id', 0) ?: 
+    			$student_details->supervisor_id ;  		
     		$props['pid'] = $project['pid'];
     		if (!isset($props['state'])){
     			$props['state'] = 'draft' ;
     		}
-    		try{
+    		if (! testInput($props, array('owner_id', 'org_id', 'inst_id', 'supervisor_id','pid', 'title'))){
+    			return FALSE;
+    		}
+    		
+    		try {
     			// inserts where the field length is exceeded fails silently here
     			// i.e. the date strinf is too long for the mysql field type
     			$id = db_insert(tableName('proposal'))->fields($props)->execute();
-    		}catch(Exception $e) {
-    			drupal_set_message($e->getMessage());
+    		} catch (Exception $e) {
+    			drupal_set_message($e->getMessage(), 'error');
 			}
     		if ($id){
     			//TODO: notify mentor???
     			drupal_set_message('You have only saved your proposal. You can continue editing it later.');
     			return $id;
     		} else {
-    			drupal_set_message(tt('We could not add your %1$s.', $type), 'error');
+    			drupal_set_message(t('We could not add your proposal. ').
+    				(_DEBUG ? ('<br/>'.getDrupalMessages()): ""), 'error');
     		}
     
     		return $result;

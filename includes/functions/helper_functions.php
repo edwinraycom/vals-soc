@@ -53,6 +53,17 @@ function startException($error_msg){
 	throw new Exception($error_msg);
 }
 
+function testInput($arr, $fields){
+	$test = TRUE;
+	foreach($fields as $f){
+		if (! isset($arr[$f])){
+			drupal_set_message(t('The input value @f is not set.', array('@f'=> $f)), 'error');
+			$test = FALSE;
+		}
+	}
+	return $test;
+}
+
 function altSubValue($arr, $field, $default=''){
 	if ($arr && isset($arr[$field])) {
 		return $arr[$field];
