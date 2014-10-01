@@ -302,8 +302,10 @@ function showOrganisationOverviewPage($organisations){
 	include_once(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 	if ($organisations->rowCount() == 1) {
 		$org_id = $organisations->fetchObject()->org_id;
-		$nr_proposals_draft = count(Proposal::getProposalsPerOrganisations($org_id));
-		$nr_proposals_final = count(Proposal::getProposalsPerOrganisations($org_id, 'published'));
+		$drafts = Proposal::getProposalsPerOrganisation($org_id);
+		print_r($drafts);
+		$nr_proposals_draft = count($drafts);
+		$nr_proposals_final = count(Proposal::getProposalsPerOrganisation($org_id, 'published'));
 		echo "<b>".t("Proposals in draft:")."</b>&nbsp; $nr_proposals_draft<br>";
 		echo "<b>".t("Proposals submitted:")."</b>&nbsp; $nr_proposals_final<br>";
 	} else {
