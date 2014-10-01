@@ -220,7 +220,7 @@ switch ($_GET['action']){
         	return;
         }
 
-        $properties = Groups::filterPost($type, $_POST);
+        $properties = Groups::filterPostByType($type, $_POST);
         if (!$id){
         	$new = true;
         	$result = ($type == _STUDENT_GROUP) ? Groups::addStudentGroup($properties) :
