@@ -339,7 +339,7 @@ class Groups extends AbstractEntity{
 		return FALSE;
 	}
 	
-	static function filterPost_type($type){
+	static function filterPostByType($type){
 	
 		//TODO: get the db fields from schema and move foreach out of switch
 		$fields = array(
