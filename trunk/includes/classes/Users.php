@@ -284,7 +284,7 @@ class Users extends AbstractEntity{
 		//todo: find out whether current user is institute_admin
 	
 		if ($institute == 'all'){
-			$supervisors = db_query('select u.*,n.name as fullname from users as u '.
+			$students = db_query('select u.*,n.name as fullname from users as u '.
 					'left join  users_roles as ur on u.uid=ur.uid '.
 					'left join role as r on r.rid=ur.rid '.
 					'left join soc_names as n on u.uid=n.names_uid '.

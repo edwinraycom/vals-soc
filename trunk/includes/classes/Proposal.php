@@ -75,13 +75,15 @@ class Proposal extends AbstractEntity{
     	return $query->execute()->fetchAll();
     }
     
-    public static function getProposalsPerOrganisation($org_id, $state='draft',$details=false){
-//     	if (! is_array($org_ids)){
-//     		$org_ids = array($org_ids);
-//     	}
+    public static function getProposalsPerOrganisation($org_id='', $inst_id='', $state='draft',$details=false){
     	$query = db_select('soc_proposals', 'p')->fields('p', self::$fields);
     	//$query->addExpression('Count(p.pid)', 'nr_proposals');
-    	$query->condition('p.org_id', $org_id);
+    	if ($org_id){
+    		$query->condition('p.org_id', $org_id);
+    	}
+    	if ($inst_id){
+    		$query->condition('p.inst_id', $inst_id);
+    	}
     	if ($state){
     		$query->condition('p.state', $state);
     	}

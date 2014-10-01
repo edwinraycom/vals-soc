@@ -216,7 +216,7 @@ class Project extends AbstractEntity{
     	} elseif ($owner_id){
     		$projects = self::getProjectsByUser($owner_id);
     	} else {
-    		$projects = self::getAllProjects(NULL);
+    		$projects = self::getInstance()->getAllProjects(NULL);
     	}
     	return $projects;
     }
