@@ -7,8 +7,12 @@ class Groups extends AbstractEntity{
 		$current_userid = $user->uid;
 		//todo: find out whether current user is institute_admin
 	
-		if ($member_id == 'all'){
-			$groups = db_query("SELECT o.* from soc_${org_type}s as o");
+		if ($member_id == 'all'){	
+			if (($org_type == _STUDENT_GROUP) && $id){
+				$groups = db_query("SELECT o.* from soc_${org_type}s as o WHERE inst_id = $id");
+			} else {
+				$groups = db_query("SELECT o.* from soc_${org_type}s as o");
+			}
 		} else {
 			$key_column = self::keyField($org_type);
 			$code_key_column = ($org_type == _STUDENT_GROUP) ? 'studentgroup_id' : 'entity_id';

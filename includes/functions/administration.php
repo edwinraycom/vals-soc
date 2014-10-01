@@ -62,7 +62,8 @@ function showSupervisorPage($show_action, $show_last=FALSE){
 		} elseif ($show_action == 'groups'){
 			showInstituteGroupsAdminPage($my_institute, $show_last);
 		} elseif ($show_action == 'overview'){
-			echo "deze institute pagina voor supervisors";//showInstituteGroupsAdminPage($my_institute, $show_last);
+			//echo "deze institute pagina voor supervisors";
+			 showInstituteOverviewPage($my_institute);
 		} else {
 			echo tt('there is no such action possible %1$s', $show_action);	
 		}
@@ -102,11 +103,35 @@ function showInstitutePage($show_action, $show_last=FALSE){
 		} elseif ($show_action == 'groups'){
 			showInstituteGroupsAdminPage($my_institute, $show_last);
 		} elseif ($show_action == 'overview'){
-			echo "deze institute pagina";//showInstituteGroupsAdminPage($my_institute, $show_last);
+			showInstituteOverviewPage($my_institute, $show_last);
 		} else {
 			echo tt('there is no such action possible %1$s', $show_action);	
 		}
 	}
+}
+
+function showInstituteOverviewPage($institute){
+	include_once(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
+	include_once(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
+	include_once(_VALS_SOC_ROOT.'/includes/classes/Project.php');
+	echo "<h2>" . t('Overview of your institute activity')."</h2>";
+		$inst_id = $institute->inst_id;
+		
+		$nr_proposals_draft = count(Proposal::getProposalsPerOrganisation('', $inst_id));
+		$nr_proposals_final = count(Proposal::getProposalsPerOrganisation('', $inst_id, 'published'));
+		$nr_students = Users::getUsers(_STUDENT_TYPE, _INSTITUTE_GROUP, $inst_id)->rowCount();
+		$nr_groups = Groups::getGroups(_STUDENT_GROUP, 'all', $inst_id)->rowCount();
+		$nr_tutors = Users::getUsers(_SUPERVISOR_TYPE, _INSTITUTE_GROUP, $inst_id)->rowCount() +
+			Users::getUsers(_INSTADMIN_TYPE, _INSTITUTE_GROUP, $inst_id)->rowCount();
+		$nr_orgs = count(Organisations::getInstance()->getOrganisations());
+		$nr_projects = count(Project::getProjects());
+		echo "<b>".t("Proposals in draft:")."</b>&nbsp; $nr_proposals_draft<br>";
+		echo "<b>".t("Proposals submitted:")."</b>&nbsp; $nr_proposals_final<br>";
+		echo "<b>".t("Number of students subscribed:")."</b>&nbsp; $nr_students<br>";
+		echo "<b>".t("Number of groups available:")."</b>&nbsp; $nr_groups<br>";
+		echo "<b>".t("Number of supervisors subscribed:")."</b>&nbsp; $nr_tutors<br>";
+		echo "<b>".t("Number of organisatios:")."</b>&nbsp; $nr_orgs<br>";
+		echo "<b>".t("Number of projects:")."</b>&nbsp; $nr_projects<br>";
 }
 
 function showInstituteGroupsAdminPage($my_institute, $show_last){
@@ -298,12 +323,13 @@ function showOrganisationPage($show_action, $show_last=FALSE){
 		}
 	}
 }
+
 function showOrganisationOverviewPage($organisations){
 	include_once(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 	if ($organisations->rowCount() == 1) {
 		$org_id = $organisations->fetchObject()->org_id;
 		$nr_proposals_draft = count(Proposal::getProposalsPerOrganisation($org_id));
-		$nr_proposals_final = count(Proposal::getProposalsPerOrganisation($org_id, 'published'));
+		$nr_proposals_final = count(Proposal::getProposalsPerOrganisation($org_id, '', 'published'));
 		echo "<b>".t("Proposals in draft:")."</b>&nbsp; $nr_proposals_draft<br>";
 		echo "<b>".t("Proposals submitted:")."</b>&nbsp; $nr_proposals_final<br>";
 	} else {
@@ -311,7 +337,7 @@ function showOrganisationOverviewPage($organisations){
 			echo "<h2>".$org->name. "</h2>";
 			$org_id = $org->org_id;
 			$nr_proposals_draft = count(Proposal::getProposalsPerOrganisation($org_id));
-			$nr_proposals_final = count(Proposal::getProposalsPerOrganisation($org_id, 'published'));
+			$nr_proposals_final = count(Proposal::getProposalsPerOrganisation($org_id, '', 'published'));
 			echo "<b>".t("Proposals in draft:")."</b>&nbsp; $nr_proposals_draft<br>";
 			echo "<b>".t("Proposals submitted:")."</b>&nbsp; $nr_proposals_final<br>";
 		}
