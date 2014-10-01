@@ -58,8 +58,8 @@ function getMentorLayout($timeline_args){
 					<div class="column-entry org_app manage_project_ideas">
 						<h4>
 							<a class="dashboard-link component-link"
-								href="'.$base_url.'/dashboard/projects/administer"
-								title="'.t("Manage your project ideas").'">'.t("Manage your project ideas").'</a>
+								href="'.$base_url.'/dashboard/projects/administer/mine"
+								title="'.t("Manage my project ideas").'">'.t("Manage my project ideas").'</a>
 						</h4>
 						<p>'.t("Allows you to add and amend project ideas for students.").'</p>
 							<div>
@@ -115,14 +115,14 @@ function getMentorLayout($timeline_args){
 		';
 	}
 	if($timeline_args['proposalsVisible']){
-		$output .='
+			$output .='
 					<div class="column-entry proposals_submitted">
 						<h4>
 							<a class="dashboard-link component-link"
-								href="'.$base_url.'/dashboard/proposals/browsebytype"
-								title="'.t("Proposals submitted to my organisations").'">'.t("Proposals submitted to my organisations").'</a>
+								href="'.$base_url.'/dashboard/proposals/browsebytype/mine"
+								title="'.t("Manage my proposals").'">'.t("Manage my proposals").'</a>
 						</h4>
-						<p>'.t("List of proposals submitted to my organisations").'</p>
+						<p>'.t("Allows you to see a list of proposals submitted to your projects by prospective students").'</p>
 						<div>
 							<a href="'.$base_url.'/dashboard/proposals/browsebytype/mine" title="Manage my proposals only">Manage my proposals only</a>
 							|<a href="'.$base_url.'/dashboard/proposals/browsebytype" title="Manage all my organisations proposals">Manage all my organisations proposals</a>&nbsp;(Limited access)

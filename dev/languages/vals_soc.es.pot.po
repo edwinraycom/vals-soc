@@ -952,7 +952,7 @@ msgstr ""
 
 #: includes/js/render_functions.js:0
 msgid ""
-"The project mentor has'nt yet selected a proposal as the preferred interim "
+"The project mentor hasn't yet selected a proposal as the preferred interim "
 "choice of solution for this project idea."
 msgstr ""
 
