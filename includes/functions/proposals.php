@@ -40,7 +40,7 @@ function renderProposal($proposal, $target='none', $follow_action='show'){
 	//'supervisor_id', 'pid', 'solution_short', 'solution_long', 'state',);
 	$propid = $proposal->proposal_id;
 	$buttons = '';
-	if (Users::isStudent() && Groups::isOwner('proposal', $propid) && $proposal->state != 'published'){
+	if (Users::isStudent() && Groups::isOwner(_PROPOSAL_OBJ, $propid) && $proposal->state != 'published'){
 		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this proposal?')."\")){ajaxCall(\"proposal\", \"delete\", ".
 			"{type: \"proposal\", proposal_id: $propid, target: \"$target\"}, \"refreshTabs\", \"json\", ".
 			"[\"proposal\", \"$target\", \"proposal\", \"\", \"$follow_action\"]);}'";
@@ -81,7 +81,7 @@ function renderProposal($proposal, $target='none', $follow_action='show'){
 	</div>";
 	
 	module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
-	$content .= initComments($propid, 'proposal');
+	$content .= initComments($propid, _PROPOSAL_OBJ);
 	return $content;
 	
 }
@@ -107,12 +107,12 @@ function showMyProposals($proposals, $current_tab_propid=0){
 					$proposal->proposal_id, TRUE), $current_tab_id, 'myproposal_page');
 		}
 		$activating_tabs[] = "'$tab_id_prefix$nr'";
-		$data[] = array(0, $proposal->title, 'view', 'proposal', $proposal->proposal_id);
+		$data[] = array(0, $proposal->title, 'view', _PROPOSAL_OBJ, $proposal->proposal_id);
 
 	}
 
-	echo renderTabs($nr, 'Proposal', $tab_id_prefix, 'proposal', $data, 0, TRUE, $current_tab_content,
-		$current_tab, 'proposal');?>
+	echo renderTabs($nr, 'Proposal', $tab_id_prefix, _PROPOSAL_OBJ, $data, 0, TRUE, $current_tab_content,
+		$current_tab, _PROPOSAL_OBJ);?>
 	<script type="text/javascript">
 		window.view_settings = {};
 		window.view_settings.apply_projects = <?php echo $apply_projects ? 1: 0;?>;

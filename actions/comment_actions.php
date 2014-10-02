@@ -25,11 +25,11 @@ switch ($_GET['action']){
 			// get all the threads
 			$thread_details = ThreadedComments::getInstance()->getThreadsForEntity($entity_id, $type);
 			// decide which entity it is and get the owner details & description etc
-			if($type=='project'){
+			if($type==_PROJECT_OBJ){
 				$entity_details = Project::getInstance()->getProjectById($entity_id, true);
 				$fire_emails = true;
 			}
-			else if($type=='proposal'){
+			else if($type==_PROPOSAL_OBJ){
 				$entity_details = objectToArray(Proposal::getInstance()->getProposalById($entity_id, true));
 				$fire_emails = true;
 			}

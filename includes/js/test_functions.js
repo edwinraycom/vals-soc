@@ -42,7 +42,7 @@ var testing = testing || {
 				console.log('could not find '+ msg_target);
 				alertdev('could not find '+ msg_target);
 			}
-			console.log(this.msgs.join("\n"));
+			console.log('Testing:'+ this.msgs.join("\n"));
 		}
 		this.msgs = [];
 		return all_good;

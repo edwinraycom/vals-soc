@@ -134,13 +134,13 @@ switch ($_GET['action']){
 		$proposal_id = getRequestVar('proposal_id', null);
 		//TODO bepaal hier 
 		if ($proposal_id){
-			if (! ($browse_proposals || Groups::isOwner('proposal', $proposal_id) )){
+			if (! ($browse_proposals || Groups::isOwner(_PROPOSAL_OBJ, $proposal_id) )){
 				jsonBadResult(t('You can only see your own proposals!'));
 			} else {
 				$proposal = Proposal::getInstance()->getProposalById($proposal_id, true);
 				$project_id = $proposal->pid;
 				// is this person the project owner?
-				$is_project_owner = Groups::isOwner('project', $project_id);
+				$is_project_owner = Groups::isOwner(_PROJECT_OBJ, $project_id);
 				$proposal->is_project_owner = $is_project_owner;
 				$proposal->is_project_mentor = true;
 				if($user->uid != $proposal->mentor_id){
@@ -156,7 +156,7 @@ switch ($_GET['action']){
 		$proposal_id = getRequestVar('proposal_id', null, 'post');
 		$result_format = getRequestVar('format', 'json', 'post');
 		if($proposal_id){
-			if (! ($browse_proposals || Groups::isOwner('proposal', $proposal_id) )){
+			if (! ($browse_proposals || Groups::isOwner(_PROPOSAL_OBJ, $proposal_id) )){
 				jsonBadResult(t('You can only see your own proposals!'));
 			} else {
 				$target = altSubValue($_POST, 'target');
@@ -201,17 +201,17 @@ switch ($_GET['action']){
 			}
 			$title = altPropertyValue($proposal_nr, 'title');
 			$state = altPropertyValue($proposal_nr, 'state');
-			if (! Groups::isOwner('proposal', $proposal_id)){
+			if (! Groups::isOwner(_PROPOSAL_OBJ, $proposal_id)){
 				jsonBadResult(t('You can only delete your own proposals!'), $args);
 			} elseif ($state == 'published') {
 				jsonBadResult(t('We could not remove your proposal: It has already been published.'), $args);
 			} else {
-				$num_deleted = db_delete(tableName('proposal'))
-					->condition(AbstractEntity::keyField('proposal'), $proposal_id)
+				$num_deleted = db_delete(tableName(_PROPOSAL_OBJ))
+					->condition(AbstractEntity::keyField(_PROPOSAL_OBJ), $proposal_id)
 					->execute();
 				if ($num_deleted){
 					// junk the proposal comments too
-					ThreadedComments::getInstance()->removethreadsForEntity($proposal_id, 'proposal');
+					ThreadedComments::getInstance()->removethreadsForEntity($proposal_id, _PROPOSAL_OBJ);
 					$args['before'] = '';
 					jsonGoodResult(TRUE, tt('You have removed the proposal %1$s', $title), $args);
 				} else {
@@ -232,7 +232,7 @@ switch ($_GET['action']){
 			$id = $result = Proposal::insertProposal($properties, $project_id);
 		} else {
 			$new = FALSE;
-			if (!Groups::isOwner('proposal', $id)){
+			if (!Groups::isOwner(_PROPOSAL_OBJ, $id)){
 				drupal_set_message(t('You are not the owner of this proposal'), 'error');
 				$result = null;
 			} else {
@@ -266,7 +266,7 @@ switch ($_GET['action']){
 		if (!$id){
 			$result = $id = Proposal::insertProposal($properties, $project_id);
 		} else {
-			if (!Groups::isOwner('proposal', $id)){
+			if (!Groups::isOwner(_PROPOSAL_OBJ, $id)){
 				drupal_set_message(t('You are not the owner of this proposal'), 'error');
 				$result = null;
 			} else {
@@ -321,7 +321,7 @@ switch ($_GET['action']){
 				echo errorDiv(t('This proposal does not seem to exist!'));
 				return;
 			}
-			if (Users::isStudent() && ! Groups::isOwner('proposal', $proposal_id)){
+			if (Users::isStudent() && ! Groups::isOwner(_PROPOSAL_OBJ, $proposal_id)){
 				echo errorDiv(t('You can only view your own proposals!'));
 			} else {
 				//TODO: find out whether we use the proposal view only in the my proposals and if not whether this 

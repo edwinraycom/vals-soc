@@ -27,3 +27,6 @@ define('_USER_TYPE', 'authenticated user');
 define('_STUDENT_GROUP', 'studentgroup');
 define('_ORGANISATION_GROUP', 'organisation');
 define('_INSTITUTE_GROUP', 'institute');
+//Object types
+define('_PROJECT_OBJ', 'project');
+define('_PROPOSAL_OBJ', 'proposal');

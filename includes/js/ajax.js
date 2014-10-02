@@ -405,7 +405,7 @@ $jq(document)
 							} catch (e) {
 								txt = jqxhr.responseText;
 								if (console) {
-									console.error("Parsing error:", e);
+									console.error("Parsing error:" + e);//, e
 								}
 							}
 						} else {
@@ -419,7 +419,7 @@ $jq(document)
 						myWindow.document.close();
 						myWindow.focus();
 					} else {
-						
+						return {result:'error', error: 'Unexpected result, please contact the administrator'};
 					}
 				});
 

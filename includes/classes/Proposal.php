@@ -217,7 +217,7 @@ class Proposal extends AbstractEntity{
     		try {
     			// inserts where the field length is exceeded fails silently here
     			// i.e. the date strinf is too long for the mysql field type
-    			$id = db_insert(tableName('proposal'))->fields($props)->execute();
+    			$id = db_insert(tableName(_PROPOSAL_OBJ))->fields($props)->execute();
     		} catch (Exception $e) {
     			drupal_set_message($e->getMessage(), 'error');
 			}
@@ -263,8 +263,8 @@ class Proposal extends AbstractEntity{
 //     		$props['supervisor_id'] = $student_details->supervisor_id ;
     		//$props['pid'] = $project['pid'];
     		//$props['state'] = 'draft' ;
-    		$id = db_update(tableName('proposal'))->fields($props)
-    			->condition(self::keyField('proposal'), $proposal_id)->execute();
+    		$id = db_update(tableName(_PROPOSAL_OBJ))->fields($props)
+    			->condition(self::keyField(_PROPOSAL_OBJ), $proposal_id)->execute();
 //     		if ($id){
 //     			//TODO: notify mentor???
 //     			drupal_set_message('You have saved your proposal. Later you can edit it.');

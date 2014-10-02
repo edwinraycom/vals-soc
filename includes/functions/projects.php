@@ -45,8 +45,8 @@ function showProjectPage($show_last=FALSE, $owner_only=false){
 			$add_tab = renderForm($form, $target, true);
 
 			$data = array();
-			$data[] = array(1, 'Add', 'add', 'project', '0', "target=admin_container", true, 'adding from the right');
-			echo renderTabs(1, null, 'project_page-', 'project', $data, null, TRUE, $add_tab, 1,'project');
+			$data[] = array(1, 'Add', 'add', _PROJECT_OBJ, '0', "target=admin_container", true, 'adding from the right');
+			echo renderTabs(1, null, 'project_page-', _PROJECT_OBJ, $data, null, TRUE, $add_tab, 1,_PROJECT_OBJ);
 			?>
 				<script type="text/javascript">
 					   transform_into_rte();
@@ -81,7 +81,7 @@ function showOrganisationProjects($org_nr, $projects, $organisation, $show_org_t
 	$current_tab_id = "$tab_id_prefix$current_tab";
 	
 	//data is like: [translate, label, action, type, id, extra GET arguments, render with rich text area, render tab to the right]
-	$data[] = array(1, 'All', 'list', 'project', null, "org=$org_id&inline=".($inline? 1:0)."&mine=".($owner_only? 1:0));
+	$data[] = array(1, 'All', 'list', _PROJECT_OBJ, null, "org=$org_id&inline=".($inline? 1:0)."&mine=".($owner_only? 1:0));
 	$activating_tabs[] = "'$tab_id_prefix$nr'";
 	$nr++;
 	if ($show_org_title){
@@ -93,18 +93,18 @@ function showOrganisationProjects($org_nr, $projects, $organisation, $show_org_t
 			$my_project = $project;
 		}
 		$activating_tabs[] = "'$tab_id_prefix$nr'";
-		$data[] = array(0, $project->title, 'view', 'project', $project->pid);
+		$data[] = array(0, $project->title, 'view', _PROJECT_OBJ, $project->pid);
 		$nr++;
 	}
 	
-	$data[] = array(1, 'Add', 'add', 'project', 0, "target=$tab_id_prefix$nr&org=$org_id", TRUE, 'right');
+	$data[] = array(1, 'Add', 'add', _PROJECT_OBJ, 0, "target=$tab_id_prefix$nr&org=$org_id", TRUE, 'right');
 	$activating_tabs[] = "'$tab_id_prefix$nr'";
 	//If no target is sent along, the project views are shown inline
 	$current_tab_content = (1 == $current_tab) ? renderProjects('', $projects, $current_tab_id, $inline, FALSE, FALSE): 
 		renderProject($my_project, $current_tab_id, false);
 	
-	echo renderTabs($nr, 'Project', $tab_id_prefix, 'project', $data, 0, TRUE, $current_tab_content,
-		$current_tab, 'project');?>
+	echo renderTabs($nr, 'Project', $tab_id_prefix, _PROJECT_OBJ, $data, 0, TRUE, $current_tab_content,
+		$current_tab, _PROJECT_OBJ);?>
 	<script type="text/javascript">
 		activatetabs('tab_', [<?php echo implode(', ', $activating_tabs);?>], '<?php echo $current_tab_id;?>');
 	</script>
@@ -150,9 +150,9 @@ function renderProject($project='', $target='', $inline=FALSE, $all_can_edit=_VA
 	} else {
 		//It is NOT an object, so: array
 	}
-	$key_name = Groups::keyField('project');
+	$key_name = Groups::keyField(_PROJECT_OBJ);
 	$id = $project[$key_name];
-	$type = 'project';
+	$type = _PROJECT_OBJ;
 	$role = getRole();
 	
 	$content ="<div class=\"totheright\">";
@@ -160,7 +160,7 @@ function renderProject($project='', $target='', $inline=FALSE, $all_can_edit=_VA
 		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
 		")\" value='.t( 'Submit proposal for this project').'/>";
 	}
-	if (!$inline && (($all_can_edit && Groups::isAssociate('project', $id)) || Groups::isOwner('project', $id))  ){
+	if (!$inline && (($all_can_edit && Groups::isAssociate(_PROJECT_OBJ, $id)) || Groups::isOwner(_PROJECT_OBJ, $id))  ){
 		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this project?')."\")){ajaxCall(\"project\", \"delete\", {type: \"$type\", id: $id, target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"project\"]);}'";
 		$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"$type\", id: $id, target: \"$target\"}, \"formResult\", \"html\", [\"$target\", \"project\"]);'";
 		$content .= "<input type='button' value='".t('edit')."' $edit_action/>";
@@ -175,7 +175,7 @@ function renderProject($project='', $target='', $inline=FALSE, $all_can_edit=_VA
 	
 	if (! $inline){
 		module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
-		$content .= initComments($id, 'project');
+		$content .= initComments($id, _PROJECT_OBJ);
 	}
 	
 	return $content;

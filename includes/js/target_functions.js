@@ -114,12 +114,11 @@ function handlePostDOMUPdate(result, args){
 	var entity_type = args[3];
 	var entity_id = args[4];
 	// try to increment the thread count on this entity.
-	try{
+	try {
 		$total_count = $jq('#comment-total-'+entity_type+"-"+entity_id);
 		$total_count.text(parseInt($total_count.text()) + 1);
-	}
-	catch(err) {
-		console.log(err);
+	} catch (err) {
+		console.log('In handlePostDOMUPdate:'+ err);
 	}
 	if (parent_id == '0' || parent_id == ''){
 		//$jq('.existing-comments-container').append(result);
@@ -331,10 +330,10 @@ function handleSubmitResult(result, args){
 						ajaxCall('proposal', 'view', {id: result.id, target:target}, target);
 					}
 				} else {
-					try{
+					try {
 						Drupal.CTools.Modal.dismiss();
-					}catch(err){
-						console.log(err);
+					} catch (err) {
+						console.log('In handleSubmitResult:'+ err);
 					}
 				}
 				//Right now the content div has no immediate child with an id at the top, so we let ajaxAppend
@@ -353,12 +352,11 @@ function handleSubmitResult(result, args){
 function populateModal(result, args){
 	// TODO : work more on the formatting
 	// and add other fields from DB
-	if ((typeof args[2] != 'undefined') && args[2] ){
-		//The result will be a js object already parsed
-		var data = result;
-	} else {
+	var data = result;
+	if ((typeof args[2] == 'undefined') || !args[2] ){
+		//So the result will be a js object NOT already parsed. So we calculate a parsed data
 		try{
-			var data = jQuery.parseJSON(result);
+			data = jQuery.parseJSON(result);
 		} catch (err){
 			console.log('Some program error occured. We could not render the result');
 			Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
@@ -367,13 +365,13 @@ function populateModal(result, args){
 			} else {
 				Obj("modal-content").html("<div class='messages error'>Some program error occured. Could not parse result.</div>");
 			}
+			return;
 		}
 	}
 	if (data && data.result !== 'error'){
 		var content = '';
 		var fun = args[0];
 		var arg1 = (typeof args[1] != 'undefined') ? args[1] : null;
-		console.log('show type of data '+typeof data.result);
 		if (typeof fun == 'function'){
 			content = fun(data.result, arg1);
 		} else {
@@ -383,11 +381,11 @@ function populateModal(result, args){
 			Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
 			Obj("modal-content").html(content);
 		} catch (err){
-			console.log(err);
+			console.log('There was some error: '+ err);
 		}
 		return true;
 	} else {
-		console.log('Some program error occured. We could not render the result');
+		console.log('Some identified program error occured. We could not render the result');
 		if (data){
 			Obj("modal-title").html("&nbsp;"); // doesnt render unless theres something there!
 			Obj("modal-content").html("<div class='messages error'>"+data.error+ "</div>");
@@ -400,6 +398,7 @@ function populateModal(result, args){
 function generateAndPopulateModal(result, fun, arg1){
 	// TODO : work more on the formatting
 	// and add other fields from DB
+	console.log('In de generatePopulate');
 	Drupal.CTools.Modal.show();
 	var return_result = populateModal(result, [fun, arg1]);
 	Drupal.attachBehaviors();

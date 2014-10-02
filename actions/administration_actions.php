@@ -12,7 +12,7 @@ switch ($_GET['action']){
 		switch ($type){
 			case _INSTITUTE_GROUP:
 			case _ORGANISATION_GROUP:
-			case 'project':
+			case _PROJECT_OBJ:
 			case _STUDENT_GROUP: echo renderOrganisations($type, '', 'all', $_POST['target']);break;
 			case _SUPERVISOR_TYPE:
 			case _STUDENT_TYPE:
@@ -213,7 +213,7 @@ switch ($_GET['action']){
         $id = altSubValue($_POST, 'id', '');
         $show_action = altSubValue($_POST, 'show_action', '');
         //TODO do some checks here
-        if(! isValidOrganisationType($type) ){//&& ($type !== 'project')
+        if(! isValidOrganisationType($type) ){//&& ($type !== _PROJECT_OBJ)
         	$result = NULL;
         	drupal_set_message(tt('This is not a valid type: %s', $type), 'error');
         	echo jsonBadResult();
@@ -224,7 +224,7 @@ switch ($_GET['action']){
         if (!$id){
         	$new = true;
         	$result = ($type == _STUDENT_GROUP) ? Groups::addStudentGroup($properties) :
-        		($type == 'project' ? Project::getInstance()->addProject($properties) : Groups::addGroup($properties, $type));
+        		($type == _PROJECT_OBJ ? Project::getInstance()->addProject($properties) : Groups::addGroup($properties, $type));
         } else {
         	$new = false;
         	$result = Groups::changeGroup($type, $properties, $id);

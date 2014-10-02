@@ -239,7 +239,7 @@ function t_type($type){
 		case _INSTITUTE_GROUP: return t('institute');break;
 		case _ORGANISATION_GROUP: return t('organisation');break;
 		case _STUDENT_GROUP: return t('studentgroup');break;
-		case 'project': return t('project'); break;
+		case _PROJECT_OBJ: return t('project'); break;
 		default: return $type;
 	}
 }
@@ -303,7 +303,7 @@ function valssoc_form_get_js($form){
 }
 
 function createRandomCode($org, $id=1 ){
-	$fixed_prefixes = array(
+	$fixed_postfixes = array(
 			_ADMINISTRATOR_TYPE => 1,
 			_SOC_TYPE => 2,
 			_ORGADMIN_TYPE => 3,
@@ -316,7 +316,7 @@ function createRandomCode($org, $id=1 ){
 			_MENTOR_TYPE => 0
 
 	);
-	$int = (int) $id.$fixed_prefixes[$org];
+	$int = (int) $id.$fixed_postfixes[$org];
 	return my_convert($int);
 }
 
@@ -330,7 +330,7 @@ function createRandomCode($org, $id=1 ){
 //Note that if the full length of chars -say 5- is needed to code the int, we need an extra char in front telling
 //the first char is not a padding indicator, but an included char. In that case we would have a 6-char string
 //starting with an A. As an invariant we have that the 10 positions shifted result of base_convert can never start
-//with an 'a' since base_convert returns a string with 1-9,[a-q] (so it never starts with 0).
+//with an 'a' since base_convert returns a string with 0-9,[a-p] (so it never starts with 0, except for 0 itself).
 
 function my_convert($int, $wishedlen = 9){
 	$map = array(

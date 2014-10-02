@@ -42,10 +42,10 @@ function setStyleById(i, p, v) {
 }
 
 function setStyleOnObject(o, p, v) {
-	try{
+	try {
 		o.style[p] = v;
-	}catch(err){
-		console.log(err);
+	} catch (err) {
+		console.log('In setStyleOnObject '+ err);
 	}
 }
 
@@ -73,21 +73,21 @@ function setWait(state, wait_name, x, y, target){
 }
 
 function waitingIcon(wait_name, x, y, container){
-	try{
+	try {
 		var obj = createDiv(wait_name, container, '', true);
 		setStyleOnObject(obj, 'position', 'fixed');
 		setStyleOnObject(obj, 'zIndex', 1002);
 		setStyleOnObject(obj, 'top', (y - ajax_settings.ajax_waiting_half_width) +'px');
 		setStyleOnObject(obj, 'left',(x - ajax_settings.ajax_waiting_half_height)  +'px');
 		obj.innerHTML = ajax_settings.ajax_waiting_icon;
-	}catch(err){
-		console.log(err);
+	} catch (err) {
+		console.log('In waitingIcon ' + err);
 	}
 }
 ajax_settings = {
 		ajax_waiting_half_width:20,
 		ajax_waiting_half_height:20,
-		ajax_waiting_icon : "<img src='"+ moduleUrl+ "includes/js/resources/ajax-loader_old.gif'"+
+		ajax_waiting_icon : "<img src='" + moduleUrl+ "includes/js/resources/ajax-loader_old.gif' " +
 		" width='20px'"  +
 		" height='20px'"+
 		"alt='waiting'></img>"
