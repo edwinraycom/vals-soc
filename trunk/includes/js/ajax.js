@@ -248,9 +248,17 @@ function ajaxCall(handler_type, action, data, target, type, extra_args, extra_fu
 			call.success = function(msg){
 				window[target](msg, args);
 				stopWait(1);
-				if ((typeof extra_fun_fail == 'function') && msg.result == 'error'){
-					extra_fun_fail.call();
+				if (msg.result == 'error'){
+					if ((typeof extra_fun_fail == 'function')){
+						extra_fun_fail.call();
+					}
+				} else {
+					console.log('hier is NOGMAALS het type van deze first class value '+ typeof extra_fun_success);
+					if ((typeof extra_fun_success == 'function')){
+						extra_fun_success.call();
+					}
 				}
+							
 				return true;
 			};
 		} else {
@@ -326,11 +334,17 @@ function ajaxFormCall(frm_selector, handler_type, action, data, target, type, ar
 			call_args = call_args.concat('&' + data);
 		}
 	}
+	var enable_this_form_on_fail = function(){ajaxEnableForm(frm_selector);};
+	var enable_this_form_on_success = '';
 	if(handler_type == 'comment'){
 		console.log('Comment, form ' + '#' + frm_selector + " is reset");
 		$jq('#' + frm_selector)[0].reset();//reset the form for comments
+		console.log('hier is het type van deze first class value '+ typeof enable_this_form_on_fail);
+		enable_this_form_on_success = enable_this_form_on_fail; //comments keep the form even after successfull save
 	}
-	ajaxCall(handler_type, action, call_args, target, type, args, function(){ajaxEnableForm(frm_selector);});
+	
+	ajaxCall(handler_type, action, call_args, target, type, args, 
+		enable_this_form_on_fail, enable_this_form_on_success);
 //	$jq.when(ajaxCall(handler_type, action, call_args, target, type, args)).done(function(a1){
 //		$jq("#" + frm_selector + " input[type='button']").prop(
 //			{'disabled': false, 'style': ""});
@@ -343,11 +357,13 @@ function ajaxFormCall(frm_selector, handler_type, action, data, target, type, ar
 }
 
 function ajaxDisableForm(frm_selector, disable_style){
+	console.log('disable now the form '+ frm_selector);
 	$jq("#" + frm_selector + " input[type='button']").prop(
 			{'disabled': true, 'style': disable_style});
 }
 
 function ajaxEnableForm(frm_selector){
+	console.log('enable now the form '+ frm_selector);
 	$jq("#" + frm_selector + " input[type='button']").prop(
 			{'disabled': false, 'style': ''});
 }

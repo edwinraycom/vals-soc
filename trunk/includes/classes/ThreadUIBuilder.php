@@ -56,19 +56,25 @@ class ThreadUIBuilder {
 			$class_display = 'initial-threaded-comment-wrapper';
 			$post_type= t('Posted on');
 		}
-		$this->output .= "<div id='threaded-comment-wrapper-".$comment ['id']."' class='".$class_display."'>";
+		$id = $comment ['id'];
+		$this->output .= "<div id='threaded-comment-wrapper-$id' class='".$class_display."'>";
 		$this->output .= "	<div class='threaded-comment'>";
-		$this->output .= "	<div id='msg_threaded-comment-wrapper-".$comment['id']."'></div>";
+		$this->output .= "	<div id='msg_threaded-comment-wrapper-$id'></div>";
+		if (Users::isAdmin()){
+			//$this->output .=  "			&nbsp;";
+			$this->output .= "			<div class='totheright'><a href='#' onclick='ajaxCall(\"comment\", \"delete\", {id: $id}, \"threaded-comment-wrapper-$id\");'>". t('delete')."</a>";
+			$this->output .= "			</div>";
+		}
 		$this->output .= "		<div class='threaded-comment-header'>";
 		$this->output .= "			<span class='comment_author'>";//<a href='#'>";
-		$this->output .= 			$comment ['name'];
+		$this->output .= "			${comment ['name']}";
 		$this->output .= "			</span>";
 		$this->output .= "			&nbsp;(${comment['type']}) - &nbsp;";
 		$this->output .= 			$post_type;
 		$this->output .= "			&nbsp;";
 		// TODO check date
 		$this->output .= 			date('F j, Y, g:i a', strtotime($comment ['date_posted']));
-		$this->output .=  "			&nbsp;";
+
 		$this->output .= "		</div>"; // end header
 		$this->output .= "		<div class='threaded-comment-body'>";
 		$this->output .= 			$comment ['description'];
