@@ -212,12 +212,11 @@ function notify_all_of_new_comment($entity_details, $thread_details, $properties
 	echo '<br/>****************properties*************************<br/>';
 	echo var_dump($properties);
 	*/
-	
-	
 	$items = array();
 	$number_of_emails_count = 0;
-	$subject = tt('VALS Notification: New comment added to your %1$s', $properties['entity_type']);
 	
+	// email the owner of this entity
+	$subject = tt('VALS Notification: New comment added to your %1$s', $properties['entity_type']);
 	$owner_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $entity_details['mail']);
 	$recipients = array();
 	array_push($recipients, $entity_details['mail']); // push the owners mail in first
@@ -225,7 +224,29 @@ function notify_all_of_new_comment($entity_details, $thread_details, $properties
 	$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_new_comment', 'to' => $owner_recipient, 'from' => NULL, 
 			'subject' => $subject, 'body' => $message_body_owner);
 	
+	//if the entity is a proposal then the owner is mailed above (who is a student), but not the 
+	//mentor or supervisor unless they have already commented in the loop below
+	//so manually add them in here so that they know that someone has commented on this proposal.
+	// This does not affect project comments
+	if($properties['entity_type']=='proposal'){
+		// mail the mentor of the original project idea
+		$subject = tt('VALS Notification: New comment added to a %1$s based on one of your project ideas', $properties['entity_type']);
+		$mentor_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $entity_details['mentor_user_mail']);
+		array_push($recipients, $entity_details['mentor_user_mail']); // push the mentors mail
+		$message_body_owner = get_new_comment_email_body($entity_details, $properties, $entity_details['mentor_user_name']);
+		$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_new_comment', 'to' => $mentor_recipient, 'from' => NULL,
+				'subject' => $subject, 'body' => $message_body_owner);
+		
+		// now mail the supvisor of the student
+		$subject = tt('VALS Notification: New comment added to a %1$s submitted by one of your students', $properties['entity_type']);
+		$supervisor_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $entity_details['supervisor_user_mail']);
+		array_push($recipients, $entity_details['supervisor_user_mail']); // push the supervisors mail
+		$message_body_owner = get_new_comment_email_body($entity_details, $properties, $entity_details['supervisor_user_name']);
+		$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_new_comment', 'to' => $supervisor_recipient, 'from' => NULL,
+				'subject' => $subject, 'body' => $message_body_owner);
+	}
 	
+	// now loop around all other people who have previously commented on this entity
 	$subject = tt('VALS Notification: New comment added to a %1$s you have previously commented on', $properties['entity_type']);
 	foreach($thread_details as $thread_detail){
 		// make sure we only send one email per user

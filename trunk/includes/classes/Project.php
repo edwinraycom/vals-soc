@@ -29,12 +29,14 @@ class Project extends AbstractEntity{
     public static function getProjectById($id, $details= false, $fetch_style=PDO::FETCH_ASSOC){
     	$query = db_select('soc_projects', 'p')->fields('p', self::$fields)->condition('pid', $id);
     	if ($details){
-    		$query->leftjoin('users', 'u1', 'p.owner_id = %alias.uid');
+    		$query->leftjoin('users', 'u1', 'p.mentor_id = %alias.uid');
+    		$query->leftjoin('users', 'u2', 'p.owner_id = %alias.uid');
     		$query->leftjoin('soc_names', 'owner', 'p.owner_id = %alias.names_uid');
     		$query->leftjoin('soc_names', 'mentor', 'p.mentor_id = %alias.names_uid');
     		$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
 
     		$query->fields('u1', array('mail', 'name'));
+    		$query->fields('u2', array('mail', 'name'));
     		$query->fields('owner', array('name'));
     		$query->fields('mentor', array('name'));
     		$query->fields('o', array('name'));
@@ -162,7 +164,8 @@ class Project extends AbstractEntity{
     	}
     	$query = "SELECT p.* from soc_projects as p WHERE p.org_id IN (:orgs) ";
     	if($owner_id){
-    		$query .= "AND p.owner_id = " . $owner_id;
+    		//$query .= "AND p.owner_id = " . $owner_id;
+    		$query .= "AND p.mentor_id = " . $owner_id;
     	}
     	$projects =  db_query($query, array(':orgs' => $organisation))->rowCount();
     	return $projects;
@@ -186,7 +189,9 @@ class Project extends AbstractEntity{
 			WHERE p.org_id IN (:orgs) ";
     	
     	if($owner_id){
-    		$query .= "AND p.owner_id = " . $owner_id . " ";
+    		//$query .= "AND p.owner_id = " . $owner_id . " ";
+    		$query .= "AND p.mentor_id = " . $owner_id . " ";
+    		
     	}
     	
 		$query .= 	 "GROUP BY p.pid ";
@@ -291,7 +296,8 @@ class Project extends AbstractEntity{
 			} else {
 				//echo 'dat';
 				$my_projects =
-					db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) AND p.owner_id = $user_id",array(':orgs' => $my_orgs))
+					///db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) AND p.owner_id = $user_id",array(':orgs' => $my_orgs))
+				db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) AND p.mentor_id = $user_id",array(':orgs' => $my_orgs))
 					->fetchAll();
 			}
 		} else {

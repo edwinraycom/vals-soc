@@ -238,19 +238,6 @@ switch ($_GET['action']){
 		echo '<h2>'.t('Add new project').'</h2>';
 		echo "<div id='msg_$target'></div>"; 
 		$form = drupal_get_form("vals_soc_project_form", '', $target, $org);
-		// Process the submit button which uses ajax
-		//$form['submit'] = ajax_pre_render_element($form['submit']);
-		// Build renderable array
-		/*
-		$build = array(
-			'form' => $form,
-			'#attached' => $form['submit']['#attached'], // This will attach all needed JS behaviors onto the page
-		);
-		// Print $form
-		print drupal_render($build);
-		*/
-		
-		// Print $form
 		renderForm($form, $target);
 		
 	break;
@@ -349,16 +336,18 @@ switch ($_GET['action']){
     	if (!$is_final){
     		$is_final = 0;
     	}
-    	// only allow project owner to update its selected & proposal_id fields - Do we need to allow org_admins to do this too? 
-    	if(!Groups::isOwner('project', $project_id)){
-    		echo t('Only the project owner can update its proposal status.');
-    		return;
-    	}
     	
     	// Get the projects current proposal id and state (if set)
     	$project = Project::getProjectById($project_id, FALSE, NULL);
     	$old_proposal = $project->proposal_id;// probably dont need this now
     	$was_selected = $project->selected;
+    	
+    	
+    	// only allow project owner (or assigned mentor) to update its selected & proposal_id fields
+    	if(!Groups::isOwner('project', $project_id) && $project->mentor_id != $GLOBALS['user']->uid){
+    		echo t('Only the project owner or mentor can update its proposal status.');
+    		return;
+    	}
     	
     	$selected_prev_set = false;
     	if($was_selected == 1){

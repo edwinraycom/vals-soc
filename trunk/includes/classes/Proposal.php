@@ -35,7 +35,7 @@ class Proposal extends AbstractEntity{
     		$query->fields('supervisor', array('name'));
     		$query->fields('i', Institutes::$fields);
     		$query->fields('o', Organisations::$fields);
-    		$query->fields('pr', array('title', 'description', 'url', 'owner_id', 'proposal_id', 'selected'));
+    		$query->fields('pr', array('title', 'description', 'url', 'mentor_id', 'owner_id', 'proposal_id', 'selected'));
     		$query->fields('mentor_user', array('mail', 'name'));
     		$query->fields('mentor', array('name'));
     	}
