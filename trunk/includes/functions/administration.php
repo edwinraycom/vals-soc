@@ -116,7 +116,6 @@ function showInstituteOverviewPage($institute){
 	include_once(_VALS_SOC_ROOT.'/includes/classes/Project.php');
 	echo "<h2>" . t('Overview of your institute activity')."</h2>";
 		$inst_id = $institute->inst_id;
-		
 		$nr_proposals_draft = count(Proposal::getProposalsPerOrganisation('', $inst_id));
 		$nr_proposals_final = count(Proposal::getProposalsPerOrganisation('', $inst_id, 'published'));
 		$nr_students = Users::getUsers(_STUDENT_TYPE, _INSTITUTE_GROUP, $inst_id)->rowCount();
@@ -130,7 +129,7 @@ function showInstituteOverviewPage($institute){
 		echo "<b>".t("Number of students subscribed:")."</b>&nbsp; $nr_students<br>";
 		echo "<b>".t("Number of groups available:")."</b>&nbsp; $nr_groups<br>";
 		echo "<b>".t("Number of supervisors subscribed:")."</b>&nbsp; $nr_tutors<br>";
-		echo "<b>".t("Number of organisatios:")."</b>&nbsp; $nr_orgs<br>";
+		echo "<b>".t("Number of organisations:")."</b>&nbsp; $nr_orgs<br>";
 		echo "<b>".t("Number of projects:")."</b>&nbsp; $nr_projects<br>";
 }
 

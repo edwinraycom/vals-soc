@@ -8,7 +8,9 @@ module_load_include('php', 'vals_soc', 'includes/classes/Proposal');
 module_load_include('php', 'vals_soc', 'includes/functions/projects');
 module_load_include('php', 'vals_soc', 'includes/functions/ajax_functions');
 
-$mine = ('mine' == (array_pop(explode('/', $_SERVER['HTTP_REFERER']))));//needed for save and delete
+$path_arr = explode('/', $_SERVER['HTTP_REFERER']);//we need to store in separate var as otherwise a warning is issued for passing non var by ref
+$mine = ('mine' == (array_pop($path_arr)));//needed for save and delete
+
 switch ($_GET['action']){
 	case 'project_page':
 		module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
@@ -22,7 +24,7 @@ switch ($_GET['action']){
 		$mails = array();
 		$id = getRequestVar('id');
 		$mail = array('from' => $GLOBALS['user']->mail);
-		$mail['body'] = tt('Hello,')."\n\n".
+		$mail['body'] = t('Hello,')."\n\n".
 				tt('I would like to recommend the following project to you: %1$s',
 						_VALS_SOC_FULL_URL."/projects/browse?pid=$id."). "\n\n".
 						t('Kind regards,')."\n\n".
@@ -174,7 +176,7 @@ switch ($_GET['action']){
 			try {
 				if (isset($_SESSION['lists']['projects']) && $_SESSION['lists']['projects']){
 					$current = getRequestVar('current',-1);
-					if ($current >=0){
+					if ($current >=0) {
 						$project = $_SESSION['lists']['projects']['list'][$current];
 					} else {
 						$current = 0;
@@ -198,17 +200,33 @@ switch ($_GET['action']){
 						}
 					}
 				}
+				
+				//It might be that the project is in draft and is not returned by the browse and so it is not
+				//present in the session lists 
 				if (!$project){
 					 $project = Project::getProjectById($project_id);
 				}
+				$my_id = Users::getMyId();
+				if (($project['state'] == 'draft') && 
+					!(
+						($project['mentor_id'] == $my_id) || 
+						($project['owner_id'] == $my_id) ||
+						Users::isAdmin() ||
+						(Groups::isAssociate(_PROJECT_OBJ, $project_id))))
+				{
+						jsonBadResult(t('You cannot view this proposal. It is in draft state.'));
+						return;
+				}
+					
+				
 				if (Users::isSuperVisor()){
-					$project['rate'] = Project::getRating($project_id, Users::getMyId());
+					$project['rate'] = Project::getRating($project_id, $my_id);
 				} else {
 					$project['rate'] = -2;
 				}
 				jsonGoodResult($project);
 			} catch (Exception $e){
-				jsonBadResult($e->getMessage());
+				jsonBadResult(t('Could not get details of project').(_DEBUG ? $e->getMessage(): ""));
 			}
 		}
 		else{
@@ -216,7 +234,7 @@ switch ($_GET['action']){
 		}
 	break;
 	case 'view':
-		$type = 'project';
+		$type = _PROJECT_OBJ;
 		$id = altSubValue($_POST, 'id');
 		$target = altSubValue($_POST, 'target', '');
 		$inline = getRequestVar('inline', FALSE);

@@ -62,7 +62,7 @@ function jsonGoodResultJT($records, $cnt=-1, $msg=''){
 }
 
 function isValidOrganisationType($type){
-	return in_array($type, array(_ORGANISATION_GROUP, _INSTITUTE_GROUP, _STUDENT_GROUP, 'project'));
+	return in_array($type, array(_ORGANISATION_GROUP, _INSTITUTE_GROUP, _STUDENT_GROUP, _PROJECT_OBJ));
 }
 
 function showDrupalMessages($category='status', $echo=FALSE){

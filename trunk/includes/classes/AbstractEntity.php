@@ -12,8 +12,8 @@ abstract class AbstractEntity {
 			case _STUDENT_GROUP: return 'studentgroup_id';break;
 			case _INSTITUTE_GROUP: return 'inst_id';break;
 			case _ORGANISATION_GROUP: return 'org_id';break;
-			case 'project': return 'pid';break;
-			case 'proposal': return 'proposal_id';break;
+			case _PROJECT_OBJ: return 'pid';break;
+			case _PROPOSAL_OBJ: return 'proposal_id';break;
 			default: return '';
 		}
 	}

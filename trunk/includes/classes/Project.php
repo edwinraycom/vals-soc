@@ -78,7 +78,7 @@ class Project extends AbstractEntity{
     }
     
     public function getProjectsBySearchCriteria($tags, $organisation, $sorting, $startIndex, $pageSize){
-    	$queryString = "SELECT p.pid, p.title, p.description, p.tags, o.name"
+    	$queryString = "SELECT p.pid, p.title, p.description, p.tags, p.state, o.name"
     			." FROM soc_projects p
     			   LEFT JOIN soc_organisations o on p.org_id = o.org_id"
     			." WHERE 1=1 ";
@@ -90,7 +90,7 @@ class Project extends AbstractEntity{
     	}
     	$this->addProjectCondition($queryString);
     	$queryString .= 	 " ORDER BY " . $sorting
-    	." LIMIT " . $startIndex . "," . $pageSize . ";";	//die($queryString);
+    	." LIMIT " . $startIndex . "," . $pageSize . ";";
     	$result = db_query($queryString);
     
     	$rows = array();
@@ -108,7 +108,7 @@ class Project extends AbstractEntity{
     			array_push($group, $record->studentgroup_id);
     		}
     	}
-    	$role = 4;
+    	$role = _STUDENT_TYPE;
     	$query ="
     		SELECT u.uid,u.name as username, sg.name as groupname,COUNT(v.proposal_id) AS proposal_count
 			FROM users AS u
@@ -210,7 +210,7 @@ class Project extends AbstractEntity{
     		$p = self::getProjectById($project_id, FALSE, NULL);
     		$projects = $p ? array($p) : array();
     	} elseif ($organisations) {
-    		$table = tableName('project');
+    		$table = tableName(_PROJECT_OBJ);
     		if (!$owner_id){
     			$projects = db_query("SELECT p.* from $table as p WHERE p.org_id IN (:orgs) ",
     				array(':orgs' => $organisations))->fetchAll();
@@ -235,7 +235,7 @@ class Project extends AbstractEntity{
     	$my_role = getRole();
     	//todo: find out whether current user is institute_admin
      
-    	$table = tableName('project');
+    	$table = tableName(_PROJECT_OBJ);
     	if ($user_type == _ORGADMIN_TYPE) {
     		if ($my_role != _ORGADMIN_TYPE){
     			drupal_set_message(t('You are not allowed to perform this action'), 'error');
@@ -275,7 +275,7 @@ class Project extends AbstractEntity{
 		$user_id = $user_id ?: $org_admin_or_mentor;
 		$my_role = getRole();
 		
-		$table = tableName('project');
+		$table = tableName(_PROJECT_OBJ);
 		if (in_array($my_role, array(_ORGADMIN_TYPE, _MENTOR_TYPE))){
 			$my_orgs = $organisations ?: db_query(
 					"SELECT o.org_id from $table as o ".
@@ -354,7 +354,7 @@ class Project extends AbstractEntity{
 				$props['url'] = 'http://'.$props['url'];
 			}
 			$result = FALSE;
-			$query = db_insert(tableName('project'))->fields($props);
+			$query = db_insert(tableName(_PROJECT_OBJ))->fields($props);
 			$id = $query->execute();
 			if ($id){
 				$result = $id;
@@ -378,9 +378,9 @@ class Project extends AbstractEntity{
 		if (isset($props['url']) && $props['url'] && (stripos($props['url'], 'http') === FALSE)){
 			$props['url'] = 'http://'.$props['url'];
 		}
-		$key = self::keyField('project');
+		$key = self::keyField(_PROJECT_OBJ);
 		//Project::normaliseFormArrays($props);
-		$query = db_update(tableName('project'))
+		$query = db_update(tableName(_PROJECT_OBJ))
 			->condition($key, $id)
 			->fields($props);
 		$res = $query->execute();

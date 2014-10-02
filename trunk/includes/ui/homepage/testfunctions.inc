@@ -16,7 +16,7 @@ function getTimelineTester(){
 						$jq.post( url("timeline","setdate"), { date: dateText+" 00:00:00" },
 							function(result) {
 								if(result){
-									console.log(result);
+									console.log("In timelinetester: " + result);
 									$jq("#dateNow").html(result);
 								}
 						});

@@ -73,18 +73,18 @@ function renderProposalStatus(proposal){
 	content += '<br/>';
 	content += '<br/>';
 
-	if(proposal.selected == 1 && proposal.pr_proposal_id == proposal.proposal_id){
+	if((proposal.selected == 1) && (proposal.pr_proposal_id == proposal.proposal_id)){
 		content += (proposal.is_project_owner ? 
 				Drupal.t('You have selected this proposal as your final choice of solution for your project idea. You cannot change this.') : 
 				Drupal.t('The project mentor selected this proposal as the final choice of solution for this project idea.'));
 	}
 	else{
-		if(proposal.selected == 1 && proposal.pr_proposal_id != proposal.proposal_id){
+		if((proposal.selected == 1) && (proposal.pr_proposal_id != proposal.proposal_id)){
 			content += ((proposal.is_project_owner || proposal.is_project_mentor) ? 
 					Drupal.t('You have already selected another proposal as your final choice of solution for your project idea. You cannot change this.') :
 					Drupal.t('The project mentor selected another proposal as the final choice of solution for this project idea.'));
 		}
-		else if(proposal.selected == 0 && proposal.pr_proposal_id == proposal.proposal_id){
+		else if((proposal.selected == 0) && (proposal.pr_proposal_id == proposal.proposal_id)){
 			if(proposal.is_project_owner || proposal.is_project_mentor){
 				content += Drupal.t('You have selected this proposal as your preferred interim choice of solution for your project idea. ');
 				content += Drupal.t('This is not final and you may change it to another proposal before the end of the student signup period.');
@@ -371,8 +371,7 @@ function getProposalDetail(proposal_id, target, msg){
 		}
 		if (tabs_created){
 			//TODO: these activate tabs should be done for the case where tabs are created
-			console.log('doing the tabs second');
-			console.log(content_tabs);
+			console.log('doing the tabs second' + content_tabs);
 			activatetabs('tab_', content_tabs);
 		}
 		if (typeof msg != 'undefined' && msg){
@@ -480,9 +479,9 @@ function getProposalFormForProject(projectId){
 function getProjectDetail(projectId){
 	var url = moduleUrl + "actions/project_actions.php?action=project_detail&project_id=" + projectId;
 	//TODO: currently the apply projects is passed around as global. not so elegant
+	console.log('dit zou ik toch als eerste verwachten');
 	$jq.get(url, function(data,status){
-		generateAndPopulateModal(data, renderProject, window.view_settings.apply_projects,
-			window.view_settings.rate_projects);
+		generateAndPopulateModal(data, renderProject, window.view_settings.apply_projects);
 	});
 }
 

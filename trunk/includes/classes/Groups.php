@@ -64,7 +64,7 @@ class Groups extends AbstractEntity{
 	}
 
 	static function isOwner($type, $id){
-		if (! in_array($type, array(_STUDENT_GROUP, _INSTITUTE_GROUP, _ORGANISATION_GROUP, 'project', 'proposal'))){
+		if (! in_array($type, array(_STUDENT_GROUP, _INSTITUTE_GROUP, _ORGANISATION_GROUP, _PROJECT_OBJ, _PROPOSAL_OBJ))){
 			drupal_set_message(tt('You cannot be the owner of an entity called %1$s', $type), 'error');
 			return FALSE;
 		}
@@ -86,20 +86,19 @@ class Groups extends AbstractEntity{
 		return $entity && ($entity['owner_id'] == $GLOBALS['user']->uid);
 	}
 	
-	static function isAssociate($type, $id){	
+	static function isAssociate($type, $id, $obj=null){	
 		$scope_table = array(_INSTITUTE_GROUP=>_INSTITUTE_GROUP,_ORGANISATION_GROUP=>_ORGANISATION_GROUP,
-				_STUDENT_GROUP=>_INSTITUTE_GROUP, 'project' =>_ORGANISATION_GROUP, 'proposal' => _INSTITUTE_GROUP);
+				_STUDENT_GROUP=>_INSTITUTE_GROUP, _PROJECT_OBJ =>_ORGANISATION_GROUP, _PROPOSAL_OBJ => _INSTITUTE_GROUP);
 		if (! in_array($type, array_keys($scope_table))){
 			drupal_set_message(tt('You cannot be the associate of an entity called %1$s', $type), 'error');
 			return FALSE;
 		}
 		$key_field = self::keyField($type);
-		$entity = db_query("SELECT * FROM ".tableName($type)." WHERE $key_field = $id")->fetchAssoc();
+		$entity = $obj ?: db_query("SELECT * FROM ".tableName($type)." WHERE $key_field = $id")->fetchAssoc();
 		//fetchAssoc returns next record (array) or false if there is none
 		if (!$entity) {
 			return false;
 		}
-	
 		//Is the current user the owner of this object, fine
 		if ($entity['owner_id'] == $GLOBALS['user']->uid) {
 			return true;
@@ -116,8 +115,10 @@ class Groups extends AbstractEntity{
 			return Users::isInstituteAdmin(); 
 		} elseif ($type == _ORGANISATION_GROUP){
 			return Users::isOrganisationAdmin();
-		} elseif($type == 'proposal'){
-			return ! Users::isStudent();
+		} elseif($type == _PROPOSAL_OBJ){
+			return ! Users::isStudent();// So all non-student institute members
+		} elseif($type == _PROJECT_OBJ){
+			return Users::isOrganisationAdmin();
 		}
 		return true;
 	}
@@ -153,7 +154,7 @@ class Groups extends AbstractEntity{
 		}
 		
 		try {
-			if($type != 'project'){
+			if($type != _PROJECT_OBJ){
 				$num_deleted2 = db_delete("soc_user_membership")
 				->condition('group_id', $id)
 				->condition('type', $type)
@@ -357,7 +358,7 @@ class Groups extends AbstractEntity{
 				_INSTITUTE_GROUP => array('name', 'contact_name', 'contact_email'),
 				_ORGANISATION_GROUP=> array('name', 'contact_name', 'contact_email', 'url', 'description'),
 				_STUDENT_GROUP=> array('name', 'description'),
-				'project' => array('org_id', 'title', 'description', 'url', 'tags')
+				_PROJECT_OBJ => array('org_id', 'title', 'description', 'url', 'tags')
 		);
 		if (!$type || !isset($fields[$type])){
 			return null;

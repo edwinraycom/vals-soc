@@ -7,7 +7,7 @@ include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 
 switch ($_GET['action']){
 	//Moved the student_actions to proposal_actions. We keep this file for student actions only. At the moment there are none
-/*	case 'proposal':
+/*	case _PROPOSAL_OBJ:
 		if (!vals_soc_access_check('dashboard/projects/apply')) {
 			echo errorDiv(t('You cannot apply for projects'));
 			break;
@@ -81,7 +81,7 @@ switch ($_GET['action']){
 			$id = $result = Proposal::insertProposal($properties, $project_id);
 		} else {
 			$new = FALSE;
-			if (!Groups::isOwner('proposal', $id)){
+			if (!Groups::isOwner(_PROPOSAL_OBJ, $id)){
 				drupal_set_message(t('You are not the owner of this proposal'), 'error');
 				$result = null;
 			} else {
@@ -115,7 +115,7 @@ switch ($_GET['action']){
 		if (!$id){
 			$result = $id = Proposal::insertProposal($properties, $project_id);
 		} else {
-			if (!Groups::isOwner('proposal', $id)){
+			if (!Groups::isOwner(_PROPOSAL_OBJ, $id)){
 				drupal_set_message(t('You are not the owner of this proposal'), 'error');
 				$result = null;
 			} else {

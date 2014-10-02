@@ -374,9 +374,9 @@ class Users extends AbstractEntity{
 			$mentors = db_query(
 					"SELECT u.* from users as u ".
 					"left join soc_user_membership as um on u.uid = um.uid ".
-					" WHERE um.type = :institute AND um.group_id = $organisation AND ".
+					" WHERE um.type = :organisation AND um.group_id = $organisation AND ".
 					"u.uid != $organisation_admin ",
-      					array(':institute' =>_INSTITUTE_GROUP));
+      					array(':organisation' =>_ORGANISATION_GROUP));
 		} else {
 			//get the organisation
 			$organisation = db_query(
@@ -437,7 +437,7 @@ class Users extends AbstractEntity{
 		return $admins;
 	}
 	
-	public static function getGroupAdmins($organisation='')
+	public static function getOrganisationAdmins($organisation='')
 	{
 		global $user;
 	
