@@ -253,7 +253,6 @@ function ajaxCall(handler_type, action, data, target, type, extra_args, extra_fu
 						extra_fun_fail.call();
 					}
 				} else {
-					console.log('hier is NOGMAALS het type van deze first class value '+ typeof extra_fun_success);
 					if ((typeof extra_fun_success == 'function')){
 						extra_fun_success.call();
 					}
@@ -294,7 +293,6 @@ function ajaxCall(handler_type, action, data, target, type, extra_args, extra_fu
 			+ errorThrown);
 		stopWait(1);
 		if (typeof extra_fun_fail != 'undefined' && isFunction(extra_fun_fail)){
-			console.log('hier gekomen met '+typeof extra_fun_fail);
 			extra_fun_fail.call();
 		}
 		return false;
