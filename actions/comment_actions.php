@@ -9,8 +9,25 @@ module_load_include('php', 'vals_soc', 'includes/classes/Institutes');
 module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 
 switch ($_GET['action']){
+	case 'delete':
+		if (! Users::isAdmin()){
+			echo errorDiv("You cannot delete comments");
+		} else {
+			$type = altSubValue($_POST, 'entity_type', '');
+			$id = altSubValue($_POST, 'id', '');
+			$entity_id = altSubValue($_POST, 'entity_id', '');
+			try {
+				$result = db_delete(tableName('comment'))->condition('id', $id);
+			} catch (Exception $e) {
+				echo "Error ". $e->getMessage();
+			}
+			echo $result ? successDiv(tt('You succesfully deleted your %1$s.', t('comment'))) :
+				errorDiv(tt('We could not delete your %1%s.', t('comment')));
+		}
+		break;
 	case 'save':
 		global $user;
+		
 		$type = altSubValue($_POST, 'entity_type', '');
 		$id = altSubValue($_POST, 'id', '');
 		$entity_id = altSubValue($_POST, 'entity_id', '');

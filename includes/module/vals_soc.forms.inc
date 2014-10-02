@@ -905,7 +905,7 @@ function vals_soc_comment_form($form, &$form_state, $comment='', $target='', $en
 			'#type' => 'button',
 			'#value' => t('Cancel'),
 			'#prefix' => '&nbsp; &nbsp; &nbsp;',
-			'#attributes' => array('onClick' => 'this.form.reset(); return false;'),
+			'#attributes' => array('onClick' => 'console.log(\'doet een reset\');this.form.reset(); return false;'),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
 	$form['#vals_soc_attached']['js'] = array(

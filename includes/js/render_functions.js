@@ -229,7 +229,7 @@ function renderProject(project, apply_projects){
 
 function renderRecommendation(pid){
 	return "<div id='recommend_msg'></div>"+
-		Drupal.t('Recommend this project to:')+ "&nbsp;<input type='text' id='recommend_email' name='recommend_email'/>"+
+		Drupal.t('Recommend this project to:')+ "&nbsp;&nbsp;<input type='text' id='recommend_email' name='recommend_email'/>"+
 		"<input type='button' value='"+ Drupal.t('Recommend')+ "' onclick='ajaxCall(\"project\", \"recommend\", {id: "+ 
 			pid+ ", email: $jq(\"#recommend_email\").val()}, \"recommend_msg\");' />";
 }
