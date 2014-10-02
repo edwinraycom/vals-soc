@@ -67,7 +67,7 @@ class ThreadUIBuilder {
 		}
 		$this->output .= "		<div class='threaded-comment-header'>";
 		$this->output .= "			<span class='comment_author'>";//<a href='#'>";
-		$this->output .= "			${comment ['name']}";
+		$this->output .= "			${comment['name']}";
 		$this->output .= "			</span>";
 		$this->output .= "			&nbsp;(${comment['type']}) - &nbsp;";
 		$this->output .= 			$post_type;
@@ -77,7 +77,7 @@ class ThreadUIBuilder {
 
 		$this->output .= "		</div>"; // end header
 		$this->output .= "		<div class='threaded-comment-body'>";
-		$this->output .= 			$comment ['description'];
+		$this->output .= 			$comment['description'];
 		$this->output .= "			<br/>";
 		$this->output .= '			<a class="reply-comment" href="">reply</a>';
 		$this->output .= "		</div>"; // end body
