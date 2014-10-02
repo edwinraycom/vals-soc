@@ -594,7 +594,6 @@ function vals_soc_project_form($form, &$form_state, $project='', $target='', $or
 	);
 	$my_organisations = Groups::getGroups(_ORGANISATION_GROUP);
 	$number_of_organisations = $my_organisations->rowCount();
-		//$DDDD = $my_organisations->fetchCol();
 	// now turn results into array
 	$organisations = objectToArray($my_organisations);
 	$select_values = array(); // to store the result
@@ -654,6 +653,26 @@ function vals_soc_project_form($form, &$form_state, $project='', $target='', $or
 			//'#required' => '1',
 			"#default_value" => populate($project, 'tags')
 	);
+	if ($project){
+		$orgadmin_users = Users::getUsers(_ORGADMIN_TYPE, _ORGANISATION_GROUP, $project->org_id);
+		$mentor_users = Users::getUsers(_MENTOR_TYPE, _ORGANISATION_GROUP, $project->org_id);
+		$o_users = objectToArray($orgadmin_users);
+		$m_users = objectToArray($mentor_users);
+		$users = array_merge($o_users, $m_users);
+		$tselect_values = array(); // to store the result
+		//loop around setting the name/value parts to be values in the drop down select box
+		foreach($users as $user){
+			$tselect_values[$user['uid']] = $user['name'] . ' ('.$user['mail'].')';
+		}
+	
+		$form['mentor_id'] = array(
+				"#type" => "select",
+				'#title' => t('Optionally, set the mentor to another user'),
+				"#options" => $tselect_values,
+				'#required' => '0',
+				"#default_value" => populate($project, 'mentor_id', ($org ?: ''))
+		);
+	}
 	$form['draft'] = array(
 			"#type" => "checkbox",
 			'#title' => t('If you want you can save the project as draft, making it visible only to members of your organisation)'),

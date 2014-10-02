@@ -130,6 +130,7 @@ switch ($_GET['action']){
 		}
 	break;
 	case 'proposal_detail':
+		global $user;
 		$proposal_id = getRequestVar('proposal_id', null);
 		//TODO bepaal hier 
 		if ($proposal_id){
@@ -141,6 +142,10 @@ switch ($_GET['action']){
 				// is this person the project owner?
 				$is_project_owner = Groups::isOwner('project', $project_id);
 				$proposal->is_project_owner = $is_project_owner;
+				$proposal->is_project_mentor = true;
+				if($user->uid != $proposal->mentor_id){
+					$proposal->is_project_mentor = false;
+				}
 				jsonGoodResult($proposal);
 			}
 		} else {
