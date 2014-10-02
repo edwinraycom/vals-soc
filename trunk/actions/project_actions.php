@@ -344,7 +344,8 @@ switch ($_GET['action']){
     	
     	
     	// only allow project owner (or assigned mentor) to update its selected & proposal_id fields
-    	if(!Groups::isOwner('project', $project_id) && $project->mentor_id != $GLOBALS['user']->uid){
+    	//if(!Groups::isOwner('project', $project_id) && $project->mentor_id != $GLOBALS['user']->uid){
+    	if(!Groups::isOwner('project', $project_id)){
     		echo t('Only the project owner or mentor can update its proposal status.');
     		return;
     	}
