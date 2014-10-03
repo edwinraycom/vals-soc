@@ -61,7 +61,7 @@ switch ($_GET['action']){
                 echo renderSupervisors($_POST['id']);
             } elseif ($subtype == _INSTADMIN_TYPE){
                 echo renderUsers(_INSTADMIN_TYPE, '', $_POST['id'], _INSTITUTE_GROUP);
-            } elseif ($type == 'staff'){
+            } elseif ($subtype == 'staff'){
                 $inst_id = $_POST['id'];
                 echo renderUsers(_INSTADMIN_TYPE, '', $inst_id, _INSTITUTE_GROUP, TRUE);
 	    		echo renderUsers(_SUPERVISOR_TYPE, '', $inst_id, _INSTITUTE_GROUP, TRUE);

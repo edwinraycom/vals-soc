@@ -486,7 +486,7 @@ function vals_soc_institute_form($form, &$form_state, $institute='', $target='',
 	$form['name'] = array(
 		"#type" => "textfield",
 		'#title' => t('What is the name of your institute?'),
-		"#size" => 60,
+		"#size" => 100,
 		"#default_value" => populate($institute, 'name'),
 		'#required' => '1'
  	);
