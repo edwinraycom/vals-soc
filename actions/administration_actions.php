@@ -83,7 +83,7 @@ switch ($_GET['action']){
     case 'show':
     	$type = altSubValue($_POST, 'type', '');
     	$show_action = altSubValue($_POST, 'show_action', 'administer');
-    	if ($type && ($type == _INSTITUTE_GROUP)){
+    	if ($type && (in_array($type, array(_INSTITUTE_GROUP, _STUDENT_GROUP)))){
     		$derived = deriveTypeAndAction();
     		if ($derived['type'] == 'group'){
     			$show_action = 'groups';

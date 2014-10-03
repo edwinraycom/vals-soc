@@ -2,7 +2,7 @@
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after propjects.php which does the same
 
 function showRoleDependentAdminPage($role, $show_action='administer', $show_last= FALSE){
-	echo "<a href='"._VALS_SOC_URL."/dashboard'>".t('Back To Dashboard')."</a><br/>";
+	echo "<a href='"._WEB_URL."/dashboard'>".t('Back To Dashboard')."</a><br/>";
 	switch ($role){
 		case _ADMINISTRATOR_TYPE:
 			showAdminPage($show_action, $show_last);
@@ -47,9 +47,12 @@ function showAdminPage($show_action, $show_last=FALSE){
 
 function showSupervisorPage($show_action, $show_last=FALSE){
 	//Get my institutions
-	$institutes = Groups::getGroups(_INSTITUTE_GROUP, $GLOBALS['user']->uid);
+	$my_id = Users::getMyId();
+	$institutes = Groups::getGroups(_INSTITUTE_GROUP, $my_id);
 	if (! $institutes->rowCount()){
 		echo t('You have not registered yourself to an institute yet. ');
+		echo tt('Register yourself with your institute at %1$s using the code you got or ask your Semester of Code Program organiser.', 
+			'<a href="'._WEB_URL ."/user/$my_id/edit\">". t('your account').'</a>');
 	} else {
 		$my_institute = $institutes->fetchObject();
 		
@@ -74,21 +77,28 @@ function showInstitutePage($show_action, $show_last=FALSE){
 	//Get my institutions
 	$institutes = Groups::getGroups(_INSTITUTE_GROUP, $GLOBALS['user']->uid);
 	if (! $institutes->rowCount()){
-		echo t('You have no institute yet registered.');
-		$add_tab = '<h2>'.t('Add your institute').'</h2>';
-		$tab_prefix = 'inst_page-';
-		$target = "${tab_prefix}1";
-		$form = drupal_get_form('vals_soc_institute_form', '', $target, $show_action);
-		unset($form['cancel']);
-		$add_tab .= renderForm($form, $target, true);
-		$data = array();
-		$data[] = array(1, 'Add', 'add', _INSTITUTE_GROUP, null, "target=admin_container&show_action=$show_action", false);
-		echo renderTabs(1, null, $tab_prefix, _INSTITUTE_GROUP, $data, null, TRUE, $add_tab);
-		?>
-		<script type="text/javascript">
-			transform_into_rte();
-			activatetabs('tab_', ['<?php echo $target;?>']);
-        </script><?php
+		if (Users::isInstituteAdmin() || user_access('vals admin register')) {
+			echo t('You have no institute yet registered.');
+			
+			$add_tab = '<h2>'.t('Add your institute').'</h2>';
+			$tab_prefix = 'inst_page-';
+			$target = "${tab_prefix}1";
+			$form = drupal_get_form('vals_soc_institute_form', '', $target, $show_action);
+			unset($form['cancel']);
+			$add_tab .= renderForm($form, $target, true);
+			$data = array();
+			$data[] = array(1, 'Add', 'add', _INSTITUTE_GROUP, null, "target=admin_container&show_action=$show_action", false);
+			echo renderTabs(1, null, $tab_prefix, _INSTITUTE_GROUP, $data, null, TRUE, $add_tab);
+			?>
+			<script type="text/javascript">
+				transform_into_rte();
+				activatetabs('tab_', ['<?php echo $target;?>']);
+	        </script><?php
+		} else {
+			echo t('You have not registered yourself to an institute yet. ');
+			echo tt('Register yourself with your institute at %1$s using the code you got or ask your Semester of Code Program organiser.', 
+			'<a href="'._WEB_URL ."/user/$my_id/edit\">". t('your account').'</a>');
+		}
 
 	} else {
 		$my_institute = $institutes->fetchObject();
@@ -248,7 +258,7 @@ function showInstituteMembersPage($my_institute, $show_last=FALSE){
 		    			t('There are no students yet in this group registered.'));
 	    } else {
 	    	echo "<br/>".t('There are no groups yet in this institute.'). "<a href='".
-	    	_VALS_SOC_URL."/dashboard/institute/group/administer'>".t('Create new groups'). "</a>";
+	    	_WEB_URL."/dashboard/institute/group/administer'>".t('Create new groups'). "</a>";
 	    } */
 	    ?>
 	    <script type="text/javascript">
@@ -292,22 +302,29 @@ function showInstituteAdminPage($my_institute, $action='administer'){
 
 function showOrganisationPage($show_action, $show_last=FALSE){
 	//Get my organisations
-	$organisations = Groups::getGroups(_ORGANISATION_GROUP, $GLOBALS['user']->uid);
-	if (! $organisations->rowCount() && user_access('vals admin register')){
-		echo t('You have no organisation yet registered');
-		echo '<h2>'.t('Add your organisation').'</h2>';
-		$tab_prefix = 'organisation_page-';
-		$target = "${tab_prefix}1";
-		$form = drupal_get_form('vals_soc_organisation_form', '', $target);
-		$add_tab = renderForm($form, $target, true);
-		$data = array();
-		$data[] = array(1, 'Add', 'add', _ORGANISATION_GROUP, null, "target=admin_container&show_action=$show_action", true, 'adding_to_the right');
-		echo renderTabs(1, null, $tab_prefix, _ORGANISATION_GROUP, $data, null, TRUE, $add_tab);
-		?>
-		<script type="text/javascript">
-		   transform_into_rte();
-		   activatetabs('tab_', ['<?php echo $target;?>']);
-        </script><?php
+	$my_id = Users::getMyId();
+	$organisations = Groups::getGroups(_ORGANISATION_GROUP, $my_id);
+	if (! $organisations->rowCount()){
+		if (Users::isOrganisationAdmin() || user_access('vals admin register')) {
+			echo t('You have no organisation yet registered');
+			echo '<h2>'.t('Add your organisation').'</h2>';
+			$tab_prefix = 'organisation_page-';
+			$target = "${tab_prefix}1";
+			$form = drupal_get_form('vals_soc_organisation_form', '', $target);
+			$add_tab = renderForm($form, $target, true);
+			$data = array();
+			$data[] = array(1, 'Add', 'add', _ORGANISATION_GROUP, null, "target=admin_container&show_action=$show_action", true, 'adding_to_the right');
+			echo renderTabs(1, null, $tab_prefix, _ORGANISATION_GROUP, $data, null, TRUE, $add_tab);
+			?>
+			<script type="text/javascript">
+			   transform_into_rte();
+			   activatetabs('tab_', ['<?php echo $target;?>']);
+	        </script><?php
+		} else {
+			echo t('You have not registered yourself to an organisation yet. ');
+			echo tt('Register yourself with your organisation at %1$s using the code you got from a colleague.',
+					'<a href="'._WEB_URL ."/user/$my_id/edit\">". t('your account').'</a>');
+		}
 	} else {
 		if ($show_action == 'administer'){
 			showOrganisationAdminPage($organisations, $show_action, $show_last);
