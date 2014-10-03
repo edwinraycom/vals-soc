@@ -794,9 +794,13 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#attributes' => array(
 					'onclick' => 'if (confirm("'.t('Do you want to leave the proposal for now?').'")){'.
 						(($target != 'our_content') ? 
-							(($target == 'admin_container') ?  'ajaxCall("proposal", "myproposal_page", "", "admin_container");}'
+							/*
+							 * (($target == 'admin_container') ?  'ajaxCall("proposal", "myproposal_page", "", "admin_container");}'
 									:'Drupal.CTools.Modal.dismiss();}'):
- 						'ajaxCall("project", "project_page", "", "our_content");}')),
+							 */
+						'ajaxCall("proposal", "myproposal_page", "", "admin_container");}':
+ 						'ajaxCall("project", "project_page", "", "our_content");}')
+			),
 			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
 	$proposal_id = ((!$proposal) ? 0 : $proposal->proposal_id);
