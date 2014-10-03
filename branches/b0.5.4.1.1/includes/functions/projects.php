@@ -15,11 +15,11 @@ function showProjectPage($show_last=FALSE, $owner_only=false){
 		//There are no organisations yet for this user
 		if ($role == _ORGADMIN_TYPE) {
 			echo t('You have no organisation yet.').'<br/>';
-			echo "<a href='"._VALS_SOC_URL. "/dashboard/organisation/administer'>".t('Please go to the organisation register page')."</a>";
+			echo "<a href='"._WEB_URL. "/dashboard/organisation/administer'>".t('Please go to the organisation register page')."</a>";
 
 		} else {
 			echo t('You are not connected to any organisation yet.').'<br/>';
-			echo "<a href='"._VALS_SOC_URL. "/user/".Users::getMyId()."/edit'>".t('Please edit your account to connect')."</a>";
+			echo "<a href='"._WEB_URL. "/user/".Users::getMyId()."/edit'>".t('Please edit your account to connect')."</a>";
 
 		}
 	} else {
@@ -54,9 +54,9 @@ function showProjectPage($show_last=FALSE, $owner_only=false){
 		        </script><?php
 		} else {
 
-			echo "<a href='"._VALS_SOC_URL. "/dashboard/projects/administer'>".t('Show all')."</a>";
+			echo "<a href='"._WEB_URL. "/dashboard/projects/administer'>".t('Show all')."</a>";
 			echo " | ";
-			echo "<a href='"._VALS_SOC_URL. "/dashboard/projects/administer/mine'>".t('Show only mine')."</a>";
+			echo "<a href='"._WEB_URL. "/dashboard/projects/administer/mine'>".t('Show only mine')."</a>";
 
 			$org =1;
 			$show_org_title = ($my_organisations->rowCount() > 1);

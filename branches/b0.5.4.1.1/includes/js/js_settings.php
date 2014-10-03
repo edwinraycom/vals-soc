@@ -1,8 +1,8 @@
 <?php
 define('DRUPAL_ROOT', realpath(getcwd().'/../../../../../..'));
-include(DRUPAL_ROOT.'/initial.php');//Needed to derive the _VALS_SOC_URL which will be '' or '/vals'
+include(DRUPAL_ROOT.'/initial.php');//Needed to derive the _WEB_URL which will be '' or '/vals'
 $scheme = ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? 'https': 'http');
-$base_url = $scheme. '://'.$_SERVER['HTTP_HOST']._VALS_SOC_URL; //This seems to be necessary to get to the user object: see
+$base_url = $scheme. '://'.$_SERVER['HTTP_HOST']._WEB_URL; //This seems to be necessary to get to the user object: see
 require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_SESSION);
 

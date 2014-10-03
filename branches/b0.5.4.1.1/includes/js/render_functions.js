@@ -257,7 +257,7 @@ function renderOrganisation(org, contact_possible){
 //		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='Submit proposal for this project'/>";
 //		content +="</div>";
 //	}
-	content += "<br/><h3>"+ Drupal.t('Website')+"</h3><a href='"+org.url+"'>"+org.url+"</a>";
+	content += "<br/><h3>"+ Drupal.t('Website')+"</h3><a target='_blank' class='external' href='"+org.url+"'>"+org.url+"</a>";
 	if (typeof contact_possible !== 'undefined' && contact_possible){
 		content += "<h3>"+ Drupal.t('Contact information')+"</h3>"+
 		'<div style="padding-left:5px;">'+

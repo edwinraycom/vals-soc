@@ -23,9 +23,9 @@ define('DRUPAL_ROOT', getcwd());
  * 
  *  COPY THIS FILE TO THE ROOT OF THE INSTALLATION, REPLACING THE DRUPAL INDEX!
  */
-include(DRUPAL_ROOT.'/initial.php');//Needed to derive the _VALS_SOC_URL which will be '' or '/vals'
+include(DRUPAL_ROOT.'/initial.php');//Needed to derive the _WEB_URL which will be '' or '/vals'
 $scheme = ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? 'https': 'http');
-$base_url = $scheme. '://'.$_SERVER['HTTP_HOST']._VALS_SOC_URL;
+$base_url = $scheme. '://'.$_SERVER['HTTP_HOST']._WEB_URL;
 require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 
@@ -37,3 +37,4 @@ menu_execute_active_handler();
 if ($vals_soc_pretend_possible){
 	restoreUser($u, $o_state);
 }
+//////// EDIT THE FILE UNDER THE ROOT IF YOU HAVE ALREADY INSTALLED THE APPLICATION
