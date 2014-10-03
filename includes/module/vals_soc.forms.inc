@@ -801,7 +801,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#value' => t('Save draft'),
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
-					'onclick' => "ajaxFormCall('vals-soc-proposal-form', _PROPOSAL_OBJ, 'save',".
+					'onclick' => "ajaxFormCall('vals-soc-proposal-form', '"._PROPOSAL_OBJ."', 'save',".
 					" {id: $proposal_id, project_id: $project_id,  target: '$target' }, 'handleSaveResult', 'json', ['$target']);")
 			,'#post_render' => array('vals_soc_fix_submit_button')
 	);
@@ -812,7 +812,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
 					'onclick' => "if (confirm('".t('Are you sure you want to submit your proposal now? Once submitted, you cannot edit it anymore.')."')){".
-					"ajaxFormCall('vals-soc-proposal-form', _PROPOSAL_OBJ, 'submit',".
+					"ajaxFormCall('vals-soc-proposal-form', '"._PROPOSAL_OBJ."', 'submit',".
 					" {id: $proposal_id, project_id: $project_id,  target: '$target' }, 'handleSubmitResult', ".
 					"'json', ['$target']);}")
 			,'#post_render' => array('vals_soc_fix_submit_button')
