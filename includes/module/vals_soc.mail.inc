@@ -273,7 +273,7 @@ function notify_all_of_new_comment($entity_details, $thread_details, $properties
 function notify_students_and_supervisors_of_project_status_update($all_proposals, $successful_proposal_id, $is_final){
 	$items = array();
 	$number_of_emails_count = 0;
-	$subject = t('VALS Notification: A propsective mentor has set a proposal status for a project');
+	$subject = t('VALS Notification: A prospective mentor has set a proposal status for a project');
 	foreach($all_proposals as $proposal) {
 		if($proposal->proposal_id != $successful_proposal_id){
 			// unsuccessful ones
