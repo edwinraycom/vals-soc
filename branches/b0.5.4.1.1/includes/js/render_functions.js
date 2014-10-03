@@ -105,7 +105,7 @@ function renderProposalStatus(proposal){
 				Drupal.t('The project mentor has selected another proposal as the preferred interim choice of solution for this project idea.'));
 			}else{
 				content += ((proposal.is_project_owner || proposal.is_project_mentor) ? Drupal.t('You haven\'t yet selected a proposal as your preferred choice of solution for your project idea.') :
-				Drupal.t('The project mentor has\'nt yet selected a proposal as the preferred interim choice of solution for this project idea.'));
+				Drupal.t('The project mentor hasn\'t yet selected a proposal as the preferred interim choice of solution for this project idea.'));
 			}
 			if(proposal.is_project_owner || proposal.is_project_mentor){
 				content += '<div><br/>';
@@ -127,7 +127,7 @@ function renderProposalStatus(proposal){
 
 function renderProposalOverview(proposal){
 	var content = "<h2>"+proposal.title+"</h2>";
-	content += Drupal.t('Submitted by student') + " '" + (proposal.student_name ? proposal.student_name: proposal.name) + '\'';
+	content += Drupal.t('Submitted by student') + " '" + (proposal.student_name ? proposal.student_name: proposal.name);
 	content += '<br/>';
 	content += '<ul>';
 	content += '	<li>';
