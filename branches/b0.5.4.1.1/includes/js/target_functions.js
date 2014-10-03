@@ -277,17 +277,13 @@ function handleSaveResult(result, args){
 			ajaxAppend(result.error, target, 'error', 'edit_proposal');
 		} else {
 			if (result.result == "OK") {
-				console.log("verwacht hem hier met "+result.id + '  en '+ target + ' ook nog '+result.msg );
 				if (target == 'our_content'){
-					console.log('gaat die nieuwe doen');
 					ajaxCall('proposal', 'myproposal_page', {id: result.id, target:target, new_tab:result.id}, target);
 					ajaxMessage('ajax_msg', result.msg);
 				} else {
 					if (target == 'modal'){
-					console.log('roept om getProposalDetail');
-					getProposalDetail(result.id, target, result.msg);
+						getProposalDetail(result.id, target, result.msg);
 					} else {
-						console.log('doet een view');
 						ajaxCall('proposal', 'view', {id: result.id, target:target, new_tab:result.id},
 							'handleContentAndMessage', 'html', [target, 'msg_'+target, result.msg]);
 						//ajaxMessage('ajax_msg', result.msg);

@@ -10,7 +10,7 @@ define('_VALS_SOC_FULL_URL', 'http://'.$_SERVER['HTTP_HOST']._WEB_URL);
 define('_VALS_TEST_UI_ONLY', TRUE && _DEBUG);
 define('_FULL_NAME_LENGTH', 50);
 define('_VALS_SOC_MENTOR_ACCESS_ALL', FALSE);
-@define('_TEST_EMAIL_ADDRESS', 'enter_you_email_address');
+@define('_TEST_EMAIL_ADDRESS', 'ps3com40@gmail.com,edwin@raycom.com');
 
 //Some convenient constants
 //user types
