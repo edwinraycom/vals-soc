@@ -263,6 +263,12 @@ switch ($_GET['action']){
 		$target = altSubValue($_POST, 'target', '');
 		$properties = Proposal::filterPost($_POST);
 		$properties['state'] = 'published';
+		//If there was no supervisor chosen, at least maintain the orginal one, rather than leave it orphaned
+		$original_supervisor = altSubValue($_POST, 'original_supervisor_id', '');
+		if($properties['supervisor_id'] == 0 && isset($original_supervisor)){
+			$properties['supervisor_id'] = $original_supervisor;
+		}
+		
 		if (!$id){
 			$result = $id = Proposal::insertProposal($properties, $project_id);
 		} else {

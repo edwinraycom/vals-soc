@@ -729,6 +729,12 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			$options[$super_obj->uid] = ($super_obj->full_name ?: $super_obj->name);
 		}
 	}
+	
+	$form['original_supervisor_id'] = array(
+			'#type' => 'hidden',
+			"#default_value" => populate($proposal, 'supervisor_id'),
+	);
+	
 	$form['supervisor_id'] = array(
 			"#type" => "select",
 			'#title' => t('Choose a supervisor for this project'),
