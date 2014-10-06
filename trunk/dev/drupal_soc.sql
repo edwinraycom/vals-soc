@@ -27,6 +27,9 @@ ALTER TABLE `soc_projects` CHANGE `url` `url` VARCHAR( 1024 ) CHARACTER SET utf8
 CHANGE `mentor` `mentor_id` MEDIUMINT( 9 ) NOT NULL DEFAULT '0',
 CHANGE `proposal_id` `proposal_id` MEDIUMINT( 9 ) NOT NULL DEFAULT '0',
 CHANGE `tags` `tags` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT ''''''
+
+-- 06-10-14
+ALTER TABLE `soc_proposals` CHANGE `state` `state` ENUM('draft','published','accepted','rejected','finished','archived','open') NOT NULL;
 */
 -- use vals_vps;
 
@@ -127,7 +130,7 @@ CREATE TABLE IF NOT EXISTS soc_proposals (
   solution_short varchar(512) NOT NULL,
   solution_long varchar(1024) NOT NULL,
   -- modules varchar(1024) DEFAULT NULL,
-  state enum('draft','published','accepted','rejected','finished','archived') NOT NULL,
+  state enum('draft','published','accepted','rejected','finished','archived','open') NOT NULL,
   PRIMARY KEY (proposal_id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 -- RC: used to be soc_studentgroups, key changed to: studentgroup_id 

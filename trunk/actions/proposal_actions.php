@@ -222,11 +222,17 @@ switch ($_GET['action']){
 			jsonBadResult(t('No proposal identifier submitted!'), $args);
 		}
 	break;
+	case 'save_public':
+		// no break so that the request filters down to 'save'
+		$is_public = true;
 	case 'save':
 		$id = altSubValue($_POST, 'id', '');
 		$project_id = altSubValue($_POST, 'project_id', '');
 		$project = Project::getProjectById($project_id);
 		$properties = Proposal::filterPost($_POST);
+		if (isset($is_public) && $is_public){
+			$properties['state'] = 'open';
+		}
 		if (!$id){
 			$new = TRUE;
 			$id = $result = Proposal::insertProposal($properties, $project_id);
@@ -236,6 +242,11 @@ switch ($_GET['action']){
 				drupal_set_message(t('You are not the owner of this proposal'), 'error');
 				$result = null;
 			} else {
+				//If there was no supervisor chosen, at least maintain the orginal one, rather than leave it orphaned
+				$original_supervisor = altSubValue($_POST, 'original_supervisor_id', '');
+				if($properties['supervisor_id'] == 0 && isset($original_supervisor)){
+					$properties['supervisor_id'] = $original_supervisor;
+				}
 				$result = Proposal::updateProposal($properties, $id);
 			}
 		}
