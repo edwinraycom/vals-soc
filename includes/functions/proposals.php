@@ -597,7 +597,7 @@ function showProposalsForProject($project_id){
 		    					title: "Proposal details",
 								sorting: false,
 		    					display: function (data) {
-		    						if(data.record.state != 'published'){
+		    						if(data.record.state == 'draft'){
 										return "Draft only";
 		    						
 									}else{

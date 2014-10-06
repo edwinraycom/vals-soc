@@ -712,8 +712,8 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 		return FALSE;
 	}
 	$form = array(
-			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
-			'#suffix' => '</div>',
+		'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
+		'#suffix' => '</div>',
 	);
 	$form['title'] = array(
 		"#type" => "textfield",
@@ -731,17 +731,17 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 	}
 	
 	$form['original_supervisor_id'] = array(
-			'#type' => 'hidden',
-			"#default_value" => populate($proposal, 'supervisor_id'),
+		'#type' => 'hidden',
+		"#default_value" => populate($proposal, 'supervisor_id'),
 	);
 	
 	$form['supervisor_id'] = array(
-			"#type" => "select",
-			'#title' => t('Choose a supervisor for this project'),
-			"#options" => $options,
-			'#required' => '0',
-			"#default_value" => populate($proposal, 'supervisor_id'),
-			"#description" => t("You can also choose a supervisor later. The supervisors in this list have voted that they are willing to be supervisor for this project"),
+		"#type" => "select",
+		'#title' => t('Choose a supervisor for this project'),
+		"#options" => $options,
+		'#required' => '0',
+		"#default_value" => populate($proposal, 'supervisor_id'),
+		"#description" => t("You can also choose a supervisor later. The supervisors in this list have voted that they are willing to be supervisor for this project"),
 	);
 	
 	$form['solution_short'] = array(
@@ -786,42 +786,83 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 // 	);
 	//If we never need a stand alone form and only use ajax, remove the commented code
 	//and get common code outside
-	$form['cancel'] = array(
-			'#type' => 'button',
-			'#button_type' => 'button',
-			'#value' => t('Cancel'),
-			//'#theme' => 'garland_button',
-			'#attributes' => array(
-					'onclick' => 'if (confirm("'.t('Do you want to leave the proposal for now?').'")){'.
-						(($target != 'our_content') ? 
-							(($target == 'admin_container') ?  'ajaxCall("proposal", "myproposal_page", "", "admin_container");}'
-									:'Drupal.CTools.Modal.dismiss();}'):
- 						'ajaxCall("project", "project_page", "", "our_content");}')),
-			'#post_render' => array('vals_soc_fix_submit_button'),
+	
+	$form['form_submit_help_text'] = array(
+			'#markup' => '<hr/>
+	<h2>'.t('Choose one of the options below').'</h2>
+	<ol>
+		<li><b>'.t('Save as private draft').'</b><br/>
+			<i>'.t('This will save your proposal and means that only you and your current supervisor can see it. 
+				Use this method in the early stages of creating a proposal, but consider moving to the next 
+				choice as soon as possible. The owner of the project idea this proposal is intended for 
+				cannot see it and so cannot provide feedback. You can still make changes to it.').'</i>
+		</li>
+		<li><b>'.t('Save as open draft').'</b><br/>
+			<i>'.t('This will save your proposal enabling you, your current supervisor and also the project ideas mentor 
+				to see it. Saving with this method allows the project mentor to access your proposal and provide feedback  
+				and possible improvements. You can still make changes to it, however you cannot go back to the private draft mode.').'</i>
+		</li>
+		<li><b>'.t('Submit final proposal').'</b><br/>
+			<i>'.t('This will save your proposal in its final state, meaning you can no longer make changes to it.  
+				Use this button once you have carefully reviewed your proposal with your supervisor and ideally  
+				after having received feedback from the project mentor.').'</i>
+		</li>
+		<li><b>'.t('Cancel this form').'</b><br/>
+			<i>'.t('This will dismiss this form without saving any changes.').'</i>
+		</li>
+	</ol>'
 	);
+	
 	$proposal_id = ((!$proposal) ? 0 : $proposal->proposal_id);
 	unset($form['#submit']);		
-	$form['save'] = array(
+	$form['save_private'] = array(
 			'#type' => 'button',
 			'#button_type' => 'button',
-			'#value' => t('Save draft'),
+			'#value' => t('Save as private draft'),
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
+					'class' => array('button-spacer'),
 					'onclick' => "ajaxFormCall('vals-soc-proposal-form', '"._PROPOSAL_OBJ."', 'save',".
+					" {id: $proposal_id, project_id: $project_id,  target: '$target' }, 'handleSaveResult', 'json', ['$target']);")
+			,'#post_render' => array('vals_soc_fix_submit_button')
+	);
+	$form['save_open'] = array(
+			'#type' => 'button',
+			'#button_type' => 'button',
+			'#value' => t('Save as open draft'),
+			//'#theme' => 'garland_button',
+			'#attributes' => array(
+					'class' => array('button-spacer'),
+					'onclick' => "ajaxFormCall('vals-soc-proposal-form', '"._PROPOSAL_OBJ."', 'save_public',".
 					" {id: $proposal_id, project_id: $project_id,  target: '$target' }, 'handleSaveResult', 'json', ['$target']);")
 			,'#post_render' => array('vals_soc_fix_submit_button')
 	);
 	$form['sumbit'] = array(
 			'#type' => 'button',
 			'#button_type' => 'button',
-			'#value' => t('Submit proposal'),
+			'#value' => t('Submit final proposal'),
 			//'#theme' => 'garland_button',
 			'#attributes' => array(
+					'class' => array('button-spacer'),
 					'onclick' => "if (confirm('".t('Are you sure you want to submit your proposal now? Once submitted, you cannot edit it anymore.')."')){".
 					"ajaxFormCall('vals-soc-proposal-form', '"._PROPOSAL_OBJ."', 'submit',".
 					" {id: $proposal_id, project_id: $project_id,  target: '$target' }, 'handleSubmitResult', ".
 					"'json', ['$target']);}")
 			,'#post_render' => array('vals_soc_fix_submit_button')
+	);
+	$form['cancel'] = array(
+			'#type' => 'button',
+			'#button_type' => 'button',
+			'#value' => t('Cancel this form'),
+			//'#theme' => 'garland_button',
+			'#attributes' => array(
+					'class' => array('button-spacer'),
+					'onclick' => 'if (confirm("'.t('Do you want to leave the proposal for now?').'")){'.
+					(($target != 'our_content') ?
+							(($target == 'admin_container') ?  'ajaxCall("proposal", "myproposal_page", "", "admin_container");}'
+									:'Drupal.CTools.Modal.dismiss();}'):
+							'ajaxCall("project", "project_page", "", "our_content");}')),
+			'#post_render' => array('vals_soc_fix_submit_button'),
 	);
 	$form['#vals_soc_attached']['js'] = array(
 		array(
