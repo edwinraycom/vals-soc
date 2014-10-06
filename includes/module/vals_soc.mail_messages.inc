@@ -34,16 +34,37 @@ function get_proposal_email_body($record, $is_update, $user_type){
 	if($user_type=='supervisor'){
 		$recipient_username = $record->supervisor_user_name;
 		if($is_update){
-			$alert .= t('An existing proposal has been updated by one of your students.');
+			if($record->state != 'published'){
+				$alert .= t('An existing proposal has been updated by one of your students.');
+			}
+			else{
+				$alert .= t('An existing proposal has been marked as final version by one of your students.');
+			}
 		}else{
-			$alert .= t('A new proposal has been published by one of your students.');
+			if($record->state != 'published'){
+				$alert .= t('A new proposal has been made available by one of your students.');
+			}
+			else{
+				$alert .= t('A new proposal has been marked as final version by one of your students.');
+			}
 		}
-	}else{
+	}
+	else{
 		$recipient_username = $record->mentor_user_name;
 		if($is_update){
-			$alert .= t('An existing proposal has been updated for one of your projects.');
+			if($record->state != 'published'){
+				$alert .= t('An existing proposal for one of your projects, has been updated by the student.');
+			}
+			else{
+				$alert .= t('An existing proposal for one of your projects, has been marked as final by the student.');
+			}
 		}else{
-			$alert .= t('A new proposal has been published for one of your projects.');
+			if($record->state != 'published'){
+				$alert .= t('A new proposal for one of your projects, has been made available .');
+			}
+			else{
+				$alert .= t('A new proposal for one of your projects, has been marked as final by the student.');
+			}
 		}
 	}
 	$output='';
