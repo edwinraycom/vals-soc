@@ -233,14 +233,15 @@ function renderRecommendation(pid){
 }
 
 function renderSupervisorLike(pid, current){
-	return Drupal.t('Could you or do you want to be the supervisor for this project for one of this institutes students?')+ "<br>"+
+	return "<div id='preference_msg'></div>"+
+	Drupal.t('Could you or do you want to be the supervisor for this project for one of this institutes students?')+ "<br>"+
 	"<label><input type='radio' value='-1' id='project_like_1' name='project_like' "+ 
 		((-1 == current)? 'checked="checked"': '') + "/>"+  Drupal.t('Not for me') +"</label>&nbsp;" +
 	"<label><input type='radio' value=0 id='project_like0' name='project_like' "+ 
 		((0 == current)? 'checked="checked"': '') + "/>"+ Drupal.t('Maybe') +"</label>&nbsp;" +	
 	"<label><input type='radio' value=1 id='project_like1' name='project_like' "+ 
 		((1 == current)? 'checked="checked"': '') + "/>"+ Drupal.t('Would suit me')+"</label>&nbsp;<input type='button' value='"+ Drupal.t('Save Preference') + "' onclick='ajaxCall(\"project\", \"rate\", {id: "+ pid+
-		", rate: $jq(\"input:radio[name=project_like]:checked\").val()}, \"handleMessage\", \"json\", [\"recommend_msg\"]);'/>"
+		", rate: $jq(\"input:radio[name=project_like]:checked\").val()}, \"handleMessage\", \"json\", [\"preference_msg\"]);'/>"
 		;
 }
 
