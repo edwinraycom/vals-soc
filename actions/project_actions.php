@@ -332,6 +332,8 @@ switch ($_GET['action']){
     	$id = altSubValue($_POST, 'id', '');
     	if (! isValidOrganisationType($type)) {
     		echo jsonBadResult(t('There is no such type we can delete'));
+    	} elseif (count(Proposal::getProposalsPerProject($id))) {
+    		echo jsonBadResult(t('You cannot delte the project; there are already students working on a proposal for this project. You can still edit it though.'));
     	} else {
     		$result = Groups::removeGroup($type, $id);
     		ThreadedComments::getInstance()->removethreadsForEntity($id, $type);
