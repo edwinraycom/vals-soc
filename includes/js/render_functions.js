@@ -72,52 +72,50 @@ function renderProposalStatus(proposal){
 	content += Drupal.t('Submitted by student') + " '" + (proposal.student_name ? proposal.student_name: proposal.name) + "'";
 	content += '<br/>';
 	content += '<br/>';
-
 	if((proposal.selected == 1) && (proposal.pr_proposal_id == proposal.proposal_id)){
 		content += (proposal.is_project_owner ? 
 				Drupal.t('You have selected this proposal as your final choice of solution for your project idea. You cannot change this.') : 
 				Drupal.t('The project mentor selected this proposal as the final choice of solution for this project idea.'));
-	}
-	else{
+	} else {
 		if((proposal.selected == 1) && (proposal.pr_proposal_id != proposal.proposal_id)){
 			content += ((proposal.is_project_owner || proposal.is_project_mentor) ? 
 					Drupal.t('You have already selected another proposal as your final choice of solution for your project idea. You cannot change this.') :
 					Drupal.t('The project mentor selected another proposal as the final choice of solution for this project idea.'));
-		}
-		else if((proposal.selected == 0) && (proposal.pr_proposal_id == proposal.proposal_id)){
-			if(proposal.is_project_owner || proposal.is_project_mentor){
-				content += Drupal.t('You have selected this proposal as your preferred interim choice of solution for your project idea. ');
-				content += Drupal.t('This is not final and you may change it to another proposal before the end of the student signup period.');
-			}else{
-				content += Drupal.t('The project owner selected this proposal as the preferred interim choice of solution for this project idea. ');
-				content += Drupal.t('This is not final and the owner may change to another proposal before the end of the student signup period.');
-			}
+		} else {
+			if((proposal.selected == 0) && (proposal.pr_proposal_id == proposal.proposal_id)){
+				if(proposal.is_project_owner || proposal.is_project_mentor){
+					content += Drupal.t('You have selected this proposal as your preferred interim choice of solution for your project idea. ');
+					content += Drupal.t('This is not final and you may change it to another proposal before the end of the student signup period.');
+				}else{
+					content += Drupal.t('The project owner selected this proposal as the preferred interim choice of solution for this project idea. ');
+					content += Drupal.t('This is not final and the owner may change to another proposal before the end of the student signup period.');
+				}
 			
-			if(proposal.is_project_owner || proposal.is_project_mentor){
-				content += '<div class="prop-mini-form-wrapper" id="proposal-final-markup-'+proposal.proposal_id+'">';
-				content += 		getAcceptProposalFinalMarkup(proposal, '');
-				content += '</div>';
-			}
-		}
-		else{
-			if(proposal.pr_proposal_id != null){
-				content += ((proposal.is_project_owner || proposal.is_project_mentor) ? Drupal.t('You have already selected another proposal as your preferred choice of solution for your project idea.') :
-				Drupal.t('The project mentor has selected another proposal as the preferred interim choice of solution for this project idea.'));
-			}else{
-				content += ((proposal.is_project_owner || proposal.is_project_mentor) ? Drupal.t('You haven\'t yet selected a proposal as your preferred choice of solution for your project idea.') :
-				Drupal.t('The project mentor has\'nt yet selected a proposal as the preferred interim choice of solution for this project idea.'));
-			}
-			if(proposal.is_project_owner || proposal.is_project_mentor){
-				content += '<div><br/>';
-				content += '	<div>'+ Drupal.t('You have the following two choices')+ '</div>';
-				content += '	<br/>';
-				content += '	<div class="prop-mini-form-wrapper" id="proposal-intrim-markup-'+proposal.proposal_id+'">';
-				content += 			getAcceptProposalIntrimMarkup(proposal, '1.');
-				content += '	</div>';
-				content += '	<div class="prop-mini-form-wrapper" id="proposal-final-markup-'+proposal.proposal_id+'">';
-				content += 			getAcceptProposalFinalMarkup(proposal, '2.');
-				content += '	</div>';
-				content += '</div>';
+				if(proposal.is_project_owner || proposal.is_project_mentor){
+					content += '<div class="prop-mini-form-wrapper" id="proposal-final-markup-'+proposal.proposal_id+'">';
+					content += 		getAcceptProposalFinalMarkup(proposal, '');
+					content += '</div>';
+				}
+			} else {
+				if(proposal.pr_proposal_id != null){
+					content += ((proposal.is_project_owner || proposal.is_project_mentor) ? Drupal.t('You have already selected another proposal as your preferred choice of solution for your project idea.') :
+					Drupal.t('The project mentor has selected another proposal as the preferred interim choice of solution for this project idea.'));
+				}else{
+					content += ((proposal.is_project_owner || proposal.is_project_mentor) ? Drupal.t('You haven\'t yet selected a proposal as your preferred choice of solution for your project idea.') :
+					Drupal.t('The project mentor hasn\'t yet selected a proposal as the preferred interim choice of solution for this project idea.'));
+				}
+				if(proposal.is_project_owner || proposal.is_project_mentor){
+					content += '<div><br/>';
+					content += '	<div>'+ Drupal.t('You have the following two choices')+ '</div>';
+					content += '	<br/>';
+					content += '	<div class="prop-mini-form-wrapper" id="proposal-intrim-markup-'+proposal.proposal_id+'">';
+					content += 			getAcceptProposalIntrimMarkup(proposal, '1.');
+					content += '	</div>';
+					content += '	<div class="prop-mini-form-wrapper" id="proposal-final-markup-'+proposal.proposal_id+'">';
+					content += 			getAcceptProposalFinalMarkup(proposal, '2.');
+					content += '	</div>';
+					content += '</div>';
+				}
 			}
 		}
 	}
@@ -127,7 +125,8 @@ function renderProposalStatus(proposal){
 
 function renderProposalOverview(proposal){
 	var content = "<h2>"+proposal.title+"</h2>";
-	content += Drupal.t('Submitted by student') + " '" + (proposal.student_name ? proposal.student_name: proposal.name) + '\'';
+	content += Drupal.t('Submitted by student') + " '" + (proposal.student_name ? proposal.student_name: proposal.name);
+	content += '&nbsp;<i>('+proposal.state+')</i>';
 	content += '&nbsp;<i>('+proposal.state+')</i>';
 	content += '<br/>';
 	content += '<ul>';
@@ -171,6 +170,7 @@ function renderProject(project, apply_projects){
 	var navigation = true;
 	var content = "<h2>"+project.title+"</h2>";
 	var rate_projects = window.view_settings.rate_projects;
+	var navigation_class = (project.description.length > 2980) ? 'center_bottom_relative': 'center_bottom';
 	content += project.description;
 	if(project.url){
 		content += "<br/><a target='_blank' class='external' href='" + project.url + "'>" + project.url + "</a>";
@@ -212,7 +212,7 @@ function renderProject(project, apply_projects){
 	}
 	if (navigation){
 		if (typeof project.nav != 'undefined'){
-			content +="<div class=\"centerbottom\">";
+			content +="<div class='"+ navigation_class + "'>";
 			content += (project.nav.prev_pid ? 
 					"<input id='vals-btn-prev' type='button' onclick='ajaxCall(\"project\", " +
 					"\"project_detail\", {project_id: "+project.nav.prev_pid+", index: "+project.nav.prev_nr+"}" +
@@ -236,14 +236,15 @@ function renderRecommendation(pid){
 }
 
 function renderSupervisorLike(pid, current){
-	return Drupal.t('Could you or do you want to be the supervisor for this project for one of this institutes students?')+ "<br>"+
+	return "<div id='preference_msg'></div>"+
+	Drupal.t('Could you or do you want to be the supervisor for this project for one of this institutes students?')+ "<br>"+
 	"<label><input type='radio' value='-1' id='project_like_1' name='project_like' "+ 
 		((-1 == current)? 'checked="checked"': '') + "/>"+  Drupal.t('Not for me') +"</label>&nbsp;" +
 	"<label><input type='radio' value=0 id='project_like0' name='project_like' "+ 
 		((0 == current)? 'checked="checked"': '') + "/>"+ Drupal.t('Maybe') +"</label>&nbsp;" +	
 	"<label><input type='radio' value=1 id='project_like1' name='project_like' "+ 
 		((1 == current)? 'checked="checked"': '') + "/>"+ Drupal.t('Would suit me')+"</label>&nbsp;<input type='button' value='"+ Drupal.t('Save Preference') + "' onclick='ajaxCall(\"project\", \"rate\", {id: "+ pid+
-		", rate: $jq(\"input:radio[name=project_like]:checked\").val()}, \"handleMessage\", \"json\", [\"recommend_msg\"]);'/>"
+		", rate: $jq(\"input:radio[name=project_like]:checked\").val()}, \"handleMessage\", \"json\", [\"preference_msg\"]);'/>"
 		;
 }
 
@@ -258,7 +259,7 @@ function renderOrganisation(org, contact_possible){
 //		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='Submit proposal for this project'/>";
 //		content +="</div>";
 //	}
-	content += "<br/><h3>"+ Drupal.t('Website')+"</h3><a href='"+org.url+"'>"+org.url+"</a>";
+	content += "<br/><h3>"+ Drupal.t('Website')+"</h3><a target='_blank' class='external' href='"+org.url+"'>"+org.url+"</a>";
 	if (typeof contact_possible !== 'undefined' && contact_possible){
 		content += "<h3>"+ Drupal.t('Contact information')+"</h3>"+
 		'<div style="padding-left:5px;">'+

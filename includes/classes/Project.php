@@ -108,7 +108,7 @@ class Project extends AbstractEntity{
     			array_push($group, $record->studentgroup_id);
     		}
     	}
-    	$role = _STUDENT_TYPE;
+    	$role = _STUDENT_ROLE_ID;
     	$query ="
     		SELECT u.uid,u.name as username, sg.name as groupname,COUNT(v.proposal_id) AS proposal_count
 			FROM users AS u
@@ -132,7 +132,7 @@ class Project extends AbstractEntity{
     			array_push($group, $record->studentgroup_id);
     		}
     	}
-    	$role = 4; 
+    	$role = _STUDENT_ROLE_ID; 
     	$query ="
     		SELECT u.uid,u.name as username, sg.name as groupname,COUNT(v.proposal_id) AS proposal_count
 			FROM users AS u

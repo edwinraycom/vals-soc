@@ -1,8 +1,16 @@
 <?php
 //The following are copied from the current database state. Can be neater to derive and put in the cache
-//or something like that
-define('_ANONYMOUS_ROLE', 1);
-define('_USER_ROLE', 2); //Identical to DRUPAL_AUTHENTICATED_RID
+//or something like that. But for now, all database instances use the same ids ('rid') so we just define them
+//for performance reasons
+define('_ANONYMOUS_ROLE_ID', 1);
+define('_USER_ROLE_ID', 2); //Identical to DRUPAL_AUTHENTICATED_RID
+define('_ADMINISTRATOR_ROLE_ID', 3);
+define('_STUDENT_ROLE_ID', 4);
+define('_MENTOR_ROLE_ID', 5);
+define('_ORGADMIN_ROLE_ID', 8);
+define('_SUPERVISOR_ROLE_ID', 9);
+define('_INSTADMIN_ROLE_ID', 12);
+define('_SOC_ROLE_ID', 14);
 
 /**
  * Function to create the custom roles needed in drupal for the summer of code programme.
@@ -66,7 +74,6 @@ function create_permissions(){
 			'vals edit projects' => TRUE,
 	);
 	foreach ($perms as $role => $permissions){
-		echo "Bekijkt nu $role";
 		if (!$role_obj = user_role_load_by_name($role)) {
 			$role_temp = new stdClass(); // create your Class
 			// Match values to the role Class.
@@ -191,9 +198,9 @@ function getRole(){
     $roles = getRoles();
     if ($roles) {
         foreach ($roles as $rid => $name){
-            if ($rid == _ANONYMOUS_ROLE ){
+            if ($rid == _ANONYMOUS_ROLE_ID ){
                 return _ANONYMOUS_TYPE;
-            } elseif ($rid !== _USER_ROLE) {
+            } elseif ($rid !== _USER_ROLE_ID) {
                 return $name;
             }
         }
@@ -207,14 +214,12 @@ function getUserRoleId($roles='', $uid=''){
     //The roles come either from the global user property roles or via the form in an admin edit of a user.
     //In the latter case the roles have the form: [10 => 0, 9 => 9, 8 => 0,....2 => 2]  
     foreach ($roles as $rid => $role_val){
-        if (($role_val !== 0) && ($rid != _USER_ROLE) && ($rid != _ANONYMOUS_ROLE)) {
-        	//echo "tevreden";
+        if (($role_val !== 0) && ($rid != _USER_ROLE_ID) && ($rid != _ANONYMOUS_ROLE_ID)) {
             return $rid;
         } else {
-        	//echo "verder kijken<br>";
         }
     }
-    return _USER_ROLE;
+    return _USER_ROLE_ID;
 }
 
 function getUserRoleName($roles=array(), $uid='', $role_id=''){

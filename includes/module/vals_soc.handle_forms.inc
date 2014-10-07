@@ -256,7 +256,7 @@ function vals_soc_form_user_profile_form_submit_handler(&$form, &$form_state) {
 	 */
     if (TRUE || $is_admin) {
     	if ((isset($form_state['values']['institute']) && $form_state['values']['institute']) &&
-	     	(($type == _INSTADMIN_TYPE) || ($is_admin && (($type == _STUDENT_TYPE) || ($type == _SUPERVISOR_TYPE))))
+	     	(($type == _INSTADMIN_TYPE || ($type == _SUPERVISOR_TYPE)) || ($is_admin && (($type == _STUDENT_TYPE))))
 	    		){
 	    	db_query("DELETE FROM soc_user_membership WHERE uid = $uid");
 	        db_insert('soc_user_membership')->fields( array(

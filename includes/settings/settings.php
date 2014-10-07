@@ -5,12 +5,12 @@ define('_VALS_SOC_ROOT', DRUPAL_ROOT.'/'._VALS_SOC_PATH);
 variable_set('configurable_timezones', 0);
 variable_set('user_pictures', 0); //omit the user avatar picture
 include_once(DRUPAL_ROOT.'/initial.php');
-define('_VALS_SOC_REL_URL', _VALS_SOC_URL.'/'._VALS_SOC_PATH);
-define('_VALS_SOC_FULL_URL', 'http://'.$_SERVER['HTTP_HOST']._VALS_SOC_URL);
+define('_VALS_SOC_REL_URL', _WEB_URL.'/'._VALS_SOC_PATH);
+define('_VALS_SOC_FULL_URL', 'http://'.$_SERVER['HTTP_HOST']._WEB_URL);
 define('_VALS_TEST_UI_ONLY', TRUE && _DEBUG);
 define('_FULL_NAME_LENGTH', 50);
 define('_VALS_SOC_MENTOR_ACCESS_ALL', FALSE);
-@define('_TEST_EMAIL_ADDRESS', 'enter_you_email_address');
+@define('_TEST_EMAIL_ADDRESS', 'ps3com40@gmail.com,edwin@raycom.com');
 
 //Some convenient constants
 //user types
