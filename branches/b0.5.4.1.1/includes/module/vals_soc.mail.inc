@@ -308,9 +308,11 @@ function notify_mentor_and_supervisor_of_proposal_update($record, $is_update){
 	}
 
 	if(isset($record->mentor_user_mail) && isset($record->mentor_user_name)){
-		$mentor_body = get_proposal_email_body($record, $is_update, 'mentor');
-		$recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $record->mentor_user_mail);
-		$items[1] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $recipient, 'from' => NULL, 'subject' => $subject, 'body' => $mentor_body);
+		if($record->state != 'draft'){ // dont send the mentor a mail if the proposal is only in draft state
+			$mentor_body = get_proposal_email_body($record, $is_update, 'mentor');
+			$recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $record->mentor_user_mail);
+			$items[1] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $recipient, 'from' => NULL, 'subject' => $subject, 'body' => $mentor_body);
+		}
 	}else{
 		drupal_set_message(t('unable to send supervisor proposal notification email: missing email or username'));
 	}
