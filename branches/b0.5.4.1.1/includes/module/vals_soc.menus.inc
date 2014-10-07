@@ -312,9 +312,15 @@ function getMyProjectsAdministerLink($path){ //dashboard/projects/administer/min
  * @return multitype:string NULL multitype:unknown
  */
 function getProjectsBrowseLink($path){// dashboard/projects/browse or projects/browse
+	if ($path == 'dashboard/projects/browse'){
+		$access = MENU_CALLBACK;
+	}
+	else{
+		$access = MENU_NORMAL_ITEM;
+	}
 	return array(
 			'title' => t('Projects'),
-			'type' => MENU_CALLBACK, // register link, but dont put it in the menu
+			'type' => $access, // register link, but dont put it in the menu
 			'page callback' => 'vals_soc_browse_projects',
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' => array($path),
@@ -334,9 +340,15 @@ function getProjectsBrowseLink($path){// dashboard/projects/browse or projects/b
  * @return multitype:string NULL multitype:unknown
  */
 function getOrganisationBrowseLink($path){ // dashboard/organisations/browse or organisations/browse
+	if ($path == 'dashboard/organisations/browse'){
+		$access = MENU_CALLBACK;
+	}
+	else{
+		$access = MENU_NORMAL_ITEM;
+	}
 	return  array(
 			'title' => t('Organisations'),
-			'type' => MENU_NORMAL_ITEM,
+			'type' => $access,
 			'page callback' => 'vals_soc_browse_organisations',
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' =>  array($path),
@@ -356,9 +368,15 @@ function getOrganisationBrowseLink($path){ // dashboard/organisations/browse or 
  * @return multitype:string NULL multitype:unknown
  */
 function getInstituteBrowseLink($path){ // dashboard/institutes/browse or institutes/browse
+	if ($path == 'dashboard/institutes/browse'){
+		$access = MENU_CALLBACK;
+	}
+	else{
+		$access = MENU_NORMAL_ITEM;
+	}
 	return  array(
 			'title' => t('Institutes'),
-			'type' => MENU_NORMAL_ITEM,
+			'type' => $access,
 			'page callback' => 'vals_soc_browse_institutes',
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' =>  array($path),
