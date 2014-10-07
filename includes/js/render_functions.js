@@ -169,6 +169,7 @@ function renderProject(project, apply_projects){
 	var navigation = true;
 	var content = "<h2>"+project.title+"</h2>";
 	var rate_projects = window.view_settings.rate_projects;
+	var navigation_class = (project.description.length > 2980) ? 'center_bottom_relative': 'center_bottom';
 	content += project.description;
 	if(project.url){
 		content += "<br/><a target='_blank' class='external' href='" + project.url + "'>" + project.url + "</a>";
@@ -210,7 +211,7 @@ function renderProject(project, apply_projects){
 	}
 	if (navigation){
 		if (typeof project.nav != 'undefined'){
-			content +="<div class=\"centerbottom\">";
+			content +="<div class='"+ navigation_class + "'>";
 			content += (project.nav.prev_pid ? 
 					"<input id='vals-btn-prev' type='button' onclick='ajaxCall(\"project\", " +
 					"\"project_detail\", {project_id: "+project.nav.prev_pid+", index: "+project.nav.prev_nr+"}" +
