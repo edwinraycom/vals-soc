@@ -2,8 +2,8 @@
 //The following are copied from the current database state. Can be neater to derive and put in the cache
 //or something like that. But for now, all database instances use the same ids ('rid') so we just define them
 //for performance reasons
-define('_ANONYMOUS_ROLE_ID', 1);
-define('_USER_ROLE_ID', 2); //Identical to DRUPAL_AUTHENTICATED_RID
+define('_ANONYMOUS_ROLE_ID_ID', 1);
+define('_USER_ROLE_ID_ID', 2); //Identical to DRUPAL_AUTHENTICATED_RID
 define('_ADMINISTRATOR_ROLE', 3);
 define('_STUDENT_ROLE_ID', 4);
 define('_MENTOR_ROLE_ID', 5);
@@ -199,9 +199,9 @@ function getRole(){
     $roles = getRoles();
     if ($roles) {
         foreach ($roles as $rid => $name){
-            if ($rid == _ANONYMOUS_ROLE ){
+            if ($rid == _ANONYMOUS_ROLE_ID ){
                 return _ANONYMOUS_TYPE;
-            } elseif ($rid !== _USER_ROLE) {
+            } elseif ($rid !== _USER_ROLE_ID) {
                 return $name;
             }
         }
@@ -215,12 +215,12 @@ function getUserRoleId($roles='', $uid=''){
     //The roles come either from the global user property roles or via the form in an admin edit of a user.
     //In the latter case the roles have the form: [10 => 0, 9 => 9, 8 => 0,....2 => 2]  
     foreach ($roles as $rid => $role_val){
-        if (($role_val !== 0) && ($rid != _USER_ROLE) && ($rid != _ANONYMOUS_ROLE)) {
+        if (($role_val !== 0) && ($rid != _USER_ROLE_ID) && ($rid != _ANONYMOUS_ROLE_ID)) {
             return $rid;
         } else {
         }
     }
-    return _USER_ROLE;
+    return _USER_ROLE_ID;
 }
 
 function getUserRoleName($roles=array(), $uid='', $role_id=''){
