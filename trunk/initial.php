@@ -19,6 +19,6 @@ function getInitialPath($path1, $path2){
 	return $arr1[0];
 } 
 $vals = getInitialPath($_SERVER['PHP_SELF'], '/sites/all/modules');
-define('_VALS_SOC_URL', $vals);
+define('_WEB_URL', $vals);
 
 //////// EDIT THE FILE UNDER THE ROOT IF YOU HAVE ALREADY INSTALLED THE APPLICATION

@@ -61,7 +61,7 @@ switch ($_GET['action']){
                 echo renderSupervisors($_POST['id']);
             } elseif ($subtype == _INSTADMIN_TYPE){
                 echo renderUsers(_INSTADMIN_TYPE, '', $_POST['id'], _INSTITUTE_GROUP);
-            } elseif ($type == 'staff'){
+            } elseif ($subtype == 'staff'){
                 $inst_id = $_POST['id'];
                 echo renderUsers(_INSTADMIN_TYPE, '', $inst_id, _INSTITUTE_GROUP, TRUE);
 	    		echo renderUsers(_SUPERVISOR_TYPE, '', $inst_id, _INSTITUTE_GROUP, TRUE);
@@ -83,7 +83,7 @@ switch ($_GET['action']){
     case 'show':
     	$type = altSubValue($_POST, 'type', '');
     	$show_action = altSubValue($_POST, 'show_action', 'administer');
-    	if ($type && ($type == _INSTITUTE_GROUP)){
+    	if ($type && (in_array($type, array(_INSTITUTE_GROUP, _STUDENT_GROUP)))){
     		$derived = deriveTypeAndAction();
     		if ($derived['type'] == 'group'){
     			$show_action = 'groups';

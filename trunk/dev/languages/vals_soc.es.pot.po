@@ -1560,7 +1560,7 @@ msgstr ""
 
 #: includes/module/vals_soc.mail.inc:206
 msgid ""
-"VALS Notification: A propsective mentor has set a proposal status for a "
+"VALS Notification: A prospective mentor has set a proposal status for a "
 "project"
 msgstr ""
 

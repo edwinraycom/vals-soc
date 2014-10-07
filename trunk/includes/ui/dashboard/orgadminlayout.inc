@@ -120,12 +120,15 @@ function getOrgAdminLayout($timeline_args){
 						<h4>
 							<a class="dashboard-link component-link"
 								href="'.$base_url.'/dashboard/proposals/browsebytype/mine"
-								title="'.t("Manage my proposals").'">'.t("Manage my proposals").'</a>
+								title="'.t("Manage submitted proposals").'">'.t("Manage submitted proposals").'</a>
 						</h4>
 						<p>'.t("Allows you to see a list of proposals submitted to your projects by prospective students").'</p>
 						<div>
-							<a href="'.$base_url.'/dashboard/proposals/browsebytype/mine" title="Manage my proposals only">Manage my proposals only</a>
-							|<a href="'.$base_url.'/dashboard/proposals/browsebytype" title="Manage all my organisations proposals">Manage all my organisations proposals</a>&nbsp;(Limited access)
+							<a href="'.$base_url.'/dashboard/proposals/browsebytype/mine" title="'. t('Manage my proposals only').'">'.
+								t('Manage my proposals only') .'</a>
+							|<a href="'.$base_url.'/dashboard/proposals/browsebytype" title="'. 
+							t('Manage all my organisations proposals').'">'. 
+							t('Manage all my organisations proposals'). '</a>&nbsp;('. t('Limited access'). ')
 						</div>
 					</div>
 		';

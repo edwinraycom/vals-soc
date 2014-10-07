@@ -13,7 +13,7 @@ function showMyProposalPage(){
 	$my_proposals = Proposal::getInstance()->getMyProposals();//::getGroups(_ORGANISATION_GROUP);
 	if (!$my_proposals){
 		echo t('You have no proposal at the moment.').'<br/>';
-		echo "<a href='"._VALS_SOC_URL. "/projects/browse'>".t('Please find yourself a project')."</a>.";
+		echo "<a href='"._WEB_URL. "/projects/browse'>".t('Please find yourself a project')."</a>.";
 	} else {
 		$current_tab = altSubValue($_POST, 'new_tab', 0);
 		showMyProposals($my_proposals, $current_tab);
@@ -323,9 +323,9 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 			$org_id = $_GET['organisation'];
 		}
 	
-		echo "<a href='"._VALS_SOC_URL. "/dashboard/proposals/browsebytype'>".t('Show all')."</a>";
+		echo "<a href='"._WEB_URL. "/dashboard/proposals/browsebytype'>".t('Show all')."</a>";
 		echo " | ";
-		echo "<a href='"._VALS_SOC_URL. "/dashboard/proposals/browsebytype/mine'>".t('Show only mine')."</a>";
+		echo "<a href='"._WEB_URL. "/dashboard/proposals/browsebytype/mine'>".t('Show only mine')."</a>";
 	
 		?>
 		<div class="filtering" style="width: 800px;">

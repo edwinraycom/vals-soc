@@ -38,7 +38,7 @@ switch ($_GET['action']){
 		//those is invalid, the others are sent, but as I thought I had to use vals_soc_send_emails_now for multiple messages
 		//one of them is sent with invalid address and so the following buggy message (punctuation and content) is shown: 
 		//'Invalid address: testingnonsensYou must provide at least one recipient email address. '
-		//this is a bad message for a user sending a list of users one email. Better is to send one mail with multiple recipiendt
+		//this is a bad message for a user sending a list of users one email. Better is to send one mail with multiple recipients
 		//and let smtp or php mail sort out that one of those is incorrect. Last try now: 1. send one mail with smtp where one 
 		//address is wrong, 2. sending with php mail and one incorrect address.
 		//REsult: for 1, since there are other valid addresses: the invalid one is ignored completely: test: have one nonsens address only
@@ -332,6 +332,8 @@ switch ($_GET['action']){
     	$id = altSubValue($_POST, 'id', '');
     	if (! isValidOrganisationType($type)) {
     		echo jsonBadResult(t('There is no such type we can delete'));
+    	} elseif (count(Proposal::getProposalsPerProject($id))) {
+    		echo jsonBadResult(t('You cannot delte the project; there are already students working on a proposal for this project. You can still edit it though.'));
     	} else {
     		$result = Groups::removeGroup($type, $id);
     		ThreadedComments::getInstance()->removethreadsForEntity($id, $type);
