@@ -141,12 +141,12 @@ function repairRoles($user_load_roles){
 	if ($user_load_roles){
 		$rid = getUserRoleId($user_load_roles);
 		$current_role = getUserRoleName('', '', $rid);
-		return ($rid != _USER_ROLE) ?
-			array(_USER_ROLE => _USER_TYPE, $rid => $current_role) :
-			array(_USER_ROLE => _USER_TYPE);
+		return ($rid != _USER_ROLE_ID) ?
+			array(_USER_ROLE_ID => _USER_TYPE, $rid => $current_role) :
+			array(_USER_ROLE_ID => _USER_TYPE);
 		 
 	} else {
-		return array(_ANONYMOUS_ROLE => _ANONYMOUS_TYPE);
+		return array(_ANONYMOUS_ROLE_ID => _ANONYMOUS_TYPE);
 	}
 }
 
