@@ -2,9 +2,9 @@
 //The following are copied from the current database state. Can be neater to derive and put in the cache
 //or something like that. But for now, all database instances use the same ids ('rid') so we just define them
 //for performance reasons
-define('_ANONYMOUS_ROLE_ID_ID', 1);
-define('_USER_ROLE_ID_ID', 2); //Identical to DRUPAL_AUTHENTICATED_RID
-define('_ADMINISTRATOR_ROLE', 3);
+define('_ANONYMOUS_ROLE_ID', 1);
+define('_USER_ROLE_ID', 2); //Identical to DRUPAL_AUTHENTICATED_RID
+define('_ADMINISTRATOR_ROLE_ID', 3);
 define('_STUDENT_ROLE_ID', 4);
 define('_MENTOR_ROLE_ID', 5);
 define('_ORGADMIN_ROLE_ID', 8);
@@ -74,7 +74,6 @@ function create_permissions(){
 			'vals edit projects' => TRUE,
 	);
 	foreach ($perms as $role => $permissions){
-		echo "Bekijkt nu $role";
 		if (!$role_obj = user_role_load_by_name($role)) {
 			$role_temp = new stdClass(); // create your Class
 			// Match values to the role Class.
