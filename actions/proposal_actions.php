@@ -222,65 +222,47 @@ switch ($_GET['action']){
 			jsonBadResult(t('No proposal identifier submitted!'), $args);
 		}
 	break;
+	case 'save_public':
+		// no break so that the request filters down to 'save'
+		$is_public = true;
+	case 'submit':
+		// no break so that the request filters down to 'save'
+		$is_final = true;
+		$target = altSubValue($_POST, 'target', '');
 	case 'save':
 		$id = altSubValue($_POST, 'id', '');
 		$project_id = altSubValue($_POST, 'project_id', '');
 		$project = Project::getProjectById($project_id);
 		$properties = Proposal::filterPost($_POST);
+		if (isset($is_public) && $is_public){
+			$properties['state'] = 'open';
+			$is_final = false;
+		}
+		if (isset($is_final) && $is_final){
+			$properties['state'] = 'published';
+		}
 		if (!$id){
 			$new = TRUE;
 			$id = $result = Proposal::insertProposal($properties, $project_id);
-		} else {
+		} 
+		else {
 			$new = FALSE;
 			if (!Groups::isOwner(_PROPOSAL_OBJ, $id)){
 				drupal_set_message(t('You are not the owner of this proposal'), 'error');
 				$result = null;
-			} else {
+			}
+			else {
+				//If there was no supervisor chosen, at least maintain the orginal one, rather than leave it orphaned
+				$original_supervisor = altSubValue($_POST, 'original_supervisor_id', '');
+				if($properties['supervisor_id'] == 0 && isset($original_supervisor)){
+					$properties['supervisor_id'] = $original_supervisor;
+				}
 				$result = Proposal::updateProposal($properties, $id);
 			}
 		}
 	
 		if ($result){
-			echo json_encode(array(
-					'result'=>'OK',
-					'id' => $id,
-					//'type'=> $type,
-					'msg'=>
-					($new ?
-							tt('You succesfully saved a draft of your proposal for %1$s', $project['title']):
-							tt('You succesfully changed the draft of your proposal for %1$s', $project['title'])
-					).
-					(_DEBUG ? showDrupalMessages() : '')
-			));
-		} else {
-			echo jsonBadResult();
-		}
-		break;
-	case 'submit':
-		$id = altSubValue($_POST, 'id', '');
-		$project_id = altSubValue($_POST, 'project_id', '');
-		$project = Project::getProjectById($project_id);
-		$target = altSubValue($_POST, 'target', '');
-		$properties = Proposal::filterPost($_POST);
-		$properties['state'] = 'published';
-		//If there was no supervisor chosen, at least maintain the orginal one, rather than leave it orphaned
-		$original_supervisor = altSubValue($_POST, 'original_supervisor_id', '');
-		if($properties['supervisor_id'] == 0 && isset($original_supervisor)){
-			$properties['supervisor_id'] = $original_supervisor;
-		}
-		
-		if (!$id){
-			$result = $id = Proposal::insertProposal($properties, $project_id);
-		} else {
-			if (!Groups::isOwner(_PROPOSAL_OBJ, $id)){
-				drupal_set_message(t('You are not the owner of this proposal'), 'error');
-				$result = null;
-			} else {
-				$result = Proposal::updateProposal($properties, $id);
-			}
-		}
-		if ($result){
-			// uncomment below to send out emails to mentor/supervisor once new proposal published
+			// Send out emails to mentor/supervisor once new proposal published
 			// get either the existing proposal key
 			// or the newly inserted proposal key
 			if(is_bool($result)){
@@ -300,18 +282,32 @@ switch ($_GET['action']){
 			} catch (Exception $e) {
 				// Logged higher up or log this here somehow? TODO
 			}
-			echo json_encode(array(
-					'result'=>'OK',
-					'id' => $id,
-					'target' => $target,
-					'msg'=>tt('You succesfully submitted your proposal for %1$s', $project['title']).
-					(_DEBUG ? showDrupalMessages() : '')
-			));
+			
+			if (isset($is_final) && $is_final){
+				echo json_encode(array(
+						'result'=>'OK',
+						'id' => $id,
+						'target' => $target,
+						'msg'=>tt('You succesfully submitted your proposal for %1$s', $project['title']).
+						(_DEBUG ? showDrupalMessages() : '')
+				));
+			}
+			else{
+				echo json_encode(array(
+						'result'=>'OK',
+						'id' => $id,
+						//'type'=> $type,
+						'msg'=>
+						($new ?
+								tt('You succesfully saved a draft of your proposal for %1$s', $project['title']):
+								tt('You succesfully changed the draft of your proposal for %1$s', $project['title'])
+						).
+						(_DEBUG ? showDrupalMessages() : '')
+				));
+			}
 		} else {
 			echo jsonBadResult();
 		}
-	
-	
 		break;
 	case 'view':
 		$proposal_id = getRequestVar('id', 'post', 0);
