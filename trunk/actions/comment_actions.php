@@ -92,11 +92,13 @@ switch ($_GET['action']){
 		}
 		break;
 	case 'viewall':
-		$type = altSubValue($_GET, 'type');
-		$id = altSubValue($_GET, 'id');
-		module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
-		$content = initComments($id, $type);
-		echo $content;
+		if(getRole() != _ANONYMOUS_TYPE){
+			$type = altSubValue($_GET, 'type');
+			$id = altSubValue($_GET, 'id');
+			module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
+			$content = initComments($id, $type);
+			echo $content;
+		}
 		break;
 	default: echo "No such action: ".$_GET['action'];
 }

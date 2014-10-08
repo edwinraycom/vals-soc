@@ -174,8 +174,10 @@ function renderProject($project='', $target='', $inline=FALSE, $all_can_edit=_VA
 	}
 	
 	if (! $inline){
-		module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
-		$content .= initComments($id, _PROJECT_OBJ);
+		if(getRole() != _ANONYMOUS_TYPE){
+			module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
+			$content .= initComments($id, _PROJECT_OBJ);
+		}
 	}
 	
 	return $content;
