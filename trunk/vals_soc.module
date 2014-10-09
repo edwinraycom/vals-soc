@@ -18,7 +18,8 @@ include(_VALS_SOC_ROOT.'/includes/module/vals_soc.forms.inc');
 include(_VALS_SOC_ROOT.'/includes/module/vals_soc.handle_forms.inc');
 
 //***********************************************************************************
-// BLOCKS
+// module hooks automatically loaded by Drupal
+//
 //***********************************************************************************
 
 // NOTE: template.php for the theme is used to hold the breadcrumb routines

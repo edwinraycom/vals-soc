@@ -190,6 +190,7 @@ function initBrowseProjectLayout($pid=''){
 	}
 	$apply_projects = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 	$rate_projects = Users::isSuperVisor();
+	$is_student = Users::isStudent();
 	?>
 	<div class="filtering" id="browse_projects">
 		<span id="infotext" style="margin-left: 34px"></span>
@@ -204,9 +205,12 @@ function initBrowseProjectLayout($pid=''){
 				echo '<option ' .$selected.'value="'.$record->org_id.'">'.$record->name.'</option>';
 			}?>
 			</select>
+			<?php if ($is_student){?>
+			<input type='button' value='<?php echo t('Filter on Favourites');?>' id='favourite_filter'/>
+			<?php }?>
 		</form>
 	</div>
-	<div id="ProjectTableContainer" style="width: 600px;"></div>
+	<div id="ProjectTableContainer" style="width: 700px;"></div>
 
 <script type="text/javascript">
 	jQuery(document).ready(function($){
@@ -326,7 +330,14 @@ function initBrowseProjectLayout($pid=''){
 			});
 		}
 	});
-	
+	<?php if ($is_student){ ?>
+	$("#favourite_filter").click(function(e) {
+		e.preventDefault();
+		//if(testTagInput()){
+			$("#ProjectTableContainer").jtable("load", {favourites :true});
+		//}
+	});
+	<?php }?>
 	$("#project_filter").submit(function(e){
 		e.preventDefault();
 		if(testTagInput()){

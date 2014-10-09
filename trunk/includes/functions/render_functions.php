@@ -4,6 +4,24 @@
  * instititutes, mentors, supervisors, students etc
  */
 
+function showFavouritesPage(){
+	if (Users::isStudent()){
+		$my_id = Users::getMyId();
+		$projects = Project::getInstance()->getFavouriteProjects();
+		if ($projects){
+			echo "<ul>";
+			foreach ($projects as $project){
+				echo "<li><a href='"._WEB_URL. "/projects/browse?pid=".$project->pid."'>".$project->title."</a></li>";
+			}
+			echo "</ul>";
+		} else {
+			echo t('You have no projects marked as favourite yet. By browsing them you can mark them as you find them interesting');
+		}
+	} else {
+		echo t('You must be a student to have kept a favourite list');
+	}
+	
+}
 function formatUsersNice($users, $type='User', $empty_message='', $show_title=FALSE){
 	$output='';
 	$output .= '<dl class="view_record">';
@@ -249,7 +267,8 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
 	    	$s .= "	<input type='button' value='".t('edit')."' $edit_action/>";
 	    	// has the org signup period ended if so user cant add/delete entries, only edit
 	    	if(vals_soc_access_check("dashboard/$type/administer/add_or_delete")){
-	    		$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t_type($type))."\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"administration\"]);}'";
+	    		$delete_action = "onclick='if(confirm(\"".tt('Are you sure you want to delete this %1$s?', t_type($type)).
+	    			"\")){ajaxCall(\"administration\", \"delete\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"administration\"]);}'";
 	    		$s .= "	<input type='button' value='".t('delete')."' $delete_action/>";
 	    	}
 	    	$s .= "</div>";

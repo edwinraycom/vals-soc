@@ -15,7 +15,7 @@ function showMyProposalPage(){
 		echo t('You have no proposal at the moment.').'<br/>';
 		echo "<a href='"._WEB_URL. "/projects/browse'>".t('Please find yourself a project')."</a>.";
 	} else {
-		$current_tab = altSubValue($_POST, 'new_tab', 0);
+		$current_tab = getRequestVar('new_tab', 0);
 		showMyProposals($my_proposals, $current_tab);
 	}
 }

@@ -67,7 +67,7 @@ THE SOFTWARE.
             messages: {
                 serverCommunicationError: 'An error occured while communicating to the server.',
                 loadingMessage: 'Loading records...',
-                noDataAvailable: 'No data available!',
+                noDataAvailable: 'No data (yet)!',
                 areYouSure: 'Are you sure?',
                 save: 'Save',
                 saving: 'Saving',

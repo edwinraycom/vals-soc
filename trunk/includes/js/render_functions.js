@@ -176,15 +176,27 @@ function renderProject(project, apply_projects){
 		content += "<br/><a target='_blank' class='external' href='" + project.url + "'>" + project.url + "</a>";
 	}
 	if ((typeof rate_projects != 'undefined') && rate_projects){
+		var rate = -2;
 		if (typeof project.rate != 'undefined') {
 			rate = project.rate;
-		} else {
-			rate = -2;
 		}
 		content += "<h2>"+ Drupal.t('Your Opinion')+ "</h2>"+ 
 			renderRecommendation(project.pid);
 		content += "<br/>";
 		content += renderSupervisorLike(project.pid, rate);
+	} else {
+//		var favourite = false;
+//		if (debugging || (typeof apply_projects != 'undefined') && apply_projects){
+//			if (typeof project.favourite != 'undefined') {
+//				favourite = project.favourite;
+//			}
+//			if (favourite){
+//				content += Drupal.t('You marked this project as one of your favourites');
+//			} else {
+//				content +=  //"<h2>"+ Drupal.t('Remember this project')+ "</h2>"+
+//				 renderStudentLike(project.pid);
+//			}
+//		}
 	}
 	// comments
 	content += "<div id=\"comments-project-"+project.pid+"\"></div>";
@@ -193,7 +205,18 @@ function renderProject(project, apply_projects){
 	if (apply_projects){
 		content +="<div class=\"totheright\">";//style=\"display:none\"
 		//content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-
+		var favourite = false;
+		if (debugging || (typeof apply_projects != 'undefined') && apply_projects){
+			if (typeof project.favourite != 'undefined') {
+				favourite = project.favourite;
+			}
+			if (false && favourite){
+				content += Drupal.t('You marked this project as one of your favourites');
+			} else {
+				content +=  //"<h2>"+ Drupal.t('Remember this project')+ "</h2>"+
+				 renderStudentLike(project.pid, favourite);
+			}
+		}
 		//content +="<br/><br/><input id='vals-btn-cancel' type='button' onclick=\"Drupal.CTools.Modal.dismiss()\" value='Cancel' />";
 		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='"+ Drupal.t('Create proposal for this project')+ "'/>";
 		content +="</div>";
@@ -246,6 +269,18 @@ function renderSupervisorLike(pid, current){
 		((1 == current)? 'checked="checked"': '') + "/>"+ Drupal.t('Would suit me')+"</label>&nbsp;<input type='button' value='"+ Drupal.t('Save Preference') + "' onclick='ajaxCall(\"project\", \"rate\", {id: "+ pid+
 		", rate: $jq(\"input:radio[name=project_like]:checked\").val()}, \"handleMessage\", \"json\", [\"preference_msg\"]);'/>"
 		;
+}
+
+function renderStudentLike(pid, is_marked){
+	return "<div id='favourite_msg'>"+
+	//Drupal.t('You can mark this project as one of your favourites?')+
+	(is_marked ? 
+		"<img src='"+ moduleUrl+ "includes/js/resources/heart_blue.png' title= '"+
+			Drupal.t('You marked this project as one of your favourites')+ "' />" : 
+		"<input type='button' value='"+  Drupal.t('Mark this project') +
+			"' id='project_favour' name='project_favour' "+ 
+			" onclick='ajaxCall(\"project\", \"mark\", {id: "+ pid+
+		 	"}, \"handleMessage\", \"json\", [\"favourite_msg\"]);'/>") + "</div>";
 }
 
 function renderOrganisation(org, contact_possible){
@@ -481,7 +516,6 @@ function getProposalFormForProject(projectId){
 function getProjectDetail(projectId){
 	var url = moduleUrl + "actions/project_actions.php?action=project_detail&project_id=" + projectId;
 	//TODO: currently the apply projects is passed around as global. not so elegant
-	console.log('dit zou ik toch als eerste verwachten');
 	$jq.get(url, function(data,status){
 		generateAndPopulateModal(data, renderProject, window.view_settings.apply_projects);
 	});

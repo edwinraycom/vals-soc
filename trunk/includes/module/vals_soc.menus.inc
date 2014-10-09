@@ -54,6 +54,9 @@ function vals_soc_menu_handler(){
 	$items['dashboard/projects/administer'] = getProjectsAdministerLink('dashboard/projects/administer');
 	$items['dashboard/projects/administer/mine'] = getMyProjectsAdministerLink('dashboard/projects/administer/mine');
 	$items['dashboard/projects/browse'] = getProjectsBrowseLink('dashboard/projects/browse');
+	$items['dashboard/projects/marked'] = getFavouriteProjectsLink('dashboard/projects/marked');
+	
+	
 
 	// proposal actions
 	$items['dashboard/proposals/browse'] = getProposalsBrowseLink('dashboard/proposals/browse'); // browse all proposals - not used yet - might be part of admin view at some stage
@@ -325,6 +328,19 @@ function getProjectsBrowseLink($path){// dashboard/projects/browse or projects/b
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' => array($path),
 			'description' => t('Projects page'),
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
+	);
+}
+
+function getFavouriteProjectsLink($path){
+	return array(
+			'title' => t('Favourite marked projects'),
+			'type' => MENU_CALLBACK, // register link, but dont put it in the menu
+			'page callback' => 'vals_soc_favourite_projects',
+			'access callback' => 'vals_soc_access_check',
+			'access arguments' => array($path),
+			'description' => t('Favourite projects page'),
 			'file' => 'vals_soc.pages.inc',
 			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);

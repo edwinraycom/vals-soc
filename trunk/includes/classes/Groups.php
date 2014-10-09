@@ -146,13 +146,24 @@ class Groups extends AbstractEntity{
 			drupal_set_message(t('You are not authorised to perform this action'), 'error');
 			return FALSE;
 		}
-	
+		
 		if (self::hasMembers($type, $id)){
 			drupal_set_message(tt('There are already members in this %1$s. You can still edit the %1$s though.',
 					t_type($type)), 'error');
 			return FALSE;
 		}
 		
+		if (($type == _ORGANISATION_GROUP) && db_query("SELECT pid FROM soc_projects WHERE org_id = $id")->rowCount()){
+			drupal_set_message(tt('There are already projects for this %1$s. You should delete these first.',
+					t_type($type)), 'error');
+			return FALSE;
+		}
+		
+		if (($type == _INSTITUTE_GROUP) && db_query("SELECT pid FROM soc_studentgroups WHERE inst_id = $id")->rowCount()){
+			drupal_set_message(tt('There are already student groups for this %1$s. You should delete these first.',
+					t_type($type)), 'error');
+			return FALSE;
+		}
 		try {
 			if($type != _PROJECT_OBJ){
 				$num_deleted2 = db_delete("soc_user_membership")
