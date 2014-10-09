@@ -5,7 +5,7 @@ include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');
 module_load_include('php', 'vals_soc', 'includes/classes/ThreadedComments');
-module_load_include('php', 'vals_soc', 'includes/functions/proposals');
+module_load_include('php', 'vals_soc', 'includes/pages/proposals');
 
 $apply_proposals = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 $browse_proposals = vals_soc_access_check('dashboard/proposals/browse') ? 1 : 0;
@@ -247,18 +247,17 @@ switch ($_GET['action']){
 		if (!$id){
 			$new = TRUE;
 			$id = $result = Proposal::insertProposal($properties, $project_id);
-		} 
-		else {
+		} else {
 			$new = FALSE;
 			if (!Groups::isOwner(_PROPOSAL_OBJ, $id)){
 				drupal_set_message(t('You are not the owner of this proposal'), 'error');
 				$result = null;
-			}
-			else {
+			} else {
 				//If there was no supervisor chosen, at least maintain the orginal one, rather than leave it orphaned
-				$original_supervisor = altSubValue($_POST, 'original_supervisor_id', '');
-				if($properties['supervisor_id'] == 0 && isset($original_supervisor)){
-					$properties['supervisor_id'] = $original_supervisor;
+				if($properties['supervisor_id'] == 0){
+					if ($original_supervisor = altSubValue($_POST, 'original_supervisor_id', '')) {
+						$properties['supervisor_id'] = $original_supervisor;
+					}
 				}
 				$result = Proposal::updateProposal($properties, $id);
 			}
@@ -268,12 +267,11 @@ switch ($_GET['action']){
 			// Send out emails to mentor/supervisor once new proposal published
 			// get either the existing proposal key
 			// or the newly inserted proposal key
-			if(is_bool($result)){
+			if (is_bool($result)){
 				//already existed
 				$existed = true;
 				$key = $id;
-			}
-			else{
+			} else {
 				/// newly inserted
 				$existed = false;
 				$key = $result;
@@ -294,16 +292,16 @@ switch ($_GET['action']){
 						'msg'=>tt('You succesfully submitted your proposal for %1$s', $project['title']).
 						(_DEBUG ? showDrupalMessages() : '')
 				));
-			}
-			else{
+			} else {
+				$version = ($properties['state'] == 'draft') ? t('draft'): t('public');
 				echo json_encode(array(
 						'result'=>'OK',
 						'id' => $id,
 						//'type'=> $type,
 						'msg'=>
 						($new ?
-								tt('You succesfully saved a draft of your proposal for %1$s', $project['title']):
-								tt('You succesfully changed the draft of your proposal for %1$s', $project['title'])
+								tt('You succesfully saved a %2$s version of your proposal for %1$s', $project['title'], $version):
+								tt('You succesfully changed the %2$s version of your proposal for %1$s', $project['title'], $version)
 						).
 						(_DEBUG ? showDrupalMessages() : '')
 				));
@@ -311,9 +309,24 @@ switch ($_GET['action']){
 		} else {
 			echo jsonBadResult();
 		}
-		break;
+	break;
+	case 'reject_form':
+		$target = getRequestVar('target');
+		renderForm(drupal_get_form('vals_soc_reject_form', getRequestVar('id', 0), $target), $target);
+	break;
 	case 'reject':
 		$id = getRequestVar('id', 0, 'post');
+		$reason = getRequestVar('reason', '', 'post');
+		$rationale = getRequestVar('rationale', '', 'post');
+		try {
+			$result = Proposal::getInstance()->rejectProposal($id, $reason, $rationale);
+			echo  $result ?
+			jsonGoodResult(true, t('You rejected this proposal')):
+			jsonBadResult(t('You tried to reject this proposal, but it failed'));
+		} catch (Exception $e){
+			jsonBadResult(t('Something went wrong in the database '. (_DEBUG ? $e->getMessage():'')));
+		}
+	break;
 	case 'view':
 		$proposal_id = getRequestVar('id', 0, 'post');
 		$target = getRequestVar('target', 'admin_container', 'post');

@@ -190,6 +190,21 @@ function handleMessage(result, args){
 	}
 }
 
+function handleMessagesForm(result, args){
+	var target = args[0];
+	var formid = args[1];
+	if (result){
+		if (result.result == "error") {
+			ajaxError(target, result.error);
+		} else {
+			ajaxMessage(target, result.msg);
+			$jq("#"+formid).remove();
+		}
+	} else {
+		alertdev('Not a valid result');
+	}
+}
+
 function handleResult(result, args){
 	var target = args[0];
 	var before = (args.length > 1 ? args[1] : '');

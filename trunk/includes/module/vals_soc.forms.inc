@@ -6,7 +6,8 @@ function populate($obj, $prop, $default=''){
 	return ($obj && isset($obj->$prop)) ? $obj->$prop : $default;
 }
 
-function entityCall($type, $obj, $target, $show_action='administer', $action_handler='administration', $entity_action='save'){
+function entityCall($type, $obj, $target, $show_action='administer', $action_handler='administration',
+		$entity_action='save'){
 	$key = AbstractEntity::keyField($type);
 	$id = $obj && $obj->$key ? $obj->$key : 0;
     $post_function = $id ? 'refreshSingleTab' : 'refreshTabs';
@@ -405,6 +406,52 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 	return $form;
 }
 
+function vals_soc_reject_form($form, &$form_state, $id=0, $target=''){
+	$options_reason = array(
+			Proposal::_REASON_REJECT_INTEREST => t(' This is not what we were looking for'),
+			Proposal::_REASON_REJECT_OCCUPIED_BUT => t('Proposal is interesting, but we chose a different one'),
+			Proposal::_REASON_REJECT_OCCUPIED => t('We chose a better one'),
+			'no_reason' => t('Unspecified'));
+	$form['reason'] = array(
+			"#type" => "select",
+			"#title" => t("What is the reason for the rejection"),
+			"#options" => $options_reason,
+			//"#description" => t("This will be the default language"),
+			//"#default_value" => $default_language,
+	);
+	$form['rationale'] = array(
+		"#type" => "textarea",
+		'#title' => t('Describe what the rationale is for the rejection'),
+		"#size" => 60,
+		//"#size" => 20,
+		//'#cols' =>5,
+		//'#rows' =>4,
+		//"#default_value" => populate($org, 'description'),
+	);
+	$form['submit'] = array(
+			'#type' => 'submit',
+			'#attributes' => array('onclick'=> "ajaxFormCall('vals-soc-reject-form', ".
+				"'proposal', 'reject', {id:$id}, 'handleMessagesForm','json', ['msg_$target', 'vals-soc-reject-form']);" ),
+			'#value' => t('Reject'),
+			'#post_render' => array('vals_soc_fix_submit_button'),
+	);
+
+	$form['cancel'] = array(
+			'#type' => 'button',
+			'#value' => t('Cancel'),
+			'#prefix' => '&nbsp; &nbsp; &nbsp;',
+			'#attributes' => array('onClick' => "\$jq('#rejectformdiv').html(''); return true;"),
+			'#post_render' => array('vals_soc_fix_submit_button'),
+	);
+	$form['#vals_soc_attached']['js'] = array(
+			array(
+					'type'  => 'file',
+					'data' => '/includes/js/test_functions.js',
+			),
+	);
+	return $form;
+}
+
 function vals_soc_organisation_form($form, &$form_state, $org='', $target='', $show_action='administer'){
 	$form = array(
 			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
@@ -715,6 +762,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 		'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
 		'#suffix' => '</div>',
 	);
+	
 	$form['title'] = array(
 		"#type" => "textfield",
 		'#title' => t('Give a title to your proposal'),
@@ -767,29 +815,14 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			.' Additionally you may want to describe any third party modules you intend to utilise as part of your solution.'.
 			'</i></p><br/>'
 	);
-	/*
-	$form['modules'] = array(
-		"#type" => "textarea",
-		'#title' => t('Which extra modules and libraries will you use, if any?'),
-		'#cols' => 50,//"#size" => 1024,
-		"#default_value" => populate($proposal, 'modules'),
-		"#description" => t("Write the name of the library, it's url and its purpose."),
-		
-	);
-	*/
-// 	$form['cv'] = array(
-// 		"#type" => "textarea",
-// 		'#title' => t('Describe your Curriculum Vitae'),
-// 		'#cols' => 50,//"#size" => 1024,
-// 		"#default_value" => populate($proposal, 'cv'),
-// 		"#description" => t("You might want to discuss with your supervisor which courses you should put on your cv."),
-// 	);
+
 	//If we never need a stand alone form and only use ajax, remove the commented code
 	//and get common code outside
 	
 	$form['form_submit_help_text'] = array(
 			'#markup' => '<hr/>
-	<h2>'.t('Choose one of the options below').'</h2>
+	<h3>'.tt('Choose one of the options below -depending on the current status <i>(%1$s)</i>', 
+			(($proposal && $proposal->state) ? $proposal->state : 'draft')).'</h3>
 	<ol>
 		<li><b>'.t('Save as private draft').'</b><br/>
 			<i>'.t('This will save your proposal and means that only you and your current supervisor can see it. 
@@ -814,12 +847,16 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 	);
 	
 	$proposal_id = ((!$proposal) ? 0 : $proposal->proposal_id);
-	unset($form['#submit']);		
+	unset($form['#submit']);
+	//We have draft available for new and draft proposals, open for new and open etc.
+	$states = array('draft'=>1, 'open' =>2, 'published'=>3);
+	$current_state = $proposal ? ($proposal->state == 'rejected' ? 4 : $states[$proposal->state]) : 0;
+			
 	$form['save_private'] = array(
 			'#type' => 'button',
 			'#button_type' => 'button',
 			'#value' => t('Save as private draft'),
-			//'#theme' => 'garland_button',
+			'#disabled' => ($current_state > 1),
 			'#attributes' => array(
 					'class' => array('button-spacer'),
 					'onclick' => "ajaxFormCall('vals-soc-proposal-form', '"._PROPOSAL_OBJ."', 'save',".
@@ -830,7 +867,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#type' => 'button',
 			'#button_type' => 'button',
 			'#value' => t('Save as open draft'),
-			//'#theme' => 'garland_button',
+			'#disabled' => ($current_state > 2),
 			'#attributes' => array(
 					'class' => array('button-spacer'),
 					'onclick' => "ajaxFormCall('vals-soc-proposal-form', '"._PROPOSAL_OBJ."', 'save_public',".
@@ -841,6 +878,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 			'#type' => 'button',
 			'#button_type' => 'button',
 			'#value' => t('Submit final proposal'),
+			'#disabled' => ($current_state >= 3),
 			'#attributes' => array(
 					'class' => array('button-spacer'),
 					'onclick' => "if (confirm('".t('Are you sure you want to submit your proposal now? Once submitted, you cannot edit it anymore.')."')){".

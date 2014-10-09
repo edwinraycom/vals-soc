@@ -29,23 +29,47 @@ function chooseProposalForProject(project_id, proposal_id, is_final){
 		var url = moduleUrl + "actions/proposal_actions.php?action=mark_proposal";
 		$jq.post(url, {'proposal_id': proposal_id, 'project_id' : project_id, 'is_final' : is_final}, function(data,status){
 			if(!is_final){
-				ajaxInsert(data, 'proposal-intrim-markup-'+proposal_id+'-button');
+				ajaxInsert(data, 'proposal-interim-markup-'+proposal_id+'-button');
 			}
 			else{
 				ajaxInsert(data, 'proposal-final-markup-'+proposal_id+'-button');
-				$jq('#proposal-intrim-markup-'+proposal_id).hide();//disable this button if final
+				$jq('#proposal-interim-markup-'+proposal_id).hide();//disable this button if final
 			}
 		});
 	}
 }
 
-function getAcceptProposalIntrimMarkup(proposal, option){
+function rejectProposalForm(pid, target){
+	var url = moduleUrl + "actions/proposal_actions.php?action=reject_form&id=" + pid+ "&target="+target;
+	$jq.get(url,function(data,status){
+		ajaxInsert(data, target);
+	});
+}
+
+function getRejectProposalMarkup(proposal, option){
+	var content ="";
+	content += '	<div>';
+	content += '		'+option+ Drupal.t(' Click the button below to reject this proposal. Please give a reason why you do so');
+	content += '		<br/>';
+	content += '		<br/>';
+	content += '		<div id="proposal-reject-markup-'+proposal.proposal_id+'-button">';
+	content += '			<input style="margin-left:20px" type="button" value="'+
+		Drupal.t('Reject this proposal') + '" onclick="rejectProposalForm('+ proposal.proposal_id+
+		', \'rejectformdiv\');"/>';
+	//", 'proposal-reject-markup-" + proposal.proposal_id + "-button');\"/>";
+	content += '			<div id="rejectformdiv"></div>';
+	content += '		</div>';
+	content += '	</div>';
+	return content;
+}
+
+function getAcceptProposalInterimMarkup(proposal, option){
 	var content ="";
 	content += '	<div>';
 	content += '		'+option+ Drupal.t(' Click the button below to select this proposal as your preferred interim solution.');
 	content += '		<br/>';
 	content += '		<br/>';
-	content += '		<div id="proposal-intrim-markup-'+proposal.proposal_id+'-button">';
+	content += '		<div id="proposal-interim-markup-'+proposal.proposal_id+'-button">';
 	content += '			<input style="margin-left:20px" type=\"button\" value=\"'+ Drupal.t('Accept interim') + '\" onclick=\"chooseProposalForProject('+proposal.pid+','+ proposal.proposal_id+', 0);\"/>';
 	content += '			<br/>';
 	content += '		</div>';
@@ -69,7 +93,7 @@ function getAcceptProposalFinalMarkup(proposal, option){
 
 function renderProposalStatus(proposal){
 	var content = "<h2>"+proposal.pr_title+"</h2>";
-	content += Drupal.t('Submitted by student') + " '" + (proposal.student_name ? proposal.student_name: proposal.name) + "'";
+	content += Drupal.t('Submitted by the student') + " <i>" + (proposal.student_name ? proposal.student_name: proposal.name) + " </i>";
 	content += '<br/>';
 	content += '<br/>';
 	if((proposal.selected == 1) && (proposal.pr_proposal_id == proposal.proposal_id)){
@@ -106,13 +130,16 @@ function renderProposalStatus(proposal){
 				}
 				if(proposal.is_project_owner || proposal.is_project_mentor){
 					content += '<div><br/>';
-					content += '	<div>'+ Drupal.t('You have the following two choices')+ '</div>';
+					content += '	<div>'+ Drupal.t('You have the following three choices')+ '</div>';
 					content += '	<br/>';
-					content += '	<div class="prop-mini-form-wrapper" id="proposal-intrim-markup-'+proposal.proposal_id+'">';
-					content += 			getAcceptProposalIntrimMarkup(proposal, '1.');
+					content += '	<div class="prop-mini-form-wrapper" id="proposal-reject-markup-'+proposal.proposal_id+'">';
+					content += 			getRejectProposalMarkup(proposal, '1.');
+					content += '	</div>';
+					content += '	<div class="prop-mini-form-wrapper" id="proposal-interim-markup-'+proposal.proposal_id+'">';
+					content += 			getAcceptProposalInterimMarkup(proposal, '2.');
 					content += '	</div>';
 					content += '	<div class="prop-mini-form-wrapper" id="proposal-final-markup-'+proposal.proposal_id+'">';
-					content += 			getAcceptProposalFinalMarkup(proposal, '2.');
+					content += 			getAcceptProposalFinalMarkup(proposal, '3.');
 					content += '	</div>';
 					content += '</div>';
 				}
@@ -386,7 +413,7 @@ function getProposalDetail(proposal_id, target, msg){
 		switch (target){
 			case 'modal':
 				tabs_created = generateAndPopulateModal(data, renderProposalTabs, tabs);
-				console.log('Creating and filling the modal window');
+				//console.log('Creating and filling the modal window');
 			break;
 			case 'our_content' : //this case should not occur anymore
 				var data2 = jQuery.parseJSON(data);
@@ -396,7 +423,7 @@ function getProposalDetail(proposal_id, target, msg){
 					var content = renderProposalTabs(data2.result, tabs, 'our_content');
 					msg_container = 'our_content';
 					if (Obj('our_content').html(content)) {
-						console.log('doing the tabs first?');
+						//console.log('doing the tabs first?');
 						tabs_created = true;
 						//activatetabs('tab_', content_tabs);
 					};
@@ -423,7 +450,7 @@ function getProposalDetail(proposal_id, target, msg){
 		}
 		if (tabs_created){
 			//TODO: these activate tabs should be done for the case where tabs are created
-			console.log('doing the tabs second' + content_tabs);
+			//console.log('doing the tabs second' + content_tabs);
 			activatetabs('tab_', content_tabs);
 		}
 		if (typeof msg != 'undefined' && msg){

@@ -2,8 +2,8 @@
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');
 include(_VALS_SOC_ROOT.'/includes/functions/render_functions.php');
-include(_VALS_SOC_ROOT.'/includes/functions/projects.php');
-include(_VALS_SOC_ROOT.'/includes/functions/administration.php');
+include(_VALS_SOC_ROOT.'/includes/pages/projects.php');
+include(_VALS_SOC_ROOT.'/includes/pages/administration.php');
 
 //return result depending on action parameter
 switch ($_GET['action']){

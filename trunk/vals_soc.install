@@ -179,3 +179,21 @@ function vals_soc_update_7105() {
 	);
   db_create_table('soc_student_favourites', $schema['soc_student_favourites']);
 }
+
+function vals_soc_update_7106(){
+	$spec = array(
+		'type' => 'enum',//DOES NOT EXIST as generic type
+		'not null' => TRUE,
+		'default' => 'draft'
+	);
+	//db_change_field('soc_proposals', 'state', 'state', $spec);
+	//ALTER TABLE `soc_proposals` CHANGE `state` `state` ENUM( 'draft', 'published', 'accepted', 'rejected', 'finished', 'archived', 'open', 'retracted' ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+	db_query("ALTER TABLE `soc_proposals` CHANGE `state` `state` ENUM( 'draft', 'open', 'published', 'accepted', ".
+		"'rejected', 'finished', 'archived', 'retracted' ) CHARACTER SET utf8 COLLATE utf8_general_ci ".
+		"NOT NULL")->execute();
+	}
+	
+	function vals_soc_update_7107(){
+		db_query("ALTER TABLE `soc_proposals` ADD `reason` VARCHAR( 512 ) NULL COMMENT 'reason for rejection or withdraw' AFTER `state`")->execute();
+	}
+	 

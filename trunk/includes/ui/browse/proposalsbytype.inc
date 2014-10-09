@@ -25,7 +25,7 @@ ctools_modal_add_js();
 
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
-include(_VALS_SOC_ROOT.'/includes/functions/proposals.php');
+include(_VALS_SOC_ROOT.'/includes/pages/proposals.php');
 
 $owner_only = isset($owner_only) ? $owner_only : false;
 initBrowseProposalsByTypeLayout($owner_only);

@@ -117,7 +117,8 @@ CREATE TABLE IF NOT EXISTS soc_projects (
 --
 -- Tabelstructuur voor tabel 'soc_proposals'
 --
-
+-- Added this to an update function:
+-- ALTER TABLE `soc_proposals` CHANGE `state` `state` ENUM( 'draft', 'published', 'accepted', 'rejected', 'finished', 'archived', 'open', 'retracted' ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL 
 DROP TABLE IF EXISTS soc_proposals;
 CREATE TABLE IF NOT EXISTS soc_proposals (
   proposal_id mediumint(8) unsigned NOT NULL AUTO_INCREMENT,

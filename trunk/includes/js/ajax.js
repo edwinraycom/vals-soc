@@ -286,6 +286,8 @@ function ajaxCall(handler_type, action, data, target, type, extra_args, extra_fu
 		}
 	} else {
 		alertdev('No target or function has been specified: see console for details.');
+		stopWait(1);
+		return false;
 	}
 
 	call.fail = function(jqXHR, textStatus, errorThrown) {
