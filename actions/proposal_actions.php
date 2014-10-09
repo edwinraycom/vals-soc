@@ -22,8 +22,11 @@ switch ($_GET['action']){
 		// showMyProposalPage();
 	break;
 	case 'render_proposals_for_id':
+		if(isset($_POST['mine_only']) && $_POST['mine_only']){
+			$mine_only = $_POST['mine_only'] === 'true' ? true: false;
+		}
 		if(isset($_POST['id']) && $_POST['id']){
-			echo showProposalsForProject($_POST['id']);
+			echo showProposalsForProject($_POST['id'], $mine_only);
 		}else{
 			echo "Unable to find proposals without project identifier";
 		}

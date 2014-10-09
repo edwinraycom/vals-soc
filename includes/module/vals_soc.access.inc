@@ -44,9 +44,12 @@ function pageAccessCheck($access_string) {
 		case 'dashboard/organisation/administer':
 		case 'dashboard/institute/administer':
 		case 'dashboard/institute/members':
-		case 'dashboard/institute/view':
 		case 'dashboard/institute/group/administer':
 			return hasPermission('vals admin register') && Timeline::getInstance()->organisationSignupPeriodOpened();
+			break;
+		case 'dashboard/institute/view':
+			return hasPermission('vals admin register') && Timeline::getInstance()->organisationSignupPeriodOpened() || 
+				hasRole(array(_STUDENT_TYPE)) && Timeline::getInstance()->isAfterOrgsAnnouncedDate(); // let students see this once orgs announced
 			break;
 		// The following can be accessed by 'vals admin register' once the org applications open
 		// but adding/deleting entries is not allowed after the org signup period ends (edit existing only)

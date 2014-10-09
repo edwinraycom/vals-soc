@@ -57,16 +57,25 @@ switch ($_GET['action']){
 		if(isset($_POST['group']) && $_POST['group']){
 			$group = $_POST['group'];
 		}
+		if(isset($_GET['mine_only']) && $_GET['mine_only']){
+			$mine_only = true;
+		}
+		else{
+			$mine_only = false;
+		}
 		//Return result to jTable
 		$recs = Project::getInstance()->getStudentsAndProposalCountByCriteria(
-				$group, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
-		$cnt = Project::getInstance()->getStudentsAndProposalCountByCriteriaRowCount($group);
+				$group, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"], $mine_only);
+		$cnt = Project::getInstance()->getStudentsAndProposalCountByCriteriaRowCount($group, $mine_only);
 		
 		jsonGoodResultJT($recs, $cnt);
 	break;
 	case 'render_proposals_for_student':
+		if(isset($_POST['mine_only']) && $_POST['mine_only']){
+			$mine_only = $_POST['mine_only'] === 'true' ? true: false;
+		}
 		if(isset($_POST['id']) && $_POST['id']){
-			echo showProposalsForStudent($_POST['id']);
+			echo showProposalsForStudent($_POST['id'], $mine_only);
 		}else{
 			echo "Unable to find proposals without student identifier";
 		}

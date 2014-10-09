@@ -471,4 +471,16 @@ class Users extends AbstractEntity{
 	
 		return $admins;
 	}
+	
+	public static function getInstituteForUser($id){		
+		if ($id){
+			$query = "SELECT o.* from soc_institutes as o
+						left join soc_user_membership as um on o.inst_id = um.group_id
+						WHERE um.type = 'institute' AND um.uid =".$id;
+			return db_query($query);
+		} else {
+			return null;
+		}
+		
+	}
 }

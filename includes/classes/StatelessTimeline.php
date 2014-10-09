@@ -374,6 +374,7 @@ class StatelessTimeline {
 		$timeline_args['viewOrganisations'] = FALSE;
 		$timeline_args['viewProjectIdeas'] = FALSE;
 		$timeline_args['connectionsVisible'] = FALSE;
+		$timeline_args['myInstitutionVisible'] = FALSE;
 		$timeline_args['myOrganisationsVisible'] = FALSE; // a list of organisations i participate in
 		$timeline_args['myProposalsVisible'] = FALSE; // proposals I have submitted
 		$timeline_args['myAcceptedProjectsVisible'] = FALSE;
@@ -397,6 +398,7 @@ class StatelessTimeline {
 				$timeline_args['dashboardLegend'] = t("You can now browse the organisations and project ideas. ".
 						"You can start to apply for projects once the student sign period begins. ").
 						$timeline->getStudentsSignupStartDate()->format('F j, Y, g:i a');
+						$timeline_args['myInstitutionVisible'] = TRUE; // see my institution details
 						$timeline_args['viewOrganisations'] = TRUE; // look at the organisations
 						$timeline_args['viewProjectIdeas'] = TRUE; // look at the project ideas
 						$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
@@ -405,6 +407,7 @@ class StatelessTimeline {
 				$timeline_args['dashboardLegend'] = t("Student signup period. You can now submit project proposals." .
 						"Please complete any project proposals before the following date. ").
 						$timeline->getStudentsSignupEndDate()->format('F j, Y, g:i a');;
+						$timeline_args['myInstitutionVisible'] = TRUE; // see my institution details
 						$timeline_args['viewOrganisations'] = TRUE; // look at ALL of the organisations
 						$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
 						$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
@@ -413,6 +416,7 @@ class StatelessTimeline {
 			case PRE_ORGS_REVIEW_APPLICATIONS_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Project proposals due to be evaluated by. ") .
 				$timeline->getOrgsReviewApplicationsDate()->format('F j, Y, g:i a');
+				$timeline_args['myInstitutionVisible'] = TRUE; // see my institution details
 				$timeline_args['viewOrganisations'] = TRUE; // look at ALL of the organisations
 				$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
 				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
@@ -421,6 +425,7 @@ class StatelessTimeline {
 			case PRE_PROPOSAL_MATCHED_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Students projects matched to mentors on the following date. ") .
 				$timeline->getStudentsMatchedToMentorsDate()->format('F j, Y, g:i a');
+				$timeline_args['myInstitutionVisible'] = TRUE; // see my institution details
 				$timeline_args['viewOrganisations'] = TRUE; // look at ALL of the organisations
 				$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
 				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
@@ -429,6 +434,7 @@ class StatelessTimeline {
 			case PRE_STUDENTS_ANNOUNCED_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("The list of students and projects will become visable to everyone after the following date. ") .
 				$timeline->getAcceptedStudentsAnnouncedDate()->format('F j, Y, g:i a');
+				$timeline_args['myInstitutionVisible'] = TRUE; // see my institution details
 				$timeline_args['viewOrganisations'] = TRUE; // look at ALL of the organisations
 				$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
 				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
@@ -437,17 +443,19 @@ class StatelessTimeline {
 			case PRE_BONDING_PERIOD: // here is where student sees his accepted projects
 				$timeline_args['dashboardLegend'] = t("The list of students and projects is now visible to other users of the system. " .
 						"The Bonding period starts on the following date. ") .
-						$timeline->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
-						$timeline_args['viewOrganisations'] = TRUE; // look at ALL of the organisations
-						$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
-						$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
-						$timeline_args['myProposalsVisible'] = TRUE;// see just my proposals - not yet accepted
-						$timeline_args['myAcceptedProjectsVisible'] =  TRUE; // projects I am accepted onto
-						$timeline_args['myOrganisationsVisible'] = TRUE; // Organisations I am a member of
-						break;
+				$timeline->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
+				$timeline_args['myInstitutionVisible'] = TRUE; // see my institution details
+				$timeline_args['viewOrganisations'] = TRUE; // look at ALL of the organisations
+				$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
+				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
+				$timeline_args['myProposalsVisible'] = TRUE;// see just my proposals - not yet accepted
+				$timeline_args['myAcceptedProjectsVisible'] =  TRUE; // projects I am accepted onto
+				$timeline_args['myOrganisationsVisible'] = TRUE; // Organisations I am a member of
+				break;
 			case PRE_CODING_PERIOD:
 				$timeline_args['dashboardLegend'] = t("Community bonding period.  Coding starts on the following date. ") .
 				$timeline->getCodingStartDate()->format('F j, Y, g:i a');
+				$timeline_args['myInstitutionVisible'] = TRUE; // see my institution details
 				$timeline_args['viewOrganisations'] = TRUE; // look at ALL of the organisations
 				$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
 				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
@@ -458,6 +466,7 @@ class StatelessTimeline {
 			case PRE_SUGGESTED_CODING_END_DATE:
 				$timeline_args['dashboardLegend'] = t("Coding period. The following is the suggested end date for coding. ") .
 				$timeline->getSuggestedCodingDeadline()->format('F j, Y, g:i a');
+				$timeline_args['myInstitutionVisible'] = TRUE; // see my institution details
 				$timeline_args['viewOrganisations'] = TRUE; // look at ALL of the organisations
 				$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
 				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
@@ -468,6 +477,7 @@ class StatelessTimeline {
 			case PRE_CODING_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Coding period. The following is the deadline date for coding. ") .
 				$timeline->getCodingEndDate()->format('F j, Y, g:i a');
+				$timeline_args['myInstitutionVisible'] = TRUE; // see my institution details
 				$timeline_args['viewOrganisations'] = TRUE; // look at ALL of the organisations
 				$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
 				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc

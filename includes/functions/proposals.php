@@ -313,17 +313,16 @@ function initBrowseProposalsLayout(){
 
 function initBrowseProposalsByTypeLayout($owner_only=false){
 
+	$only_mine_query = (bool) $owner_only ? '&mine_only=true' : '';
+	$only_mine_js = (bool) $owner_only ? 'true' : 'false';
 	// ORG ADMIN & MENTOR VIEWS
 	if( hasRole(array(_ORGADMIN_TYPE)) || hasRole(array(_MENTOR_TYPE)) ){
-
-		$only_mine_query = (bool) $owner_only ? '&mine_only=true' : '';
-
 		$org_id=0;
 		if(isset($_GET['organisation'])){
 			$org_id = $_GET['organisation'];
 		}
 	
-		echo "<a href='"._WEB_URL. "/dashboard/proposals/browsebytype'>".t('Show all')."</a>";
+		echo "<a href='"._WEB_URL. "/dashboard/proposals/browsebytype'>".t('Show all proposals for my organisation')."</a>";
 		echo " | ";
 		echo "<a href='"._WEB_URL. "/dashboard/proposals/browsebytype/mine'>".t('Show only mine')."</a>";
 	
@@ -334,7 +333,8 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 		        <?php echo t('Filter by Organisation');?>:
 		        <?php // echo t('Organisations');?>
 		        <select id="organisation" name="organisation">
-					<option <?php echo  (! $org_id) ? 'selected="selected"': ''; ?> value="0"><?php echo t('All My Organisations');?></option><?php
+					<option <?php echo  (! $org_id) ? 'selected="selected"': ''; ?>
+					value="0"><?php echo t('All My Organisations');?></option><?php
 					$result = Organisations::getInstance()->getMyOrganisations(TRUE);
 					foreach ($result as $record) {
 						$selected = ($record->org_id == $org_id ? 'selected="selected" ' : '');
@@ -397,7 +397,7 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 		    					display: function (data) {
 			    					if(data.record.proposal_count > 0){
 									return "<a title=\"View Proposals\" href=\"javascript:void(0);\" "+
-										"onclick=\"getProposalsForProject("+data.record.pid+")\">"+
+										"onclick=\"getProposalsForProject("+data.record.pid+",<?php echo $only_mine_js;?>)\">"+
 											"<span class=\"ui-icon ui-icon-info\">See detail</span></a>";
 			    					}
 		    					},
@@ -432,16 +432,35 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 		if(isset($_GET['group'])){
 			$studentgroup_id = $_GET['group'];
 		}
-
+		echo "<a href='"._WEB_URL. "/dashboard/proposals/browsebytype'>".t('Show all proposals from my Institution')."</a>";
+		echo " | ";
+		echo "<a href='"._WEB_URL. "/dashboard/proposals/browsebytype/mine'>".t('Show only mine')."</a>";
 		 ?>
 		 	<div class="filtering" style="width: 800px;">
 				<span id="infotext" style="margin-left: 34px"></span>
 				<form id="proposal_filter">
 			        <?php echo t('Filter by Group');?>:
-			        <?php // echo t('Organisations');?>
+			        <?php // echo t('Organisations');
+		 			$option_text = (bool) $owner_only ? t('All My Groups') : t('All Groups from my Institution');
+		 			
+		 			if($owner_only){
+						$result = Groups::getGroups ( _STUDENT_GROUP, $GLOBALS ['user']->uid );
+					} 
+					else {
+						$institutes = Users::getInstituteForUser ( $GLOBALS ['user']->uid );
+						if ($institutes->rowCount () > 0) {
+							$result = Groups::getGroups ( _STUDENT_GROUP, 'all', $institutes->fetchObject ()->inst_id );
+						} 
+						else {
+							// give up, just get their own
+							$result = Groups::getGroups ( _STUDENT_GROUP, $GLOBALS ['user']->uid );
+						}
+					}
+		 			?>
 			        <select id="group" name="group">
-						<option <?php echo  (! $studentgroup_id) ? 'selected="selected"': ''; ?> value="0"><?php echo t('All My Groups');?></option><?php
-						$result = Groups::getGroups(_STUDENT_GROUP, $GLOBALS['user']->uid);
+			<option
+				<?php echo  (! $studentgroup_id) ? 'selected="selected"': ''; ?>
+				value="0"><?php echo $option_text;?></option><?php
 						foreach ($result as $record) {
 							$selected = ($record->studentgroup_id == $studentgroup_id ? 'selected="selected" ' : '');
 							echo '<option ' .$selected.'value="'.$record->studentgroup_id.'">'.$record->name.'</option>';
@@ -449,8 +468,8 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 					</select>
 				</form>
 			</div>
-		 	<div id="TableContainer" style="width: 800px;"></div>
-		 	<script type="text/javascript">
+			<div id="TableContainer" style="width: 800px;"></div>
+			<script type="text/javascript">
 		 
 		 			jQuery(document).ready(function($){
 		 				window.view_settings = {};
@@ -468,7 +487,7 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 		 					sorting: true,
 		 					defaultSorting: "pid ASC",
 		 					actions: {
-		 						listAction: moduleUrl + "actions/institute_actions.php?action=list_search_proposal_count_student"
+		 						listAction: moduleUrl + "actions/institute_actions.php?action=list_search_proposal_count_student<?php echo $only_mine_query;?>"
 		 					},
 		 					fields: {
 		 						uid: {
@@ -502,7 +521,7 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 		 	    					display: function (data) {
 		 		    					if(data.record.proposal_count > 0){
 		 								return "<a title=\"View Proposals\" href=\"javascript:void(0);\" "+
-		 									"onclick=\"getProposalsForStudent("+data.record.uid+")\">"+
+		 									"onclick=\"getProposalsForStudent("+data.record.uid+",<?php echo $only_mine_js;?>)\">"+
 		 										"<span class=\"ui-icon ui-icon-info\">See detail</span></a>";
 		 		    					}
 		 	    					},
@@ -534,10 +553,11 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 		
 }
 
-function showProposalsForProject($project_id){
+function showProposalsForProject($project_id, $show_only_mine){
 	global $base_url;
 
-	echo '<div id="baktoprops"><a href=" '.$base_url.'/dashboard/proposals/browsebytype'.'">'.t('Back to proposals overview').'</a></div>';
+	$url_type = (bool) $show_only_mine ? '/mine' : '';
+	echo '<div id="baktoprops"><a href=" '.$base_url.'/dashboard/proposals/browsebytype'.$url_type.'">'.t('Back to proposals overview').'</a></div>';
 	$project = Project::getInstance()->getProjectById($project_id);
 	echo '<h2>'.t('Proposals for project idea \''. $project['title']).'\'</h2>';
 	?>
@@ -618,10 +638,10 @@ function showProposalsForProject($project_id){
 			</script><?php
 }
 
-function showProposalsForStudent($student_id){
+function showProposalsForStudent($student_id, $show_only_mine){
 	global $base_url;
-
-	echo '<div id="baktoprops"><a href=" '.$base_url.'/dashboard/proposals/browsebytype'.'">'.t('Back to proposals overview').'</a></div>';
+	$url_type = (bool) $show_only_mine ? '/mine' : '';
+	echo '<div id="baktoprops"><a href=" '.$base_url.'/dashboard/proposals/browsebytype'.$url_type.'">'.t('Back to proposals overview').'</a></div>';
 	$student = Users::getStudentDetails($student_id);
 	$s_name = $student->student_name;
 	echo '<h2>'.t('Project proposals made by \''. $s_name).'\'</h2>';

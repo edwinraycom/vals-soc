@@ -494,12 +494,12 @@ function renderProposalTabs(result, labels, container){
 	return s;
 }
 
-function getProposalsForProject(projectId){
-	ajaxCall("proposal", "render_proposals_for_id", {id: projectId, target:'our_content'}, "formResult", 'html', 'our_content');
+function getProposalsForProject(projectId, show_mine_only){
+	ajaxCall("proposal", "render_proposals_for_id", {id: projectId, target:'our_content', mine_only:show_mine_only}, "formResult", 'html', 'our_content');
 }
 
-function getProposalsForStudent(studentId){
-	ajaxCall("institute", "render_proposals_for_student", {id: studentId, target:'our_content'}, "formResult", 'html', 'our_content');
+function getProposalsForStudent(studentId, show_mine_only){
+	ajaxCall("institute", "render_proposals_for_student", {id: studentId, target:'our_content', mine_only:show_mine_only}, "formResult", 'html', 'our_content');
 }
 
 function getProposalFormForProject(projectId){

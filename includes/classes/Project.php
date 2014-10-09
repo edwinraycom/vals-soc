@@ -104,10 +104,22 @@ class Project extends AbstractEntity{
     	return db_query($queryString)->fetchAll();
     }
     
-    public function  getStudentsAndProposalCountByCriteriaRowCount($group=''){
+    public function  getStudentsAndProposalCountByCriteriaRowCount($group='', $mine_only=false){
        	if(!$group){
     		$group = array();
-    		$result = Groups::getGroups(_STUDENT_GROUP, $GLOBALS['user']->uid);
+    		if($mine_only){
+    			$result = Groups::getGroups(_STUDENT_GROUP, $GLOBALS['user']->uid);
+    		}
+    		else{
+    		    $institutes = Users::getInstituteForUser($GLOBALS['user']->uid);
+    			if ($institutes->rowCount() > 0){
+    				$result = Groups::getGroups(_STUDENT_GROUP, 'all', $institutes->fetchObject()->inst_id);
+    			}
+    			else{
+    				// give up, just get their own
+    				$result = Groups::getGroups(_STUDENT_GROUP, $GLOBALS['user']->uid);
+    			}
+    		}
     		foreach ($result as $record) {
     			array_push($group, $record->studentgroup_id);
     		}
@@ -121,17 +133,30 @@ class Project extends AbstractEntity{
 			LEFT JOIN soc_user_membership as m ON (u.uid = m.uid)
 			LEFT JOIN soc_studentgroups AS sg ON (sg.studentgroup_id = m.group_id)".
 			($group ? "WHERE sg.studentgroup_id IN (:grps) AND " : "WHERE ").
-			"sg.owner_id = ".$GLOBALS['user']->uid." AND r.rid = $role AND m.type = 'studentgroup'
+			//"sg.owner_id = ".$GLOBALS['user']->uid." AND r.rid = $role AND m.type = 'studentgroup'
+    		" r.rid = $role AND m.type = 'studentgroup'
 			GROUP BY username";
     	$projects =  db_query($query,array(':grps' => $group))->rowCount();
     	return $projects;
     }
     
     public static function getStudentsAndProposalCountByCriteria($group, $sorting='p.pid',
-    	$startIndex=1, $pageSize=10){
+    	$startIndex=1, $pageSize=10, $mine_only=false){
     	if(!$group){
     		$group = array();
-    		$result = Groups::getGroups(_STUDENT_GROUP, $GLOBALS['user']->uid);
+    		if($mine_only){
+    			$result = Groups::getGroups(_STUDENT_GROUP, $GLOBALS['user']->uid);
+    		}
+    		else{
+    			$institutes = Users::getInstituteForUser($GLOBALS['user']->uid);
+    			if ($institutes->rowCount() > 0){
+    				$result = Groups::getGroups(_STUDENT_GROUP, 'all', $institutes->fetchObject()->inst_id);
+    			}
+    			else{
+    				// give up, just get their own
+    				$result = Groups::getGroups(_STUDENT_GROUP, $GLOBALS['user']->uid);
+    			}
+    		}
     		foreach ($result as $record) {
     			array_push($group, $record->studentgroup_id);
     		}
@@ -145,7 +170,8 @@ class Project extends AbstractEntity{
 			LEFT JOIN soc_user_membership as m ON (u.uid = m.uid)
 			LEFT JOIN soc_studentgroups AS sg ON (sg.studentgroup_id = m.group_id)".
 			($group ? "WHERE sg.studentgroup_id IN (:grps) AND " : "WHERE ").
-			"sg.owner_id = ".$GLOBALS['user']->uid." AND r.rid = $role AND m.type = 'studentgroup'
+			//"sg.owner_id = ".$GLOBALS['user']->uid." AND r.rid = $role AND m.type = 'studentgroup'
+    		" r.rid = $role AND m.type = 'studentgroup'
 			GROUP BY username";
 
     	if (!$sorting){
