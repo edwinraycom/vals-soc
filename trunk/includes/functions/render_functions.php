@@ -37,7 +37,7 @@ function formatUsersNice($users, $type='User', $empty_message='', $show_title=FA
 		foreach($users as $member){
 			$output .=  '<dd>';
 			$output .=  '<b>'.t('Name').': </b>';
-			if(isset($member->fullname)){
+			if(isset($member->fullname) && $member->fullname !=''){
 				$output .= $member->fullname;
 			}
 			else{

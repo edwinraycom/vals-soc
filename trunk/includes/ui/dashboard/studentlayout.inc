@@ -40,6 +40,19 @@ function getStudentLayout($timeline_args){
 		';
 	}
 */
+	if($timeline_args['myInstitutionVisible']){
+		$output .='
+					<div class="column-entry org_app">
+						<h4>
+							<a class="dashboard-link component-link"
+								href="'.$base_url.'/dashboard/institute/view"
+								title="'.t("Details for my institution").'">'.t("My institution").'</a>
+						</h4>
+						<p>'.t("Institution in which you are receiving lectures").'</p>
+					</div>
+		';
+	}
+
 	if($timeline_args['viewOrganisations']){
 		$output .='
 					<div class="column-entry participants">

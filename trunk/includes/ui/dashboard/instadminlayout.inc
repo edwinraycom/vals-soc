@@ -119,10 +119,17 @@ function getInstAdminLayout($timeline_args){
 					<div class="column-entry proposals_submitted">
 						<h4>
 							<a class="dashboard-link component-link"
-								href="'.$base_url.'/dashboard/proposals/browsebytype"
+								href="'.$base_url.'/dashboard/proposals/browsebytype/mine"
 								title="'.t("Proposals submitted within my institute").'">'.t('Proposals submitted by students from my institute and in my groups').'</a>
 						</h4>
 						<p>'.t("List of proposals submitted within my institute").'</p>
+						<div>
+							<a href="'.$base_url.'/dashboard/proposals/browsebytype/mine" title="'. t('See my students proposals only').'">'.
+							t('See my students proposals only') .'</a>
+							|<a href="'.$base_url.'/dashboard/proposals/browsebytype" title="'.
+							t('See all proposals from students in my Institution').'">'.
+							t('See all proposals from students in my Institution'). '</a>&nbsp;('. t('Limited access'). ')
+						</div>
 					</div>
 		';
 	}	
