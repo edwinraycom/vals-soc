@@ -7,7 +7,7 @@ drupal_add_js (_VALS_SOC_PATH .'/includes/ui/tabs/activatetabs.js');
 drupal_add_js (_VALS_SOC_PATH .'/includes/js/ajax.js');
 drupal_add_js (_VALS_SOC_PATH .'/includes/js/target_functions.js');
 
-include(_VALS_SOC_ROOT.'/includes/functions/projects.php');
+include(_VALS_SOC_ROOT.'/includes/pages/projects.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');
 include(_VALS_SOC_ROOT.'/includes/functions/render_functions.php');
 

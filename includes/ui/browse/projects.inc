@@ -1,7 +1,7 @@
 <?php
 module_load_include('php', 'vals_soc', 'includes/classes/Project');
 module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
-module_load_include('php', 'vals_soc', 'includes/functions/projects');
+module_load_include('php', 'vals_soc', 'includes/pages/projects');
 drupal_add_library('system','ui.widget');
 drupal_add_library('system','ui.dialog');
 drupal_add_library('system','ui.icon');

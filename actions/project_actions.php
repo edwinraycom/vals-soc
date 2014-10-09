@@ -5,7 +5,7 @@ module_load_include('php', 'vals_soc', 'includes/classes/ThreadedComments');
 module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 module_load_include('php', 'vals_soc', 'includes/classes/Project');
 module_load_include('php', 'vals_soc', 'includes/classes/Proposal');
-module_load_include('php', 'vals_soc', 'includes/functions/projects');
+module_load_include('php', 'vals_soc', 'includes/pages/projects');
 module_load_include('php', 'vals_soc', 'includes/functions/ajax_functions');
 
 $path_arr = explode('/', $_SERVER['HTTP_REFERER']);//we need to store in separate var as otherwise a warning is issued for passing non var by ref

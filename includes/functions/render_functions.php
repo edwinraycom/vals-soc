@@ -204,6 +204,144 @@ function renderUsers($type='', $users='', $group_selection='', $group_type='', $
     
 }
 
+function renderDefaultField($field, $obj, $alternative_field=''){
+	static $unknown = null;
+
+	if (! $unknown) {
+		$unknown = t('The %1$s is not known yet');
+	}
+	if (isset($obj->$field) && $obj->$field){
+		return $obj->$field;
+	} elseif ($alternative_field && isset($obj->$alternative_field) && $obj->$alternative_field){
+		return $obj->$alternative_field;
+	} else {
+		return sprintf($unknown, t(str_replace('_', ' ', $field)));
+	}
+}
+
+function renderProposal($proposal, $target='none', $follow_action='show'){
+	//A proposal consists of: fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id',
+	//'supervisor_id', 'pid', 'solution_short', 'solution_long', 'state',);
+	$propid = $proposal->proposal_id;
+	$buttons = '';
+	if (Users::isStudent() && Groups::isOwner(_PROPOSAL_OBJ, $propid) && $proposal->state != 'published'){
+		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this proposal?')."\")){ajaxCall(\"proposal\", \"delete\", ".
+				"{type: \"proposal\", proposal_id: $propid, target: \"$target\"}, \"refreshTabs\", \"json\", ".
+				"[\"proposal\", \"$target\", \"proposal\", \"\", \"$follow_action\"]);}'";
+		$edit_action = "onclick='ajaxCall(\"proposal\", \"edit\", {type: \"proposal\", proposal_id: $propid, target: ".
+				"\"$target\", format:\"html\"}, \"formResult\", \"html\", [\"$target\", \"proposal\"]);'";
+		$buttons .= "<div class='totheright' id='proposal_buttons'><input type='button' value='".t('edit')."' $edit_action/>";
+		$buttons .= "<input type='button' value='".t('delete')."' $delete_action/></div>";
+	}
+	$content =
+	"<div id='msg_$target'></div>
+	$buttons".
+	"<h1>".($proposal->title ? $proposal->title : Proposal::getDefaultName('', $proposal))." (".
+	renderDefaultField('state', $proposal).")</h1>
+
+	<div id='personalia'>
+	<h3>Parties involved</h3>
+	<ul>
+	<li>".t('Supervisor').": ".renderDefaultField('supervisor_name', $proposal, 'supervisor_user_name')."</i>".
+			"<li>".t('Mentor').": ".renderDefaultField('mentor_name', $proposal, 'mentor_user_name')."</i>".
+					"<li>".t('Student').": ".renderDefaultField('student_name', $proposal, 'name')."</i>".
+							"<li>".t('Institute').": ".renderDefaultField('i_name', $proposal)."</i>".
+			"<li>".t('Organisation').": ".renderDefaultField('o_name', $proposal)."</i>".
+			"</ul>
+			</div>".
+			"<div id='project'>
+			".t('Project').": ".$proposal->pr_title."
+			</div>".
+			"<div id='proposal_text'>
+			<h3>".t('Solution Summary')."</h3>
+			".renderDefaultField('solution_short', $proposal)."<br/>".
+			"<a href='javascript:void(0)' data='off' onclick='makeVisible(\"solution_$propid\");'>".t('more')."</a>".
+			//"<input type='button' value='View more' onclick='makeVisible(\"solution_$propid\");'/>
+			"
+			<div id='solution_$propid' class='invisible'>
+			<h3>Solution</h3>
+			".renderDefaultField('solution_long', $proposal)."
+			</div>
+			</div>";
+
+			module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
+			$content .= initComments($propid, _PROPOSAL_OBJ);
+	return $content;
+
+}
+
+function renderProjects($organisation_selection='', $projects='', $target='', $inline=FALSE, $reload_data=TRUE, $owner_only=FALSE){
+	if (!$projects && $reload_data){
+		$projects = Project::getProjects('', ($owner_only ? $GLOBALS['user']->uid: null), $organisation_selection);
+	}
+	$target_set = ! empty($target);
+	if ($projects){
+		$s = "<ol class='projectlist'>";
+		foreach($projects as $project){
+			$project = objectToArray($project);
+			$s .= "<li>";
+			if (!$target_set || $inline) {
+				$target = "show_${project['pid']}";
+		}
+		$inline = $inline ? 1 : 0;
+		$s .= "<a href='javascript: void(0);' onclick='".
+				//($target_set ? "" : "\$jq(\"#$target\").toggle();").
+		"ajaxCall(\"project\", \"view\", {id:${project['pid']},type:\"project\", target:\"$target\", inline:$inline}, \"$target\");'>${project['title']}</a>";
+		if (! $target_set || $inline) {
+			$s .= "<div id='$target' ></div>";
+		}
+		$s .= "</li>";
+}
+$s .= "</ol>";
+return $s;
+}
+else {
+	return t('You have no projects yet');
+}
+}
+
+function renderProject($project='', $target='', $inline=FALSE, $all_can_edit=_VALS_SOC_MENTOR_ACCESS_ALL){
+	if (!$project){
+		return t('I cannot show this project. It seems empty.');
+	}
+	if (is_object($project)){
+		$project = objectToArray($project);
+	} else {
+		//It is NOT an object, so: array
+	}
+	$key_name = Groups::keyField(_PROJECT_OBJ);
+	$id = $project[$key_name];
+	$type = _PROJECT_OBJ;
+	$role = getRole();
+
+	$content ="<div class=\"totheright\">";
+	if (_STUDENT_TYPE == getRole()){
+		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
+		")\" value='.t( 'Submit proposal for this project').'/>";
+	}
+	if (!$inline && (($all_can_edit && Groups::isAssociate(_PROJECT_OBJ, $id)) || Groups::isOwner(_PROJECT_OBJ, $id))  ){
+		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this project?')."\")){ajaxCall(\"project\", \"delete\", {type: \"$type\", id: $id, target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"project\"]);}'";
+		$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"$type\", id: $id, target: \"$target\"}, \"formResult\", \"html\", [\"$target\", \"project\"]);'";
+		$content .= "<input type='button' value='".t('edit')."' $edit_action/>";
+		$content .= "<input type='button' value='".t('delete')."' $delete_action/>";
+	}
+	$content .="</div>";
+	$content .= "<h2>".$project['title']."</h2>";
+	$content .= '<p>'.$project['description']. '</p>';
+	if ($project['url']){
+		$content .= '<p>'.tt('More information can be found at %1$s', "<a href='${project['url']}'> ${project['url']}</a>"). '</p>';
+	}
+	
+	if (! $inline){
+		if(getRole() != _ANONYMOUS_TYPE){
+			module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
+			$content .= initComments($id, _PROJECT_OBJ);
+		}
+	}
+	
+	return $content;
+}
+
 function renderGroups($supervisor_selection='', $groups=''){
 	if (!$groups){
 		//if we pass empty value to getGroups the current supervisor is assumed

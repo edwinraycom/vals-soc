@@ -20,6 +20,6 @@ drupal_add_css(_VALS_SOC_PATH . '/includes/js/jtable/jtable.css', array(
     ));
 ctools_include('modal');
 ctools_modal_add_js();
-include(_VALS_SOC_ROOT.'/includes/functions/proposals.php');
+include(_VALS_SOC_ROOT.'/includes/pages/proposals.php');
 
 initBrowseProposalsLayout();
