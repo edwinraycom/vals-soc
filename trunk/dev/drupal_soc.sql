@@ -130,7 +130,7 @@ CREATE TABLE IF NOT EXISTS soc_proposals (
   solution_short varchar(512) NOT NULL,
   solution_long varchar(1024) NOT NULL,
   -- modules varchar(1024) DEFAULT NULL,
-  state enum('draft','published','accepted','rejected','finished','archived','open') NOT NULL,
+  state enum('draft','open','published','accepted','rejected','finished','archived') NOT NULL,
   PRIMARY KEY (proposal_id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 -- RC: used to be soc_studentgroups, key changed to: studentgroup_id 

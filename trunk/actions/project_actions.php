@@ -17,7 +17,7 @@ switch ($_GET['action']){
 		initBrowseProjectLayout();
 	break;
 	case 'mark':
-		if (!(Users::isStudent() ||_DEBUG)){
+		if (!(Users::isStudent())){
 			echo t('You can only mark a project as student member of an institute.');
 			return;
 		}
@@ -39,7 +39,7 @@ switch ($_GET['action']){
 		jsonBadResult(t('Something went wrong with the project marking.'));
 	break;
 	case 'recommend':
-		if (!(Users::isSuperVisor() ||_DEBUG)){
+		if (!(Users::isSuperVisor())){
 			echo t('You can only rate a project as staff member of an institute.');
 			return;
 		}
@@ -95,7 +95,7 @@ switch ($_GET['action']){
 		break;
 	case 'rate':
 		//do something
-		if (!(Users::isSuperVisor()|| _DEBUG)){
+		if (!(Users::isSuperVisor())){
 			echo t('You can only rate a project as supervisor.');
 			return;
 		}
@@ -251,7 +251,7 @@ switch ($_GET['action']){
 					$project['rate'] = Project::getRating($project_id, $my_id);
 				} else {
 					$project['rate'] = -2;
-					if (Users::isStudent() || _DEBUG){
+					if (Users::isStudent()){
 						$table = tableName('student_favourite');
 						$favourite = db_select($table)->fields($table)
 						->condition('pid', $project_id)
@@ -377,63 +377,6 @@ switch ($_GET['action']){
     		echo $result ? jsonGoodResult(true, '', array('extra'=> ($mine? array( 'mine' =>1) :''))) : jsonBadResult();
     	}
     break;
-    case 'mark_proposal':
-    	$proposal_id = getRequestVar('proposal_id', 'post', 0);
-    	$project_id = getRequestVar('project_id', 'post', 0);
-    	$is_final = getRequestVar('is_final', 'post', 0);
-    	
-    	if (!$project_id){
-    		echo t('The project could not be found');
-    		return;
-    	}
-    	if (!$proposal_id){
-    		echo t('The proposal could not be found');
-    		return;
-    	}
-    	if (!$is_final){
-    		$is_final = 0;
-    	}
-    	
-    	// Get the projects current proposal id and state (if set)
-    	$project = Project::getProjectById($project_id, FALSE, NULL);
-    	$old_proposal = $project->proposal_id;// probably dont need this now
-    	$was_selected = $project->selected;
-    	
-    	
-    	// only allow project owner (or assigned mentor) to update its selected & proposal_id fields
-    	//if(!Groups::isOwner('project', $project_id) && $project->mentor_id != $GLOBALS['user']->uid){
-    	if(!Groups::isOwner('project', $project_id)){
-    		echo t('Only the project owner or mentor can update its proposal status.');
-    		return;
-    	}
-    	
-    	$selected_prev_set = false;
-    	if($was_selected == 1){
-    		$selected_prev_set = true;
-    	}
-
-    	if(!$selected_prev_set){
-    	// update the project
-    		$props['proposal_id'] = $proposal_id;
-    		$props['selected'] = $is_final;
-    		$result = Project::changeProject($props, $project_id);
-    		//send message back giving status & success message
-    		if ($result){
-    			// fire our emails
-    			$all_proposals_for_this_project = Proposal::getProposalsPerProject($project_id, null, true);
-    			module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
-    			notify_students_and_supervisors_of_project_status_update($all_proposals_for_this_project, $proposal_id, $is_final);
-    			echo t('Changes successfully made.');
-    		} 
-    		else{
-    			echo t('There was a problem updating your project preferences.');
-    		}
-    	}
-    	else{
-    		// send message back saying mentor has already made his decision & can't change it
-    		echo t('You already have chosen a final proposal for this project, you cannot change it now.');
-    	}
-    	break;
 	//
 	default: echo "No such action: ".$_GET['action'];
 }
