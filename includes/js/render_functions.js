@@ -127,7 +127,6 @@ function renderProposalOverview(proposal){
 	var content = "<h2>"+proposal.title+"</h2>";
 	content += Drupal.t('Submitted by student') + " '" + (proposal.student_name ? proposal.student_name: proposal.name);
 	content += '&nbsp;<i>('+proposal.state+')</i>';
-	content += '&nbsp;<i>('+proposal.state+')</i>';
 	content += '<br/>';
 	content += '<ul>';
 	content += '	<li>';
