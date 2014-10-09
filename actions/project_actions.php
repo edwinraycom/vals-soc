@@ -138,7 +138,7 @@ switch ($_GET['action']){
 				$jTableResult['TotalRecordCount'] = count($jTableResult['Records']);
 			} else {
 				if ($project_id){
-					$project = Project::getProjectById($project_id);
+					$project = Project::getProjectById($project_id, false, PDO::FETCH_ASSOC, true);
 					if ($project){
 						$jTableResult['TotalRecordCount'] = 1;
 						$jTableResult['Records'] = array($project);
@@ -232,7 +232,7 @@ switch ($_GET['action']){
 				//It might be that the project is in draft and is not returned by the browse and so it is not
 				//present in the session lists 
 				if (!$project){
-					 $project = Project::getProjectById($project_id);
+					 $project = Project::getProjectById($project_id, false, PDO::FETCH_ASSOC, true);
 				}
 				$my_id = Users::getMyId();
 				if (($project['state'] == 'draft') && 

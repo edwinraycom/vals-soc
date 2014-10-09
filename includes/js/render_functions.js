@@ -174,6 +174,22 @@ function renderProject(project, apply_projects){
 	if(project.url){
 		content += "<br/><a target='_blank' class='external' href='" + project.url + "'>" + project.url + "</a>";
 	}
+	
+	if(project.proposal_count){
+		content += "<h2>"+Drupal.t('Statistics')+"</h2>";
+		content += ''+ Drupal.t('Number of proposals already submitted to this project') + ' ('+ project.proposal_count+')';
+		if(project.proposal_id && project.selected=="0"){
+			message = Drupal.t('The project mentor has selected an interim preferred proposal already, however this is not final and may change.');
+		}
+		else if(project.proposal_id && project.selected=="1"){
+			message = Drupal.t('The project mentor has marked an existing proposal as final solution.');
+		}
+		else{
+			message = Drupal.t('The project mentor has not marked any proposal as their preferred solution yet.');
+		}
+		content += '<br/>'+ message +'<br/>';
+	}
+	
 	if ((typeof rate_projects != 'undefined') && rate_projects){
 		var rate = -2;
 		if (typeof project.rate != 'undefined') {

@@ -230,7 +230,7 @@ function initBrowseProjectLayout($pid=''){
 				listAction: moduleUrl + "actions/project_actions.php?action=list_search"
 			},
 			fields: {
-				pid: {								
+				pid: {
 					key: true,
 					create: false,
 					edit: false,
@@ -253,6 +253,12 @@ function initBrowseProjectLayout($pid=''){
 				tags: {
 					title: "Tags",
 					width: "26%",
+					create: false,
+					edit: false
+				},
+				proposal_count: {
+					title: "proposals",
+					width: "12%",
 					create: false,
 					edit: false
 				}
