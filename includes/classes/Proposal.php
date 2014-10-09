@@ -4,12 +4,65 @@ class Proposal extends AbstractEntity{
 	private static $instance; 	 	 	 	 	 	 	 	 	
 	public static $fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'title', 'solution_short', 'solution_long', 'state',);
 	
+	const _REASON_REJECT_INTEREST = 'not interested';
+	const _REASON_REJECT_OCCUPIED = 'found another';
+	const _REASON_REJECT_OCCUPIED_BUT = 'interesting but';
+	const _REASON_REJECT_DELETED = 'deleted';
+	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){
 			self::$instance = new self ();
 		}
 		return self::$instance;
 	}
+	
+    public function rejectProposal($id, $reason='', $reason_txt=''){
+    	$msg = '';
+    	switch ($reason){
+    		case self::_REASON_REJECT_INTEREST:
+    			$msg = t('The proposal as it is presented, will not be selected by us. ').
+    			t('Thank you for your effort to write a proposal. ').
+    			t('Below you find the rationale why we made this decision.');
+    			break;
+    		case self::_REASON_REJECT_OCCUPIED_BUT:
+    			$msg = t('The proposal as it is presented, is very interesting but will not be selected by us because we found another proposal which we found even more appropriate. ').
+    			t('Thank you for your effort to write a proposal. ').
+    			t('Below you find the rationale why we made this decision.');
+    		break;
+    		case self::_REASON_REJECT_OCCUPIED:
+    			$msg = t('The proposal as it is presented, will not be selected by us as we chose for another proposal. ').
+    			t('Thank you for your effort to write a proposal. ').
+    			t('Below you find the rationale why we made this decision.');
+    			break;
+    		case self::_REASON_REJECT_DELETED:
+    				$msg = t('The proposal you presented, can not be selected as the project itself is withdrawn. ').
+    				t('Thank you for your effort to write a proposal. ');
+    				break;
+    		default: $msg = t('We are sorry to let you know that for some reason the proposal is rejected. Perhaps you can find the reason in the rationale below, if provided, or in the comments.');
+    	}
+    	
+    	$msg .= "<br/>$reason_txt ";
+    	if (db_update(tableName('proposal'))->
+    		fields(array('state'=>'rejected', 'reason'=>$msg))->
+    		condition('proposal_id', $id)->
+    		execute()){
+//     		$proposal = $this->getProposalById($id, true);
+//     		$mails = $proposal->student_email;
+//     		if ($proposal->supervisor_email){
+//     			$mails .= ",".$proposal->supervisor_email;
+//     		}
+    		//mail 
+    		//TODO send mails to supervisors etc
+    		return TRUE;
+    	} else {
+    		return FALSE;
+    	}
+    }
+    
+    public function retractProposal($id, $reason='', $reason_txt=''){
+    	
+    
+    }
     
     public function getProposals(){
     	$proposals = db_select('soc_proposals')->fields('soc_proposals')->execute()->fetchAll(PDO::FETCH_ASSOC);

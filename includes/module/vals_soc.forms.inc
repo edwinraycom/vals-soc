@@ -372,7 +372,7 @@ function vals_soc_form_user_register_form_alter_handler(&$form, &$form_state) {
 				"#description" => t("(for organisation admins and mentors only)"),
 		);
 	}
-    $url_set_code =   $code;//getRequestVar('c', '', 'GET');
+    $url_set_code =   $code;//getRequestVar('c', '', 'get');
     if ($no_administrator){
         //If the admin adds users directly we do not want the following fields as these are already 
         //provided in one or another way

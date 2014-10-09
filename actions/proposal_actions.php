@@ -189,8 +189,8 @@ switch ($_GET['action']){
 		}
 	break;
 	case 'delete':
-		$proposal_id = getRequestVar('proposal_id', 'post', null);
-		$target = getRequestVar('target', 'post', 'our_content');
+		$proposal_id = getRequestVar('proposal_id', null, 'post');
+		$target = getRequestVar('target', 'our_content', 'post');
 		if($proposal_id){
 			$is_modal = ($target !== 'our_content');
 			//we need the container where the result is bad and we show an error msg
@@ -312,9 +312,11 @@ switch ($_GET['action']){
 			echo jsonBadResult();
 		}
 		break;
+	case 'reject':
+		$id = getRequestVar('id', 0, 'post');
 	case 'view':
-		$proposal_id = getRequestVar('id', 'post', 0);
-		$target = getRequestVar('target', 'post', 'admin_container');
+		$proposal_id = getRequestVar('id', 0, 'post');
+		$target = getRequestVar('target', 'admin_container', 'post');
 		if($proposal_id){
 			//$is_modal = ($target !== 'our_content');
 			//this is the case where the result is bad and we show an error msg
@@ -339,9 +341,9 @@ switch ($_GET['action']){
 	break;
 	
 	case 'mark_proposal':
-		$proposal_id = getRequestVar('proposal_id', 'post', 0);
-		$project_id = getRequestVar('project_id', 'post', 0);
-		$is_final = getRequestVar('is_final', 'post', 0);
+		$proposal_id = getRequestVar('proposal_id', 0, 'post');
+		$project_id = getRequestVar('project_id', 0, 'post');
+		$is_final = getRequestVar('is_final', 0, 'post');
 		 
 		if (!$project_id){
 			echo t('The project could not be found');
