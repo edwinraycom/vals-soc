@@ -87,7 +87,18 @@ function getStudentLayout($timeline_args){
 					</div>
 		';
 	}
-	
+	if($timeline_args['viewProjectIdeas']){
+		$output .='
+		<div class="column-entry org_app projects">
+		<h4>
+		<a class="dashboard-link component-link"
+		href="'.$base_url.'/dashboard/projects/marked"
+		title="'.t("List favourite projects").'">'.t("List favourite projects").'</a>
+		</h4>
+		<p>'.t("Overview list of favourite projects").'</p>
+		</div>
+		';
+	}
 	if($timeline_args['myAcceptedProjectsVisible']){
 		$output .='
 					<div class="column-entry proposals">

@@ -91,15 +91,19 @@ class Project extends AbstractEntity{
     	$this->addProjectCondition($queryString);
     	$queryString .= 	 " ORDER BY " . $sorting
     	." LIMIT " . $startIndex . "," . $pageSize . ";";
-    	$result = db_query($queryString);
-    
-    	$rows = array();
-    	foreach ($result as $record) {
-    		$rows[] = $record;
-    	}
-    	return $rows;
+    	return db_query($queryString)->fetchAll();
     }
 
+    public function getFavouriteProjects(){
+    	$my_id = Users::getMyId();
+    	$queryString = "SELECT p.pid, p.title, p.description, p.tags, p.state, o.name"
+    	." FROM soc_projects p
+    	LEFT JOIN soc_organisations o on p.org_id = o.org_id
+    	LEFT JOIN soc_student_favourites f on p.pid = f.pid"
+    	." WHERE f.uid = $my_id ";
+    	return db_query($queryString)->fetchAll();
+    }
+    
     public function  getStudentsAndProposalCountByCriteriaRowCount($group=''){
        	if(!$group){
     		$group = array();

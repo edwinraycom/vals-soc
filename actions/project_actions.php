@@ -16,6 +16,28 @@ switch ($_GET['action']){
 		module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 		initBrowseProjectLayout();
 	break;
+	case 'mark':
+		if (!(Users::isStudent() ||_DEBUG)){
+			echo t('You can only mark a project as student member of an institute.');
+			return;
+		}
+		$id = getRequestVar('id');
+		$table = tableName('student_favourite');
+		$num_deleted = db_delete($table)
+		->condition('pid', $id)
+		->condition('uid', $GLOBALS['user']->uid)
+		->execute();
+		if ($num_deleted !== FALSE){
+			$result = db_insert($table)
+			->fields(array('pid'=> $id,
+					'uid'=>$GLOBALS['user']->uid))
+					->execute();
+		} else {
+			$result = FALSE;
+		}
+		echo $result ? jsonGoodResult(TRUE, t('You have marked this project')) :
+		jsonBadResult(t('Something went wrong with the project marking.'));
+	break;
 	case 'recommend':
 		if (!(Users::isSuperVisor() ||_DEBUG)){
 			echo t('You can only rate a project as staff member of an institute.');
@@ -107,23 +129,29 @@ switch ($_GET['action']){
 				$organisation = $_POST['organisation'];
 			}
 			$project_id = getRequestVar('pid', null);
+			$favourites_only = getRequestVar('favourites', false);
 			//Return result to jTable
 			$jTableResult = array();
 			$jTableResult['Result'] = "OK";
-			if ($project_id){
-				$project = Project::getProjectById($project_id);
-				if ($project){
-					$jTableResult['TotalRecordCount'] = 1;
-					$jTableResult['Records'] = array($project);
-				} else {
-					$jTableResult['TotalRecordCount'] = 0;
-					$jTableResult['Records'] = array();
-				}
+			if ($favourites_only){
+				$jTableResult['Records'] = Project::getInstance()->getFavouriteProjects();
+				$jTableResult['TotalRecordCount'] = count($jTableResult['Records']);
 			} else {
-				$jTableResult['TotalRecordCount'] = Project::getInstance()->getProjectsRowCountBySearchCriteria(
-						$tags, $organisation);
-				$jTableResult['Records'] = Project::getInstance()->getProjectsBySearchCriteria($tags,
-						$organisation, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
+				if ($project_id){
+					$project = Project::getProjectById($project_id);
+					if ($project){
+						$jTableResult['TotalRecordCount'] = 1;
+						$jTableResult['Records'] = array($project);
+					} else {
+						$jTableResult['TotalRecordCount'] = 0;
+						$jTableResult['Records'] = array();
+					}
+				} else {
+					$jTableResult['TotalRecordCount'] = Project::getInstance()->getProjectsRowCountBySearchCriteria(
+							$tags, $organisation);
+					$jTableResult['Records'] = Project::getInstance()->getProjectsBySearchCriteria($tags,
+							$organisation, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
+				}
 			}
 			//Save it for navigation
 			$_SESSION['lists']['projects'] = array();
@@ -223,6 +251,15 @@ switch ($_GET['action']){
 					$project['rate'] = Project::getRating($project_id, $my_id);
 				} else {
 					$project['rate'] = -2;
+					if (Users::isStudent() || _DEBUG){
+						$table = tableName('student_favourite');
+						$favourite = db_select($table)->fields($table)
+						->condition('pid', $project_id)
+						->condition('uid', $my_id)
+						->execute()->rowCount();
+						$project['favourite'] = ($favourite !=0);
+								
+					}
 				}
 				jsonGoodResult($project);
 			} catch (Exception $e){

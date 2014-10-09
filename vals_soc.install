@@ -12,6 +12,12 @@ function vals_soc_install(){
     drupal_install_schema('soc_user_membership');
     drupal_install_schema('soc_studentgroups');
     
+     drupal_install_schema('soc_comments');
+     drupal_install_schema('soc_names');
+     drupal_install_schema('soc_proposals');
+     drupal_install_schema('soc_supervisor_rates');
+     drupal_install_schema('soc_student_favourites');
+    
     create_roles();
     create_permissions();
     create_codes();
@@ -40,19 +46,25 @@ function vals_soc_uninstall() {
   // Delete tables.
     $tables = array(
         'soc_projects',
-        'soc_studentgroups',
         'soc_codes',
-        'soc_organisations',
         'soc_institutes',
-        'soc_user_membership'
+        'soc_organisations',
+        'soc_user_membership',
+        'soc_studentgroups',
+        
+         'soc_comments',
+	     'soc_names',
+	     'soc_proposals',
+	     'soc_supervisor_rates',
+	     'soc_student_favourites',
     );
     foreach ($tables as $table) {
         if (db_table_exists($table)) {
             db_drop_table($table);
         }
     }
-	//TODO - remove all custom roles in the drupal rols table
-  menu_cache_clear_all();
+	db_query("DELETE FROM role WHERE rid > "._USER_ROLE);
+  	menu_cache_clear_all();
 }
 /**
  * Implements Drupal hook_schema()
@@ -134,4 +146,36 @@ function vals_soc_DONOTDOTHISupdate_7104() {
 	
 	//This is what should happen
 	//ALTER TABLE `soc_names` CHANGE `name` `name` VARCHAR( 50 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+}
+
+/**
+* Create new database table {soc_student_favourites}. in svn version 0.5.5. The 05 follow up is coincidence
+  and has nothing to do with the svn version. Currently we are in version 7.x.1.2
+*/
+function vals_soc_update_7105() {
+  $schema['soc_student_favourites'] = array(
+			'description' => 'The students will mark some projects as their favourites',
+			'fields' => array(
+					'favour_id' => array(
+							'description' => 'favourite auto id.',
+							'type' => 'serial',
+							'length' => 'small',
+							'not null' => TRUE,
+					),
+                    'uid' => array(
+							'description' => 'the student uid.',
+							'type' => 'int',
+							'unsigned' => TRUE,
+        					'not null' => TRUE,
+					),
+					'pid' => array(
+							'description' => 'The project id',
+							'type' => 'int',
+							'unsigned' => TRUE,
+        					'not null' => TRUE,
+					)
+			),
+			'primary key' => array('favour_id'),
+	);
+  db_create_table('soc_student_favourites', $schema['soc_student_favourites']);
 }

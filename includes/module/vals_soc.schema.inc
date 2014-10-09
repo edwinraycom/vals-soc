@@ -73,12 +73,6 @@ function vals_soc_schema_handler() {
 							'length' => 'medium',
 							'not null' => TRUE,
 					),
-					'cv' => array(
-							'description' => 'The cv of this student',
-							'type' => 'text',
-							//'size' => '1024',
-							'not null' => TRUE,
-					),
 					'solution_short' => array(
 							'description' => 'The short description of the proposal.',
 							'type' => 'varchar',
@@ -88,12 +82,6 @@ function vals_soc_schema_handler() {
 					),
 					'solution_long' => array(
 							'description' => 'A longer description of the proposal',
-							'type' => 'text',
-							//'size' => '1024',
-							'not null' => TRUE,
-					),
-					'modules' => array(
-							'description' => 'The modules used for the solution in this project',
 							'type' => 'text',
 							//'size' => '1024',
 							'not null' => TRUE,

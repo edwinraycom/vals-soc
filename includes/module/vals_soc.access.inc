@@ -62,6 +62,8 @@ function pageAccessCheck($access_string) {
 		case 'dashboard/projects/administer/mine':
 			return hasPermission('vals admin projects') && Timeline::getInstance()->organisationSignupPeriodOpened();
 			break;
+		case 'dashboard/projects/marked': return hasRole(array(_STUDENT_TYPE));
+		break;
 		case 'projects/browse':
 		case 'dashboard/projects/browse':
 			// any user must have 'val browse projects' permission

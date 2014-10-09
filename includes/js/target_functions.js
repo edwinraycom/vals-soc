@@ -394,7 +394,6 @@ function populateModal(result, args){
 function generateAndPopulateModal(result, fun, arg1){
 	// TODO : work more on the formatting
 	// and add other fields from DB
-	console.log('In de generatePopulate');
 	Drupal.CTools.Modal.show();
 	var return_result = populateModal(result, [fun, arg1]);
 	Drupal.attachBehaviors();

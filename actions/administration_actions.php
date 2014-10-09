@@ -112,6 +112,7 @@ switch ($_GET['action']){
     	$type = altSubValue($_POST, 'type', '');
     	$id = altSubValue($_POST, 'id', '');
     	$target = altSubValue($_POST, 'target', '');
+    	//perhaps the type can be derived from the current url (based on http-referrer system var)
     	extract(deriveTypeAndAction(empty($type)), EXTR_OVERWRITE);
     	if (! isValidOrganisationType($type)) {
     		echo jsonBadResult(t('There is no such type we can delete'));
