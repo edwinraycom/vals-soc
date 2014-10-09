@@ -26,8 +26,12 @@ class Project extends AbstractEntity{
     	return $projects;
     }
     
-    public static function getProjectById($id, $details= false, $fetch_style=PDO::FETCH_ASSOC){
-    	$query = db_select('soc_projects', 'p')->fields('p', self::$fields)->condition('pid', $id);
+    public static function getProjectById($id, $details= false, $fetch_style=PDO::FETCH_ASSOC, $get_prop_count= false){
+    	$query = db_select('soc_projects', 'p')->fields('p', self::$fields)->condition('p.pid', $id);
+    	if ($get_prop_count){
+    		$query->leftjoin('soc_proposals', 'prop', 'p.pid = prop.pid');
+    		$query->addExpression('COUNT(prop.proposal_id)', 'proposal_count');
+    	}
     	if ($details){
     		$query->leftjoin('users', 'u1', 'p.mentor_id = %alias.uid');
     		$query->leftjoin('users', 'u2', 'p.owner_id = %alias.uid');
@@ -46,6 +50,20 @@ class Project extends AbstractEntity{
     	return $project;
     }
     
+	public static function addProjectCondition(&$query, $project_alias = 'p.') {
+		// we want to deliver all the non-draft projects except for the owner (or colleagues) of these projects
+		$myorgs = Organisations::getMyOrganisations ();
+		if (gettype ( $query ) == 'string') {
+			$query .= " AND (${project_alias}state <> 'draft'" . ($myorgs ? " OR ${project_alias}org_id IN (" . implode ( $myorgs, ',' ) . "))" : ")");
+		} else {
+			if ($myorgs) {
+				$query->condition ( db_or ()->condition ( "${project_alias}state", 'draft', '<>' )->condition ( "${project_alias}org_id", $myorgs, 'IN' ) );
+			} else {
+				$query->condition ( 'state', 'draft', '<>' );
+			}
+		}
+	}
+    
     public function getProjectsRowCountBySearchCriteria($tags, $organisation){
     	$projectCount = db_select('soc_projects');
     	if(isset($tags)){
@@ -58,30 +76,13 @@ class Project extends AbstractEntity{
     	$projectCount->fields('soc_projects');
     	return $projectCount->execute()->rowCount();
     }
-    
-    public static function addProjectCondition(&$query, $project_alias='p.'){
-    	//we want to deliver all the non-draft projects except for the owner (or colleagues) of these projects
-    	$myorgs = Organisations::getMyOrganisations();
-    	if (gettype($query) == 'string') {
-    		$query .= " AND (${project_alias}state <> 'draft'".
-    			($myorgs ? " OR ${project_alias}org_id IN (".implode($myorgs, ',')."))" : ")");
-    	} else {
-    		if ($myorgs){
-	    		$query->condition(
-					db_or()
-						->condition("${project_alias}state", 'draft', '<>')
-						->condition("${project_alias}org_id", $myorgs, 'IN'));
-    		} else {
-    			$query->condition('state', 'draft', '<>');
-    		}
-    	}
-    }
-    
+
     public function getProjectsBySearchCriteria($tags, $organisation, $sorting, $startIndex, $pageSize){
-    	$queryString = "SELECT p.pid, p.title, p.description, p.tags, p.state, o.name"
-    			." FROM soc_projects p
-    			   LEFT JOIN soc_organisations o on p.org_id = o.org_id"
-    			." WHERE 1=1 ";
+    	$queryString = "SELECT p.pid, p.title, p.description, p.tags, p.state, o.name, COUNT(v.proposal_id) AS proposal_count "
+    			."FROM soc_projects p "
+    			."LEFT JOIN soc_proposals AS v ON ( v.pid = p.pid ) "
+    			."LEFT JOIN soc_organisations o ON ( p.org_id = o.org_id) "
+    			."WHERE 1=1 ";
     	if(isset($tags)){
     		$queryString .=	 " AND tags LIKE '%".$tags."%'";
     	}
@@ -89,8 +90,10 @@ class Project extends AbstractEntity{
     		$queryString .=	 " AND p.org_id = ".$organisation;
     	}
     	$this->addProjectCondition($queryString);
-    	$queryString .= 	 " ORDER BY " . $sorting
-    	." LIMIT " . $startIndex . "," . $pageSize . ";";
+    	$queryString .= " GROUP BY p.pid ";
+    	$queryString .= " ORDER BY " . $sorting . " ";
+    	
+    	$queryString .= "LIMIT " . $startIndex . "," . $pageSize . ";";
     	return db_query($queryString)->fetchAll();
     }
 
