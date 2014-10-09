@@ -26,7 +26,7 @@ function chooseProposalForProject(project_id, proposal_id, is_final){
 		content += '\n';
 	}
 	if (confirm(content)) {
-		var url = moduleUrl + "actions/project_actions.php?action=mark_proposal";
+		var url = moduleUrl + "actions/proposal_actions.php?action=mark_proposal";
 		$jq.post(url, {'proposal_id': proposal_id, 'project_id' : project_id, 'is_final' : is_final}, function(data,status){
 			if(!is_final){
 				ajaxInsert(data, 'proposal-intrim-markup-'+proposal_id+'-button');
