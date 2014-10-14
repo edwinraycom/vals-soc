@@ -115,16 +115,24 @@ function pageAccessCheck($access_string) {
 			break;
 		case 'dashboard/proposals/mine':
 			return  hasRole(array(_STUDENT_TYPE));
-			break;		
+			break;
 		case 'institutes/browse':
-			 if( (hasRole(array(_STUDENT_TYPE)) || hasRole(array(_ANONYMOUS_TYPE))) && 
-					Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
-					return TRUE;
-				} else {
-					// everyone else with 'vals browse projects' permission can see projects once org applications open
-				 	return (Timeline::getInstance()->organisationSignupPeriodOpened());
-				};
-	
+			if( (hasRole(array(_STUDENT_TYPE)) || hasRole(array(_ANONYMOUS_TYPE))) && 
+				Timeline::getInstance()->isAfterOrgsAnnouncedDate() ){
+				return TRUE;
+			} 
+			else {
+				// everyone else with 'vals browse projects' permission can see projects once org applications open
+			 	return (Timeline::getInstance()->organisationSignupPeriodOpened());
+			};
+			break;
+		case 'dashboard/projects/offers':
+			if(hasRole(array(_STUDENT_TYPE)) && Timeline::getInstance()->hasStudentSignupPeriodOpened() ){
+				return TRUE;
+			} else {
+				return FALSE;
+			}
+			break;
 		default:
 			return hasPermission($access_string);
 	}

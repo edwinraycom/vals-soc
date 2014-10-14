@@ -111,6 +111,7 @@ function showOrganisationProjects($org_nr, $projects, $organisation, $show_org_t
 	<?php
 }
 
+/*
 function renderProjects($organisation_selection='', $projects='', $target='', $inline=FALSE, $reload_data=TRUE, $owner_only=FALSE){
 	if (!$projects && $reload_data){
 		$projects = Project::getProjects('', ($owner_only ? $GLOBALS['user']->uid: null), $organisation_selection);
@@ -182,7 +183,7 @@ function renderProject($project='', $target='', $inline=FALSE, $all_can_edit=_VA
 	
 	return $content;
 }
-
+*/
 function initBrowseProjectLayout($pid=''){
 	$org_id=0;
 	if(isset($_GET['organisation'])){

@@ -407,9 +407,34 @@ switch ($_GET['action']){
 		}
 		else{
 			// send message back saying mentor has already made his decision & can't change it
-			echo t('You already have chosen a final proposal for this project, you cannot change it now.');
+			echo t('You already have chosen a final proposal for this project, you cannot change it now, unless the students chooses another offer.');
 		}
 	break;
+	case 'list_my_offers':
+		try{
+			if(!(Users::isStudent())){
+				echo jsonBadResult(t('Only students can accept project offers'));
+			}
+			$student = $GLOBALS['user']->uid;
+	
+			$organisation=null;
+			if(isset($_POST['organisation']) && $_POST['organisation']){
+				$organisation = $_POST['organisation'];
+			}
+			$cnt = Proposal::getInstance()->getProposalsRowCountBySearchCriteria(
+					$student, null, $organisation, null, true);
+			$recs = $cnt ?
+			Proposal::getInstance()->getProposalsBySearchCriteria(
+					$student, null, $organisation, null, $_GET["jtSorting"], $_GET["jtStartIndex"],
+					$_GET["jtPageSize"], true) :
+					array();
+			jsonGoodResultJT($recs, $cnt);
+		}
+		catch(Exception $ex){
+			//Return error message
+			jsonBadResultJT($ex->getMessage());
+		}
+		break;
 	case 'show':
 		// THIS IS A PLACEHOLDER
 	break;

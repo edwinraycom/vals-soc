@@ -174,20 +174,25 @@ class Proposal extends AbstractEntity{
     	return tt('Proposal for: %1$s', $title);
     }
     
-    public function getProposalsRowCountBySearchCriteria($student='', $institute='', $organisation='', $project=''){
+    public function getProposalsRowCountBySearchCriteria($student='', $institute='', $organisation='', $project='', $accepted_only=false){
     	$query = db_select('soc_proposals', 'p')->fields('p');
     	if($student){
-    		$query->condition('owner_id', $student);
+    		$query->condition('p.owner_id', $student);
     	}
     	if($institute){
-    		$query->condition('inst_id', $institute);
+    		$query->condition('p.inst_id', $institute);
     	}
     	if($organisation){
-    		$query->condition('org_id', $organisation);
+    		$query->condition('p.org_id', $organisation);
     	}
     	if($project){
-    		$query->condition('pid', $project);
+    		$query->condition('p.pid', $project);
     	}
+        if($accepted_only){
+    		$query->condition('pr.selected', true);
+    		$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid');
+    	}
+    	 
     	return $query->execute()->rowCount();
     }
     
@@ -197,7 +202,7 @@ class Proposal extends AbstractEntity{
     }
     
     public function getProposalsBySearchCriteria($student='', $institute='', $organisation='', $project='', $sorting='pid',
-    	$startIndex=1, $pageSize=10)
+    	$startIndex=1, $pageSize=10, $accepted_only=false)
     {
     	
     	$query = db_select('soc_proposals', 'p')->fields('p', array(
@@ -213,6 +218,9 @@ class Proposal extends AbstractEntity{
     	}
     	if($project){
     		$query->condition('p.pid', $project);
+    	}
+    	if($accepted_only){
+    		$query->condition('pr.selected', true);
     	}
     	$query->leftjoin('soc_names', 'student', 'p.owner_id = %alias.names_uid');
     	$query->leftjoin('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
