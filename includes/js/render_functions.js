@@ -544,6 +544,18 @@ function getProposalsForStudent(studentId, show_mine_only){
 	ajaxCall("institute", "render_proposals_for_student", {id: studentId, target:'our_content', mine_only:show_mine_only}, "formResult", 'html', 'our_content');
 }
 
+function acceptProjectOffer(proposalId, ptitle){
+	var confirm_text = '';
+	confirm_text += Drupal.t('Are you sure that you want to choose this one?') + '\n\n';
+	confirm_text += ptitle + '\n\n';
+	confirm_text += Drupal.t('By clicking okay you agree to be the chosen student for this project idea and cannot change to another.') + '\n';
+	confirm_text += Drupal.t('Any other project offers will marked as rejected by you and made available to other students again');
+	if(confirm(confirm_text)){
+		ajaxCall("proposal", "accept_proposal_offer", {proposal_id: proposalId, target:'our_content'}, "formResult", 'html', 'our_content');
+	}
+	
+}
+
 function getProposalFormForProject(projectId){
 	Drupal.CTools.Modal.dismiss();
 	//With formResult it will turn all textareas in rte fields and with handleResult, it just copies the

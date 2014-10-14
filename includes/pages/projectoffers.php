@@ -67,20 +67,13 @@ function initBrowseProjectOffersLayout(){
 								width: "35%",
 								display: function (data){return data.record.o_name;}
 							},
-							/*
-							proposal_count : {
-								title: "Proposals",
-								width: "10%",
-								display: function (data){return data.record.owner_id + " : " +data.record.pr_proposal_id+" : "+data.record.selected}
-							},
-							*/
 							accept_col : {
 								width: "6%",
 		    					title: "Accept",
 								sorting: false,
 		    					display: function (data) {
 									return "<a title=\"Accept this offer\" href=\"javascript:void(0);\" "+
-										"onclick=\"alert("+data.record.pid+")\">"+
+										"onclick=\"acceptProjectOffer("+data.record.proposal_id+",'"+data.record.pr_title+"')\">"+
 											"<span class=\"ui-icon ui-icon-star\">accept</span></a>";
 		    					},
 	

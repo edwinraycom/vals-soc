@@ -176,3 +176,19 @@ CREATE TABLE `soc_comments` (
   `description` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS soc_agreements;
+CREATE TABLE IF NOT EXISTS soc_agreements (
+  agreement_id mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  student_id mediumint(8) unsigned NOT NULL,
+  supervisor_id mediumint(8) NOT NULL,
+  mentor_id mediumint(8) NOT NULL,
+  proposal_id mediumint(8) unsigned NOT NULL,
+  project_id mediumint(8) unsigned NOT NULL,
+  description TEXT DEFAULT '' COMMENT 'Description of the agreement',
+  student_signed tinyint(4) DEFAULT '0' COMMENT 'Whether the project is signed off by a student',
+  supervisor_signed tinyint(4) DEFAULT '0' COMMENT 'Whether the project is signed off by a student',
+  mentor_signed tinyint(4) DEFAULT '0' COMMENT 'Whether the project is signed off by a student',
+  PRIMARY KEY (agreement_id)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
