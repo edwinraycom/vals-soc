@@ -112,6 +112,18 @@ function getStudentLayout($timeline_args){
 		</div>
 		';
 	}
+	if($timeline_args['myOffersVisible']){
+		$output .='
+		<div class="column-entry  proposals_submitted">
+		<h4>
+		<a class="dashboard-link component-link"
+		href="'.$base_url.'/dashboard/projects/offers"
+		title="'.t("Manage your project offers").'">'.t("Manage your project offers").'</a>
+		</h4>
+		<p>'.t("Allows you to select your final project from your accepted proposals.").'</p>
+		</div>
+		';
+	}
 	if($timeline_args['myAcceptedProjectsVisible']){
 		$output .='
 					<div class="column-entry proposals">

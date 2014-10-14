@@ -377,6 +377,5 @@ switch ($_GET['action']){
     		echo $result ? jsonGoodResult(true, '', array('extra'=> ($mine? array( 'mine' =>1) :''))) : jsonBadResult();
     	}
     break;
-	//
 	default: echo "No such action: ".$_GET['action'];
 }

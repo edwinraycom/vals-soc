@@ -55,9 +55,8 @@ function vals_soc_menu_handler(){
 	$items['dashboard/projects/administer/mine'] = getMyProjectsAdministerLink('dashboard/projects/administer/mine');
 	$items['dashboard/projects/browse'] = getProjectsBrowseLink('dashboard/projects/browse');
 	$items['dashboard/projects/marked'] = getFavouriteProjectsLink('dashboard/projects/marked');
+	$items['dashboard/projects/offers'] = getMyProjectOffersLink('dashboard/projects/offers');
 	
-	
-
 	// proposal actions
 	$items['dashboard/proposals/browse'] = getProposalsBrowseLink('dashboard/proposals/browse'); // browse all proposals - not used yet - might be part of admin view at some stage
 	
@@ -345,6 +344,21 @@ function getFavouriteProjectsLink($path){
 			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
+
+function getMyProjectOffersLink($path){
+	return array(
+			'title' => t('My project offers'),
+			'type' => MENU_CALLBACK, // register link, but dont put it in the menu
+			'page callback' => 'vals_soc_my_project_offers',
+			'access callback' => 'vals_soc_access_check',
+			'access arguments' => array($path),
+			'description' => t('Favourite projects page'),
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
+	);
+}
+//
+
 
 /**
  * ALLOWS USERS TO VIEW THE ORGANISAITONS IN THE SYSTEM
