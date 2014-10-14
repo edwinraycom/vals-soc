@@ -1,5 +1,6 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
+include(_VALS_SOC_ROOT.'/includes/classes/Agreement.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
@@ -433,6 +434,41 @@ switch ($_GET['action']){
 		catch(Exception $ex){
 			//Return error message
 			jsonBadResultJT($ex->getMessage());
+		}
+		break;
+	case 'accept_proposal_offer':
+		if(!(Users::isStudent())){
+			echo jsonBadResult(t('Only students can accept project offers'));
+		}
+		$student = $GLOBALS['user']->uid;
+		if(isset($_POST['proposal_id']) && $_POST['proposal_id']){
+			if(Groups::isOwner('proposal', $_POST['proposal_id'])){
+				/*
+				 * TODO
+				  =============================================================  
+				    1. Mentor1 has chosen proposal1 by student1 - this has already marked in the system as 'final'
+					2. Student1 also is chosen by mentor2 of proposal2 - again this is marked in the system 'final'
+					3. Student1 chooses proposal1 by student1 as his/her preferred
+				    4. Now we loop through all proposals submitted by student1 and marked as chosen 'final' by any mentors
+    -				 where there is a chosen proposal for project and that student has now chosen another proposal
+    				a. email ALL concerned what the student decided
+    				b. deselect the original 'final' status for projects he has not accepted, which would allow the mentor to reallocate his 'final' proposal to someone else.
+    				c. email students who have made a proposal previously that this project idea has now reopened.
+					5. Additionally, we'd have to change the wording of what a mentor marking a proposal as final actually means, as at that stage a student may still reject it.
+				 */ 
+				
+				// next create the initial agreement entity in the db
+				$props = array();
+				$props['proposal_id'] = $_POST['proposal_id'];
+				$agreement = Agreement::getInstance()->insertAgreement($props);
+				echo t('You have now chosen your project, congratulations!');
+			}
+			else{
+				echo t('Only the proposal owner can accept this project offer.');
+			}
+		}
+		else{
+			echo t('No proposal Id found in request.');
 		}
 		break;
 	case 'show':
