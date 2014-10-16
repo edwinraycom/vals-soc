@@ -287,7 +287,7 @@ function get_project_status_update_email_body($record, $is_final, $is_student, $
 		else if(!$is_final && $is_successful){
 			$alert .= t('You have previously made a proposal to the project idea below. '.
 					'The owner of that project has decided to mark your proposal as his/her preferred interim one at this time. '.
-					'This decision is NOT final however and the owner may in the future decide to change this to another students proposal. '.
+					'This decision is not final however and the owner may in the future decide to change this to another students proposal. '.
 					'If the project owners decision does become final or he/she changes their preferred interim proposal, you will be informed by email.');
 		}
 	}

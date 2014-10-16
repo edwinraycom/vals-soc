@@ -86,7 +86,7 @@ function initBrowseProjectOffersLayout(){
 								sorting: false,
 		    					display: function (data) {
 									return "<a title=\"Accept this offer\" href=\"javascript:void(0);\" "+
-										"onclick=\"acceptProjectOffer("+data.record.proposal_id+",'"+data.record.pr_title+"')\">"+
+										"onclick=\"acceptProjectOffer("+data.record.proposal_id+",'"+data.record.pr_title+"', "+data.record.pid+")\">"+
 											"<span class=\"ui-icon ui-icon-star\">accept</span></a>";
 		    					},
 	

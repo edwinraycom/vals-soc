@@ -295,6 +295,56 @@ function notify_students_and_supervisors_of_project_status_update($all_proposals
 	vals_soc_send_emails_cron($items);
 }
 
+function notify_all_of_project_offer_acceptance($proposal, $proposal_id, $was_successful){
+	/*
+	$student_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mail);
+	$supervisor_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->supervisor_user_mail);
+	$mentor_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mentor_user_mail);
+	*/
+	$student_recipient = $proposal->mail;
+	$supervisor_recipient = $proposal->supervisor_user_mail;
+	$mentor_recipient = $proposal->mentor_user_mail;
+	$proposal_title = $proposal->title;
+	$project_title = $proposal->pr_title;
+
+	if ($was_successful){ // email (student, supervisor, mentor) that this project has now been accepted by this student
+		echo '<hr/><br/>student:'. $proposal_title . ' : ' . $project_title . ' : ' . $student_recipient . ' :ACCEPTED OFFER';
+		echo '<hr/><br/>supervisor:'. $proposal_title . ' : ' . $project_title . ' : ' . $supervisor_recipient . ' :ACCEPTED OFFER';
+		echo '<hr/><br/>mentor:'. $proposal_title . ' : ' . $project_title . ' : ' . $mentor_recipient . ' :ACCEPTED OFFER';
+	}
+	else{ // email (student & supervisor) that this project has now been accepted by another student and is finally gone!
+		echo '<hr/><br/>student:'. $proposal_title . ' : ' . $project_title . ' : ' . $student_recipient . ' :ACCEPTED BY ANOTHER, project taken';
+		echo '<hr/><br/>supervisor:'. $proposal_title . ' : ' . $project_title . ' : ' . $supervisor_recipient . ' :ACCEPTED BY ANOTHER, project taken';
+	}
+
+}
+
+function notify_all_of_project_offer_rejection($proposal, $proposal_id, $is_interim){
+	/*
+	$student_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mail);
+	$supervisor_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->supervisor_user_mail);
+	$mentor_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mentor_user_mail);
+	*/
+	$student_recipient = $proposal->mail;
+	$supervisor_recipient = $proposal->supervisor_user_mail;
+	$mentor_recipient = $proposal->mentor_user_mail;
+	$proposal_title = $proposal->title;
+	$project_title = $proposal->pr_title;
+	
+	
+	if ($is_interim){ // email mentor only because it wasn't final - rejected PREFERRED INTERIM 
+		echo '<hr/><br/>mentor:'. $proposal_title . ' : ' . $project_title . ' : ' . $mentor_recipient . ' :WITHDRAWN, choose another INTRIM';
+	}
+	else{ // email (mentor) - rejected OFFER - project is therefore reopened and he should choose another proposal
+		 // email this proposal (student & supervisor) to say that the project has reopended and the mentor can choose another, possibly theirs
+		echo '<hr/><br/>student:'. $proposal_title . ' : ' . $project_title . ' : ' . $student_recipient . ' :REJECTED OFFER';
+		echo '<hr/><br/>supervisor:'. $proposal_title . ' : ' . $project_title . ' : ' . $supervisor_recipient . ' :REJECTED OFFER';
+		echo '<hr/><br/>mentor:'. $proposal_title . ' : ' . $project_title . ' : ' . $mentor_recipient . ' :REJECTED OFFER, choose another FINAL';
+	
+	}
+	
+}
+
 function notify_mentor_and_supervisor_of_proposal_update($record, $is_update){
 	// TODO - fix the name missing on one of the emails
 	$subject = t('VALS Proposal Notification');

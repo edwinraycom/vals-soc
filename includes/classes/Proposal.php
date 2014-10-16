@@ -108,7 +108,8 @@ class Proposal extends AbstractEntity{
     		$query->leftjoin('soc_names', 'student', 'p.owner_id = %alias.names_uid');
 	    	$query->leftjoin('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
 	    	$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
-	    	$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid');$query->leftjoin('users', 'mentor_user', 'pr.mentor_id = %alias.uid');
+	    	$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid');
+	    	$query->leftjoin('users', 'mentor_user', 'pr.mentor_id = %alias.uid');
     		$query->leftjoin('soc_names', 'mentor', 'pr.mentor_id = %alias.names_uid');
     		$query->leftjoin('users', 'u1', 'p.owner_id = %alias.uid');
     		$query->leftjoin('users', 'supervisor_user', 'p.supervisor_id = %alias.uid');
@@ -119,7 +120,7 @@ class Proposal extends AbstractEntity{
     		$query->fields('student', array('name'));
     		$query->fields('i', array('name'));
     		$query->fields('o', array('name'));
-    		$query->fields('pr', array('title'));
+    		$query->fields('pr', array('proposal_id', 'title'));
     	}
     	
     	
