@@ -235,14 +235,15 @@ function get_project_status_update_email_body($record, $is_final, $is_student, $
 		$recipient_username = $record->supervisor_user_name;
 		if($is_final && !$is_successful){
 			$alert .= t('One of your students has previously made a proposal to the project idea below. '.
-					'The owner of that project has however decided to mark another students proposal as their FINAL choice. '.
-					'This decision is final and so unfortunately your students proposal has been declined. '. 
+					'The owner of that project has however decided to offer it to another students proposal. '.
+					'If the other student decides to accept the offer, this decision becomes final and so unfortunately your students proposal will have been declined. '.
+					'However, if the other student declines the offer, the project idea will reopen and the mentor may choose another proposal. '.
 					'This gives you both advance warning in case you wish to submit another proposal for another project idea before the end of the student signup period. ');
 		}
 		else if(!$is_final && !$is_successful){
 			$alert .= t('One of your students has previously made a proposal to the project idea below. '.
 					'The owner of that project has however decided to mark another students proposal as his/her preferred interim one at this time. '.
-					'This decision is NOT final however and the owner may in the future decide to change this to another students proposal. '. 
+					'This decision is not final however and the owner may in the future decide to change this to another students proposal. '. 
 					'This gives your student an opportunity to revise and/or restructure his/her proposal if they wish to do so. '.
 					'This also gives you both advance warning in case you wish to submit another proposal for another project idea before the end of the student signup period. '.
 					'If the project owners decision does become final, you will be informed by email.');
@@ -255,7 +256,7 @@ function get_project_status_update_email_body($record, $is_final, $is_student, $
 		else if(!$is_final && $is_successful){
 			$alert .= t('One of your students has previously made a proposal to the project idea below. '.
 					'The owner of that project has decided to mark your students proposal as his/her preferred interim one at this time. '.
-					'This decision is NOT final however and the owner may in the future decide to change this to another students proposal. '.
+					'This decision is not final however and the owner may in the future decide to change this to another students proposal. '.
 					'If the project owners decision does become final or he/she changes their preferred interim proposal, you will be informed by email.');
 		}
 	}
@@ -263,14 +264,15 @@ function get_project_status_update_email_body($record, $is_final, $is_student, $
 		$recipient_username = $record->name;
 		if($is_final && !$is_successful){
 			$alert .= t('You have previously made a proposal to the project idea below. '.
-					'The owner of that project has however decided to mark another students proposal as their FINAL choice. '.
-					'This decision is final and so unfortunately your proposal has been declined. '. 
+					'The owner of that project has however decided to offer it to another students proposal. '.
+					'If the other student decides to accept the offer, this decision becomes final and so unfortunately your proposal will have been declined. '.
+					'However, if the other student declines the offer, the project idea will reopen and the mentor may choose another proposal. '.
 					'This gives you advance warning in case you wish to submit another proposal for another project idea before the end of the student signup period. ');
 		}
 		else if(!$is_final && !$is_successful){
 			$alert .= t('You have previously made a proposal to the project idea below. '.
 					'The owner of that project has however decided to mark another students proposal as his/her interim preferred one at this time. '.
-					'This decision is NOT final however and the owner may in the future decide to change this to another students proposal. '. 
+					'This decision is not final however and the owner may in the future decide to change this to another students proposal. '. 
 					'This gives you an opportunity to revise and/or restructure your proposal if you wish to do so. '.
 					'This also gives you advance warning in case you wish to submit another proposal for another project idea before the end of the student signup period. '.
 					'If the project owners decision does become final, you will be informed by email.');
