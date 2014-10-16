@@ -386,7 +386,7 @@ class StatelessTimeline {
 		$timeline_args['myOrganisationsVisible'] = FALSE; // a list of organisations i participate in
 		$timeline_args['myProposalsVisible'] = FALSE; // proposals I have submitted
 		$timeline_args['myOffersVisible'] = FALSE;
-		$timeline_args['myAcceptedProjectsVisible'] = FALSE;
+		$timeline_args['myAcceptedProjectVisible'] = FALSE;
 		$timeline_args['dashboardLegend'] = "";
 	
 		$period = $timeline->getCurrentPeriod();
@@ -406,23 +406,24 @@ class StatelessTimeline {
 			case POST_ORGS_ANNOUNCED_PERIOD: // orgs announced so lets student look at the project ideas - cant apply yet
 				$timeline_args['dashboardLegend'] = t("You can now browse the organisations and project ideas. ".
 						"You can start to apply for projects once the student sign period begins. ").
-						$timeline->getStudentsSignupStartDate()->format('F j, Y, g:i a');
-						$timeline_args['myInstitutionVisible'] = TRUE; // see my institution details
-						$timeline_args['viewOrganisations'] = TRUE; // look at the organisations
-						$timeline_args['viewProjectIdeas'] = TRUE; // look at the project ideas
-						$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
-						break;
+				$timeline->getStudentsSignupStartDate()->format('F j, Y, g:i a');
+				$timeline_args['myInstitutionVisible'] = TRUE; // see my institution details
+				$timeline_args['viewOrganisations'] = TRUE; // look at the organisations
+				$timeline_args['viewProjectIdeas'] = TRUE; // look at the project ideas
+				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
+				break;
 			case STUDENT_SIGNUP_PERIOD: // Students can now apply for projects
 				$timeline_args['dashboardLegend'] = t("Student signup period. You can now submit project proposals." .
 						"Please complete any project proposals before the following date. ").
-						$timeline->getStudentsSignupEndDate()->format('F j, Y, g:i a');;
-						$timeline_args['myInstitutionVisible'] = TRUE; // see my institution details
-						$timeline_args['viewOrganisations'] = TRUE; // look at ALL of the organisations
-						$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
-						$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
-						$timeline_args['myOffersVisible'] = TRUE; // allow students to see their project offers
-						$timeline_args['myProposalsVisible'] = TRUE;// see just my proposals - not yet accepted
-						break;
+				$timeline->getStudentsSignupEndDate()->format('F j, Y, g:i a');;
+				$timeline_args['myInstitutionVisible'] = TRUE; // see my institution details
+				$timeline_args['viewOrganisations'] = TRUE; // look at ALL of the organisations
+				$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
+				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
+				$timeline_args['myOffersVisible'] = TRUE; // allow students to see their project offers
+				$timeline_args['myAcceptedProjectVisible'] = TRUE; // this appears once a student has selected a project
+				$timeline_args['myProposalsVisible'] = TRUE;// see just my proposals - not yet accepted
+				break;
 			case PRE_ORGS_REVIEW_APPLICATIONS_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Project proposals due to be evaluated by. ") .
 				$timeline->getOrgsReviewApplicationsDate()->format('F j, Y, g:i a');
@@ -431,6 +432,7 @@ class StatelessTimeline {
 				$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
 				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
 				$timeline_args['myOffersVisible'] = TRUE; // allow students to see their project offers
+				$timeline_args['myAcceptedProjectVisible'] = TRUE; // this appears once a student has selected a project
 				$timeline_args['myProposalsVisible'] = TRUE;// see just my proposals - not yet accepted
 				break;
 			case PRE_PROPOSAL_MATCHED_DEADLINE:
@@ -441,6 +443,7 @@ class StatelessTimeline {
 				$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
 				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
 				$timeline_args['myOffersVisible'] = TRUE; // allow students to see their project offers
+				$timeline_args['myAcceptedProjectVisible'] = TRUE; // this appears once a student has selected a project
 				$timeline_args['myProposalsVisible'] = TRUE;// see just my proposals - not yet accepted
 				break;
 			case PRE_STUDENTS_ANNOUNCED_DEADLINE:
@@ -451,6 +454,7 @@ class StatelessTimeline {
 				$timeline_args['viewProjectIdeas'] = TRUE; // look at ALL of the project ideas
 				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
 				$timeline_args['myOffersVisible'] = TRUE; // allow students to see their project offers
+				$timeline_args['myAcceptedProjectVisible'] = TRUE; // this appears once a student has selected a project
 				$timeline_args['myProposalsVisible'] = TRUE;// see just my proposals - not yet accepted
 				break;
 			case PRE_BONDING_PERIOD: // here is where student sees his accepted projects
@@ -463,7 +467,7 @@ class StatelessTimeline {
 				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
 				$timeline_args['myProposalsVisible'] = TRUE;// see just my proposals - not yet accepted
 				$timeline_args['myOffersVisible'] = TRUE; // allow students to see their project offers
-				$timeline_args['myAcceptedProjectsVisible'] =  TRUE; // projects I am accepted onto
+				$timeline_args['myAcceptedProjectVisible'] =  TRUE; // projects I am accepted onto
 				$timeline_args['myOrganisationsVisible'] = TRUE; // Organisations I am a member of
 				break;
 			case PRE_CODING_PERIOD:
@@ -475,7 +479,7 @@ class StatelessTimeline {
 				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
 				$timeline_args['myOffersVisible'] = TRUE; // allow students to see their project offers
 				$timeline_args['myProposalsVisible'] = TRUE;// see just my proposals - not yet accepted
-				$timeline_args['myAcceptedProjectsVisible'] =  TRUE; // projects I am accepted onto
+				$timeline_args['myAcceptedProjectVisible'] =  TRUE; // projects I am accepted onto
 				$timeline_args['myOrganisationsVisible'] = TRUE; // Organisations I am a member of
 				break;
 			case PRE_SUGGESTED_CODING_END_DATE:
@@ -487,7 +491,7 @@ class StatelessTimeline {
 				$timeline_args['connectionsVisible'] = TRUE; // allow students to communicate with other users - perhaps ask questions of mentors etc
 				$timeline_args['myOffersVisible'] = TRUE; // allow students to see their project offers
 				$timeline_args['myProposalsVisible'] = TRUE;// see just my proposals - not yet accepted
-				$timeline_args['myAcceptedProjectsVisible'] =  TRUE; // projects I am accepted onto
+				$timeline_args['myAcceptedProjectVisible'] =  TRUE; // projects I am accepted onto
 				$timeline_args['myOrganisationsVisible'] = TRUE; // Organisations I am a member of
 				break;
 			case PRE_CODING_DEADLINE:

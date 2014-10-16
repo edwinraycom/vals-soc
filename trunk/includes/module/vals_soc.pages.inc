@@ -200,3 +200,11 @@ function vals_soc_my_project_offers(){
 	vals_soc_content_end();
 	return ob_get_clean();
 }
+
+function vals_soc_my_accepted_project(){
+	ob_start();
+	vals_soc_content_start();
+	module_load_include('inc', 'vals_soc', 'includes/ui/administer/accepted_project');
+	vals_soc_content_end();
+	return ob_get_clean();
+}

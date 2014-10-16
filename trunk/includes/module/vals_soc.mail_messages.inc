@@ -249,8 +249,8 @@ function get_project_status_update_email_body($record, $is_final, $is_student, $
 		}
 		else if($is_final && $is_successful){
 			$alert .= t('One of your students has previously made a proposal to the project idea below. '.
-					'The owner of that project has decided to mark your students proposal as their FINAL choice. '.
-					'This decision is final and so your students proposal is the accepted solution for this project idea. ');
+					'After reviewing other proposals, the owner of that project has decided to offer your student the chance to undertake that project as their final choice. '.
+					'This decision is not yet final. The student must now login to the system and confirm he/she wants to accept it. ');
 		}
 		else if(!$is_final && $is_successful){
 			$alert .= t('One of your students has previously made a proposal to the project idea below. '.
@@ -277,8 +277,10 @@ function get_project_status_update_email_body($record, $is_final, $is_student, $
 		}
 		else if($is_final && $is_successful){
 			$alert .= t('You have previously made a proposal to the project idea below. '.
-					'The owner of that project has decided to mark your proposal as their FINAL choice. '.
-					'This decision is final and so your proposal is the accepted solution for this project idea. ');
+					'After reviewing other proposals, the owner of this project has decided to offer you the chance to undertake that project as your final choice. '.
+					'This decision is not yet final. You must now login to the system and confirm that you want to accept it. '.
+					'Please login into the VALS semester of code website and go to the dashboard and click "Manage your project offers"'.
+					'Here you can select which offer you wish to take up by clicking on the star icon next to that offer.');
 		}
 		else if(!$is_final && $is_successful){
 			$alert .= t('You have previously made a proposal to the project idea below. '.

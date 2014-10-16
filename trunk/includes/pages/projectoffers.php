@@ -1,4 +1,17 @@
 <?php
+function getAcceptedProjectResponse(){
+	$content = t('You have now chosen your project, congratulations!');
+	$content .= "<br/><br/>";
+	$content .= t("You can now optionally complete an agreement between you, your supervisor and your project mentor. ");
+	$content .= t("Your supervisor and mentor will be able to tell you what is required if an agreement is needed.");
+	$content .= "<br/><br/>";
+	$content .= t("You can access your accepted project details ");
+	$content .= "<a href='"._WEB_URL. "/dashboard/projects/mine'>".t('here')."</a>.";
+	$content .= "<br/>";
+	$content .= t("Or in the future by using the dashboard and clicking the 'My project' link.");
+	return $content;
+}
+
 function initBrowseProjectOffersLayout(){
 	global $base_url;
 	$org_id=0;

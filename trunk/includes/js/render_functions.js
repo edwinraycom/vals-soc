@@ -2,26 +2,29 @@
 function chooseProposalForProject(project_id, proposal_id, is_final){
 	var content = '';
 	if(is_final){
-		content += Drupal.t('Note: This is final and irreversible.');
+		content += Drupal.t('Note: This is a final decision but not irreversible.');
 		content += '\n\n';
-		content += '1.'+ Drupal.t('If instead, you want to only mark this proposal as your preferred one and still have the ability to change at a ')+ 
+		content += '1. '+ Drupal.t('If instead, you want to only mark this proposal as your preferred one and still have the ability to change at a ')+ 
 			Drupal.t('later date, then press \'cancel\' and choose "Accept interim" instead.') + '\n';
-		content += '2.'+ Drupal.t('This proposal will become accepted for this project idea.')+ '\n';
-		content += '3.'+ Drupal.t('The student and his/her supervisor will be informed by email that you have decided to select this proposal.')+ '\n';
-		content += '4.'+ Drupal.t('This will mean all other proposals are rejected.')+ '\n';
-		content += '5.'+ Drupal.t('All other candidate proposals will be informed by email that their proposal has now been rejected ')+ 
-			Drupal.t('and that you have chosen another proposal as your choice of solution.') + '\n';
+		content += '2. '+ Drupal.t('This student will be offered the project idea.')+ '\n';
+		content += '3. '+ Drupal.t('The student and his/her supervisor will be informed by email that you have decided to select this proposal.')+ '\n';
+		content += '4. '+ Drupal.t('This will mean all other proposals are rejected for now.')+ '\n';
+		content += '5. '+ Drupal.t('All other candidates will be informed by email that their proposal has been offered to another student. ')+ '\n';
+		content += '6. '+ Drupal.t('This offer will only become final once the student accepts it. ')+ 
+			Drupal.t('If the student decides to accept another project offer, this project idea will once again become available to other students ') + '\n';
+			Drupal.t('which means you can then select an alternative proposal.') + '\n';
+
 		content += '\n';
 	}
 	else{
 		content += Drupal.t('Note: This is not a final decision.');
 		content += '\n\n';
-		content += '1.'+ Drupal.t('If instead, you want to mark this proposal as your final choice, then press "cancel" and choose "Accept final" instead.')+ '\n';
-		content += '2.'+ Drupal.t('This proposal will be flagged in the system as your interim choice for this project idea.')+ '\n';
-		content += '3.'+ Drupal.t('You may change from this proposal to another one if a student writes a proposal which you prefer over this one. ')+ '\n';
-		content += '4.'+ Drupal.t('The Student and his/her supervisor will be informed by email that you have decided to select (as interim) this proposal.')+ '\n';
-		content += '5.'+ Drupal.t('This will mean all other proposals for this project are still valid in the system. ')+ '\n';
-		content += '6.'+ Drupal.t('Other students will not know which candidate proposal you have chosen in the interim, ') + 
+		content += '1. '+ Drupal.t('If instead, you want to mark this proposal as your final choice, then press "cancel" and choose "Accept final" instead.')+ '\n';
+		content += '2. '+ Drupal.t('This proposal will be flagged in the system as your interim choice for this project idea.')+ '\n';
+		content += '3. '+ Drupal.t('You may change from this proposal to another one if a student writes a proposal which you prefer over this one. ')+ '\n';
+		content += '4. '+ Drupal.t('The Student and his/her supervisor will be informed by email that you have decided to select (as interim) this proposal.')+ '\n';
+		content += '5. '+ Drupal.t('This will mean all other proposals for this project are still valid in the system. ')+ '\n';
+		content += '6. '+ Drupal.t('Other students will not know which candidate proposal you have chosen in the interim, ') + 
 			Drupal.t('but they will recieve an email to let them know it is not their own, meaning they still have a chance if they improve it.')+ '\n';
 		content += '\n';
 	}
@@ -30,17 +33,24 @@ function chooseProposalForProject(project_id, proposal_id, is_final){
 		$jq.post(url, {'proposal_id': proposal_id, 'project_id' : project_id, 'is_final' : is_final}, function(data,status){
 			if(!is_final){
 				ajaxInsert(data, 'proposal-interim-markup-'+proposal_id+'-button');
+				$jq('#proposal-reject-markup-'+proposal_id).hide();//disable this button if final
 			}
 			else{
 				ajaxInsert(data, 'proposal-final-markup-'+proposal_id+'-button');
 				$jq('#proposal-interim-markup-'+proposal_id).hide();//disable this button if final
+				$jq('#proposal-reject-markup-'+proposal_id).hide();//disable this button if final
 			}
 		});
 	}
 }
 
-function rejectProposalForm(pid, target){
-	var url = moduleUrl + "actions/proposal_actions.php?action=reject_form&id=" + pid+ "&target="+target;
+function hideOtherDivsAfterProposalReject(proposal_id){
+	$jq('#proposal-interim-markup-'+proposal_id).hide();//disable this button if final
+	$jq('#proposal-final-markup-'+proposal_id).hide();//disable this button if final
+}
+
+function rejectProposalForm(proposal_id, target){
+	var url = moduleUrl + "actions/proposal_actions.php?action=reject_form&id=" + proposal_id+ "&target="+target;
 	$jq.get(url,function(data,status){
 		ajaxInsert(data, target);
 	});
@@ -55,8 +65,8 @@ function getRejectProposalMarkup(proposal, option){
 	content += '		<div id="proposal-reject-markup-'+proposal.proposal_id+'-button">';
 	content += '			<input style="margin-left:20px" type="button" value="'+
 		Drupal.t('Reject this proposal') + '" onclick="rejectProposalForm('+ proposal.proposal_id+
-		', \'rejectformdiv\');"/>';
-	//", 'proposal-reject-markup-" + proposal.proposal_id + "-button');\"/>";
+		//', \'rejectformdiv\');"/>';
+	', \'proposal-reject-markup-' + proposal.proposal_id + '-button\');\"/>';
 	content += '			<div id="rejectformdiv"></div>';
 	content += '		</div>';
 	content += '	</div>';
@@ -96,11 +106,19 @@ function renderProposalStatus(proposal){
 	content += Drupal.t('Submitted by the student') + " <i>" + (proposal.student_name ? proposal.student_name: proposal.name) + " </i>";
 	content += '<br/>';
 	content += '<br/>';
-	if((proposal.selected == 1) && (proposal.pr_proposal_id == proposal.proposal_id)){
+	if(proposal.state=='rejected'){
+		if(proposal.is_project_owner || proposal.is_project_mentor){
+			content += Drupal.t('You have rejected this proposal for the solution of your project idea. ');
+		}else{
+			content += Drupal.t('The project owner rejected this proposal for the solution of your project idea. ');
+		}
+	}
+	else if((proposal.selected == 1) && (proposal.pr_proposal_id == proposal.proposal_id)){
 		content += (proposal.is_project_owner ? 
 				Drupal.t('You have selected this proposal as your final choice of solution for your project idea. You cannot change this.') : 
 				Drupal.t('The project mentor selected this proposal as the final choice of solution for this project idea.'));
-	} else {
+	} 
+	else {
 		if((proposal.selected == 1) && (proposal.pr_proposal_id != proposal.proposal_id)){
 			content += ((proposal.is_project_owner || proposal.is_project_mentor) ? 
 					Drupal.t('You have already selected another proposal as your final choice of solution for your project idea. You cannot change this.') :
@@ -130,7 +148,7 @@ function renderProposalStatus(proposal){
 				}
 				if(proposal.is_project_owner || proposal.is_project_mentor){
 					content += '<div><br/>';
-					content += '	<div>'+ Drupal.t('You have the following three choices')+ '</div>';
+					content += '	<div>'+ Drupal.t('You have the following choices')+ '</div>';
 					content += '	<br/>';
 					content += '	<div class="prop-mini-form-wrapper" id="proposal-reject-markup-'+proposal.proposal_id+'">';
 					content += 			getRejectProposalMarkup(proposal, '1.');

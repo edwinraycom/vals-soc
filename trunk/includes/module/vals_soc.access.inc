@@ -126,6 +126,7 @@ function pageAccessCheck($access_string) {
 			 	return (Timeline::getInstance()->organisationSignupPeriodOpened());
 			};
 			break;
+		case 'dashboard/projects/mine':
 		case 'dashboard/projects/offers':
 			if(hasRole(array(_STUDENT_TYPE)) && Timeline::getInstance()->hasStudentSignupPeriodOpened() ){
 				return TRUE;

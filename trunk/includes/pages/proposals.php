@@ -599,9 +599,13 @@ function showProposalsForProject($project_id, $show_only_mine){
 									}else{
 										uname_text = data.record.u_name;
 									}
-									if(data.record.proposal_id == data.record.pr_proposal_id){
-										uname_text += "&nbsp;<span style=\"float:left;display:inline;\" class=\"ui-icon ui-icon-link\" title=\"You have chosen this proposal for your project idea.\">&nbsp;</span>";
+									if(data.record.proposal_id == data.record.pr_proposal_id && data.record.selected==0){
+										uname_text += "&nbsp;<span style=\"float:left;display:inline;\" class=\"ui-icon ui-icon-link\" title=\"You have set this proposal as your interim favourite for your project idea.\">&nbsp;</span>";
 									}
+									if(data.record.proposal_id == data.record.pr_proposal_id && data.record.selected==1){
+										uname_text += "&nbsp;<span style=\"float:left;display:inline;\" class=\"ui-icon ui-icon-check\" title=\"You have chosen to offer this student the project.\">&nbsp;</span>";
+									}
+									
 									return uname_text;
 								}
 							},
@@ -617,10 +621,35 @@ function showProposalsForProject($project_id, $show_only_mine){
 		    					title: "Proposal details",
 								sorting: false,
 		    					display: function (data) {
-		    						if(data.record.state == 'draft'){
-										return "Draft only";
+			    					console.log(data.record);
+		    						if(data.record.state == 'rejected'){
+										return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
+										"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
+											"<span style=\"float:left;display:inline;\" class=\"ui-icon ui-icon-info\">See details</span></a>"+
+											"&nbsp;<span style=\"float:left;display:inline;\" class=\"\" title=\"You have rejected this proposal for your project idea.\">"+
+											"&nbsp;&nbsp;<div style=\"display:inline;\">Rejected</div></span>";
 		    						
-									}else{
+		    						}
+		    						else if(data.record.state == 'draft'){
+										return "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+
+										"<span style=\"display:inline;\" class=\"\" title=\"This proposal is in draft mode and not yet visible.\">"+
+										"&nbsp;&nbsp;<div style=\"display:inline;\">Draft only</div></span>";
+		    						}
+									else if(data.record.proposal_id == data.record.pr_proposal_id && data.record.selected==0){
+										return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
+										"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
+											"<span style=\"float:left;display:inline;\" class=\"ui-icon ui-icon-info\">See details</span></a>"+
+											"&nbsp;<span style=\"float:left;display:inline;\" class=\"\" title=\"You have set this proposal as your interm favourite for your project idea.\">"+
+											"&nbsp;&nbsp;<div style=\"display:inline;\">Interim</div></span>";
+									}
+									else if(data.record.proposal_id == data.record.pr_proposal_id && data.record.selected==1){
+											return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
+											"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
+												"<span style=\"float:left;display:inline;\" class=\"ui-icon ui-icon-info\">See details</span></a>"+
+												"&nbsp;<span style=\"float:left;display:inline;\" class=\"\" title=\"You have chosen to offer this student the project.\">"+
+												"&nbsp;&nbsp;<div style=\"display:inline;\">Offered</div></span>";
+									}
+									else{
 										return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
 											"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
 												"<span class=\"ui-icon ui-icon-info\">See details</span></a>";
