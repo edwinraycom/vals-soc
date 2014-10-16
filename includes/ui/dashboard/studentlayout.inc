@@ -1,4 +1,5 @@
 <?php
+module_load_include('php', 'vals_soc', 'includes/classes/Agreement');
 drupal_add_css(drupal_get_path('module', 'vals_soc') . '/includes/css/dashboard/css/dashboard.css', array(
       'type' => 'file',
       'group' => CSS_THEME
@@ -112,19 +113,19 @@ function getStudentLayout($timeline_args){
 		</div>
 		';
 	}
-	if($timeline_args['myOffersVisible']){
+	if($timeline_args['myOffersVisible'] && sizeof(Agreement::getInstance()->getSingleStudentsAgreement())==0){
 		$output .='
-		<div class="column-entry  proposals_submitted">
-		<h4>
-		<a class="dashboard-link component-link"
-		href="'.$base_url.'/dashboard/projects/offers"
-		title="'.t("Manage your project offers").'">'.t("Manage your project offers").'</a>
-		</h4>
-		<p>'.t("Allows you to select your final project from your accepted proposals.").'</p>
-		</div>
+					<div class="column-entry  proposals_submitted">
+						<h4>
+							<a class="dashboard-link component-link"
+							href="'.$base_url.'/dashboard/projects/offers"
+							title="'.t("Manage your project offers").'">'.t("Manage your project offers").'</a>
+						</h4>
+						<p>'.t("Allows you to select your final project from your accepted proposals").'</p>
+					</div>
 		';
 	}
-	if($timeline_args['myAcceptedProjectsVisible']){
+	if($timeline_args['myAcceptedProjectVisible'] && sizeof(Agreement::getInstance()->getSingleStudentsAgreement())==1){
 		$output .='
 					<div class="column-entry proposals">
 						<h4>

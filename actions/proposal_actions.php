@@ -7,6 +7,7 @@ include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Project.php');
 module_load_include('php', 'vals_soc', 'includes/classes/ThreadedComments');
 module_load_include('php', 'vals_soc', 'includes/pages/proposals');
+module_load_include('php', 'vals_soc', 'includes/pages/projectoffers');
 
 $apply_proposals = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 $browse_proposals = vals_soc_access_check('dashboard/proposals/browse') ? 1 : 0;
@@ -320,9 +321,10 @@ switch ($_GET['action']){
 		$reason = getRequestVar('reason', '', 'post');
 		$rationale = getRequestVar('rationale', '', 'post');
 		try {
+			$good_result = t('You rejected this proposal').'<script>hideOtherDivsAfterProposalReject('.$id.')</script>';
 			$result = Proposal::getInstance()->rejectProposal($id, $reason, $rationale);
 			echo  $result ?
-			jsonGoodResult(true, t('You rejected this proposal')):
+			jsonGoodResult(true, $good_result):
 			jsonBadResult(t('You tried to reject this proposal, but it failed'));
 		} catch (Exception $e){
 			jsonBadResult(t('Something went wrong in the database '. (_DEBUG ? $e->getMessage():'')));
@@ -415,9 +417,10 @@ switch ($_GET['action']){
 		try{
 			if(!(Users::isStudent())){
 				echo jsonBadResult(t('Only students can accept project offers'));
+				return;
 			}
 			$student = $GLOBALS['user']->uid;
-	
+			
 			$organisation=null;
 			if(isset($_POST['organisation']) && $_POST['organisation']){
 				$organisation = $_POST['organisation'];
@@ -439,8 +442,13 @@ switch ($_GET['action']){
 	case 'accept_proposal_offer':
 		if(!(Users::isStudent())){
 			echo jsonBadResult(t('Only students can accept project offers'));
+			return;
 		}
 		$student = $GLOBALS['user']->uid;
+		if(sizeof(Agreement::getInstance()->getSingleStudentsAgreement())==1){
+			echo t('You have already accepted a project offer');
+			return;
+		}
 		if(isset($_POST['proposal_id']) && $_POST['proposal_id']){
 			if(Groups::isOwner('proposal', $_POST['proposal_id'])){
 				/*
@@ -461,7 +469,7 @@ switch ($_GET['action']){
 				$props = array();
 				$props['proposal_id'] = $_POST['proposal_id'];
 				$agreement = Agreement::getInstance()->insertAgreement($props);
-				echo t('You have now chosen your project, congratulations!');
+				echo getAcceptedProjectResponse();
 			}
 			else{
 				echo t('Only the proposal owner can accept this project offer.');

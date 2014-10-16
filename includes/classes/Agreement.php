@@ -107,5 +107,14 @@ class Agreement extends AbstractEntity {
 		}
 		return FALSE;
 	}
+	
+	static public function getSingleStudentsAgreement(){
+		if (!Users::isStudent()){
+			echo t('You are not a student');
+			return null;
+		}
+		$student = $GLOBALS['user']->uid;
+		return db_select('soc_agreements')->fields('soc_agreements')->condition('student_id', $student)->execute()->fetchAll(PDO::FETCH_ASSOC);
+	}
 }
 	

@@ -56,6 +56,7 @@ function vals_soc_menu_handler(){
 	$items['dashboard/projects/browse'] = getProjectsBrowseLink('dashboard/projects/browse');
 	$items['dashboard/projects/marked'] = getFavouriteProjectsLink('dashboard/projects/marked');
 	$items['dashboard/projects/offers'] = getMyProjectOffersLink('dashboard/projects/offers');
+	$items['dashboard/projects/mine'] = getMyProjectLink('dashboard/projects/mine'); // link for the student to get his/her accepted project info
 	
 	// proposal actions
 	$items['dashboard/proposals/browse'] = getProposalsBrowseLink('dashboard/proposals/browse'); // browse all proposals - not used yet - might be part of admin view at some stage
@@ -352,11 +353,26 @@ function getMyProjectOffersLink($path){
 			'page callback' => 'vals_soc_my_project_offers',
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' => array($path),
-			'description' => t('Favourite projects page'),
+			'description' => t('Project offers page'),
 			'file' => 'vals_soc.pages.inc',
 			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);
 }
+
+function getMyProjectLink($path){
+	return array(
+			'title' => t('My accepted project'),
+			'type' => MENU_CALLBACK, // register link, but dont put it in the menu
+			'page callback' => 'vals_soc_my_accepted_project',
+			'access callback' => 'vals_soc_access_check',
+			'access arguments' => array($path),
+			'description' => t('My accepted project page'),
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
+	);
+	
+}
+
 //
 
 

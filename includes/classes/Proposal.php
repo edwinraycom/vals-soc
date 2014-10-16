@@ -219,13 +219,15 @@ class Proposal extends AbstractEntity{
     	if($project){
     		$query->condition('p.pid', $project);
     	}
-    	if($accepted_only){
-    		$query->condition('pr.selected', true);
-    	}
     	$query->leftjoin('soc_names', 'student', 'p.owner_id = %alias.names_uid');
     	$query->leftjoin('soc_institutes', 'i', 'p.inst_id = %alias.inst_id');
     	$query->leftjoin('soc_organisations', 'o', 'p.org_id = %alias.org_id');
-    	$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid');
+    	if($accepted_only){
+    		$query->condition('pr.selected', true);
+    		$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid AND p.proposal_id = %alias.proposal_id');
+    	}else{
+    		$query->leftjoin('soc_projects', 'pr', 'p.pid = %alias.pid');
+    	}
     	$query->leftjoin('users', 'u', 'p.owner_id = %alias.uid');
     	
     	$query->fields('student', array('name'));
@@ -241,6 +243,7 @@ class Proposal extends AbstractEntity{
     		$query->orderBy($sorting, $direction);
     	}
     	$query->range($startIndex, $pageSize);
+    	//echo $query;
     	return $query->execute()->fetchAll(); 
     }
     
