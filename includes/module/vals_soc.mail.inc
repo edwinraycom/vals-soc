@@ -296,53 +296,84 @@ function notify_students_and_supervisors_of_project_status_update($all_proposals
 }
 
 function notify_all_of_project_offer_acceptance($proposal, $proposal_id, $was_successful){
-	/*
+
 	$student_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mail);
 	$supervisor_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->supervisor_user_mail);
 	$mentor_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mentor_user_mail);
-	*/
-	$student_recipient = $proposal->mail;
-	$supervisor_recipient = $proposal->supervisor_user_mail;
-	$mentor_recipient = $proposal->mentor_user_mail;
-	$proposal_title = $proposal->title;
-	$project_title = $proposal->pr_title;
-
+	$previously_rejected = ($proposal->state == "rejected"  ? true : false);
+	
+	$items = array();
+	$number_of_emails_count = 0;
+	
 	if ($was_successful){ // email (student, supervisor, mentor) that this project has now been accepted by this student
-		echo '<hr/><br/>student:'. $proposal_title . ' : ' . $project_title . ' : ' . $student_recipient . ' :ACCEPTED OFFER';
-		echo '<hr/><br/>supervisor:'. $proposal_title . ' : ' . $project_title . ' : ' . $supervisor_recipient . ' :ACCEPTED OFFER';
-		echo '<hr/><br/>mentor:'. $proposal_title . ' : ' . $project_title . ' : ' . $mentor_recipient . ' :ACCEPTED OFFER';
+		
+		$subject = t('VALS Notification: Congratulations, you have accepted a project offer');
+		$message_body_student = get_project_acceptance_email_body($proposal, $was_successful, 'student');
+		$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_project_acceptance_change', 'to' => $student_recipient, 'from' => NULL, 'subject' => $subject, 'body' => $message_body_student);
+		//echo '<hr/><br/>student:'. $proposal_title . ' : ' . $project_title . ' : ' . $student_recipient . ' :ACCEPTED OFFER';
+		
+		$subject = t('VALS Notification: Congratulations, one of your students has accepted a project offer');
+		$message_body_supervisor = get_project_acceptance_email_body($proposal, $was_successful, 'supervisor');
+		$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_project_acceptance_change', 'to' => $supervisor_recipient, 'from' => NULL, 'subject' => $subject, 'body' => $message_body_supervisor);
+		//echo '<hr/><br/>supervisor:'. $proposal_title . ' : ' . $project_title . ' : ' . $supervisor_recipient . ' :ACCEPTED OFFER';
+		
+		$subject = t('VALS Notification: A student has accepted your project offer');
+		$message_body_mentor = get_project_acceptance_email_body($proposal, $was_successful, 'mentor');
+		//echo '<hr/><br/>mentor:'. $proposal_title . ' : ' . $project_title . ' : ' . $mentor_recipient . ' :ACCEPTED OFFER';
+		$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_project_acceptance_change', 'to' => $mentor_recipient, 'from' => NULL, 'subject' => $subject, 'body' => $message_body_mentor);
+		
 	}
 	else{ // email (student & supervisor) that this project has now been accepted by another student and is finally gone!
-		echo '<hr/><br/>student:'. $proposal_title . ' : ' . $project_title . ' : ' . $student_recipient . ' :ACCEPTED BY ANOTHER, project taken';
-		echo '<hr/><br/>supervisor:'. $proposal_title . ' : ' . $project_title . ' : ' . $supervisor_recipient . ' :ACCEPTED BY ANOTHER, project taken';
+		if(!$previously_rejected){
+			$subject = t('VALS Notification: Another student has now taken a project you were interested in');
+			$message_body_student = get_project_acceptance_email_body($proposal, $was_successful, 'student');
+			$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_project_acceptance_change', 'to' => $student_recipient, 'from' => NULL, 'subject' => $subject, 'body' => $message_body_student);
+			//echo '<hr/><br/>student:'. $proposal_title . ' : ' . $project_title . ' : ' . $student_recipient . ' :ACCEPTED BY ANOTHER, project taken';
+			
+			$subject = t('VALS Notification: Another student has now taken a project which one your students was interested in');
+			$message_body_supervisor = get_project_acceptance_email_body($proposal, $was_successful, 'supervisor');
+			$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_project_acceptance_change', 'to' => $supervisor_recipient, 'from' => NULL, 'subject' => $subject, 'body' => $message_body_supervisor);
+			//echo '<hr/><br/>supervisor:'. $proposal_title . ' : ' . $project_title . ' : ' . $supervisor_recipient . ' :ACCEPTED BY ANOTHER, project taken';
+		}
 	}
-
+	vals_soc_send_emails_cron($items);
 }
 
 function notify_all_of_project_offer_rejection($proposal, $proposal_id, $is_interim){
-	/*
 	$student_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mail);
 	$supervisor_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->supervisor_user_mail);
 	$mentor_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mentor_user_mail);
-	*/
-	$student_recipient = $proposal->mail;
-	$supervisor_recipient = $proposal->supervisor_user_mail;
-	$mentor_recipient = $proposal->mentor_user_mail;
-	$proposal_title = $proposal->title;
-	$project_title = $proposal->pr_title;
+	$previously_rejected = ($proposal->state == "rejected"  ? true : false);
+
+	$items = array();
+	$number_of_emails_count = 0;
 	
-	
-	if ($is_interim){ // email mentor only because it wasn't final - rejected PREFERRED INTERIM 
-		echo '<hr/><br/>mentor:'. $proposal_title . ' : ' . $project_title . ' : ' . $mentor_recipient . ' :WITHDRAWN, choose another INTRIM';
+	if ($is_interim){  // email mentor only because it wasn't final - rejected PREFERRED INTERIM 
+
+		$subject = t('VALS Notification: A student whose proposal was your preferred has accepted another project offer');
+		$message_body_mentor = get_project_rejection_email_body($proposal, $is_interim, 'mentor');
+		//echo '<hr/><br/>mentor:'. $proposal_title . ' : ' . $project_title . ' : ' . $mentor_recipient . ' :WITHDRAWN, choose another INTRIM';
+		$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_project_rejection_change', 'to' => $mentor_recipient, 'from' => NULL, 'subject' => $subject, 'body' => $message_body_mentor);
 	}
-	else{ // email (mentor) - rejected OFFER - project is therefore reopened and he should choose another proposal
-		 // email this proposal (student & supervisor) to say that the project has reopended and the mentor can choose another, possibly theirs
-		echo '<hr/><br/>student:'. $proposal_title . ' : ' . $project_title . ' : ' . $student_recipient . ' :REJECTED OFFER';
-		echo '<hr/><br/>supervisor:'. $proposal_title . ' : ' . $project_title . ' : ' . $supervisor_recipient . ' :REJECTED OFFER';
-		echo '<hr/><br/>mentor:'. $proposal_title . ' : ' . $project_title . ' : ' . $mentor_recipient . ' :REJECTED OFFER, choose another FINAL';
-	
+	else{  // email (mentor) - rejected OFFER - project is therefore reopened and he should choose another proposal
+		   // email this proposal (student & supervisor) to say that the project has reopended and the mentor can choose another, possibly theirs
+		if(!$previously_rejected){
+			$subject = t('VALS Notification: A project idea you submitted a proposal for has now reopened');
+			$message_body_student = get_project_rejection_email_body($proposal, $is_interim, 'student');
+			$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_project_rejection_change', 'to' => $student_recipient, 'from' => NULL, 'subject' => $subject, 'body' => $message_body_student);
+			//echo '<hr/><br/>student:'. $proposal_title . ' : ' . $project_title . ' : ' . $student_recipient . ' :REJECTED OFFER';
+			
+			$subject = t('VALS Notification: A project has reopened for which one of your students was previously interested in');
+			$message_body_supervisor = get_project_rejection_email_body($proposal, $is_interim, 'supervisor');
+			$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_project_rejection_change', 'to' => $supervisor_recipient, 'from' => NULL, 'subject' => $subject, 'body' => $message_body_supervisor);
+			//echo '<hr/><br/>supervisor:'. $proposal_title . ' : ' . $project_title . ' : ' . $supervisor_recipient . ' :REJECTED OFFER';
+			$subject = t('VALS Notification: A student has rejected your project offer in favour of another');
+			$message_body_mentor = get_project_rejection_email_body($proposal, $is_interim, 'mentor');
+			//echo '<hr/><br/>mentor:'. $proposal_title . ' : ' . $project_title . ' : ' . $mentor_recipient . ' :REJECTED OFFER, choose another FINAL';
+			$items[$number_of_emails_count++] = array('key' => 'vals_soc_notify_project_rejection_change', 'to' => $mentor_recipient, 'from' => NULL, 'subject' => $subject, 'body' => $message_body_mentor);
+		}
 	}
-	
+	vals_soc_send_emails_cron($items);
 }
 
 function notify_mentor_and_supervisor_of_proposal_update($record, $is_update){
@@ -356,7 +387,7 @@ function notify_mentor_and_supervisor_of_proposal_update($record, $is_update){
 	}else{
 		drupal_set_message(t('unable to send supervisor proposal notification email: missing email or username'));
 	}
-//echo var_dump($record);
+
 	if(isset($record->mentor_user_mail) && isset($record->mentor_user_name)){
 		if($record->state != 'draft'){ // dont send the mentor a mail if the proposal is only in draft state
 			$mentor_body = get_proposal_email_body($record, $is_update, 'mentor');

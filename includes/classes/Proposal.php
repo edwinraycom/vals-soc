@@ -120,7 +120,7 @@ class Proposal extends AbstractEntity{
     		$query->fields('student', array('name'));
     		$query->fields('i', array('name'));
     		$query->fields('o', array('name'));
-    		$query->fields('pr', array('proposal_id', 'title'));
+    		$query->fields('pr', array('proposal_id', 'title', 'selected'));
     	}
     	
     	
