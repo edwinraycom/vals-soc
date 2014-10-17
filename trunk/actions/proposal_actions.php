@@ -459,7 +459,7 @@ switch ($_GET['action']){
 					if ($my_proposal->proposal_id == $proposal_id){
 						$props = array();
 						$props['state'] = 'accepted'; //set this one to 'accepted'
-						//Proposal::getInstance()->updateProposal($props, $proposal_id);//uncomment to set this after testing **************
+						Proposal::getInstance()->updateProposal($props, $proposal_id);//uncomment to set this after testing **************
 						$project_id = $my_proposal->pid;
 						// next find all the other proposals for this project
 						$all_proposals_for_this_project = Proposal::getInstance()->getProposalsPerProject($project_id, '', true); // TODO - may need to set details flag here
@@ -471,13 +471,16 @@ switch ($_GET['action']){
 							else{
 								//email UNSUCCESSFUL proposal (student & supervisor) that this project has now been accepted by another student
 								notify_all_of_project_offer_acceptance($single_proposal_for_accepted_project, $proposal_id, false);
+								$props = array();
+								$props['state'] = 'archived'; // set these to archived in case we need to separate later between auto rejected & manually rejected
+								Proposal::getInstance()->updateProposal($props, $single_proposal_for_accepted_project->proposal_id);//uncomment to set this after testing **************
 							}
 						}
 					}
 					else{ // this.proposal =!= accepted proposal // any other proposals by this student not accepted
 						$props = array();
 						$props['state'] = 'archived'; // set these to archived in case we need to separate later between auto rejected & manually rejected
-						//Proposal::getInstance()->updateProposal($props, $proposal_id);//uncomment to set this after testing **************
+						Proposal::getInstance()->updateProposal($props, $proposal_id);//uncomment to set this after testing **************
 						$project_id = $my_proposal->pid;
 						$all_proposals_for_this_project = Proposal::getInstance()->getProposalsPerProject($project_id, '', true); // TODO - may need to set details flag here
 						foreach ($all_proposals_for_this_project as $single_proposal_for_unaccepted_project){
@@ -488,7 +491,6 @@ switch ($_GET['action']){
 								if($single_proposal_for_unaccepted_project->selected == "0"){ //(means its an interim)
 									// email mentor only - withdrawn PREFERRED INTERIM
 									notify_all_of_project_offer_rejection($single_proposal_for_unaccepted_project, $proposal_id, true);
-									
 								}
 								else{ // (means its an offer)
 									$update_props['selected'] = 0;
@@ -497,6 +499,7 @@ switch ($_GET['action']){
 									notify_all_of_project_offer_rejection($single_proposal_for_unaccepted_project, $proposal_id, false);
 								}
 								//Proposal::getInstance()->updateProposal($update_props, $proposal_id); //uncomment to set this after testing *********
+								Project::getInstance()->changeProject($update_props, $project_id); //uncomment to set this after testing *********
 							}
 							// else - the proposal was owned by this student but had not been either set as interim OR OFFER - so do nothing
 							// as we have now set this proposal.state as 'archived' so the mentor cannot choose it in the UI. (TODO - implement that bit)
@@ -504,47 +507,7 @@ switch ($_GET['action']){
 					}
 					
 				}
-				return; // TODO: remove this after testing
-				
-				//					//echo var_dump($my_proposal);
-				/*
-				get all proposals by THIS student
-				for (each proposal in proposals){
-					if (this.proposal == accepted proposal){ // this is the accepted offer
-						update ACCEPTED proposal set proposal.state = 'accepted'
-						get the project for this proposal
-						get all proposals for that project by ALL users
-						for (each proposal in proposals){ // all proposals for this project
-							if (this.proposal == accepted proposal){
-								email SUCCESSFUL (student, supervisor, mentor) that this project has now been accepted by this student
-							}
-							else{
-								email UNSUCCESSFULL proposal (student & supervisor) that this project has now been accepted by another student
-							}
-						}
-					}
-					else{ // this.proposal =!= accepted proposal // any other proposals by this student not accepted
-						update ALL other proposals by this student and set proposal.state = 'rejected'
-						get the project for this proposal
-						get all proposals for that project by ALL users
-						for (each proposal in proposals){ // all proposals for this project
-							if (proposals.owner_id = this_user && proposals.proposal_Id == project.proposal_id){ 
-								remove 'project.proposal_id'
-								if(project.selected==0){ //(means its an interim)
-									email mentor - rejected PREFERRED INTERIM
-								}
-								else if(project.selected==1){
-									set project.selected=0
-									email (mentor) - rejected OFFER - project is therefore reopened and he should choose another proposal
-									email this proposal (student & supervisor) to say that the project has reopended and the mentor can choose another, possibly thiers
-								}
-							}
-							// else - the proposal was owned by this student but had not been either set as interim OR OFFER - so do nothing
-							// as we have now set this proposal.state as 'rejected' so the mentor cannot choose it in the UI.
-						}
-					}	
-				}
-				*/
+
 				// next create the initial agreement entity in the db
 				$a_props = array();
 				$a_props['proposal_id'] = $proposal_id;

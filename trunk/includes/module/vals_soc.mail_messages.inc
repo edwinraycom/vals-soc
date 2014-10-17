@@ -3,6 +3,310 @@
  * Put any email message formatting in here rather than vals_soc.mail.inc 
  *
  */
+function get_project_rejection_email_body($record, $is_interim, $user_type){
+	//echo var_dump($record);
+	$server = _VALS_SOC_FULL_URL;
+
+	$student_username = $record->name; //student userid
+	$student_email = $record->mail; // student mail
+	$student_institute = $record->i_name; //Institute name where student is from
+
+	$supervisor_username = $record->supervisor_user_name;
+	$supervisor_email = $record->supervisor_user_mail;
+
+	$mentor_username = $record->mentor_user_name;
+	$mentor_email = $record->mentor_user_mail;
+	$mentor_organisation = $record->o_name;
+
+	$project_title = $record->pr_title; //project title
+	$proposal_title = $record->title; //proposal title
+	$proposal_synopsis = $record->solution_short;
+	$alert='';
+
+	if($user_type=='student'){
+		$recipient_username = $student_username;
+		$alert .= t('A project idea for which you have previously written a proposal for has now reopened. ');
+		$alert .= '<br/><br/>';
+		$alert .= t("This is because the project was offered to another student who subsequently chose another. ");
+		$alert .= t("If you have not already received a project offer from another project, then it may be worthwhile ");
+		$alert .= t("to email or at least add a comment to your exising proposal to say that you are still interested.");
+		$alert .= "<br/>";
+	}
+	else if($user_type=='supervisor'){
+		$recipient_username = $supervisor_username;
+		$alert .= t('A project idea for which one of your students has previously written a proposal for has now reopened. ');
+		$alert .= '<br/><br/>';
+		$alert .= t("This is because the project was offered to another student who subsequently chose another. ");
+		$alert .= t("If your student has not already received a project offer, then it may be worthwhile for him/her ");
+		$alert .= t("to email or at least add a comment to their exising proposal, to say that you are still interested.");
+		$alert .= "<br/>";
+	}
+	else if($user_type=='mentor'){
+		$recipient_username = $mentor_username;
+		if($is_interim){// email mentor only because it wasn't final - rejected PREFERRED INTERIM 
+			$alert .= t('A proposal has been withdrawn by a student on the project idea below by a student. This means he/she has now chosen another '.
+					'offer as their final choice of project for the VALS semester of code. '.
+					'You had previously marked this proposal as your preferred interim.');
+			$alert .= '<br/><br/>';
+			$alert .= t('This means that you no longer have a preferred intermin proposal for this project. '.
+					'However, you can still login and select another interim preferred or make a final offer '.
+					'(subject to student acceptance) ');
+			$alert .= "<br/>";
+					}
+		else{// email (mentor) - rejected OFFER - project is therefore reopened and he should choose another proposal
+			$alert .= t('A project offer has been rejected on the project idea below by a student you offered it to. This means he/she has now chosen another '.
+					'offer as their final choice of project for the VALS semester of code. ');
+			$alert .= '<br/><br/>';
+			$alert .= t("This means that your project idea has reopened and you can select a second choice proposal. ");
+			$alert .= "<br/>";
+		}
+	}
+
+	$output='';
+	$output .= '<p>';
+	$output .= t('Hello').' '. $recipient_username . ',';
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= $alert;
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= t('Here is an overview...');
+	$output .= '<br/>';
+
+	$output .= "<p>";
+	$output .= "<b>" . t('Project idea') . "</b>";
+	$output .= "<br/>";
+	$output .= $project_title;
+	$output .= "</p>";
+
+	$output .= "<p>";
+	$output .= "<b>" . t('Proposal title') . "</b>";
+	$output .= "<br/>";
+	$output .= $proposal_title;
+	$output .= "</p>";
+
+	$output .= "<p>";
+	$output .= "<b>" . t('Proposal synopsis') . "</b>";
+	$output .= "<br/>";
+	$output .= $proposal_synopsis;
+	$output .= "</p>";
+
+
+	$output .= "<b>" . t('Contact details') . "</b>";
+	$output .= '<ul class=\'grouplist\'>';
+
+	$output .= "<li>";
+	$output .= t('Student username') . ": <i>" . $student_username . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Student email') . ": <i>" . $student_email . "</i>";
+	$output .= "</li>";
+
+	$output .= '<br/>';
+
+	$output .= "<li>";
+	$output .= t('Student supervisors username') . ": <i>" . $supervisor_username . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Student supervisors email') . ": <i>" . $supervisor_email . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Students Institution') . ": <i>" . $student_institute . "</i>";
+	$output .= "</li>";
+
+	$output .= '<br/>';
+
+	$output .= "<li>";
+	$output .= t('Initial mentors username') . ": <i>" . $mentor_username . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Initial mentors email') . ": <i>" . $mentor_email . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Initial mentors Organisation') . ": <i>" . $mentor_organisation . "</i>";
+	$output .= "</li>";
+
+	$output .= "</ul>";
+
+	$output .= "<p>";
+	$output .= tt('Go to <a href="%1$s/dashboard" target="_blank">%1$s/dashboard</a> to view more details.', $server);
+	$output .= "</p>";
+
+	$output .= '<br/>';
+	$output .= t('Many Thanks,');
+	$output .= '<br/>';
+	$output .= t('The VALS team');
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= sprintf('<img src="%1$s/sites/all/themes/media/logo.png">', $server);
+	$output .= '<p>';
+	return $output;
+}
+
+function get_project_acceptance_email_body($record, $was_successful, $user_type){
+	//echo var_dump($record);
+	$server = _VALS_SOC_FULL_URL;
+	
+	$student_username = $record->name; //student userid
+	$student_email = $record->mail; // student mail
+	$student_institute = $record->i_name; //Institute name where student is from
+	
+	$supervisor_username = $record->supervisor_user_name;
+	$supervisor_email = $record->supervisor_user_mail;
+	
+	$mentor_username = $record->mentor_user_name;
+	$mentor_email = $record->mentor_user_mail;
+	$mentor_organisation = $record->o_name;
+	
+	$project_title = $record->pr_title; //project title
+	$proposal_title = $record->title; //proposal title
+	$proposal_synopsis = $record->solution_short;
+	$alert='';
+	
+	if($user_type=='student'){
+		$recipient_username = $student_username;
+		if($was_successful){ // This student has ACCEPTED this OFFER
+			$alert .= t('Congratulations, you have accepted the project offer below. This means you have chosen this '. 
+					'offer as your final choice of project for the VALS semester of code. ');
+			$alert .= '<br/><br/>';
+			$alert .= t("You can now optionally complete an agreement between you, your supervisor and your project mentor. ");
+			$alert .= t("Your supervisor and mentor will be able to tell you what is required if an agreement is needed.");
+			$alert .= "<br/><br/>";
+			$alert .= t("You can access your accepted project details ");
+			$alert .= "<a href='".$server. "/dashboard/projects/mine'>".t('here')."</a>.";
+			$alert .= "<br/>";
+			$alert .= t("Or in the future by using the dashboard and clicking the 'My project' link.");
+			$alert .= "<br/>";
+		}
+		else{// project ACCEPTED BY ANOTHER, project taken
+			$alert .= t('Sorry, but unfortunately another student has accepted a project offer based on the project below. This means that this '.
+					'particular project idea is now taken.');
+			$alert .= '<br/><br/>';
+			$alert .= t("If you haven't already, it may be worthwhile to try to improve an existing proposal you have made on an another project idea, ");
+			$alert .= t("and ask for feedback from that mentor. Alternatively, if you wish, you can still create another proposal for a different project idea.");
+			$alert .= "<br/><br/>";
+		}
+	}
+	else if($user_type=='supervisor'){
+		$recipient_username = $supervisor_username;
+		if($was_successful){ // This student has ACCEPTED this OFFER
+			$alert .= t('One of your students has accepted the project offer below. This means he/she has chosen this '.
+					'offer as their final choice of project for the VALS semester of code. ');
+			$alert .= '<br/><br/>';
+			$alert .= t("You can now optionally complete an agreement between you, your student and your project mentor. ");
+			$alert .= t("This is designed to allow all parties to agree what will be done, major milestones and completion dates. (optional only)");
+			$alert .= "<br/><br/>";
+			$alert .= t("You can access this accepted project at ");
+			$alert .= "<a href='".$server. "/dashboard/projects/mine'>".t('here')."</a>.";
+			$alert .= "<br/>";
+			$alert .= t("Or in the future by using the dashboard and clicking the 'My projects' link.");
+			$alert .= "<br/>";
+		}
+		else{// project ACCEPTED BY ANOTHER, project taken
+			$alert .= t('Sorry, but unfortunately another student has accepted a project offer based on the project below. One of your students had also created a '.
+					'proposal for this idea. This means that this particular project idea is now taken and your student will have to seek an alternative. ');
+			$alert .= '<br/><br/>';
+			$alert .= t("If your student hasn't already, it may be worth while for him/her try to improve an existing proposal they have made on an another project idea, ");
+			$alert .= t("and ask for feedback from that mentor. Alternatively, if they wish, they can still create another proposal for a different project idea.");
+			$alert .= "<br/><br/>";
+		}
+	}
+	else if($user_type=='mentor'){
+		$recipient_username = $mentor_username;
+		// mentor only gets this when its been accepted - no need to send lots of rejected duplicate emails.
+		$alert .= t('A project offer has been accepted on the project idea below by a student you offered it to. This means he/she has now chosen this '.
+				'offer as their final choice of project for the VALS semester of code. ');
+		$alert .= '<br/><br/>';
+		$alert .= t("You can now optionally complete an agreement between you, your student and your students supervisor. ");
+		$alert .= t("This is designed to allow all parties to agree what will be done, major milestones and completion dates. (optional only)");
+		$alert .= "<br/><br/>";
+		$alert .= t("You can access this accepted project at ");
+		$alert .= "<a href='".$server. "/dashboard/projects/mine'>".t('here')."</a>.";
+		$alert .= "<br/>";
+		$alert .= t("Or in the future by using the dashboard and clicking the 'My projects' link.");
+		$alert .= "<br/>";
+	}
+	
+	$output='';
+	$output .= '<p>';
+	$output .= t('Hello').' '. $recipient_username . ',';
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= $alert;
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= t('Here is an overview...');
+	$output .= '<br/>';
+	
+	$output .= "<p>";
+	$output .= "<b>" . t('Project idea') . "</b>";
+	$output .= "<br/>";
+	$output .= $project_title;
+	$output .= "</p>";
+	
+	$output .= "<p>";
+	$output .= "<b>" . t('Proposal title') . "</b>";
+	$output .= "<br/>";
+	$output .= $proposal_title;
+	$output .= "</p>";
+	
+	$output .= "<p>";
+	$output .= "<b>" . t('Proposal synopsis') . "</b>";
+	$output .= "<br/>";
+	$output .= $proposal_synopsis;
+	$output .= "</p>";
+	
+	
+	$output .= "<b>" . t('Contact details') . "</b>";
+	$output .= '<ul class=\'grouplist\'>';
+	
+	$output .= "<li>";
+	$output .= t('Student username') . ": <i>" . $student_username . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Student email') . ": <i>" . $student_email . "</i>";
+	$output .= "</li>";
+	
+	$output .= '<br/>';
+	
+	$output .= "<li>";
+	$output .= t('Student supervisors username') . ": <i>" . $supervisor_username . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Student supervisors email') . ": <i>" . $supervisor_email . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Students Institution') . ": <i>" . $student_institute . "</i>";
+	$output .= "</li>";
+	
+	$output .= '<br/>';
+	
+	$output .= "<li>";
+	$output .= t('Initial mentors username') . ": <i>" . $mentor_username . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Initial mentors email') . ": <i>" . $mentor_email . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Initial mentors Organisation') . ": <i>" . $mentor_organisation . "</i>";
+	$output .= "</li>";
+	
+	$output .= "</ul>";
+	
+	$output .= "<p>";
+	$output .= tt('Go to <a href="%1$s/dashboard" target="_blank">%1$s/dashboard</a> to view more details.', $server);
+	$output .= "</p>";
+	
+	$output .= '<br/>';
+	$output .= t('Many Thanks,');
+	$output .= '<br/>';
+	$output .= t('The VALS team');
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= sprintf('<img src="%1$s/sites/all/themes/media/logo.png">', $server);
+	$output .= '<p>';
+	return $output;
+}
 
 /**
  * Message body for when a new proposal has been added by a student & published

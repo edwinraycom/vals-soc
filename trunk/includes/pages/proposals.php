@@ -22,7 +22,7 @@ function showMyProposalPage(){
 
 function renderDefaultField($field, $obj, $alternative_field=''){
 	static $unknown = null;
-	
+
 	if (! $unknown) {
 		$unknown = t('The %1$s is not known yet');
 	}
@@ -49,7 +49,7 @@ function renderProposal($proposal, $target='none', $follow_action='show'){
 		$buttons .= "<div class='totheright' id='proposal_buttons'><input type='button' value='".t('edit')."' $edit_action/>";
 		$buttons .= "<input type='button' value='".t('delete')."' $delete_action/></div>";
 	}
-	$content = 
+	$content =
 	"<div id='msg_$target'></div>
 	$buttons".
 	"<h1>".($proposal->title ? $proposal->title : Proposal::getDefaultName('', $proposal))." (".
@@ -79,11 +79,11 @@ function renderProposal($proposal, $target='none', $follow_action='show'){
 			".renderDefaultField('solution_long', $proposal)."
 			</div>
 	</div>";
-	
+
 	module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
 	$content .= initComments($propid, _PROPOSAL_OBJ);
 	return $content;
-	
+
 }
 
 function showMyProposals($proposals, $current_tab_propid=0){
@@ -96,7 +96,7 @@ function showMyProposals($proposals, $current_tab_propid=0){
 	$current_tab = 1;
 	$current_tab_id = "$tab_id_prefix$current_tab";
 	$current_tab_content = '';
-	
+
 	foreach ($proposals as $proposal){
 		$nr++;
 		if (((!$current_tab_propid) && $nr == 1) || ($proposal->proposal_id == $current_tab_propid)){
@@ -321,11 +321,11 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 		if(isset($_GET['organisation'])){
 			$org_id = $_GET['organisation'];
 		}
-	
+
 		echo "<a href='"._WEB_URL. "/dashboard/proposals/browsebytype'>".t('Show all proposals for my organisation')."</a>";
 		echo " | ";
 		echo "<a href='"._WEB_URL. "/dashboard/proposals/browsebytype/mine'>".t('Show only mine')."</a>";
-	
+
 		?>
 		<div class="filtering" style="width: 800px;">
 			<span id="infotext" style="margin-left: 34px"></span>
@@ -345,16 +345,16 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 		</div>
 		<div id="TableContainer" style="width: 800px;"></div>
 		<script type="text/javascript">
-	
+
 				jQuery(document).ready(function($){
 					window.view_settings = {};
-	
+
 					function loadFilteredProposals(){
 						$("#TableContainer").jtable("load", {
 							organisation: $("#organisation").val(),
 						});
 					}
-	
+
 				    //Prepare jTable
 					$("#TableContainer").jtable({
 						paging: true,
@@ -389,7 +389,7 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 								width: "10%",
 								display: function (data){return data.record.proposal_count;}
 							},
-	
+
 							proposal_view : {
 								width: "6%",
 		    					title: "View",
@@ -401,32 +401,32 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 											"<span class=\"ui-icon ui-icon-info\">See detail</span></a>";
 			    					}
 		    					},
-	
+
 		    					create: false,
 		    					edit: false
 							},
-	
+
 						},
 					});
-	
+
 					//Load proposal list from server on initial page load
 					loadFilteredProposals();
-	
+
 					$("#organisation").change(function(e) {
 		           		e.preventDefault();
 		           		loadFilteredProposals();
 		        	});
-	
+
 					$("#proposal_filter").submit(function(e){
 						e.preventDefault();
 						loadFilteredProposals()
 					});
-	
+
 				});
 			</script><?php
 		}
 		else if(hasRole(array(_INSTADMIN_TYPE)) || hasRole(array(_SUPERVISOR_TYPE))){
-		
+
 		$studentgroup_id=0;
 
 		if(isset($_GET['group'])){
@@ -442,15 +442,15 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 			        <?php echo t('Filter by Group');?>:
 			        <?php // echo t('Organisations');
 		 			$option_text = (bool) $owner_only ? t('All My Groups') : t('All Groups from my Institution');
-		 			
+
 		 			if($owner_only){
 						$result = Groups::getGroups ( _STUDENT_GROUP, $GLOBALS ['user']->uid );
-					} 
+					}
 					else {
 						$institutes = Users::getInstituteForUser ( $GLOBALS ['user']->uid );
 						if ($institutes->rowCount () > 0) {
 							$result = Groups::getGroups ( _STUDENT_GROUP, 'all', $institutes->fetchObject ()->inst_id );
-						} 
+						}
 						else {
 							// give up, just get their own
 							$result = Groups::getGroups ( _STUDENT_GROUP, $GLOBALS ['user']->uid );
@@ -470,16 +470,16 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 			</div>
 			<div id="TableContainer" style="width: 800px;"></div>
 			<script type="text/javascript">
-		 
+
 		 			jQuery(document).ready(function($){
 		 				window.view_settings = {};
-		 
+
 		 				function loadFilteredProposals(){
 		 					$("#TableContainer").jtable("load", {
 		 						group: $("#group").val(),
 		 					});
 		 				}
-		 
+
 		 			    //Prepare jTable
 		 				$("#TableContainer").jtable({
 		 					paging: true,
@@ -513,7 +513,7 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 		 							width: "10%",
 		 							display: function (data){return data.record.proposal_count;}
 		 						},
-		 
+
 		 						proposal_view : {
 		 							width: "6%",
 		 	    					title: "View",
@@ -525,32 +525,32 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 		 										"<span class=\"ui-icon ui-icon-info\">See detail</span></a>";
 		 		    					}
 		 	    					},
-		 
+
 		 	    					create: false,
 		 	    					edit: false
 		 						},
-		 
+
 		 					},
 		 				});
-		 
+
 		 				//Load proposal list from server on initial page load
 		 				loadFilteredProposals();
-		 
+
 		 				$("#group").change(function(e) {
 		 	           		e.preventDefault();
 		 	           		loadFilteredProposals();
 		 	        	});
-		 
+
 		 				$("#proposal_filter").submit(function(e){
 		 					e.preventDefault();
 		 					loadFilteredProposals()
 		 				});
-		 
+
 		 			});
 		 		</script><?php
 		}
 		else{}
-		
+
 }
 
 function showProposalsForProject($project_id, $show_only_mine){
@@ -563,16 +563,16 @@ function showProposalsForProject($project_id, $show_only_mine){
 	?>
 		<div id="TableContainer" style="width: 800px;"></div>
 		<script type="text/javascript">
-	
+
 				jQuery(document).ready(function($){
 					window.view_settings = {};
-	
+
 					function loadFilteredProposals(){
 						$("#TableContainer").jtable("load", {
 							project: <?php echo $project_id?>
 						});
 					}
-	
+
 				    //Prepare jTable
 					$("#TableContainer").jtable({
 						paging: true,
@@ -605,7 +605,7 @@ function showProposalsForProject($project_id, $show_only_mine){
 									if(data.record.proposal_id == data.record.pr_proposal_id && data.record.selected==1){
 										uname_text += "&nbsp;<span style=\"float:left;display:inline;\" class=\"ui-icon ui-icon-check\" title=\"You have chosen to offer this student the project.\">&nbsp;</span>";
 									}
-									
+
 									return uname_text;
 								}
 							},
@@ -628,7 +628,7 @@ function showProposalsForProject($project_id, $show_only_mine){
 											"<span style=\"float:left;display:inline;\" class=\"ui-icon ui-icon-info\">See details</span></a>"+
 											"&nbsp;<span style=\"float:left;display:inline;\" class=\"\" title=\"You have rejected this proposal for your project idea.\">"+
 											"&nbsp;&nbsp;<div style=\"display:inline;\">Rejected</div></span>";
-		    						
+
 		    						}
 		    						else if(data.record.state == 'draft'){
 										return "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+
@@ -677,16 +677,16 @@ function showProposalsForStudent($student_id, $show_only_mine){
 ?>
 		<div id="TableContainer" style="width: 800px;"></div>
 		<script type="text/javascript">
-	
+
 				jQuery(document).ready(function($){
 					window.view_settings = {};
-	
+
 					function loadFilteredProposals(){
 						$("#TableContainer").jtable("load", {
 							student: <?php echo $student_id?>
 						});
 					}
-	
+
 				    //Prepare jTable
 					$("#TableContainer").jtable({
 						paging: true,
@@ -716,14 +716,17 @@ function showProposalsForStudent($student_id, $show_only_mine){
 								display: function (data){return data.record.o_name;}
 							},
 							state: {
-								title: "Is published?",
+								title: "Status",
 								width: "10%",
 								display: function (data){
+									return data.record.state;
+									/*
 									if(data.record.state == 'published'){
 										return 'yes';
 									}else{
 										return 'no';
 									}
+									*/
 								}
 							},
 							//if(data.record.state != 'published'){
@@ -735,7 +738,7 @@ function showProposalsForStudent($student_id, $show_only_mine){
 										return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
 											"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
 												"<span class=\"ui-icon ui-icon-info\">See details</span></a>";
-									
+
 		    					},
 
 		    					create: false,
