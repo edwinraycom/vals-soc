@@ -457,9 +457,6 @@ switch ($_GET['action']){
 				$all_my_proposals = Proposal::getInstance()->getProposalsBySearchCriteria($student, '', '', '', '', 0, 1000);
 				foreach ($all_my_proposals as $my_proposal){
 					if ($my_proposal->proposal_id == $proposal_id){
-						$props = array();
-						$props['state'] = 'accepted'; //set this one to 'accepted'
-						Proposal::getInstance()->updateProposal($props, $proposal_id);//uncomment to set this after testing **************
 						$project_id = $my_proposal->pid;
 						// next find all the other proposals for this project
 						$all_proposals_for_this_project = Proposal::getInstance()->getProposalsPerProject($project_id, '', true); // TODO - may need to set details flag here
@@ -467,20 +464,27 @@ switch ($_GET['action']){
 							if ($single_proposal_for_accepted_project->proposal_id == $proposal_id){
 								//email SUCCESSFUL (student, supervisor, mentor) that this project has now been accepted by this student
 								notify_all_of_project_offer_acceptance($single_proposal_for_accepted_project, $proposal_id, true);
+								$props = array();
+								$props['state'] = 'accepted'; //set this one to 'accepted'
+								Proposal::getInstance()->updateProposal($props, $proposal_id);//uncomment to set this after testing **************
 							}
 							else{
-								//email UNSUCCESSFUL proposal (student & supervisor) that this project has now been accepted by another student
-								notify_all_of_project_offer_acceptance($single_proposal_for_accepted_project, $proposal_id, false);
-								$props = array();
-								$props['state'] = 'archived'; // set these to archived in case we need to separate later between auto rejected & manually rejected
-								Proposal::getInstance()->updateProposal($props, $single_proposal_for_accepted_project->proposal_id);//uncomment to set this after testing **************
+								if($single_proposal_for_accepted_project->state != 'rejected'){
+									//email UNSUCCESSFUL proposal (student & supervisor) that this project has now been accepted by another student
+									notify_all_of_project_offer_acceptance($single_proposal_for_accepted_project, $proposal_id, false);
+									$props = array();
+									$props['state'] = 'archived'; // set these to archived in case we need to separate later between auto rejected & manually rejected
+									Proposal::getInstance()->updateProposal($props, $single_proposal_for_accepted_project->proposal_id);//uncomment to set this after testing **************
+								}
 							}
 						}
 					}
 					else{ // this.proposal =!= accepted proposal // any other proposals by this student not accepted
-						$props = array();
-						$props['state'] = 'archived'; // set these to archived in case we need to separate later between auto rejected & manually rejected
-						Proposal::getInstance()->updateProposal($props, $proposal_id);//uncomment to set this after testing **************
+						if($my_proposal->state != 'rejected'){
+							$props = array();
+							$props['state'] = 'archived'; // set these to archived in case we need to separate later between auto rejected & manually rejected
+							Proposal::getInstance()->updateProposal($props, $my_proposal->proposal_id);//uncomment to set this after testing **************
+						}
 						$project_id = $my_proposal->pid;
 						$all_proposals_for_this_project = Proposal::getInstance()->getProposalsPerProject($project_id, '', true); // TODO - may need to set details flag here
 						foreach ($all_proposals_for_this_project as $single_proposal_for_unaccepted_project){

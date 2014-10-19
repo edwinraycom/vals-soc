@@ -6,8 +6,8 @@ function chooseProposalForProject(project_id, proposal_id, is_final){
 		content += '\n\n';
 		content += '1. '+ Drupal.t('If instead, you want to only mark this proposal as your preferred one and still have the ability to change at a ')+ 
 			Drupal.t('later date, then press \'cancel\' and choose "Accept interim" instead.') + '\n';
-		content += '2. '+ Drupal.t('This student will be offered the project idea.')+ '\n';
-		content += '3. '+ Drupal.t('The student and his/her supervisor will be informed by email that you have decided to select this proposal.')+ '\n';
+		content += '2. '+ Drupal.t('This student will be offered to accept this project idea based on his/her proposal.')+ '\n';
+		content += '3. '+ Drupal.t('The student and his/her supervisor will be informed by email that you have decided to offer this proposal.')+ '\n';
 		content += '4. '+ Drupal.t('This will mean all other proposals are rejected for now.')+ '\n';
 		content += '5. '+ Drupal.t('All other candidates will be informed by email that their proposal has been offered to another student. ')+ '\n';
 		content += '6. '+ Drupal.t('This offer will only become final once the student accepts it. ')+ 
@@ -90,7 +90,7 @@ function getAcceptProposalInterimMarkup(proposal, option){
 function getAcceptProposalFinalMarkup(proposal, option){
 	var content ="";
 	content += '	<div>';
-	content += '		'+option+ Drupal.t(' Click the button below to accept this proposal as your final chosen solution.');
+	content += '		'+option+ Drupal.t(' Click the button below to offer this project idea to this students proposal.');
 	content += '		<br/>';
 	content += '		<br/>';
 	content += '		<div id="proposal-final-markup-'+proposal.proposal_id+'-button">';

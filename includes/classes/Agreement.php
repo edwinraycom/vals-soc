@@ -15,6 +15,10 @@ class Agreement extends AbstractEntity {
 		return self::$instance;
 	}
 	
+	public function getKeylessFields(){
+		// we dont want to return the key fields here
+		return array_slice(Agreement::$fields, 1);
+	}
 	/**
 	 * The student inserts this initially once he/she accepts a project offer
 	 * @param unknown $props
@@ -90,11 +94,11 @@ class Agreement extends AbstractEntity {
 	}
 	
 	static function updateAgreement($props){
-		if (! $props){
+		if (!$props){
 			drupal_set_message(t('Update requested with empty (filtered) data set'), 'error');
 			return false;
 		}
-	
+	//echo var_dump($props);
 		$txn = db_transaction();
 		try {
 			$id = db_update(tableName(_AGREEMENT_OBJ))->fields($props)
@@ -108,13 +112,56 @@ class Agreement extends AbstractEntity {
 		return FALSE;
 	}
 	
-	static public function getSingleStudentsAgreement(){
+	static public function getSingleStudentsAgreement($details=false){
 		if (!Users::isStudent()){
 			echo t('You are not a student');
 			return null;
 		}
-		$student = $GLOBALS['user']->uid;
-		return db_select('soc_agreements')->fields('soc_agreements')->condition('student_id', $student)->execute()->fetchAll(PDO::FETCH_ASSOC);
+		return self::getProjectAgreements('', '', $GLOBALS['user']->uid, '', '', $details)->fetchObject();
+	}
+	
+	static public function getProjectAgreements($agreement_id='', $project_id='', $student_id='', $supervisor_id='', $mentor_id='', $details=false){
+		$query = db_select('soc_agreements', 'a')->fields('a', self::$fields);
+		
+		if ($agreement_id){
+			$query->condition('a.agreement_id', $agreement_id);
+		}
+		if ($project_id){
+			$query->condition('a.project_id', $project_id);
+		}
+		if ($student_id){
+			$query->condition('a.student_id', $student_id);
+		}
+		if ($supervisor_id){
+			$query->condition('a.supervisor_id', $supervisor_id);
+		}
+		if ($mentor_id){
+			$query->condition('a.mentor_id', $mentor_id);
+		}
+		
+		if($details){// details gets the mentor, supervisor and student names & email addresses also
+			$query->leftjoin('users', 'student_user', 'a.student_id = %alias.uid');
+			$query->leftjoin('soc_names', 'student', 'a.student_id = %alias.names_uid');
+			
+			$query->leftjoin('users', 'mentor_user', 'a.mentor_id = %alias.uid');
+			$query->leftjoin('soc_names', 'mentor', 'a.mentor_id = %alias.names_uid');
+
+			$query->leftjoin('users', 'supervisor_user', 'a.supervisor_id = %alias.uid');
+			$query->leftjoin('soc_names', 'supervisor', 'a.supervisor_id = %alias.names_uid');
+			
+			$query->fields('student_user', array('mail', 'name'));
+			$query->fields('student', array('name'));
+			
+			$query->fields('mentor_user', array('mail', 'name'));
+			$query->fields('mentor', array('name'));
+			
+			$query->fields('supervisor_user', array('mail', 'name'));
+			$query->fields('supervisor', array('name'));
+		}
+
+		$query->orderBy('a.agreement_id', 'ASC');
+		//echo $query;
+		return $query->execute();
 	}
 }
 	

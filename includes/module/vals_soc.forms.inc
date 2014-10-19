@@ -1002,6 +1002,89 @@ function vals_soc_comment_form($form, &$form_state, $comment='', $target='', $en
 	);
 	return $form;
 }
+
+function vals_soc_agreement_form($form, &$form_state, $agreement='', $target=''){
+	$form = array(
+			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
+			'#suffix' => '</div>',
+	);
+
+	$form['description'] = array(
+			"#type" => "textarea",
+			'#title' => t('Your agreement'),
+			"#size" => 100,
+			"#default_value" => populate($agreement, 'description'),
+			'#required' => '0'
+	);
+	$form['agreement_help_text'] = array(
+			'#markup' => '<p><i>' . 'This page is used to enter any planning information which you, your supervisor and mentor may wish to be recorded. '.
+			'For example you may wish to record a set of milestones and completion dates of certain specific tasks. '.
+			'Once you are happy with it, student, mentors and supervisors can check the box to agree. '.
+			'</i></p>'
+	);
+	if($agreement->student_signed == 1){
+		$form['student_signed_already'] = array(
+			'#type' => 'hidden',
+			"#default_value" => 1,
+		);
+	}
+	
+	$sname = (isset($agreement->student_name) ? $agreement->student_name : $agreement->name);
+	$form['student_signed'] = array(
+			'#type' => 'checkboxes',
+			'#options' => array(1 => "Student signed (". $sname .")"),
+			'#default_value' => array(populate($agreement, 'student_signed')),
+			'#disabled' => ($agreement->student_signed == 1 || getRole()!=_STUDENT_TYPE ? true : false ),
+	);
+	
+	if($agreement->supervisor_signed == 1){
+		$form['supervisor_signed_already'] = array(
+			'#type' => 'hidden',
+			"#default_value" => 1,
+		);
+	}
+	$spname = (isset($agreement->supervisor_name) ? $agreement->supervisor_name : $agreement->supervisor_user_name);
+	$form['supervisor_signed'] = array(
+			'#type' => 'checkboxes',
+			'#options' => array(1 => "Supervisor signed (". $spname .")"),
+			'#default_value' => array(populate($agreement, 'supervisor_signed')),
+			'#disabled' => ($agreement->supervisor_signed == 1 || getRole()!=_SUPERVISOR_TYPE ? true : false ),
+	);
+	if($agreement->mentor_signed == 1){
+		$form['mentor_signed_already'] = array(
+			'#type' => 'hidden',
+			"#default_value" => 1,
+		);
+	}
+	
+	$mname = (isset($agreement->mentor_name) ? $agreement->mentor_name : $agreement->mentor_user_name);
+	$form['mentor_signed'] = array(
+			'#type' => 'checkboxes',
+			'#options' => array(1 => "Mentor signed (". $mname .")"),
+			'#default_value' => array(populate($agreement, 'mentor_signed')),
+			'#disabled' => ($agreement->mentor_signed == 1 || getRole()!=_MENTOR_TYPE ? true : false ),
+	);	
+	$form['submit'] = array(
+			'#type' => 'submit',
+			'#attributes' => array('onclick'=> entityCall(_AGREEMENT_OBJ, $agreement, $target, '',_AGREEMENT_OBJ)),
+			'#value' => t('Save'),
+			'#post_render' => array('vals_soc_fix_submit_button'),
+	);
+	$form['cancel'] = array(
+			'#type' => 'button',
+			'#value' => t('Cancel'),
+			'#prefix' => '&nbsp; &nbsp; &nbsp;',
+			'#attributes' => array('onClick' => 'location.reload(); return true;'),
+			'#post_render' => array('vals_soc_fix_submit_button'),
+	);
+	$form['#vals_soc_attached']['js'] = array(
+			array(
+				'type'  => 'file',
+				'data' => '/includes/js/test_functions.js',
+			),
+	);
+	return $form;
+}
 //
 /*
 * Drupal has a nasty habit of making buttons into "submit" buttons

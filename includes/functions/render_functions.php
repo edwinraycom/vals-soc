@@ -59,6 +59,55 @@ function formatUsersNice($users, $type='User', $empty_message='', $show_title=FA
 	return $output;
 }
 
+function formatAgreementRecordNice($agreement, $target=''){
+	$sname = (isset($agreement->student_name) ? $agreement->student_name : $agreement->name);
+	$student_email = $agreement->mail;
+	$spname = (isset($agreement->supervisor_name) ? $agreement->supervisor_name : $agreement->supervisor_user_name);
+	$supervisor_email = $agreement->supervisor_user_mail;
+	$mname = (isset($agreement->mentor_name) ? $agreement->mentor_name : $agreement->mentor_user_name);
+	$mentor_email = $agreement->mentor_user_mail;
+	
+	$output='';
+	
+	$output .= '<dl class="view_record">';
+	
+	$output .=  '<dt>';
+	$output .=  t('Agreement text');
+	$output .=  '</dt>';
+	$output .=  '<span class="ui-icon ui-icon-arrowreturn-1-e"></span>';
+	$output .=  '<dd>';
+	$output .=  $agreement->description;
+	$output .=  '</dd>';
+	
+	$output .=  '<dt>';
+	$output .=  t('Student');
+	$output .=  '</dt>';
+	$output .=  '<span class="ui-icon ui-icon-arrowreturn-1-e"></span>';
+	$output .=  '<dd>';
+	$output .=  $sname . ' (' . $student_email . ')';
+	$output .=  '</dd>';
+
+	$output .=  '<dt>';
+	$output .=  t('Supervisor');
+	$output .=  '</dt>';
+	$output .=  '<span class="ui-icon ui-icon-arrowreturn-1-e"></span>';
+	$output .=  '<dd>';
+	$output .=  $spname . ' (' . $supervisor_email . ')';
+	$output .=  '</dd>';
+	
+	$output .=  '<dt>';
+	$output .=  t('Mentor');
+	$output .=  '</dt>';
+	$output .=  '<span class="ui-icon ui-icon-arrowreturn-1-e"></span>';
+	$output .=  '<dd>';
+	$output .=  $mname . ' (' . $mentor_email . ')';
+	$output .=  '</dd>';
+	
+	$output .=  '</dl>';
+	
+	return $output;
+}
+
 /**
  * Replaces the unordered list used show a member record
  * @param unknown $record - array of key => values (form)
@@ -422,4 +471,28 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
     } else {
         return tt('You have no %1$s registered yet', $type);
     }  
+}
+
+function renderAgreement($type, $agreement='', $agreement_owner='', $target='', $show_buttons=true){
+	if (!$agreement){
+		//$agreement = Groups::getGroup($type, '', $organisation_owner);
+	}
+	$key_name = Groups::keyField($type);
+	$id = $agreement>$key_name;
+	if ($agreement){
+		$s = '';
+		//if ($show_buttons && user_access('vals admin register')){
+			$pPath=request_path();
+			$edit_action = "onclick='ajaxCall(\"agreement\", \"edit\", {type: \"$type\", id: $id, path: \"$pPath\", target: \"$target\"}, ".
+					(($type == _STUDENT_GROUP) ? "\"$target\");'" :  "\"formResult\", \"html\", \"$target\");'");
+			$s .= "<div class='totheright'>";
+			$s .= "	<input type='button' value='".t('edit')."' $edit_action/>";
+			$s .= "</div>";
+			//$sub_type_user = '';
+		//}
+		$s .= formatAgreementRecordNice($agreement, $target);
+		return $s;
+	} else {
+		return tt('You have no %1$s registered yet', $type);
+	}
 }
