@@ -14,6 +14,7 @@ abstract class AbstractEntity {
 			case _ORGANISATION_GROUP: return 'org_id';break;
 			case _PROJECT_OBJ: return 'pid';break;
 			case _PROPOSAL_OBJ: return 'proposal_id';break;
+			case _AGREEMENT_OBJ: return 'agreement_id';break;
 			default: return '';
 		}
 	}

@@ -50,7 +50,7 @@ function initMyProjectLayout(){
 						<h4>
 							<a class="dashboard-link component-link" '.
 							'href="javascript:void(0);" ' .
-							'onclick="getProposalDetail('.$my_agreement[0]['proposal_id'].')"'.
+							'onclick="getProposalDetail('.$my_agreement->proposal_id.')"'.
 									
 							' title="'.t("My project details").'">'.t("My project details").'</a>
 						</h4>
@@ -67,8 +67,4 @@ function initMyProjectLayout(){
 		</div>
 	';
 	echo $output;	
-}
-
-function initAgreementLayout(){
-	echo 'agreement view';
 }

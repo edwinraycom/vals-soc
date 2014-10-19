@@ -628,12 +628,26 @@ function showProposalsForProject($project_id, $show_only_mine){
 											"<span style=\"float:left;display:inline;\" class=\"ui-icon ui-icon-info\">See details</span></a>"+
 											"&nbsp;<span style=\"float:left;display:inline;\" class=\"\" title=\"You have rejected this proposal for your project idea.\">"+
 											"&nbsp;&nbsp;<div style=\"display:inline;\">Rejected</div></span>";
-
+		    						}
+		    						else if(data.record.state == 'archived'){
+										return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
+										"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
+											"<span style=\"float:left;display:inline;\" class=\"ui-icon ui-icon-info\">See details</span></a>"+
+											"&nbsp;<span style=\"float:left;display:inline;\" class=\"\" title=\"This proposal has been archived because another student accepted your offer or this student accepted another offer.\">"+
+											"&nbsp;&nbsp;<div style=\"display:inline;\">Archived</div></span>";
 		    						}
 		    						else if(data.record.state == 'draft'){
 										return "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+
 										"<span style=\"display:inline;\" class=\"\" title=\"This proposal is in draft mode and not yet visible.\">"+
 										"&nbsp;&nbsp;<div style=\"display:inline;\">Draft only</div></span>";
+		    						}
+		    						else if(data.record.state == 'accepted'){
+										return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
+										"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
+											"<span style=\"float:left;display:inline;\" class=\"ui-icon ui-icon-info\">See details</span></a>"+
+											"&nbsp;<span style=\"float:left;display:inline;\" class=\"\" title=\"This proposal has been accepted by the student as their final choice.\">"+
+											"&nbsp;&nbsp;<div style=\"display:inline;\">Accepted</div></span>";
+
 		    						}
 									else if(data.record.proposal_id == data.record.pr_proposal_id && data.record.selected==0){
 										return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
@@ -651,8 +665,10 @@ function showProposalsForProject($project_id, $show_only_mine){
 									}
 									else{
 										return "<a title=\"See this Proposal\" href=\"javascript:void(0);\" "+
-											"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
-												"<span class=\"ui-icon ui-icon-info\">See details</span></a>";
+										"onclick=\"getProposalDetail("+data.record.proposal_id+")\">"+
+											"<span style=\"float:left;display:inline;\" class=\"ui-icon ui-icon-info\">See details</span></a>"+
+											"&nbsp;<span style=\"float:left;display:inline;\" class=\"\" title=\"This proposal is "+data.record.state+"\">"+
+											"&nbsp;&nbsp;<div style=\"display:inline;\">"+data.record.state+"</div></span>";
 									}
 		    					},
 
