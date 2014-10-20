@@ -1,8 +1,12 @@
 <?php
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after propjects.php which does the same
 
-function showAgreement($action='administer'){
-		$agreement = Agreement::getInstance()->getSingleStudentsAgreement(true);
+
+function showAgreement($agreement=''){
+
+		if(! $agreement){
+			$agreement = Agreement::getInstance()->getSingleStudentsAgreement(true);
+		}
 		$nr = 1;
 		$tab_id_prefix = 'agree_page-';
 		$data = array();

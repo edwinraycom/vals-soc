@@ -478,7 +478,7 @@ function renderAgreement($type, $agreement='', $agreement_owner='', $target='', 
 		//$agreement = Groups::getGroup($type, '', $organisation_owner);
 	}
 	$key_name = Groups::keyField($type);
-	$id = $agreement>$key_name;
+	$id = $agreement->$key_name;
 	if ($agreement){
 		$s = '';
 		//if ($show_buttons && user_access('vals admin register')){

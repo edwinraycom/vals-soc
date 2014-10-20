@@ -133,7 +133,9 @@ function getOrgAdminLayout($timeline_args){
 					</div>
 		';
 	}	
-
+	/*
+	 * // commenting this out as the actual link is something different to what is described
+	 * 
 	if($timeline_args['matchedProjectsVisible']){
 		$output .='
 					<div class="column-entry proposals_submitted">
@@ -143,6 +145,20 @@ function getOrgAdminLayout($timeline_args){
 								title="'.t("Projects for my organisations").'">'.t("Projects for my organisations").'</a>
 						</h4>
 						<p>'.t("List of projects being developed for my organisations").'</p>
+					</div>
+				';
+	}
+	*/
+	
+	if($timeline_args['myAcceptedProjectsVisible']){
+		$output .='
+					<div class="column-entry proposals_submitted">
+						<h4>
+							<a class="dashboard-link component-link"
+								href="'.$base_url.'/dashboard/projects/mine"
+								title="'.t("My accepted projects").'">'.t("My accepted projects").'</a>
+						</h4>
+						<p>'.t("List of accepted projects that I am mentoring").'</p>
 					</div>
 				';
 	}

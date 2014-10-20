@@ -526,8 +526,10 @@ class StatelessTimeline {
 		//$timeline_args['groupsVisible'] = FALSE;
 		$timeline_args['organisationMembersVisible'] = FALSE;
 		$timeline_args['proposalsVisible'] = FALSE;
-		$timeline_args['matchedProjectsVisible'] = FALSE;
+		//$timeline_args['matchedProjectsVisible'] = FALSE;
+		$timeline_args['myAcceptedProjectsVisible'] = FALSE;
 		$timeline_args['dashboardLegend'] = "";
+		
 		$period = $timeline->getCurrentPeriod();
 	
 		$timeline_args['groupsVisible'] = $period >= ORG_SIGNUP_PERIOD;
@@ -554,11 +556,11 @@ class StatelessTimeline {
 				$timeline_args['dashboardLegend'] =
 				t("Modify your organisation details and project ideas. You have until the following date when your organisations and project ".
 						"ideas become visible to students. ") .
-						$timeline->getOrgsAnnouncedDate()->format('F j, Y, g:i a');
-						$timeline_args['managedOrganisationsVisible'] = TRUE; // only modify entries
-						$timeline_args['manageProjectIdeasVisible'] = TRUE;
-						$timeline_args['organisationMembersVisible'] = TRUE;
-						break;
+				$timeline->getOrgsAnnouncedDate()->format('F j, Y, g:i a');
+				$timeline_args['managedOrganisationsVisible'] = TRUE; // only modify entries
+				$timeline_args['manageProjectIdeasVisible'] = TRUE;
+				$timeline_args['organisationMembersVisible'] = TRUE;
+				break;
 			case POST_ORGS_ANNOUNCED_PERIOD:
 				$timeline_args['dashboardLegend'] = t("Your organisations and project ideas are now visible to other users of the system.");
 				$timeline_args['managedOrganisationsVisible'] = TRUE;
@@ -573,6 +575,7 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_ORGS_REVIEW_APPLICATIONS_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Please review your project applications before the following date. ") .
@@ -582,6 +585,7 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_PROPOSAL_MATCHED_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Please ensure you have matched all students projects to mentors before the following date. ") .
@@ -591,6 +595,7 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_STUDENTS_ANNOUNCED_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("The list of students and projects will become visable to everyone after the following date. ") .
@@ -600,18 +605,20 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_BONDING_PERIOD:
 				$timeline_args['dashboardLegend'] = t("The list of students and projects is now visible to other users of the system. " .
 						"The Bonding period starts on the following date. ") .
-						$timeline->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
-						$timeline_args['managedOrganisationsVisible'] = TRUE;
-						$timeline_args['manageProjectIdeasVisible'] = TRUE;
-						$timeline_args['organisationMembersVisible'] = TRUE;
-						$timeline_args['connectionsVisible'] = TRUE;
-						$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-						$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
-						break;
+				$timeline->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
+				$timeline_args['managedOrganisationsVisible'] = TRUE;
+				$timeline_args['manageProjectIdeasVisible'] = TRUE;
+				$timeline_args['organisationMembersVisible'] = TRUE;
+				$timeline_args['connectionsVisible'] = TRUE;
+				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				//$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
+				break;
 			case PRE_CODING_PERIOD:
 				$timeline_args['dashboardLegend'] = t("Community bonding period.  Coding starts on the following date. ") .
 				$timeline->getCodingStartDate()->format('F j, Y, g:i a');
@@ -620,7 +627,8 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-				$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				//$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_SUGGESTED_CODING_END_DATE:
 				$timeline_args['dashboardLegend'] = t("Coding period. The following is the suggested end date for coding. ") .
@@ -630,7 +638,8 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-				$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				//$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_CODING_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Coding period. The following is the deadline date for coding. ") .
@@ -640,7 +649,8 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-				$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				//$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case OUT_OF_SEASON:
 				$timeline_args['dashboardLegend'] = t("The program is currently out of season.");
@@ -662,7 +672,8 @@ class StatelessTimeline {
 	
 		$timeline_args['organisationMembersVisible'] = FALSE;
 		$timeline_args['proposalsVisible'] = FALSE;
-		$timeline_args['matchedProjectsVisible'] = FALSE;
+		//$timeline_args['matchedProjectsVisible'] = FALSE;
+		$timeline_args['myAcceptedProjectsVisible'] = FALSE;
 		$timeline_args['dashboardLegend'] = "";
 		$period = $timeline->getCurrentPeriod();
 	
@@ -693,11 +704,11 @@ class StatelessTimeline {
 				$timeline_args['dashboardLegend'] =
 				t("Modify your organisation details and project ideas. You have until the following date when your organisations and project ".
 						"ideas become visible to students. ") .
-						$timeline->getOrgsAnnouncedDate()->format('F j, Y, g:i a');
-						$timeline_args['managedOrganisationsVisible'] = TRUE; // only modify entries
-						$timeline_args['manageProjectIdeasVisible'] = TRUE;
-						$timeline_args['organisationMembersVisible'] = TRUE;
-						break;
+				$timeline->getOrgsAnnouncedDate()->format('F j, Y, g:i a');
+				$timeline_args['managedOrganisationsVisible'] = TRUE; // only modify entries
+				$timeline_args['manageProjectIdeasVisible'] = TRUE;
+				$timeline_args['organisationMembersVisible'] = TRUE;
+				break;
 			case POST_ORGS_ANNOUNCED_PERIOD:
 				$timeline_args['dashboardLegend'] = t("Your organisations and project ideas are now visible to other users of the system.");
 				$timeline_args['managedOrganisationsVisible'] = TRUE;
@@ -712,6 +723,7 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_ORGS_REVIEW_APPLICATIONS_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Please review your project applications before the following date. ") .
@@ -721,6 +733,7 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_PROPOSAL_MATCHED_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Please ensure you have matched all students projects to mentors before the following date. ") .
@@ -730,6 +743,7 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_STUDENTS_ANNOUNCED_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("The list of students and projects will become visable to everyone after the following date. ") .
@@ -743,14 +757,15 @@ class StatelessTimeline {
 			case PRE_BONDING_PERIOD:
 				$timeline_args['dashboardLegend'] = t("The list of students and projects is now visible to other users of the system. " .
 						"The Bonding period starts on the following date. ") .
-						$timeline->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
-						$timeline_args['managedOrganisationsVisible'] = TRUE;
-						$timeline_args['manageProjectIdeasVisible'] = TRUE;
-						$timeline_args['organisationMembersVisible'] = TRUE;
-						$timeline_args['connectionsVisible'] = TRUE;
-						$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-						$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
-						break;
+				$timeline->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
+				$timeline_args['managedOrganisationsVisible'] = TRUE;
+				$timeline_args['manageProjectIdeasVisible'] = TRUE;
+				$timeline_args['organisationMembersVisible'] = TRUE;
+				$timeline_args['connectionsVisible'] = TRUE;
+				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
+				break;
 			case PRE_CODING_PERIOD:
 				$timeline_args['dashboardLegend'] = t("Community bonding period.  Coding starts on the following date. ") .
 				$timeline->getCodingStartDate()->format('F j, Y, g:i a');
@@ -759,7 +774,8 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-				$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				//$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_SUGGESTED_CODING_END_DATE:
 				$timeline_args['dashboardLegend'] = t("Coding period. The following is the suggested end date for coding. ") .
@@ -769,7 +785,8 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-				$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				//$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_CODING_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Coding period. The following is the deadline date for coding. ") .
@@ -779,7 +796,8 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-				$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				//$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case OUT_OF_SEASON:
 				$timeline_args['dashboardLegend'] = t("The program is currently out of season.");
@@ -802,7 +820,8 @@ class StatelessTimeline {
 		$timeline_args['organisationMembersVisible'] = FALSE;// a list of users per org I am attached to
 		$timeline_args['connectionsVisible'] = FALSE; // communication tools with other users of the system
 		$timeline_args['proposalsVisible'] = FALSE; // submitted proposals
-		$timeline_args['projectsIamMentorForVisible'] = FALSE; // matched actual projects
+		//$timeline_args['projectsIamMentorForVisible'] = FALSE; // matched actual projects
+		$timeline_args['myAcceptedProjectsVisible'] = FALSE;
 		$timeline_args['dashboardLegend'] = "";
 		$period = $timeline->getCurrentPeriod();
 		switch ($period) {
@@ -839,6 +858,7 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_ORGS_REVIEW_APPLICATIONS_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Please review your project applications before the following date. ") .
@@ -849,6 +869,7 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_PROPOSAL_MATCHED_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Please ensure you have matched all students projects to mentors before the following date. ") .
@@ -859,6 +880,7 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_STUDENTS_ANNOUNCED_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("The list of students and projects will become visable to everyone after the following date. ") .
@@ -869,19 +891,21 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_BONDING_PERIOD:
 				$timeline_args['dashboardLegend'] = t("The list of students and projects is now visible to other users of the system. " .
 						"The Bonding period starts on the following date. ") .
-						$timeline->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
-						$timeline_args['myOrganisationsVisible'] = TRUE;
-						$timeline_args['manageProjectIdeasVisible'] = TRUE;
-						$timeline_args['browseProjectIdeasVisible'] = TRUE;
-						$timeline_args['organisationMembersVisible'] = TRUE;
-						$timeline_args['connectionsVisible'] = TRUE;
-						$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-						$timeline_args['projectsIamMentorForVisible'] = TRUE;
-						break;
+				$timeline->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
+				$timeline_args['myOrganisationsVisible'] = TRUE;
+				$timeline_args['manageProjectIdeasVisible'] = TRUE;
+				$timeline_args['browseProjectIdeasVisible'] = TRUE;
+				$timeline_args['organisationMembersVisible'] = TRUE;
+				$timeline_args['connectionsVisible'] = TRUE;
+				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				//$timeline_args['projectsIamMentorForVisible'] = TRUE;
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
+				break;
 			case PRE_CODING_PERIOD:
 				$timeline_args['dashboardLegend'] = t("Community bonding period.  Coding starts on the following date. ") .
 				$timeline->getCodingStartDate()->format('F j, Y, g:i a');
@@ -891,7 +915,8 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-				$timeline_args['projectsIamMentorForVisible'] = TRUE;
+				//$timeline_args['projectsIamMentorForVisible'] = TRUE;
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_SUGGESTED_CODING_END_DATE:
 				$timeline_args['dashboardLegend'] = t("Coding period. The following is the suggested end date for coding. ") .
@@ -903,7 +928,8 @@ class StatelessTimeline {
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
 				$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
-				$timeline_args['projectsIamMentorForVisible'] = TRUE;
+				//$timeline_args['projectsIamMentorForVisible'] = TRUE;
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_CODING_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Coding period. The following is the deadline date for coding. ") .
@@ -914,7 +940,8 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-				$timeline_args['projectsIamMentorForVisible'] = TRUE;
+				//$timeline_args['projectsIamMentorForVisible'] = TRUE;
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case OUT_OF_SEASON:
 				$timeline_args['dashboardLegend'] = t("The program is currently out of season.");
@@ -937,7 +964,8 @@ class StatelessTimeline {
 		$timeline_args['organisationMembersVisible'] = FALSE;
 		$timeline_args['connectionsVisible'] = FALSE;
 		$timeline_args['proposalsVisible'] = FALSE;
-		$timeline_args['matchedProjectsVisible'] = FALSE;
+		//$timeline_args['matchedProjectsVisible'] = FALSE;
+		$timeline_args['myAcceptedProjectsVisible'] = FALSE;
 		$timeline_args['dashboardLegend'] = "";
 		$period = $timeline->getCurrentPeriod();
 		switch ($period) {
@@ -965,11 +993,11 @@ class StatelessTimeline {
 				t("Modify your organisation details and project ideas. You have until the following date when your organisations and project ".
 						"ideas become visible to students. ") .
 						$timeline->getOrgsAnnouncedDate()->format('F j, Y, g:i a');
-						$timeline_args['managedOrganisationsVisible'] = TRUE; // only modify entries
-						$timeline_args['manageProjectIdeasVisible'] = TRUE;
-						$timeline_args['browseProjectIdeasVisible'] = TRUE;
-						$timeline_args['organisationMembersVisible'] = TRUE;
-						break;
+				$timeline_args['managedOrganisationsVisible'] = TRUE; // only modify entries
+				$timeline_args['manageProjectIdeasVisible'] = TRUE;
+				$timeline_args['browseProjectIdeasVisible'] = TRUE;
+				$timeline_args['organisationMembersVisible'] = TRUE;
+				break;
 			case POST_ORGS_ANNOUNCED_PERIOD:
 				$timeline_args['dashboardLegend'] = t("Your organisations and project ideas are now visible to other users of the system.");
 				$timeline_args['managedOrganisationsVisible'] = TRUE;
@@ -986,6 +1014,7 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_ORGS_REVIEW_APPLICATIONS_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Please review your project applications before the following date. ") .
@@ -996,6 +1025,7 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_PROPOSAL_MATCHED_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Please ensure you have matched all students projects to mentors before the following date. ") .
@@ -1006,6 +1036,7 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_STUDENTS_ANNOUNCED_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("The list of students and projects will become visable to everyone after the following date. ") .
@@ -1016,19 +1047,21 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_BONDING_PERIOD:
 				$timeline_args['dashboardLegend'] = t("The list of students and projects is now visible to other users of the system. " .
 						"The Bonding period starts on the following date. ") .
-						$timeline->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
-						$timeline_args['managedOrganisationsVisible'] = TRUE;
-						$timeline_args['manageProjectIdeasVisible'] = TRUE;
-						$timeline_args['browseProjectIdeasVisible'] = TRUE;
-						$timeline_args['organisationMembersVisible'] = TRUE;
-						$timeline_args['connectionsVisible'] = TRUE;
-						$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-						$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
-						break;
+				$timeline->getCommunityBondingPeriodStart()->format('F j, Y, g:i a');
+				$timeline_args['managedOrganisationsVisible'] = TRUE;
+				$timeline_args['manageProjectIdeasVisible'] = TRUE;
+				$timeline_args['browseProjectIdeasVisible'] = TRUE;
+				$timeline_args['organisationMembersVisible'] = TRUE;
+				$timeline_args['connectionsVisible'] = TRUE;
+				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
+				//$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
+				break;
 			case PRE_CODING_PERIOD:
 				$timeline_args['dashboardLegend'] = t("Community bonding period.  Coding starts on the following date. ") .
 				$timeline->getCodingStartDate()->format('F j, Y, g:i a');
@@ -1038,7 +1071,8 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-				$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				//$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_SUGGESTED_CODING_END_DATE:
 				$timeline_args['dashboardLegend'] = t("Coding period. The following is the suggested end date for coding. ") .
@@ -1049,7 +1083,8 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-				$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				//$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case PRE_CODING_DEADLINE:
 				$timeline_args['dashboardLegend'] = t("Coding period. The following is the deadline date for coding. ") .
@@ -1060,7 +1095,8 @@ class StatelessTimeline {
 				$timeline_args['organisationMembersVisible'] = TRUE;
 				$timeline_args['connectionsVisible'] = TRUE;
 				$timeline_args['proposalsVisible'] = TRUE;//menu options - Proposals submitted to my Organisations
-				$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				//$timeline_args['matchedProjectsVisible'] = TRUE;//- MENU OPTION - PROJECTS FOR myOrgs - these are the matched proper projects
+				$timeline_args['myAcceptedProjectsVisible'] = TRUE;
 				break;
 			case OUT_OF_SEASON:
 				$timeline_args['dashboardLegend'] = t("The program is currently out of season.");

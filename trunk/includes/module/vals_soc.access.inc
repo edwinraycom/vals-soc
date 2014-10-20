@@ -127,8 +127,15 @@ function pageAccessCheck($access_string) {
 			};
 			break;
 		case 'dashboard/projects/mine':
-		case 'dashboard/projects/offers':
 		case 'dashboard/projects/mine/agreement':
+			if(! hasRole(array(_ANONYMOUS_TYPE)) && Timeline::getInstance()->hasStudentSignupPeriodOpened() ){
+				return TRUE;
+			} else {
+				return FALSE;
+			}
+			break;
+				
+		case 'dashboard/projects/offers':
 			if(hasRole(array(_STUDENT_TYPE)) && Timeline::getInstance()->hasStudentSignupPeriodOpened() ){
 				return TRUE;
 			} else {
@@ -136,6 +143,6 @@ function pageAccessCheck($access_string) {
 			}
 			break;
 		default:
-			return hasPermission($access_string);
+			return hasPermission($access_string);//
 	}
 }

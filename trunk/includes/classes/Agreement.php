@@ -111,16 +111,25 @@ class Agreement extends AbstractEntity {
 		}
 		return FALSE;
 	}
-	
-	static public function getSingleStudentsAgreement($details=false){
-		if (!Users::isStudent()){
-			echo t('You are not a student');
-			return null;
-		}
-		return self::getProjectAgreements('', '', $GLOBALS['user']->uid, '', '', $details)->fetchObject();
+
+	static public function getSingleAgreementById($agreement_id, $details=false){
+		return self::getProjectAgreements($agreement_id,'', '', '', '', $details, '', 0, 1000)->fetchObject();
 	}
 	
-	static public function getProjectAgreements($agreement_id='', $project_id='', $student_id='', $supervisor_id='', $mentor_id='', $details=false){
+	static public function getSingleStudentsAgreement($details=false){
+		return self::getProjectAgreements('', '', $GLOBALS['user']->uid, '', '', $details, '', 0, 1000)->fetchObject();
+	}
+
+	static public function getAgreementsForMentorBySearchCriteria($details=false, $sorting='a.agreement_id', $startIndex=1, $pageSize=10){
+		return self::getProjectAgreements('', '', '', '', $GLOBALS['user']->uid, $details, $sorting, $startIndex, $pageSize)->fetchAll(); 
+	}
+	
+	static public function getAgreementsForSupervisorBySearchCriteria($details=false, $sorting='a.agreement_id', $startIndex=1, $pageSize=10){
+		return self::getProjectAgreements('', '', '', $GLOBALS['user']->uid, '', $details, $sorting, $startIndex, $pageSize)->fetchAll();
+	}
+	
+	static public function getProjectAgreements($agreement_id='', $project_id='', $student_id='', $supervisor_id='', $mentor_id='',
+			 $details=false, $sorting='a.agreement_id', $startIndex=1, $pageSize=10){
 		$query = db_select('soc_agreements', 'a')->fields('a', self::$fields);
 		
 		if ($agreement_id){
@@ -149,6 +158,8 @@ class Agreement extends AbstractEntity {
 			$query->leftjoin('users', 'supervisor_user', 'a.supervisor_id = %alias.uid');
 			$query->leftjoin('soc_names', 'supervisor', 'a.supervisor_id = %alias.names_uid');
 			
+			$query->leftjoin('soc_projects', 'pr', 'a.project_id = %alias.pid');
+			
 			$query->fields('student_user', array('mail', 'name'));
 			$query->fields('student', array('name'));
 			
@@ -157,11 +168,33 @@ class Agreement extends AbstractEntity {
 			
 			$query->fields('supervisor_user', array('mail', 'name'));
 			$query->fields('supervisor', array('name'));
+			$query->fields('pr', array('title'));
 		}
-
-		$query->orderBy('a.agreement_id', 'ASC');
+		if ($sorting){
+			$parts = explode(' ', $sorting);
+			$sorting = $parts[0];
+			$direction = (isset($parts[1])? $parts[1]: 'DESC');
+			$query->orderBy($sorting, $direction);
+		}
+		$query->range($startIndex, $pageSize);
 		//echo $query;
 		return $query->execute();
 	}
+	
+	static public function getProjectAgreementsRowCount($supervisor_id='', $mentor_id=''){
+		
+		$query = db_select('soc_agreements', 'a')->fields('a', self::$fields);
+		
+		if ($supervisor_id){
+			$query->condition('a.supervisor_id', $supervisor_id);
+		}
+		if ($mentor_id){
+			$query->condition('a.mentor_id', $mentor_id);
+		}
+		
+		return $query->execute()->rowCount();
+		
+	}
+	
 }
 	

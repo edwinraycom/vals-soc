@@ -65,14 +65,6 @@ function getSupervisorLayout($timeline_args){
 		';
 	}
 	
-	
-	$output .='	
-				</div>
-				<!-- column two -->
-				<div class="column">
-	';
-
-	
 	if(TRUE || $timeline_args['manageProjectIdeasVisible']){//TODO: the statistics can be seen by all
 		$output .="
 		<div class='column-entry org_app shipment_tracking'>
@@ -86,6 +78,15 @@ function getSupervisorLayout($timeline_args){
 				</div>
 				";
 	}
+	
+	$output .='	
+				</div>
+				<!-- column two -->
+				<div class="column">
+	';
+
+	
+
 	if($timeline_args['manageProjectIdeasVisible']){
 		$output .='
 		<div class="column-entry org_app projects">
@@ -118,8 +119,12 @@ function getSupervisorLayout($timeline_args){
 					</div>
 		';
 	}	
-
+/*
+  // commenting this out as the actual link is something different to what is described
+ 
 	if($timeline_args['matchedProjectsVisible']){
+		// commenting this out as the actual link is something different to what is described
+		
 		$output .='
 					<div class="column-entry proposals_submitted">
 						<h4>
@@ -131,8 +136,20 @@ function getSupervisorLayout($timeline_args){
 					</div>
 				';
 	}
+*/
+	if($timeline_args['myAcceptedProjectsVisible']){
+		$output .='
+					<div class="column-entry proposals_submitted">
+						<h4>
+							<a class="dashboard-link component-link"
+								href="'.$base_url.'/dashboard/projects/mine"
+								title="'.t("My accepted projects").'">'.t("My accepted projects").'</a>
+						</h4>
+						<p>'.t("List of accepted projects that I am supervising").'</p>
+					</div>
+				';
+	}
 
-	
 
 	$output .='
 	</div>
