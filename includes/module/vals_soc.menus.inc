@@ -1,4 +1,5 @@
 <?php 
+module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.access');
 /*
  * Note: changing type of MENU_NORMAL_ITEM to MENU_CALLBACK and refreshing the cache
  * does NOT make the menu item disappear.  (its still cached. you have to manually do it
@@ -362,7 +363,7 @@ function getMyProjectOffersLink($path){
 
 function getMyProjectLink($path){
 	return array(
-			'title' => t('My accepted project'),
+			'title' => '', // this is set elsewhere.
 			'type' => MENU_CALLBACK, // register link, but dont put it in the menu
 			'page callback' => 'vals_soc_my_accepted_project',
 			'access callback' => 'vals_soc_access_check',

@@ -554,6 +554,14 @@ function renderProposalTabs(result, labels, container){
 	return s;
 }
 
+function getAgreement(agreementId){
+	ajaxCall("agreement", "render_agreement_for_id", {id: agreementId, target:'our_content'}, "formResult", 'html', 'our_content');
+}
+
+function getAcceptedProjectOverview(agreementId){
+	ajaxCall("agreement", "render_project_for_id", {id: agreementId, target:'our_content'}, "formResult", 'html', 'our_content');
+}
+
 function getProposalsForProject(projectId, show_mine_only){
 	ajaxCall("proposal", "render_proposals_for_id", {id: projectId, target:'our_content', mine_only:show_mine_only}, "formResult", 'html', 'our_content');
 }
