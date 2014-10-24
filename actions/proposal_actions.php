@@ -448,7 +448,7 @@ switch ($_GET['action']){
 			return;
 		}
 		$student = $GLOBALS['user']->uid;
-		if(sizeof(Agreement::getInstance()->getSingleStudentsAgreement())==1){
+		if(Agreement::getInstance()->getSingleStudentsAgreement()){
 			echo t('You have already accepted a project offer');
 			return;
 		}
