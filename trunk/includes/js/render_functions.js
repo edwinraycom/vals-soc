@@ -102,7 +102,7 @@ function getAcceptProposalFinalMarkup(proposal, option){
 }
 
 function renderProposalStatus(proposal){
-	var content = "<h2>"+proposal.pr_title+"</h2>";
+	var content = '<div class="totheright">(' +Drupal.t('Status: ')+proposal.state+')</div>'+"<h2>"+proposal.pr_title+"</h2>";
 	content += Drupal.t('Submitted by the student') + " <i>" + (proposal.student_name ? proposal.student_name: proposal.name) + " </i>";
 	content += '<br/>';
 	content += '<br/>';
@@ -510,21 +510,26 @@ function renderProposalTabs(result, labels, container){
 	s += '<div class="tabs_container">';
 
 	var ney = Drupal.t('Nothing entered yet');
+	var project_state = result.pr_state;
+	var proposal_state = result.state;
+	console.log(proposal_state +' llllllllllll' + project_state);
 	for (var t=0; t < count;t++){
 		target = labels[t].tab;
 		s += '<div id="tab_'+ target + '" class="content">';
 		s += 	"<div id='msg_"+ target+ "'></div>";
-
+		
 		switch (target){
 			case 'project':
 				//Paul - there was a bug here which meant that the project description
 				// was being replaced by the organisation description. The value to use
 				// from this resultset is 'pr_description' rather than 'description' which
 				// is used in the renderProject() function above
-				result.title = result.pr_title;
-				result.description = result.pr_description;
-				result.url = result.pr_url;
-				s += renderProject(result, false);
+				var result_project = result;
+				result_project.title = result.pr_title;
+				result_project.description = result.pr_description;
+				result_project.url = result.pr_url;
+				result_project.state = project_state;
+				s += renderProject(result_project, false);
 				break;
 			case 'overview': s += renderProposalOverview(result);
 				break;
@@ -536,10 +541,10 @@ function renderProposalTabs(result, labels, container){
 				break;
 			case 'solution': s += (result.solution_long ? result.solution_long : ney);
 				break;
-			case 'status': s += renderProposalStatus(result);
+			case 'status': 
+				result.state = proposal_state;
+				s += renderProposalStatus(result);
 				break;
-//			case 'modules': s += (result.modules ? result.modules : ney);
-//				break;
 			case 'edit': s += Drupal.t('Wait please');
 			break;
 			case 'delete': s += Drupal.t('Are you sure you want to delete this proposal?<br>')+
