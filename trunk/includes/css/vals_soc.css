@@ -35,6 +35,10 @@ input[type=button]  {
 	text-align:right; 
 }
 
+.alert {
+	color:red;
+}
+
 /* These styles are used inside a modal window which is 983.7px at the moment */
 .center_bottom_relative {
 	text-align:center;

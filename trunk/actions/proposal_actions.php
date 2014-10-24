@@ -395,6 +395,9 @@ switch ($_GET['action']){
 			// update the project
 			$props['proposal_id'] = $proposal_id;
 			$props['selected'] = $is_final;
+			if ($is_final){
+				$props['state']= 'preselected';
+			}
 			$result = Project::changeProject($props, $project_id);
 			//send message back giving status & success message
 			if ($result){

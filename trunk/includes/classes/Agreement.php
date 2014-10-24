@@ -103,6 +103,10 @@ class Agreement extends AbstractEntity {
 		try {
 			$id = db_update(tableName(_AGREEMENT_OBJ))->fields($props)
 			->condition(self::keyField(_AGREEMENT_OBJ), $props['agreement_id'])->execute();
+			if ($props['student_signed'] && $props['supervisor_signed'] && $props['mentor_signed']) {
+				$res = db_update(tableName(_PROJECT_OBJ))->fields(array('state'=>'active'))
+				->condition(self::keyField(_PROJECT_OBJ), $props['project_id'])->execute();
+			}
 			return TRUE;
 	
 		} catch (Exception $ex) {
