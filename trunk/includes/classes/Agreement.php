@@ -181,7 +181,6 @@ class Agreement extends AbstractEntity {
 			$query->orderBy($sorting, $direction);
 		}
 		$query->range($startIndex, $pageSize);
-		//echo $query;
 		return $query->execute();
 	}
 	
