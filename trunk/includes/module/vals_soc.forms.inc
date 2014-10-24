@@ -1048,7 +1048,7 @@ function vals_soc_agreement_form($form, &$form_state, $agreement='', $target='')
 			'#type' => 'checkboxes',
 			'#options' => array(1 => "Supervisor signed (". $spname .")"),
 			'#default_value' => array(populate($agreement, 'supervisor_signed')),
-			'#disabled' => ($agreement->supervisor_signed == 1 || getRole()!=_SUPERVISOR_TYPE ? true : false ),
+			'#disabled' => ($agreement->supervisor_signed == 1 || getRole()!=_SUPERVISOR_TYPE && getRole()!=_INSTADMIN_TYPE ? true : false ),
 	);
 	if($agreement->mentor_signed == 1){
 		$form['mentor_signed_already'] = array(
@@ -1062,7 +1062,7 @@ function vals_soc_agreement_form($form, &$form_state, $agreement='', $target='')
 			'#type' => 'checkboxes',
 			'#options' => array(1 => "Mentor signed (". $mname .")"),
 			'#default_value' => array(populate($agreement, 'mentor_signed')),
-			'#disabled' => ($agreement->mentor_signed == 1 || getRole()!=_MENTOR_TYPE ? true : false ),
+			'#disabled' => ($agreement->mentor_signed == 1 || getRole()!=_MENTOR_TYPE && getRole()!=_ORGADMIN_TYPE ? true : false ),
 	);	
 	$form['submit'] = array(
 			'#type' => 'submit',
