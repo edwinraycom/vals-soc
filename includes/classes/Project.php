@@ -54,7 +54,8 @@ class Project extends AbstractEntity{
 		// we want to deliver all the non-draft projects except for the owner (or colleagues) of these projects
 		$myorgs = Organisations::getMyOrganisations ();
 		if (gettype ( $query ) == 'string') {
-			$query .= " AND (${project_alias}state <> 'draft'" . ($myorgs ? " OR ${project_alias}org_id IN (" . implode ( $myorgs, ',' ) . "))" : ")");
+			$query .= " AND (${project_alias}state <> 'draft'" . 
+			($myorgs ? " OR ${project_alias}org_id IN (" . implode ( $myorgs, ',' ) . "))" : ")");
 		} else {
 			if ($myorgs) {
 				$query->condition ( db_or ()->condition ( "${project_alias}state", 'draft', '<>' )->condition ( "${project_alias}org_id", $myorgs, 'IN' ) );
@@ -64,7 +65,7 @@ class Project extends AbstractEntity{
 		}
 	}
     
-    public function getProjectsRowCountBySearchCriteria($tags, $organisation){
+    public function getProjectsRowCountBySearchCriteria($tags, $organisation, $state){
     	$projectCount = db_select('soc_projects');
     	if(isset($tags)){
     		$projectCount->condition('tags', '%'.$tags.'%', 'LIKE');
@@ -72,12 +73,15 @@ class Project extends AbstractEntity{
     	if(isset($organisation) && $organisation !="0"){
     		$projectCount->condition('org_id', $organisation);
     	}
+    	if(isset($state) && $state !="0"){
+    		$projectCount->condition('state', $state);
+    	}
     	$this->addProjectCondition($projectCount, '');
     	$projectCount->fields('soc_projects');
     	return $projectCount->execute()->rowCount();
     }
 
-    public function getProjectsBySearchCriteria($tags, $organisation, $sorting, $startIndex, $pageSize){
+    public function getProjectsBySearchCriteria($tags, $organisation, $state, $sorting, $startIndex, $pageSize){
     	$queryString = "SELECT p.pid, p.title, p.description, p.tags, p.state, o.name, COUNT(v.proposal_id) AS proposal_count "
     			."FROM soc_projects p "
     			."LEFT JOIN soc_proposals AS v ON ( v.pid = p.pid ) "
@@ -88,6 +92,9 @@ class Project extends AbstractEntity{
     	}
     	if(isset($organisation) && $organisation !="0"){
     		$queryString .=	 " AND p.org_id = ".$organisation;
+    	}
+    	if(isset($state) && $state !="0"){
+    		$queryString .=	 " AND p.state = '$state'";
     	}
     	$this->addProjectCondition($queryString);
     	$queryString .= " GROUP BY p.pid ";
