@@ -258,7 +258,7 @@ function initBrowseProposalsLayout(){
 						display: function (data){return data.record.o_name;}
 					},
 
-					solution_short : {
+					solution_short : {//the key of the object is misused to show this column
 						//width: "2%",
     					title: "Proposal details",
 						sorting: false,

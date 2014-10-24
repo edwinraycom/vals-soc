@@ -19,7 +19,7 @@ switch ($_GET['action']){
 	break;
 	case 'mark':
 		if (!(Users::isStudent())){
-			echo t('You can only mark a project as student member of an institute.');
+			echo jsonBadResult(t('You can only mark a project as student member of an institute.'));
 			return;
 		}
 		$id = getRequestVar('id');
