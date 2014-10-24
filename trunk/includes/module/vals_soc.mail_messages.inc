@@ -182,7 +182,7 @@ function get_project_acceptance_email_body($record, $was_successful, $user_type)
 			$alert .= t('Sorry, but unfortunately another student has accepted a project offer based on the project below. This means that this '.
 					'particular project idea is now taken.');
 			$alert .= '<br/><br/>';
-			$alert .= t("If you haven't already, it may be worthwhile to try to improve an existing proposal you have made on an another project idea, ");
+			$alert .= t("If you haven't already, it may be worthwhile to try to improve an existing proposal you have made on another project idea, ");
 			$alert .= t("and ask for feedback from that mentor. Alternatively, if you wish, you can still create another proposal for a different project idea.");
 			$alert .= "<br/><br/>";
 		}
@@ -206,7 +206,7 @@ function get_project_acceptance_email_body($record, $was_successful, $user_type)
 			$alert .= t('Sorry, but unfortunately another student has accepted a project offer based on the project below. One of your students had also created a '.
 					'proposal for this idea. This means that this particular project idea is now taken and your student will have to seek an alternative. ');
 			$alert .= '<br/><br/>';
-			$alert .= t("If your student hasn't already, it may be worth while for him/her try to improve an existing proposal they have made on an another project idea, ");
+			$alert .= t("If your student hasn't already, it may be worth while for him/her try to improve an existing proposal they have made on another project idea, ");
 			$alert .= t("and ask for feedback from that mentor. Alternatively, if they wish, they can still create another proposal for a different project idea.");
 			$alert .= "<br/><br/>";
 		}
