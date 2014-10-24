@@ -128,6 +128,10 @@ switch ($_GET['action']){
 			if(isset($_POST['organisation'])){
 				$organisation = $_POST['organisation'];
 			}
+			$state=null;
+			if(isset($_POST['state'])){
+				$state = $_POST['state'];
+			}
 			$project_id = getRequestVar('pid', null);
 			$favourites_only = getRequestVar('favourites', false);
 			//Return result to jTable
@@ -148,9 +152,9 @@ switch ($_GET['action']){
 					}
 				} else {
 					$jTableResult['TotalRecordCount'] = Project::getInstance()->getProjectsRowCountBySearchCriteria(
-							$tags, $organisation);
+							$tags, $organisation, $state);
 					$jTableResult['Records'] = Project::getInstance()->getProjectsBySearchCriteria($tags,
-							$organisation, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
+							$organisation, $state, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
 				}
 			}
 			//Save it for navigation

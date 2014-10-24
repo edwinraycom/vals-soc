@@ -212,7 +212,7 @@ function renderProposalOverview(proposal){
  */
 function renderProject(project, apply_projects){
 	var navigation = true;
-	var content = "<h2>"+project.title+"</h2>";
+	var content = '<div id="project_status" class="totheright">(status:'+project.state+')</div>'+"<h2>"+project.title+"</h2>";
 	var rate_projects = window.view_settings.rate_projects;
 	var navigation_class = (project.description.length > 2980) ? 'center_bottom_relative': 'center_bottom';
 	content += project.description;

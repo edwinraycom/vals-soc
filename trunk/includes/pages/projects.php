@@ -189,6 +189,10 @@ function initBrowseProjectLayout($pid=''){
 	if(isset($_GET['organisation'])){
 		$org_id = $_GET['organisation'];
 	}
+	$state = null;
+	if(isset($_GET['state'])){
+		$state = $_GET['state'];
+	}
 	$apply_projects = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 	$rate_projects = Users::isSuperVisor();
 	$is_student = Users::isStudent();
@@ -209,6 +213,31 @@ function initBrowseProjectLayout($pid=''){
 			<?php if ($is_student){?>
 			<input type='button' value='<?php echo t('Filter on Favourites');?>' id='favourite_filter'/>
 			<?php }?>
+			
+			<?php echo "<BR/>"; echo t('Status');?>:
+			<select id="state" name="state">
+				<option <?php echo  (! $state) ? 'selected="selected"': ''; ?> value="0"><?php echo t('NA');?></option><?php
+				$states = array('draft' => 'draft', 'pending' => 'pending', 'open' => 'open', 'active' => 'active', 'ended' => 'ended', 'archived' => 'archived');
+				if (! Users::isAdmin()){
+					if (Users::isMentor()){
+						unset($states['archived']);
+					} else {
+						unset($states['draft']);
+						if ($is_student){
+							unset($states['pending'], $states['archived']);
+						} elseif (Users::isUser()) {
+							unset($states['archived']);
+						} else {
+							$states = array();
+						}
+					} 
+				}
+				foreach ($states as $key => $stat) {
+					$selected = ($key == $state ? 'selected="selected" ' : '');
+					echo "<option $selected value='$key'>$stat</option>";
+				}?>
+			</select>
+			
 		</form>
 	</div>
 	<div id="ProjectTableContainer" style="width: 700px;"></div>
@@ -258,8 +287,14 @@ function initBrowseProjectLayout($pid=''){
 					edit: false
 				},
 				proposal_count: {
-					title: "proposals",
+					title: "Proposals",
 					width: "12%",
+					create: false,
+					edit: false
+				},
+				state: {
+					title: "Status",
+					//width: "12%",
 					create: false,
 					edit: false
 				}
@@ -313,6 +348,7 @@ function initBrowseProjectLayout($pid=''){
 	//Load project list from server on initial page load
 	$("#ProjectTableContainer").jtable("load", {
 		tags: $("#tags").val(),
+		state: $("#state").val(),
 		organisation: $("#organisation").val()<?php 
 		if ($pid){echo ", pid: $pid";}?>
 	});
@@ -323,6 +359,7 @@ function initBrowseProjectLayout($pid=''){
 		if(testTagInput() && $("#tags").val()==""){
 			$("#ProjectTableContainer").jtable("load", {
 			tags: $("#tags").val(),
+			state: $("#state").val(),
 			organisation: $("#organisation").val()
 			});
 		}
@@ -333,6 +370,17 @@ function initBrowseProjectLayout($pid=''){
 		if(testTagInput()){
 			$("#ProjectTableContainer").jtable("load", {
 				tags: $("#tags").val(),
+				state: $("#state").val(),
+				organisation: $("#organisation").val()
+			});
+		}
+	});
+	$("#state").change(function(e) {
+		e.preventDefault();
+		if(testTagInput()){
+			$("#ProjectTableContainer").jtable("load", {
+				tags: $("#tags").val(),
+				state: $("#state").val(),
 				organisation: $("#organisation").val()
 			});
 		}
@@ -350,6 +398,7 @@ function initBrowseProjectLayout($pid=''){
 		if(testTagInput()){
 			$("#ProjectTableContainer").jtable("load", {
 				tags: $("#tags").val(),
+				state: $("#state").val(),
 				organisation: $("#organisation").val()
 			});
 		}
