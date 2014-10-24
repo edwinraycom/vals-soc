@@ -30,3 +30,4 @@ define('_INSTITUTE_GROUP', 'institute');
 //Object types
 define('_PROJECT_OBJ', 'project');
 define('_PROPOSAL_OBJ', 'proposal');
+define('_AGREEMENT_OBJ', 'agreement');
