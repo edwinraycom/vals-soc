@@ -7,6 +7,7 @@ module_load_include('php', 'vals_soc', 'includes/classes/Project');
 module_load_include('php', 'vals_soc', 'includes/classes/Proposal');
 module_load_include('php', 'vals_soc', 'includes/pages/projects');
 module_load_include('php', 'vals_soc', 'includes/functions/ajax_functions');
+module_load_include('php', 'vals_soc', 'includes/functions/render_functions');
 
 $path_arr = explode('/', $_SERVER['HTTP_REFERER']);//we need to store in separate var as otherwise a warning is issued for passing non var by ref
 $mine = ('mine' == (array_pop($path_arr)));//needed for save and delete
