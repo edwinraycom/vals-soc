@@ -469,7 +469,9 @@ switch ($_GET['action']){
 								notify_all_of_project_offer_acceptance($single_proposal_for_accepted_project, $proposal_id, true);
 								$props = array();
 								$props['state'] = 'accepted'; //set this one to 'accepted'
-								Proposal::getInstance()->updateProposal($props, $proposal_id);//uncomment to set this after testing **************
+								Proposal::getInstance()->updateProposal($props, $proposal_id);
+								$props['state'] = 'active'; //set this one to 'accepted'
+								Project::getInstance()->updateProject($props, $project_id);
 							}
 							else{
 								if($single_proposal_for_accepted_project->state != 'rejected'){
