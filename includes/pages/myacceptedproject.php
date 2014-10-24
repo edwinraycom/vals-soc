@@ -1,8 +1,8 @@
 <?php
-drupal_add_css(_VALS_SOC_PATH .'/includes/ui/tabs/tabs.css', array(
-'type' => 'file',
-'group' => CSS_THEME
-));
+// drupal_add_css(_VALS_SOC_PATH .'/includes/ui/tabs/tabs.css', array(
+// 'type' => 'file',
+// 'group' => CSS_THEME
+// ));
 
 function initMyProjectLayout($role){
 	$title = (hasRole(array(_STUDENT_TYPE)) ? t('My accepted project') : t('My accepted projects'));

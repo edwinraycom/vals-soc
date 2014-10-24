@@ -14,7 +14,6 @@ $mine = ('mine' == (array_pop($path_arr)));//needed for save and delete
 
 switch ($_GET['action']){
 	case 'project_page':
-		module_load_include('php', 'vals_soc', 'includes/classes/Organisations');
 		initBrowseProjectLayout();
 	break;
 	case 'mark':

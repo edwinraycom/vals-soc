@@ -95,7 +95,10 @@ switch ($_GET['action']){
 		$id = altSubValue($_POST, 'id');
 		$target = altSubValue($_POST, 'target', '');
 		$agreement = Agreement::getInstance()->getSingleAgreementById($id, true);
+		echo "<div id='admin_container' class='tabs_container'>";
 		echo showAgreement($agreement);
+		echo "</div>";
+		
 	break;
 	default: echo "No such action: ".$_GET['action'];
 }

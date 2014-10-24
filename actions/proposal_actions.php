@@ -21,7 +21,6 @@ switch ($_GET['action']){
 		echo "<div id='admin_container' class='tabs_container'>";
 		echo showMyProposalPage();
 		echo "</div>";
-		// showMyProposalPage();
 	break;
 	case 'render_proposals_for_id':
 		if(isset($_POST['mine_only']) && $_POST['mine_only']){
