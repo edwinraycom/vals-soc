@@ -217,7 +217,7 @@ function initBrowseProjectLayout($pid=''){
 			<?php echo "<BR/>"; echo t('Status');?>:
 			<select id="state" name="state">
 				<option <?php echo  (! $state) ? 'selected="selected"': ''; ?> value="0"><?php echo t('NA');?></option><?php
-				$states = array('draft' => 'draft', 'pending' => 'pending', 'open' => 'open', 'active' => 'active', 'ended' => 'ended', 'archived' => 'archived');
+				$states = array('draft' => 'draft', 'pending' => 'pending', 'open' => 'open', 'preselected' => 'preselected', 'active' => 'active', 'ended' => 'ended', 'archived' => 'archived');
 				if (! Users::isAdmin()){
 					if (Users::isMentor()){
 						unset($states['archived']);

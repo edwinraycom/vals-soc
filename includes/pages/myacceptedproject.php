@@ -171,10 +171,9 @@ function getSingleAcceptedProjectView($agreement){
 	</script>
 	';
 	 
-	if(Users::isStudent()){
+	if(!Users::isStudent()){
 		$output .= '<div id="baktoprops"><a href=" '.$base_url.'/dashboard">'.t('Back to dashboard').'</a></div>';
-	}
-	else{
+	} else {
 		$output .= '<div id="baktoprops"><a href=" '.$base_url.'/dashboard/projects/mine">'.t('Back to your list of accepted projects').'</a></div>';
 	}
 	

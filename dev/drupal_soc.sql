@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS soc_agreements (
   mentor_id mediumint(8) NOT NULL,
   proposal_id mediumint(8) unsigned NOT NULL,
   project_id mediumint(8) unsigned NOT NULL,
-  description TEXT DEFAULT '' COMMENT 'Description of the agreement',
+  description TEXT COMMENT 'Description of the agreement',
   student_signed tinyint(4) DEFAULT '0' COMMENT 'Whether the project is signed off by a student',
   supervisor_signed tinyint(4) DEFAULT '0' COMMENT 'Whether the project is signed off by a student',
   mentor_signed tinyint(4) DEFAULT '0' COMMENT 'Whether the project is signed off by a student',
