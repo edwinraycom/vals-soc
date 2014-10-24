@@ -113,7 +113,8 @@ function getStudentLayout($timeline_args){
 		</div>
 		';
 	}
-	if($timeline_args['myOffersVisible'] && sizeof(Agreement::getInstance()->getSingleStudentsAgreement())==0){
+	$found_agreement = Agreement::getInstance()->getSingleStudentsAgreement();
+	if($timeline_args['myOffersVisible'] && (!$found_agreement)){
 		$output .='
 					<div class="column-entry  proposals_submitted">
 						<h4>
@@ -125,7 +126,7 @@ function getStudentLayout($timeline_args){
 					</div>
 		';
 	}
-	if($timeline_args['myAcceptedProjectVisible'] && sizeof(Agreement::getInstance()->getSingleStudentsAgreement())==1){
+	if($timeline_args['myAcceptedProjectVisible'] && $found_agreement){
 		$output .='
 					<div class="column-entry proposals">
 						<h4>
