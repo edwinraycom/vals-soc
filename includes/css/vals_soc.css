@@ -199,8 +199,8 @@ a.external {
 	width: 213px;
 	/**  border: 1px solid blue;**/
 	display: inline-block;
-	min-height: 360px; 
-	/* It appears that the current height of the news block is 362 and we have to take into account the 1px top and bottom line */
+	min-height: 404px; 
+	/* It appears that the current height of the news block is 406 and we have to take into account the 1px top and bottom line */
 	height: 100%;
 }
 

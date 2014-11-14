@@ -3,9 +3,19 @@
 		<h4 id="title-section-how-it-works"><?php echo t('News and other information');?></h4>
 			<div class="block-padding-no-border">
 				<p>
-				<?php echo('<b>14/11/2014 Update.</b>&nbsp;The student registration period has been extended until 15/12/2014.
-						&nbsp;&nbsp;This is to ultimately encourage more students to participate.');?>
+					<b>Student period extended</b> <br/>
+					<?php 
+					echo "To give late and new interested students the opportunity to submit proposals for the current 
+					projects, we have decided to extend
+					the period for submitting proposals with one month up to and until 
+					the <b><i>15th of December</i></b>.
+					<small>(Posted: 14/11/2014)</small>";
+					?>
 				</p>
+				
+				<?php //<p>echo('<b>14/11/2014 Update.</b>&nbsp;The student registration period has been extended until 15/12/2014.
+						//&nbsp;&nbsp;This is to ultimately encourage more students to participate.');</p>?>
+				
 				<p>
 					<?php echo("We originally planned to use the well-known Melange platform used by Google's 
 							Summer of Code, but at the time there was no stable version available that we could 
