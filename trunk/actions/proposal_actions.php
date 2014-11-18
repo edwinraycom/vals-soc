@@ -470,7 +470,7 @@ switch ($_GET['action']){
 								$props['state'] = 'accepted'; //set this one to 'accepted'
 								Proposal::getInstance()->updateProposal($props, $proposal_id);
 								$props['state'] = 'active'; //set this one to 'accepted'
-								Project::getInstance()->updateProject($props, $project_id);
+								Project::getInstance()->changeProject($props, $project_id);
 							}
 							else{
 								if($single_proposal_for_accepted_project->state != 'rejected'){
