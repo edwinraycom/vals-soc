@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * This file shows the various lists and views on the possible Users to Semester of Code: organisations
  * instititutes, mentors, supervisors, students etc
  */
@@ -20,7 +20,7 @@ function showFavouritesPage(){
 	} else {
 		echo t('You must be a student to have kept a favourite list');
 	}
-	
+
 }
 function formatUsersNice($users, $type='User', $empty_message='', $show_title=FALSE){
 	$output='';
@@ -32,7 +32,7 @@ function formatUsersNice($users, $type='User', $empty_message='', $show_title=FA
 		$output .=  '</dt>';
 		$output .=  '<span class="ui-icon ui-icon-arrowreturn-1-e"></span>';
 	}
-	
+
 	if($users && $users->rowCount()){
 		foreach($users as $member){
 			$output .=  '<dd>';
@@ -66,11 +66,11 @@ function formatAgreementRecordNice($agreement, $target=''){
 	$supervisor_email = $agreement->supervisor_user_mail;
 	$mname = (isset($agreement->mentor_name) ? $agreement->mentor_name : $agreement->mentor_user_name);
 	$mentor_email = $agreement->mentor_user_mail;
-	
+
 	$output='';
-	
+
 	$output .= '<dl class="view_record">';
-	
+
 	$output .=  '<dt>';
 	$output .=  t('Agreement text');
 	$output .=  '</dt>';
@@ -78,7 +78,7 @@ function formatAgreementRecordNice($agreement, $target=''){
 	$output .=  '<dd>';
 	$output .=  $agreement->description;
 	$output .=  '</dd>';
-	
+
 	$output .=  '<dt>';
 	$output .=  t('Student');
 	$output .=  '</dt>';
@@ -94,7 +94,7 @@ function formatAgreementRecordNice($agreement, $target=''){
 	$output .=  '<dd>';
 	$output .=  $spname . ' (' . $supervisor_email . ')';
 	$output .=  '</dd>';
-	
+
 	$output .=  '<dt>';
 	$output .=  t('Mentor');
 	$output .=  '</dt>';
@@ -102,9 +102,9 @@ function formatAgreementRecordNice($agreement, $target=''){
 	$output .=  '<dd>';
 	$output .=  $mname . ' (' . $mentor_email . ')';
 	$output .=  '</dd>';
-	
+
 	$output .=  '</dl>';
-	
+
 	return $output;
 }
 
@@ -133,7 +133,7 @@ function formatMemberRecordNice($record, $type, $target=''){
 			break;
 		default: $member_type = 'user';
 	}
-	
+
 	$output='';
 	$output .= '';
 	$output .= '<dl class="view_record">';
@@ -220,7 +220,7 @@ function formatMemberRecordNice($record, $type, $target=''){
 function renderStudents($group_selection='', $students=''){
 
     if (!$students){
-        //if we pass empty value to getStudents the current supervisor is assumed and we 
+        //if we pass empty value to getStudents the current supervisor is assumed and we
         //get all his students
         $students = Users::getAllStudents($group_selection);
     }
@@ -229,13 +229,13 @@ function renderStudents($group_selection='', $students=''){
 
 function renderSupervisors($group_selection='', $supervisors=''){
     if (!$supervisors){
-        //if we pass empty value to getSupervisors the current institute_admin is assumed and we 
+        //if we pass empty value to getSupervisors the current institute_admin is assumed and we
         //get all his supervisors in his/her institute
         $supervisors = Users::getSupervisors($group_selection);
     }
     return formatUsersNice($supervisors, _SUPERVISOR_TYPE, t('There are no supervisors yet in this institute'), TRUE);
 }
-    
+
 function renderUsers($type='', $users='', $group_selection='', $group_type='', $show_title=FALSE){
 	//If no Users dataset is passed on, retrieve them based on the other arguments
     if (!$users){
@@ -244,13 +244,13 @@ function renderUsers($type='', $users='', $group_selection='', $group_type='', $
         	$users = null;
         }
     }
-    
+
     $group_type = $group_type ? t_type($group_type): t('environment');
     $type_nice = str_replace('_', ' ', $type);
     $empty_message =  $group_selection ? tt('There is no %1$s yet in this %2$s', t($type_nice), $group_type) :
     tt('There are no %1$s yet.', t($type_nice));
     return formatUsersNice($users, $type, $empty_message, $show_title);
-    
+
 }
 
 function renderDefaultField($field, $obj, $alternative_field=''){
@@ -380,14 +380,14 @@ function renderProject($project='', $target='', $inline=FALSE, $all_can_edit=_VA
 	if ($project['url']){
 		$content .= '<p>'.tt('More information can be found at %1$s', "<a href='${project['url']}'> ${project['url']}</a>"). '</p>';
 	}
-	
+
 	if (! $inline){
 		if(getRole() != _ANONYMOUS_TYPE){
 			module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
 			$content .= initComments($id, _PROJECT_OBJ);
 		}
 	}
-	
+
 	return $content;
 }
 
@@ -470,7 +470,7 @@ function renderOrganisation($type, $organisation='', $organisation_owner='', $ta
         return $s;
     } else {
         return tt('You have no %1$s registered yet', $type);
-    }  
+    }
 }
 
 function renderAgreement($type, $agreement='', $agreement_owner='', $target='', $show_buttons=true){
