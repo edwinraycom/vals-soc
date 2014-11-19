@@ -86,6 +86,19 @@ function vals_soc_menu_handler(){
 	// open this in a new window
 	$items['http://semesterofcode.com/']['options']['attributes']['target'] = '_blank';
 	
+	$items['user-guide'] = array(
+			'title' => t('User guide'),
+			'type' => MENU_NORMAL_ITEM,
+			'page callback' => 'vals_soc_user_guide',
+			'access callback' => TRUE,
+			'description' => t('User guide page'),
+			'page callback' => 'drupal_goto',
+			'page arguments' => array(_VALS_SOC_FULL_URL . '/sites/all/modules' . '/vals_soc/help/index.htm')
+	);
+	// open this in a new window
+	$items['user-guide']['options']['attributes']['target'] = '_blank';
+	
+	
 	
 	$items[_VALS_SOC_FULL_URL]['weight'] = 0;
 	$items['dashboard']['weight'] = 1;
