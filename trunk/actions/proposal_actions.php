@@ -322,9 +322,14 @@ switch ($_GET['action']){
 		try {
 			$good_result = t('You rejected this proposal').'<script>hideOtherDivsAfterProposalReject('.$id.')</script>';
 			$result = Proposal::getInstance()->rejectProposal($id, $reason, $rationale);
-			echo  $result ?
-			jsonGoodResult(true, $good_result):
-			jsonBadResult(t('You tried to reject this proposal, but it failed'));
+			if ($result){
+				$props = Proposal::getInstance()->getProposalById($id, true);
+				module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
+				notify_student_and_supervisor_of_proposal_rejection_by_mentor($props);
+				echo jsonGoodResult(true, $good_result);
+			}else{
+				echo jsonBadResult(t('You tried to reject this proposal, but it failed'));
+			}
 		} catch (Exception $e){
 			jsonBadResult(t('Something went wrong in the database '. (_DEBUG ? $e->getMessage():'')));
 		}

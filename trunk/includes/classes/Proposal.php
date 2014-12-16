@@ -2,7 +2,7 @@
 class Proposal extends AbstractEntity{
 	
 	private static $instance; 	 	 	 	 	 	 	 	 	
-	public static $fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'title', 'solution_short', 'solution_long', 'state',);
+	public static $fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id', 'supervisor_id', 'pid', 'title', 'solution_short', 'solution_long', 'state', 'reason');
 	
 	const _REASON_REJECT_INTEREST = 'not interested';
 	const _REASON_REJECT_OCCUPIED = 'found another';
@@ -25,12 +25,12 @@ class Proposal extends AbstractEntity{
     			t('Below you find the rationale why we made this decision.');
     			break;
     		case self::_REASON_REJECT_OCCUPIED_BUT:
-    			$msg = t('The proposal as it is presented, is very interesting but will not be selected by us because we found another proposal which we found even more appropriate. ').
+    			$msg = t('The proposal as it is presented, is very interesting but will not be selected by us because we found another proposal which we found more appropriate. ').
     			t('Thank you for your effort to write a proposal. ').
     			t('Below you find the rationale why we made this decision.');
     		break;
     		case self::_REASON_REJECT_OCCUPIED:
-    			$msg = t('The proposal as it is presented, will not be selected by us as we chose for another proposal. ').
+    			$msg = t('The proposal as it is presented, will not be selected by us as we chose another proposal. ').
     			t('Thank you for your effort to write a proposal. ').
     			t('Below you find the rationale why we made this decision.');
     			break;
@@ -42,21 +42,16 @@ class Proposal extends AbstractEntity{
     	}
     	
     	$msg .= "<br/>$reason_txt ";
+
     	if (db_update(tableName('proposal'))->
     		fields(array('state'=>'rejected', 'reason'=>$msg))->
     		condition('proposal_id', $id)->
     		execute()){
-//     		$proposal = $this->getProposalById($id, true);
-//     		$mails = $proposal->student_email;
-//     		if ($proposal->supervisor_email){
-//     			$mails .= ",".$proposal->supervisor_email;
-//     		}
-    		//mail 
-    		//TODO send mails to supervisors etc
     		return TRUE;
     	} else {
     		return FALSE;
     	}
+
     }
     
     public function retractProposal($id, $reason='', $reason_txt=''){
