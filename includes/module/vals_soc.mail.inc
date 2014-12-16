@@ -376,6 +376,28 @@ function notify_all_of_project_offer_rejection($proposal, $proposal_id, $is_inte
 	vals_soc_send_emails_cron($items);
 }
 
+function notify_student_and_supervisor_of_proposal_rejection_by_mentor($record){
+	$subject = t('VALS Proposal Notification');
+	$items = array();
+	if(isset($record->mail) && isset($record->name)){
+		$student_body = get_proposal_rejection_email_body($record, 'student');
+		$recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $record->mail);
+		$items[0] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $recipient, 'from' => NULL, 'subject' => $subject, 'body' => $student_body);
+	}else{
+		drupal_set_message(t('unable to send student proposal rejection notification email: missing email or username'));
+	}
+	
+	if(isset($record->supervisor_user_mail) && isset($record->supervisor_user_name)){
+		$supervisor_body = get_proposal_rejection_email_body($record, 'supervisor');
+		$recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $record->supervisor_user_mail);
+		$items[1] = array('key' => 'vals_soc_notify_new_proposal', 'to' => $recipient, 'from' => NULL, 'subject' => $subject, 'body' => $supervisor_body);
+	}else{
+		drupal_set_message(t('unable to send supervisor proposal rejection notification email: missing email or username'));
+	}
+
+	vals_soc_send_emails_cron($items);
+}
+
 function notify_mentor_and_supervisor_of_proposal_update($record, $is_update){
 	// TODO - fix the name missing on one of the emails
 	$subject = t('VALS Proposal Notification');
