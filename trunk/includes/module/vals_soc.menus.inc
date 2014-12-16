@@ -93,7 +93,7 @@ function vals_soc_menu_handler(){
 			'access callback' => TRUE,
 			'description' => t('User guide page'),
 			'page callback' => 'drupal_goto',
-			'page arguments' => array(_VALS_SOC_FULL_URL . '/sites/all/modules' . '/vals_soc/help/index.htm')
+			'page arguments' => array(_VALS_SOC_FULL_URL . '/sites/all/modules' . '/vals_soc/help/index.php')
 	);
 	// open this in a new window
 	$items['user-guide']['options']['attributes']['target'] = '_blank';
