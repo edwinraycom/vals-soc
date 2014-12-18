@@ -35,7 +35,12 @@ body {
 .content img {
 	border-width:3px;
 	border-style:solid;
-	border-color:red;
+	border-color: #3B9FDC;
+}
+
+.content button {
+	background-color: #3B9FDC;
+	color:white;
 }
 /* ~~ Element/tag selectors ~~ */
 ul,ol,dl {
@@ -149,6 +154,10 @@ ul.nav a:hover,ul.nav a:active,ul.nav a:focus, ul.nav a.current {
 
 p {
 	font-size: 14px;
+}
+
+p.image_paragraph {
+	text-align:center;
 }
 
 h1 {

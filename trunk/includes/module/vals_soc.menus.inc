@@ -7,10 +7,8 @@ module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.access');
  * 
  */
 function vals_soc_menu_handler(){
-
-	//########################## PROGRAM SETTINGS LINKS #######################
-	$progSettings = t('Program Settings');
 	$items = array();
+	//########################## HOME LINK #######################
 	$items[_VALS_SOC_FULL_URL]   = array(
 		'title' => t('Home'),
 		'type' => MENU_NORMAL_ITEM,
@@ -18,6 +16,8 @@ function vals_soc_menu_handler(){
 		'page callback' => 'drupal_goto',
 		'page arguments' => array(_VALS_SOC_FULL_URL),
 	);
+	//########################## PROGRAM SETTINGS LINKS #######################
+	$progSettings = t('Program Settings');	
 	$items['admin/config/vals-soc']  = getProgramSettingsLink('access administration pages', t('VALS Summer of code'), MENU_NORMAL_ITEM);
 	$items['admin/config/vals-soc/program_settings'] = getProgramSettingsLink('access administration pages', $progSettings, MENU_NORMAL_ITEM);
 	$items['admin/config/vals-soc/program_settings/messages'] = getEditMessagesLink('access administration pages', MENU_NORMAL_ITEM);

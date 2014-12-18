@@ -17,7 +17,18 @@ function getInitialPath($path1, $path2){
 	}
 	$arr1 = str_split($path1, $pos);
 	return $arr1[0];
-} 
+}
+
+function isAministratorType(){
+	global $user;
+
+	if ($user && $user->roles){
+		return in_array('administrator', $user->roles);
+	} else {
+		return false;
+	}
+}
+
 $vals = getInitialPath($_SERVER['PHP_SELF'], '/sites/all/modules');
 define('_WEB_URL', $vals);
 

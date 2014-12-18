@@ -34,6 +34,7 @@
 				if ($next){?>
 				<button onclick="location.href='?id=<?php echo $next;?>';">Next</button>
 				<?php }?>
+				<br/><br/>
 			</div>
 		</div>
 	</div>
