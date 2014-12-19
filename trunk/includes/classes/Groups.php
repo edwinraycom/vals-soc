@@ -75,6 +75,10 @@ class Groups extends AbstractEntity{
 		}
 		$key_field = self::keyField($type);
 		$entity = db_query("SELECT * FROM ".tableName($type)." WHERE $key_field = $id")->fetchAssoc();
+		//fetchAssoc returns next record (array) or false if there is none
+		if (!$entity) {
+			return false;
+		}
 		// just for projects, allow assigned mentors to also have shared ownership
 		// so a project owner can also allow the nominated mentor to edit the project details
 		if($type == 'project'){

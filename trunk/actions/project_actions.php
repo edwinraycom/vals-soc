@@ -23,6 +23,8 @@ switch ($_GET['action']){
 		}
 		$id = getRequestVar('id');
 		$table = tableName('student_favourite');
+		//TODO The deletion doesn't seem necessary as the mark button is replaced by an icon once marked before
+		//it is harmless though
 		$num_deleted = db_delete($table)
 		->condition('pid', $id)
 		->condition('uid', $GLOBALS['user']->uid)
@@ -32,6 +34,12 @@ switch ($_GET['action']){
 			->fields(array('pid'=> $id,
 					'uid'=>$GLOBALS['user']->uid))
 					->execute();
+			if ($num_deleted == 0){//it is a new one, so one like more for the project
+				$result = $result && db_update(tableName('project'))
+					->condition('pid', $id)
+					->expression('likes', 'likes + 1')
+					->execute();
+			}
 		} else {
 			$result = FALSE;
 		}
@@ -262,7 +270,11 @@ switch ($_GET['action']){
 						->condition('uid', $my_id)
 						->execute()->rowCount();
 						$project['favourite'] = ($favourite !=0);
-								
+						//Count the views of the students
+						$result = db_update(tableName('project'))
+							->condition('pid', $project_id)
+							->fields(array('views'=> $project['views'] + 1))
+							->execute();
 					}
 				}
 				jsonGoodResult($project);
