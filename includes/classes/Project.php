@@ -3,7 +3,7 @@ class Project extends AbstractEntity{
 	
 	private static $instance;
 	public static $fields = array('pid', 'owner_id', 'title', 'description', 'url', 'state', 
-		'org_id', 'mentor_id', 'proposal_id', 'selected', 'tags');
+		'org_id', 'mentor_id', 'proposal_id', 'selected', 'tags', 'views', 'likes');
 	
 	public static function getInstance(){
 		if (is_null ( self::$instance )){

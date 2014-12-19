@@ -196,4 +196,12 @@ function vals_soc_update_7106(){
 	function vals_soc_update_7107(){
 		db_query("ALTER TABLE `soc_proposals` ADD `reason` VARCHAR( 512 ) NULL COMMENT 'reason for rejection or withdraw' AFTER `state`")->execute();
 	}
+	
+	function vals_soc_update_7108(){
+		db_query("ALTER TABLE `soc_projects`".
+			"ADD COLUMN `views` SMALLINT UNSIGNED NULL DEFAULT '0' AFTER `selected`,".
+			"ADD COLUMN `likes` SMALLINT UNSIGNED NULL DEFAULT '0' AFTER `views`")->execute();
+	}
+	
+		
 	 

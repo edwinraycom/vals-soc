@@ -223,7 +223,7 @@ function renderProject(project, apply_projects){
 
 	if(project.proposal_count){
 		content += "<h2>"+Drupal.t('Statistics')+"</h2>";
-		content += ''+ Drupal.t('Number of proposals already submitted to this project') + ' ('+ project.proposal_count+')';
+		content += ''+ Drupal.t('Number of proposals already submitted to this project: ') + project.proposal_count;
 		if(project.proposal_id && project.selected=="0"){
 			message = Drupal.t('The project mentor has selected an interim preferred proposal already, however this is not final and may change.');
 		}
@@ -245,19 +245,6 @@ function renderProject(project, apply_projects){
 			renderRecommendation(project.pid);
 		content += "<br/>";
 		content += renderSupervisorLike(project.pid, rate);
-	} else {
-//		var favourite = false;
-//		if (debugging || (typeof apply_projects != 'undefined') && apply_projects){
-//			if (typeof project.favourite != 'undefined') {
-//				favourite = project.favourite;
-//			}
-//			if (favourite){
-//				content += Drupal.t('You marked this project as one of your favourites');
-//			} else {
-//				content +=  //"<h2>"+ Drupal.t('Remember this project')+ "</h2>"+
-//				 renderStudentLike(project.pid);
-//			}
-//		}
 	}
 	// comments
 	content += "<div id=\"comments-project-"+project.pid+"\"></div>";
@@ -265,34 +252,17 @@ function renderProject(project, apply_projects){
 	getCommentsForEntity(project.pid, 'project','comments-project-'+project.pid);
 	if (apply_projects){
 		content +="<div class=\"totheright\">";//style=\"display:none\"
-		//content +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 		var favourite = false;
-		if (debugging || (typeof apply_projects != 'undefined') && apply_projects){
-			if (typeof project.favourite != 'undefined') {
-				favourite = project.favourite;
-			}
-			if (false && favourite){
-				content += Drupal.t('You marked this project as one of your favourites');
-			} else {
-				content +=  //"<h2>"+ Drupal.t('Remember this project')+ "</h2>"+
-				 renderStudentLike(project.pid, favourite);
-			}
+		if (typeof project.favourite != 'undefined') {
+			favourite = project.favourite;
 		}
-		//content +="<br/><br/><input id='vals-btn-cancel' type='button' onclick=\"Drupal.CTools.Modal.dismiss()\" value='Cancel' />";
+		if (false && favourite){//This is the non-icon solution we do not do anymore, we have a heart icon
+			content += Drupal.t('You marked this project as one of your favourites');
+		} else {
+			content += renderStudentLike(project.pid, favourite);
+		}
 		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='"+ Drupal.t('Create proposal for this project')+ "'/>";
 		content +="</div>";
-
-//		content +=
-//			"<script type='text/javascript'>"+
-//				"$jq.get( url('language','translate'), { words: ['Cancel','Submit proposal for this project'] }, function(result) {"+
-//				"if(result){"+
-//					"var parsed = JSON.parse(result);"+
-//					//"$jq('#vals-btn-cancel').prop('value', parsed[0]);"+
-//					"$jq('#vals-btn-submit-proposal').prop('value', parsed[1]);"+
-//				"}"+
-//				"$jq('.totheright').show();"+
-//				" });"+
-//			"</script>";
 	}
 	if (navigation){
 		if (typeof project.nav != 'undefined'){

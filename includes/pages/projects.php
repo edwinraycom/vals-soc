@@ -2,7 +2,8 @@
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after administration.php which does the same
 
 function showProjectPage($show_last=FALSE, $owner_only=false){
-
+	global $base_url;
+	
 	//TODO check for the role of current user
 	$role = getRole();
 	if (!Users::isMentor()){//true for both mentors and organisation admins. Also, they will see their own stuff only
@@ -35,6 +36,8 @@ function showProjectPage($show_last=FALSE, $owner_only=false){
 		
 		if (! $projects){
 			echo $owner_only ? t('You have no project yet registered') : t('There are no projects yet registered.');
+			echo $owner_only ? "<BR>".'<a href="'.$base_url.'/dashboard/projects/administer" '.
+				'title="Manage all my organisation\'s projects">Manage all my organisation\'s projects</a>': '';
 			echo '<h2>'.t('Add a project').'</h2>';
 			
 			$tab_prefix = 'project_page-';

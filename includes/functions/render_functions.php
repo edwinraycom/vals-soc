@@ -368,7 +368,9 @@ function renderProject($project='', $target='', $inline=FALSE, $all_can_edit=_VA
 		$content .="<br/><br/><input type='button' onclick=\"getProposalFormForProject(".$project['pid'].
 		")\" value='.t( 'Submit proposal for this project').'/>";
 	}
-	if (!$inline && (($all_can_edit && Groups::isAssociate(_PROJECT_OBJ, $id)) || Groups::isOwner(_PROJECT_OBJ, $id))  ){
+	$is_inproject_organisation = Groups::isAssociate(_PROJECT_OBJ, $id);
+	//If not inline and either owner or mentor and mentors allowed to edit...
+	if (!$inline && (($all_can_edit && $is_inproject_organisation) || Groups::isOwner(_PROJECT_OBJ, $id))  ){
 		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this project?')."\")){ajaxCall(\"project\", \"delete\", {type: \"$type\", id: $id, target: \"$target\"}, \"refreshTabs\", \"json\", [\"$type\", \"$target\", \"project\"]);}'";
 		$edit_action = "onclick='ajaxCall(\"project\", \"edit\", {type: \"$type\", id: $id, target: \"$target\"}, \"formResult\", \"html\", [\"$target\", \"project\"]);'";
 		$content .= "<input type='button' value='".t('edit')."' $edit_action/>";
@@ -376,6 +378,11 @@ function renderProject($project='', $target='', $inline=FALSE, $all_can_edit=_VA
 	}
 	$content .="</div>";
 	$content .= "<h2>".$project['title']."</h2>";
+	if ($is_inproject_organisation) {
+		$content .= "<h3>Statistics</h3>";
+		$content .= "<p>Number of student views: ".$project['views']."<BR>".
+			"Number of times marked by a student: ".$project['likes']."</p>";
+	}
 	$content .= '<p>'.$project['description']. '</p>';
 	if ($project['url']){
 		$content .= '<p>'.tt('More information can be found at %1$s', "<a href='${project['url']}'> ${project['url']}</a>"). '</p>';
