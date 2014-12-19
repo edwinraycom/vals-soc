@@ -8,8 +8,7 @@ function getTimelineEnabledMessage(){
 	$period = Timeline::getInstance()->getCurrentPeriod();
 	switch ($period) {
 		case PROGRAM_NOT_YET_STARTED:
-			return 
-
+			
 			$return_args[0] = t("Program starts"). ": " . Timeline::getInstance()->getProgramStartDate()->format('F j, Y, g:i a');
 			$return_args[1] = t("Organisations and Academic partner admins can login and start to create their profiles from: ") .
 					Timeline::getInstance()->getOrgsSignupStartDate()->format('F j, Y, g:i a');
@@ -99,8 +98,7 @@ function getTimelineEnabledMessage(){
 			
 			break;
 		case PRE_BONDING_PERIOD:
-			return
-
+			
 			$return_args[0] = t("Accepted students now announced."). " " . Timeline::getInstance()->getAcceptedStudentsAnnouncedDate()->format('F j, Y, g:i a');
 			$return_args[1] = t("Students can no longer submit project proposals.") .
 					'<br/>'.
@@ -121,8 +119,7 @@ function getTimelineEnabledMessage(){
 			
 			break;
 		case PRE_SUGGESTED_CODING_END_DATE:
-			return
-
+			
 			$return_args[0] = t("Coding period started on") . ' ' . Timeline::getInstance()->getCodingStartDate()->format('F j, Y, g:i a');
 			$return_args[1] = t("The suggested date students finish their work.") . ' ' . Timeline::getInstance()->getSuggestedCodingDeadline()->format('F j, Y, g:i a').
 					'<br/>'.
