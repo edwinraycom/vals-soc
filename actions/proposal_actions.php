@@ -234,81 +234,85 @@ switch ($_GET['action']){
 		$is_final = true;
 		$target = altSubValue($_POST, 'target', '');
 	case 'save':
-		$id = altSubValue($_POST, 'id', '');
-		$project_id = altSubValue($_POST, 'project_id', '');
-		$project = Project::getProjectById($project_id);
-		$properties = Proposal::filterPost($_POST);
-		if (isset($is_public) && $is_public){
-			$properties['state'] = 'open';
-			$is_final = false;
-		}
-		if (isset($is_final) && $is_final){
-			$properties['state'] = 'published';
-		}
-		if (!$id){
-			$new = TRUE;
-			$id = $result = Proposal::insertProposal($properties, $project_id);
+		if (!$apply_proposals){
+			jsonBadResult(t('Student application period is not currently open'));
 		} else {
-			$new = FALSE;
-			if (!Groups::isOwner(_PROPOSAL_OBJ, $id)){
-				drupal_set_message(t('You are not the owner of this proposal'), 'error');
-				$result = null;
-			} else {
-				//If there was no supervisor chosen, at least maintain the orginal one, rather than leave it orphaned
-				if($properties['supervisor_id'] == 0){
-					if ($original_supervisor = altSubValue($_POST, 'original_supervisor_id', '')) {
-						$properties['supervisor_id'] = $original_supervisor;
-					}
-				}
-				$result = Proposal::updateProposal($properties, $id);
+			$id = altSubValue($_POST, 'id', '');
+			$project_id = altSubValue($_POST, 'project_id', '');
+			$project = Project::getProjectById($project_id);
+			$properties = Proposal::filterPost($_POST);
+			if (isset($is_public) && $is_public){
+				$properties['state'] = 'open';
+				$is_final = false;
 			}
-		}
-	
-		if ($result){
-			// Send out emails to mentor/supervisor once new proposal published
-			// get either the existing proposal key
-			// or the newly inserted proposal key
-			if (is_bool($result)){
-				//already existed
-				$existed = true;
-				$key = $id;
-			} else {
-				/// newly inserted
-				$existed = false;
-				$key = $result;
-			}
-			try {
-				$props = Proposal::getInstance()->getProposalById($key, true);
-				module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
-				notify_mentor_and_supervisor_of_proposal_update($props, $existed);
-			} catch (Exception $e) {
-				// Logged higher up or log this here somehow? TODO
-			}
-			
 			if (isset($is_final) && $is_final){
-				echo json_encode(array(
-						'result'=>'OK',
-						'id' => $id,
-						'target' => $target,
-						'msg'=>tt('You succesfully submitted your proposal for %1$s', $project['title']).
-						(_DEBUG ? showDrupalMessages() : '')
-				));
-			} else {
-				$version = ($properties['state'] == 'draft') ? t('draft'): t('public');
-				echo json_encode(array(
-						'result'=>'OK',
-						'id' => $id,
-						//'type'=> $type,
-						'msg'=>
-						($new ?
-								tt('You succesfully saved a %2$s version of your proposal for %1$s', $project['title'], $version):
-								tt('You succesfully changed the %2$s version of your proposal for %1$s', $project['title'], $version)
-						).
-						(_DEBUG ? showDrupalMessages() : '')
-				));
+				$properties['state'] = 'published';
 			}
-		} else {
-			echo jsonBadResult();
+			if (!$id){
+				$new = TRUE;
+				$id = $result = Proposal::insertProposal($properties, $project_id);
+			} else {
+				$new = FALSE;
+				if (!Groups::isOwner(_PROPOSAL_OBJ, $id)){
+					drupal_set_message(t('You are not the owner of this proposal'), 'error');
+					$result = null;
+				} else {
+					//If there was no supervisor chosen, at least maintain the orginal one, rather than leave it orphaned
+					if($properties['supervisor_id'] == 0){
+						if ($original_supervisor = altSubValue($_POST, 'original_supervisor_id', '')) {
+							$properties['supervisor_id'] = $original_supervisor;
+						}
+					}
+					$result = Proposal::updateProposal($properties, $id);
+				}
+			}
+		
+			if ($result){
+				// Send out emails to mentor/supervisor once new proposal published
+				// get either the existing proposal key
+				// or the newly inserted proposal key
+				if (is_bool($result)){
+					//already existed
+					$existed = true;
+					$key = $id;
+				} else {
+					/// newly inserted
+					$existed = false;
+					$key = $result;
+				}
+				try {
+					$props = Proposal::getInstance()->getProposalById($key, true);
+					module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
+					notify_mentor_and_supervisor_of_proposal_update($props, $existed);
+				} catch (Exception $e) {
+					// Logged higher up or log this here somehow? TODO
+				}
+				
+				if (isset($is_final) && $is_final){
+					echo json_encode(array(
+							'result'=>'OK',
+							'id' => $id,
+							'target' => $target,
+							'msg'=>tt('You succesfully submitted your proposal for %1$s', $project['title']).
+							(_DEBUG ? showDrupalMessages() : '')
+					));
+				} else {
+					$version = ($properties['state'] == 'draft') ? t('draft'): t('public');
+					echo json_encode(array(
+							'result'=>'OK',
+							'id' => $id,
+							//'type'=> $type,
+							'msg'=>
+							($new ?
+									tt('You succesfully saved a %2$s version of your proposal for %1$s', $project['title'], $version):
+									tt('You succesfully changed the %2$s version of your proposal for %1$s', $project['title'], $version)
+							).
+							(_DEBUG ? showDrupalMessages() : '')
+					));
+				}
+			} else {
+				echo jsonBadResult();
+			}
 		}
 	break;
 	case 'reject_form':
