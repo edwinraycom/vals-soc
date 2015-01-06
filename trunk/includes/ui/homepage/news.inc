@@ -3,16 +3,6 @@
 		<h4 id="title-section-how-it-works"><?php echo t('News and other information');?></h4>
 			<div class="block-padding-no-border">
 				<p>
-					<b>Student period extended</b> <br/>
-					<?php 
-					echo "To give late and new interested students the opportunity to submit proposals for the current 
-					projects, we have decided to extend
-					the period for submitting proposals with one month up to and until 
-					the <b><i>15th of December</i></b>.
-					<small>(Posted: 14/11/2014)</small>";
-					?>
-				</p>
-				<p>
 					<b>New chance for participating in Semester of Code</b> <br/>
 					<?php 
 					echo "We decided to start a new instance of the Semester of Code offering students in the second
@@ -23,6 +13,17 @@
 					<small>(Posted: 19/12/2014)</small>";
 					?>
 				</p>
+				<p>
+					<b>Signup period starts soon now</b> <br/>
+					<?php 
+					echo "The <b><i>7th of January</i></b> the new instance of the Semester of Code will start, offering the option for new organisations 
+					to still signup in the second round this and next week. 
+
+					The <b><i>15th of January</i></b> the signup period for students will start.
+					<small>(Posted: 06/01/2015)</small>";
+					?>
+				</p>
+
 				<?php //<p>echo('<b>14/11/2014 Update.</b>&nbsp;The student registration period has been extended until 15/12/2014.
 						//&nbsp;&nbsp;This is to ultimately encourage more students to participate.');</p>?>
 				
