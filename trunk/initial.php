@@ -29,6 +29,11 @@ function isAministratorType(){
 	}
 }
 
+//TODO: fix this in the future
+//The Timeline is working with UTC so GMT and not GMT -1 (==CET) so the change to CET should be worked through
+//in both the js/timeline.melange.js and the classes/StatelessTimeline.php etc.
+//all date/time functions take this timezone as the default if left empty
+// TODO find out what to change to make this work: date_default_timezone_set('CET');
 $vals = getInitialPath($_SERVER['PHP_SELF'], '/sites/all/modules');
 define('_WEB_URL', $vals);
 
