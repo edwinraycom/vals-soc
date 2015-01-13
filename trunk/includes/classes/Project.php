@@ -82,7 +82,7 @@ class Project extends AbstractEntity{
     }
 
     public function getProjectsBySearchCriteria($tags, $organisation, $state, $sorting, $startIndex, $pageSize){
-    	$queryString = "SELECT p.pid, p.title, p.description, p.tags, p.state, o.name, COUNT(v.proposal_id) AS proposal_count "
+    	$queryString = "SELECT p.pid, p.title, p.description, p.tags, p.state, p.proposal_id, p.selected, o.name, COUNT(v.proposal_id) AS proposal_count "
     			."FROM soc_projects p "
     			."LEFT JOIN soc_proposals AS v ON ( v.pid = p.pid ) "
     			."LEFT JOIN soc_organisations o ON ( p.org_id = o.org_id) "
