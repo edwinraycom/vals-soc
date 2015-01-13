@@ -17,7 +17,7 @@ class Organisations extends Groups{
 	 * Used in some drop down menus of the UI.
 	 */
 	public function getOrganisationsLite(){
-		return db_query("SELECT o.org_id, o.name FROM soc_organisations o;");
+		return db_query("SELECT o.org_id, o.name FROM soc_organisations o ORDER BY o.name;");
 	}
 	
     public function getOrganisations(){
@@ -52,7 +52,7 @@ class Organisations extends Groups{
     	return $count_query->execute()->rowCount();
     }
     
-    public function getOrganisationsBySearchCriteria($name, $sorting, $startIndex, $pageSize){
+    public function getOrganisationsBySearchCriteria($name, $sorting="o.name", $startIndex=0, $pageSize=1000){
     	$queryString = "SELECT o.org_id, o.name, o.url"
     			." FROM soc_organisations o";
     	 

@@ -212,15 +212,36 @@ function renderProposalOverview(proposal){
  */
 function renderProject(project, apply_projects){
 	var navigation = true;
+	var navigation_class = (true || (project.description.length > 2980)) ? 'center_bottom_relative': 'center_bottom';
 	var alert_taken = ((project.state == 'preselected') || (project.state == 'active')) ? ' alert': '';
-	var content = '<div id="project_status" class="totheright' + alert_taken+ '">(status: '+project.state+')</div>'+"<h2>"+project.title+"</h2>";
+	var content = '<div id="project_status" class="totheright' + alert_taken+ '">(status: '+project.state+')';
+	if (navigation){
+		if (typeof project.nav != 'undefined'){
+			content +="<div class='"+ navigation_class + "'>";
+			content += (project.nav.prev_pid ?
+					"<input id='vals-btn-prev' type='button' onclick='ajaxCall(\"project\", " +
+					"\"project_detail\", {project_id: "+project.nav.prev_pid+", index: "+project.nav.prev_nr+"}" +
+					", \"populateModal\", \"json\", [renderProject, "+apply_projects+", 1]);' " +//3rd arg is true denoting that result will be parsed arg to populate fun
+					" value='"+ Drupal.t('Prev')+ "'/>": "") +
+					(project.nav.next_pid ? "<input id='vals-btn-next' type='button' onclick='ajaxCall(\"project\", " +
+					"\"project_detail\", {project_id: "+project.nav.next_pid+", index: "+project.nav.next_nr+"}" +
+					", \"populateModal\", \"json\", [renderProject, "+apply_projects+", 1]);' " +//3rd arg is true denoting that result will be parsed arg to populate fun
+					" value='"+ Drupal.t('Next')+ "'/>": "");
+			content +="</div>";
+		};
+	}
+	content += '</div>'+
+		"<h2>"+project.title+"</h2>";
 	var rate_projects = window.view_settings.rate_projects;
-	var navigation_class = (project.description.length > 2980) ? 'center_bottom_relative': 'center_bottom';
+	//content += '<div style="padding-right:20px;margin-right:30px;width:810px;height:380px;overflow: auto;" id="project_content">'
 	content += project.description;
 	if(project.url){
 		content += "<br/><a target='_blank' class='external' href='" + project.url + "'>" + project.url + "</a>";
 	}
-
+	//content += '</div>';//end of project_content
+	
+	
+	
 	if(project.proposal_count){
 		content += "<h2>"+Drupal.t('Statistics')+"</h2>";
 		content += ''+ Drupal.t('Number of proposals already submitted to this project: ') + project.proposal_count;
@@ -247,7 +268,7 @@ function renderProject(project, apply_projects){
 		content += renderSupervisorLike(project.pid, rate);
 	}
 	// comments
-	content += "<div id=\"comments-project-"+project.pid+"\"></div>";
+	content += "<div style= \"height:32px;\" id=\"comments-project-"+project.pid+"\"></div>";
 	// go and get the comments asych...
 	getCommentsForEntity(project.pid, 'project','comments-project-'+project.pid);
 	if (apply_projects){
@@ -264,21 +285,7 @@ function renderProject(project, apply_projects){
 		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='"+ Drupal.t('Create proposal for this project')+ "'/>";
 		content +="</div>";
 	}
-	if (navigation){
-		if (typeof project.nav != 'undefined'){
-			content +="<div class='"+ navigation_class + "'>";
-			content += (project.nav.prev_pid ?
-					"<input id='vals-btn-prev' type='button' onclick='ajaxCall(\"project\", " +
-					"\"project_detail\", {project_id: "+project.nav.prev_pid+", index: "+project.nav.prev_nr+"}" +
-					", \"populateModal\", \"json\", [renderProject, "+apply_projects+", 1]);' " +//3rd arg is true denoting that result will be parsed arg to populate fun
-					" value='"+ Drupal.t('Prev')+ "'/>": "") +
-					(project.nav.next_pid ? "<input id='vals-btn-next' type='button' onclick='ajaxCall(\"project\", " +
-					"\"project_detail\", {project_id: "+project.nav.next_pid+", index: "+project.nav.next_nr+"}" +
-					", \"populateModal\", \"json\", [renderProject, "+apply_projects+", 1]);' " +//3rd arg is true denoting that result will be parsed arg to populate fun
-					" value='"+ Drupal.t('Next')+ "'/>": "");
-			content +="</div>";
-		};
-	}
+	
 	return content;
 }
 

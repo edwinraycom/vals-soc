@@ -16,7 +16,7 @@ class Institutes extends Groups {
 	 * Used in some drop down menus of the UI.
 	 */
 	public function getInstitutesLite(){
-		return db_query("SELECT i.inst_id, i.name FROM soc_institutes i;");
+		return db_query("SELECT i.inst_id, i.name FROM soc_institutes i ORDER BY i.name;");
 	}
 	
 	public function getInstitutes(){
