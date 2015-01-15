@@ -212,12 +212,13 @@ function renderProposalOverview(proposal){
  */
 function renderProject(project, apply_projects){
 	var navigation = true;
-	var navigation_class = (true || (project.description.length > 2980)) ? 'center_bottom_relative': 'center_bottom';
+	//var navigation_class = (true || (project.description.length > 2980)) ? 'center_bottom_relative': 'center_bottom';
 	var alert_taken = ((project.state == 'preselected') || (project.state == 'active')) ? ' alert': '';
 	var content = '<div id="project_status" class="totheright' + alert_taken+ '">(status: '+project.state+')';
 	if (navigation){
 		if (typeof project.nav != 'undefined'){
-			content +="<div class='"+ navigation_class + "'>";
+			//content +="<div class='"+ navigation_class + "'>";
+			content += "<BR>";
 			content += (project.nav.prev_pid ?
 					"<input id='vals-btn-prev' type='button' onclick='ajaxCall(\"project\", " +
 					"\"project_detail\", {project_id: "+project.nav.prev_pid+", index: "+project.nav.prev_nr+"}" +
