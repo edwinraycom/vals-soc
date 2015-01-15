@@ -13,6 +13,27 @@ $path_arr = explode('/', $_SERVER['HTTP_REFERER']);//we need to store in separat
 $mine = ('mine' == (array_pop($path_arr)));//needed for save and delete
 
 switch ($_GET['action']){
+	case 'eval_projects':
+		if (!Users::isAdmin()){
+			echo jsonBadResult(t('You can only evaluate a project as admin.'));
+			return;
+		}
+		initEvaluateProjectLayout();
+	break;
+	case 'approve':
+		if (!Users::isAdmin()){
+			echo jsonBadResult(t('You can only approve a project as admin.'));
+			return;
+		}
+		//We could bulk it like this
+		//UPDATE  `vals_vps2`.`soc_projects` SET state = 'open'  where state ='pending'
+	break;
+	case 'reject':
+		if (!Users::isAdmin()){
+			echo jsonBadResult(t('You can only reject a project as admin.'));
+			return;
+		}
+	break;
 	case 'project_page':
 		initBrowseProjectLayout();
 	break;
