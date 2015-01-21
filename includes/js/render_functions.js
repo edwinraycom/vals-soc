@@ -426,7 +426,7 @@ function getProposalDetail(proposal_id, target, msg){
 					};
 
 				}
-			break ;
+			break;
 			default:
 				var data2 = jQuery.parseJSON(data);
 				if (data2.result == 'error' ){
@@ -463,15 +463,27 @@ function renderProposalTabs(result, labels, container){
 	var count = labels.length;
 	var target = '';
 	var onclick = '';
+	
+	//passed data
+	var ney = Drupal.t('Nothing entered yet');
+	var project_state = result.pr_state;
+	var proposal_state = result.state;
+	var edit_possible = ((proposal_state == 'draft') || (proposal_state == 'open'));
+	console.log(proposal_state +' llllllllllll' + project_state);
+	
 	if (typeof container == 'undefined'){
 		container = 'tab_edit';
 	}
 	for (var t=0; t < count;t++){
 		target = labels[t].tab;
 		if (target == 'edit'){
-			onclick = "\" onclick=\"ajaxCall('proposal', 'edit', {proposal_id:"+
+			if (! edit_possible) {
+				onclick = "\" ";
+			} else {
+				onclick = "\" onclick=\"ajaxCall('proposal', 'edit', {proposal_id:"+
 				result.proposal_id+ ", target:'"+container+"'}, 'jsonFormResult', 'json', ['"+
 				container+"']);\"";
+			}
 		} else {
 			onclick = '" ';
 		}
@@ -487,10 +499,6 @@ function renderProposalTabs(result, labels, container){
 	s += '</ol>';
 	s += '<div class="tabs_container">';
 
-	var ney = Drupal.t('Nothing entered yet');
-	var project_state = result.pr_state;
-	var proposal_state = result.state;
-	console.log(proposal_state +' llllllllllll' + project_state);
 	for (var t=0; t < count;t++){
 		target = labels[t].tab;
 		s += '<div id="tab_'+ target + '" class="content">';
@@ -523,12 +531,16 @@ function renderProposalTabs(result, labels, container){
 				result.state = proposal_state;
 				s += renderProposalStatus(result);
 				break;
-			case 'edit': s += Drupal.t('Wait please');
+			case 'edit': s += edit_possible  ? 
+						Drupal.t('Wait please'):
+						'This proposal is already published and so cannot be edited anymore';
 			break;
-			case 'delete': s += Drupal.t('Are you sure you want to delete this proposal?<br>')+
-				'<input type="button" value="' + Drupal.t('Yes') +'" onclick="ajaxCall(\'proposal\', \'delete\', '+
-				'{proposal_id:'+result.proposal_id+', target: \''+ container+ '\' }, '+
-				'\'handleDeleteResult\', \'json\', [\'our_content\', \'proposal\', \'myproposal_page\']);"/>';
+			case 'delete': s += edit_possible  ? 
+						Drupal.t('Are you sure you want to delete this proposal?<br>')+
+						'<input type="button" value="' + Drupal.t('Yes') +'" onclick="ajaxCall(\'proposal\', \'delete\', '+
+						'{proposal_id:'+result.proposal_id+', target: \''+ container+ '\' }, '+
+						'\'handleDeleteResult\', \'json\', [\'our_content\', \'proposal\', \'myproposal_page\']);"/>'   :
+						'This proposal is already published and so cannot be deleted anymore';
 			break;
 		}
 		s += "</div>";

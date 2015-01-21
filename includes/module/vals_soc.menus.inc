@@ -62,7 +62,7 @@ function vals_soc_menu_handler(){
 	
 	// proposal actions
 	$items['dashboard/proposals/browse'] = getProposalsBrowseLink('dashboard/proposals/browse'); // browse all proposals - not used yet - might be part of admin view at some stage
-	
+	$items['dashboard/proposals/overview'] = getProposalsOverviewLink();
 	$items['dashboard/proposals/mine'] = getMyProposalBrowseLink('dashboard/proposals/mine'); //browse only my proposals - student view
 	
 	$items['dashboard/proposals/browsebytype'] = getProposalsBrowseByTypeLink('dashboard/proposals/browsebytype'); // browse all proposals 
@@ -219,6 +219,19 @@ function getMembersLink($path){ //dashboard/members
 			'access callback' => 'vals_soc_access_check',
 			'access arguments' => array($path),
 			'description' => t('Administer page'),
+			'file' => 'vals_soc.pages.inc',
+			'file path' => _VALS_SOC_PATH . '/includes/module',
+	);
+}
+
+function getProposalsOverviewLink($path=''){ //dashboard/proposals/overview
+	return array(
+			'title' => t('Overview Proposals'),
+			'type' => MENU_CALLBACK,
+			'page callback' => 'vals_soc_overview_proposals_page',
+			'access callback' => 'vals_soc_access_check',
+			'access arguments' => array($path),
+			'description' => t('Overview Proposals page'),
 			'file' => 'vals_soc.pages.inc',
 			'file path' => _VALS_SOC_PATH . '/includes/module',
 	);

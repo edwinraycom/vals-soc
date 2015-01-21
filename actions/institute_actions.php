@@ -5,8 +5,8 @@ include('include.php');//Includes the necessary bootstrapping and the ajax funct
 module_load_include('php', 'vals_soc', 'includes/classes/Groups');
 module_load_include('php', 'vals_soc', 'includes/classes/Project');
 module_load_include('php', 'vals_soc', 'includes/pages/proposals');
-
 module_load_include('php', 'vals_soc', 'includes/classes/Institutes');
+
 switch ($_GET['action']){
 	case 'list':
 		try{

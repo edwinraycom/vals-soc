@@ -274,9 +274,10 @@ function renderProposal($proposal, $target='none', $follow_action='show'){
 	$propid = $proposal->proposal_id;
 	$buttons = '';
 	if (Users::isStudent() && Groups::isOwner(_PROPOSAL_OBJ, $propid) && $proposal->state != 'published'){
-		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this proposal?')."\")){ajaxCall(\"proposal\", \"delete\", ".
-				"{type: \"proposal\", proposal_id: $propid, target: \"$target\"}, \"refreshTabs\", \"json\", ".
-				"[\"proposal\", \"$target\", \"proposal\", \"\", \"$follow_action\"]);}'";
+		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this proposal?').
+				'")){ajaxCall("proposal", "delete", '.
+				'{type: "proposal", proposal_id: '. $propid.', target: "'.$target.'"}, "refreshTabs", "json", '.
+				"[\"proposal\", \"$target\", \"proposal\", \"our_content\", \"$follow_action\"]);}'";
 		$edit_action = "onclick='ajaxCall(\"proposal\", \"edit\", {type: \"proposal\", proposal_id: $propid, target: ".
 				"\"$target\", format:\"html\"}, \"formResult\", \"html\", [\"$target\", \"proposal\"]);'";
 		$buttons .= "<div class='totheright' id='proposal_buttons'><input type='button' value='".t('edit')."' $edit_action/>";
@@ -319,6 +320,35 @@ function renderProposal($proposal, $target='none', $follow_action='show'){
 
 }
 
+/*
+ * This is a new function to show an overview of the proposals
+ */
+function renderProposals($type='', $proposals='', $target=''){
+	//If no proposals dataset is passed on, retrieve them based on the other arguments
+	if (!$proposals){
+		$proposals = Proposal::getProposalsPerOrganisation('', '', $type);
+		if (!($proposals)){
+			$proposals = null;
+		}
+	}
+	if ($proposals){
+		$key = 'proposal_id';
+		$s = "<ul class='grouplist'>";
+		foreach($proposals as $member){
+			$id = $member->$key;
+			$s .=  "<li>";
+			$s .= "<a href='javascript:void(0);' onclick=\"ajaxCall('proposal', 'view', {type:'$type', id:$id, target:'$target'}, '$target');\">".$member->title."</a>";
+			$s .= "</li>";
+		}
+		$s .= "</ul>";
+		return $s;
+	} else {
+		$type = $type ?: _STUDENT_GROUP;
+		return $proposal_head ? tt('You have no %1$s yet.', t_type($type)):
+		tt('There are no %1$s %2$s yet.', t_type($type), t('proposals'));
+	}
+}
+
 function renderProjects($organisation_selection='', $projects='', $target='', $inline=FALSE, $reload_data=TRUE, $owner_only=FALSE){
 	if (!$projects && $reload_data){
 		$projects = Project::getProjects('', ($owner_only ? $GLOBALS['user']->uid: null), $organisation_selection);
@@ -340,13 +370,12 @@ function renderProjects($organisation_selection='', $projects='', $target='', $i
 			$s .= "<div id='$target' ></div>";
 		}
 		$s .= "</li>";
-}
-$s .= "</ol>";
-return $s;
-}
-else {
-	return t('You have no projects yet');
-}
+	}
+		$s .= "</ol>";
+		return $s;
+	} else {
+		return t('You have no projects yet');
+	}
 }
 
 function renderProject($project='', $target='', $inline=FALSE, $all_can_edit=_VALS_SOC_MENTOR_ACCESS_ALL){
