@@ -13,6 +13,10 @@ function refreshTabs(json_data, args){
 		handler = (args.length > 2 && args[2]) ? args[2] : type;
 		container = ((args.length > 3) && args[3]) ? args[3] : 'admin_container';
 		follow_action = ((args.length > 4) && args[4]) ? args[4] : 'show';
+
+		//follow_action = ((args.length > 4) && args[4]) ? args[4] : 'show';
+		//container = ((args.length > 3) && args[3]) ? args[3] : (('myproposal_page' == follow_action) ? 'our_content':'admin_container');
+		
 	}
 	if (! handler){
 		alertdev('No handler supplied in target function');
@@ -235,16 +239,21 @@ function handleResult(result, args){
 function handleDeleteResult(result, args){
 	if (result){
 		if (result.result == "error") {
+			Drupal.CTools.Modal.dismiss();//In some cases an admin wants to delete a proposal
 			ajaxAppend(result.error, result.target, 'error', result.before);
 		} else {
 			if (is_string(result.result)) {
 				ajaxInsert(result.result, result.target);
 			} else {
+				console.log('komt in dit geval');
+				console.log('in handleDeleteResult result en args', result, args);
 				if (typeof result.msg != 'undefined') {
 					ajaxAppend(result.msg, result.target, 'status', result.before);
 				}
+				
 				if (result.replace_target) {
 					if (arguments.length > 1 && args && (args.length > 0)) {
+						//[\'our_content\', \'proposal\', \'myproposal_page\']);"
 						target  = args[0];
 						handler = args[1];
 						follow  = args[2];
@@ -259,11 +268,12 @@ function handleDeleteResult(result, args){
 					}	
 				} else {
 					alertdev('The action succeeded.');
-					var row = $jq("tr[data-record='"+result.id+"']");
+					Drupal.CTools.Modal.dismiss();
+					var row = $jq("tr[data-record-key='"+result.id+"']");
 					if (row){
 						row.remove();
 					} else {
-						alertdev('it could not find the row : data-record = '+result.id);
+						alertdev('it could not find the row : data-record-key = '+result.id);
 					}
 				}
 			}

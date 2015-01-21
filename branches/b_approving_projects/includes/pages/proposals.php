@@ -1,5 +1,6 @@
 <?php
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after administration.php which does the same
+include_once(_VALS_SOC_ROOT.'/includes/functions/render_functions.php');//it is sometimes included after administration.php which does the same
 
 function showMyProposalPage(){
 	//TODO check for the role of current user
@@ -18,72 +19,6 @@ function showMyProposalPage(){
 		$current_tab = getRequestVar('new_tab', 0);
 		showMyProposals($my_proposals, $current_tab);
 	}
-}
-
-function renderDefaultField($field, $obj, $alternative_field=''){
-	static $unknown = null;
-
-	if (! $unknown) {
-		$unknown = t('The %1$s is not known yet');
-	}
-	if (isset($obj->$field) && $obj->$field){
-		return $obj->$field;
-	} elseif ($alternative_field && isset($obj->$alternative_field) && $obj->$alternative_field){
-		return $obj->$alternative_field;
-	} else {
-		return sprintf($unknown, t(str_replace('_', ' ', $field)));
-	}
-}
-
-function renderProposal($proposal, $target='none', $follow_action='show'){
-	//A proposal consists of: fields = array('proposal_id', 'owner_id', 'org_id', 'inst_id',
-	//'supervisor_id', 'pid', 'solution_short', 'solution_long', 'state',);
-	$propid = $proposal->proposal_id;
-	$buttons = '';
-	if (Users::isStudent() && Groups::isOwner(_PROPOSAL_OBJ, $propid) && $proposal->state != 'published'){
-		$delete_action = "onclick='if(confirm(\"".t('Are you sure you want to delete this proposal?')."\")){ajaxCall(\"proposal\", \"delete\", ".
-			"{type: \"proposal\", proposal_id: $propid, target: \"$target\"}, \"refreshTabs\", \"json\", ".
-			"[\"proposal\", \"$target\", \"proposal\", \"\", \"$follow_action\"]);}'";
-		$edit_action = "onclick='ajaxCall(\"proposal\", \"edit\", {type: \"proposal\", proposal_id: $propid, target: ".
-			"\"$target\", format:\"html\"}, \"formResult\", \"html\", [\"$target\", \"proposal\"]);'";
-		$buttons .= "<div class='totheright' id='proposal_buttons'><input type='button' value='".t('edit')."' $edit_action/>";
-		$buttons .= "<input type='button' value='".t('delete')."' $delete_action/></div>";
-	}
-	$content =
-	"<div id='msg_$target'></div>
-	$buttons".
-	"<h1>".($proposal->title ? $proposal->title : Proposal::getDefaultName('', $proposal))." (".
-		renderDefaultField('state', $proposal).")</h1>
-
-	<div id='personalia'>
-	<h3>Parties involved</h3>
-		<ul>
-			<li>".t('Supervisor').": ".renderDefaultField('supervisor_name', $proposal, 'supervisor_user_name')."</i>".
-			"<li>".t('Mentor').": ".renderDefaultField('mentor_name', $proposal, 'mentor_user_name')."</i>".
-			"<li>".t('Student').": ".renderDefaultField('student_name', $proposal, 'name')."</i>".
-			"<li>".t('Institute').": ".renderDefaultField('i_name', $proposal)."</i>".
-			"<li>".t('Organisation').": ".renderDefaultField('o_name', $proposal)."</i>".
-		"</ul>
-	</div>".
-	"<div id='project'>
-		".t('Project').": ".$proposal->pr_title."
-	</div>".
-	"<div id='proposal_text'>
-		<h3>".t('Solution Summary')."</h3>
-		".renderDefaultField('solution_short', $proposal)."<br/>".
-		"<a href='javascript:void(0)' data='off' onclick='makeVisible(\"solution_$propid\");'>".t('more')."</a>".
-		//"<input type='button' value='View more' onclick='makeVisible(\"solution_$propid\");'/>
-		"
-			<div id='solution_$propid' class='invisible'>
-			<h3>Solution</h3>
-			".renderDefaultField('solution_long', $proposal)."
-			</div>
-	</div>";
-
-	module_load_include('inc', 'vals_soc', 'includes/ui/comments/threaded_comments');
-	$content .= initComments($propid, _PROPOSAL_OBJ);
-	return $content;
-
 }
 
 function showMyProposals($proposals, $current_tab_propid=0){

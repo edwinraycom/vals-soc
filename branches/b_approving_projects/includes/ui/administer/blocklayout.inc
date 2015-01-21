@@ -9,6 +9,7 @@ drupal_add_js (_VALS_SOC_PATH .'/includes/js/target_functions.js');
 drupal_add_library('system','ui');
 
 include(_VALS_SOC_ROOT.'/includes/pages/administration.php');
+include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 include(_VALS_SOC_ROOT.'/includes/functions/render_functions.php');
 //To test we switch here the user
 //31 student stuutje, 30 tutor zelfstandig, 27 salamanca (org inst), 25 orgadmin, 1 admin

@@ -29,6 +29,15 @@ function vals_soc_administer_page(){
     return ob_get_clean();
 }
 
+function vals_soc_overview_proposals_page(){
+	ob_start();
+	vals_soc_content_start();
+	$action = 'proposals';
+	include(_VALS_SOC_ROOT. '/includes/ui/administer/blocklayout.inc');
+	vals_soc_content_end();
+	return ob_get_clean();
+}
+
 function vals_soc_administer_entity_page($action='administer'){
 	ob_start();
 	vals_soc_content_start();
