@@ -80,3 +80,12 @@ Additional - notes taken from Paul in Cyprus
 			Reassign one student with second chance project (student must have already written a proposal though)
 			 
 		- How - some sort of skype/irc or whatever where the stakeholders discuss and resolve any outstanding issues.
+
+Additional -notes taken by Edwin in Udine (Marked * is something we will surely try to do)
+19. * Shift the date to the first of April
+20. * Make a filter so that supervisors can make a preselection
+21. Make it possible to download/summarize all the descriptions of interesting projects
+22. Make an overview of the current numbers visible for the SOC
+23. * Keep statistics about login, proposals by institute
+24. * Make a direct url per project possible so that supervisor can direct a student to that
+25. Search facility to search for Projects
