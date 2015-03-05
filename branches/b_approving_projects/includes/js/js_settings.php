@@ -7,7 +7,7 @@ require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_SESSION);
 
 echo "var base_url = '".$_SESSION['site_settings'][0]."/';\n";
-echo "var moduleUrl = base_url + 'sites/all/modules/vals_soc/';\n";
+echo "var module_url = base_url + 'sites/all/modules/vals_soc/';\n";
 echo "var logged_in = ".($_SESSION['site_settings'][1] ? 1 :0).";\n";
 echo "var debugging = ".($_SESSION['site_settings'][2] ? 'true' : 'false').";\n";
 ?>
@@ -87,7 +87,7 @@ function waitingIcon(wait_name, x, y, container){
 ajax_settings = {
 		ajax_waiting_half_width:20,
 		ajax_waiting_half_height:20,
-		ajax_waiting_icon : "<img src='" + moduleUrl+ "includes/js/resources/ajax-loader_old.gif' " +
+		ajax_waiting_icon : "<img src='" + module_url+ "includes/js/resources/ajax-loader_old.gif' " +
 		" width='20px'"  +
 		" height='20px'"+
 		"alt='waiting'></img>"

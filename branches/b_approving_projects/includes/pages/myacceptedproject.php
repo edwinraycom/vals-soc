@@ -44,7 +44,7 @@ function getListView(){
 						sorting: true,
 						defaultSorting: "pid ASC",
 						actions: {
-							listAction: moduleUrl + "actions/agreement_actions.php?action=list_search"
+							listAction: module_url + "actions/agreement_actions.php?action=list_search"
 						},
 						fields: {
 							agreement_id: {

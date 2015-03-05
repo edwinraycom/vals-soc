@@ -91,3 +91,11 @@ Additional -notes taken by Edwin in Udine (Marked * is something we will surely 
 25. Search facility to search for Projects
 26. Matching in admin/SOC role
 27. Finish off project of a student when finished
+
+Query to see student numbers per university
+SELECT * from users u left join users_roles ur on u.uid = ur.uid
+left join soc_user_membership um on u.uid = um.uid
+left join soc_studentgroups sg on sg.studentgroup_id = um.group_id
+left join soc_institutes i on sg.inst_id = i.inst_id
+where  ur.rid = 4 and um.`type` = 'studentgroup'
+order by i.inst_id

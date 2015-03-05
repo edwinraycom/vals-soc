@@ -29,7 +29,7 @@ function chooseProposalForProject(project_id, proposal_id, is_final){
 		content += '\n';
 	}
 	if (confirm(content)) {
-		var url = moduleUrl + "actions/proposal_actions.php?action=mark_proposal";
+		var url = module_url + "actions/proposal_actions.php?action=mark_proposal";
 		$jq.post(url, {'proposal_id': proposal_id, 'project_id' : project_id, 'is_final' : is_final}, function(data,status){
 			if(!is_final){
 				ajaxInsert(data, 'proposal-interim-markup-'+proposal_id+'-button');
@@ -50,7 +50,7 @@ function hideOtherDivsAfterProposalReject(proposal_id){
 }
 
 function rejectProposalForm(proposal_id, target){
-	var url = moduleUrl + "actions/proposal_actions.php?action=reject_form&id=" + proposal_id+ "&target="+target;
+	var url = module_url + "actions/proposal_actions.php?action=reject_form&id=" + proposal_id+ "&target="+target;
 	$jq.get(url,function(data,status){
 		ajaxInsert(data, target);
 	});
@@ -314,7 +314,7 @@ function renderStudentLike(pid, is_marked){
 	return "<div id='favourite_msg'>"+
 	//Drupal.t('You can mark this project as one of your favourites?')+
 	(is_marked ?
-		"<img src='"+ moduleUrl+ "includes/js/resources/heart_blue.png' title= '"+
+		"<img src='"+ module_url+ "includes/js/resources/heart_blue.png' title= '"+
 			Drupal.t('You marked this project as one of your favourites')+ "' />" :
 		"<input type='button' value='"+  Drupal.t('Mark this project') +
 			"' id='project_favour' name='project_favour' "+
@@ -385,7 +385,7 @@ function getProposalDetail(proposal_id, target, msg){
 	                     ,'tab_status'
 				      	//,'tab_modules'
 	                    ];
-	var url = moduleUrl + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" +
+	var url = module_url + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" +
 		proposal_id;
 
   	if (window.view_settings.apply_projects){
@@ -589,7 +589,7 @@ function getProposalFormForProject(projectId){
 }
 
 function getProjectDetail(projectId){
-	var url = moduleUrl + "actions/project_actions.php?action=project_detail&project_id=" + projectId;
+	var url = module_url + "actions/project_actions.php?action=project_detail&project_id=" + projectId;
 	//TODO: currently the apply projects is passed around as global. not so elegant
 	$jq.get(url, function(data,status){
 		generateAndPopulateModal(data, renderProject, window.view_settings.apply_projects);
@@ -597,21 +597,21 @@ function getProjectDetail(projectId){
 }
 
 function getCommentsForEntity(id, entityType, target){
-	var url = moduleUrl + "actions/comment_actions.php?action=viewall&id=" + id + "&type=" + entityType;
+	var url = module_url + "actions/comment_actions.php?action=viewall&id=" + id + "&type=" + entityType;
 	$jq.get(url,function(data,status){
 		ajaxInsert(data, target);
 	});
 }
 
 function getOrganisationDetail(org_id){
-	var url = moduleUrl + "actions/organisation_actions.php?action=organisation_detail&orgid=" + org_id;
+	var url = module_url + "actions/organisation_actions.php?action=organisation_detail&orgid=" + org_id;
 	$jq.get(url,function(data,status){
 		generateAndPopulateModal(data, renderOrganisation, true);
 	});
 }
 
 function getInstituteDetail(id){
-	var url = moduleUrl + "actions/institute_actions.php?action=detail&instid=" + id;
+	var url = module_url + "actions/institute_actions.php?action=detail&instid=" + id;
 	$jq.get(url,function(data,status){
 		generateAndPopulateModal(data, renderInstitute, true);
 	});
