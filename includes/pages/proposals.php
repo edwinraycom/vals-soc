@@ -149,7 +149,7 @@ function initBrowseProposalsLayout(){
 				sorting: true,
 				defaultSorting: "pid ASC",
 				actions: {
-					listAction: moduleUrl + "actions/proposal_actions.php?action=list_proposals"
+					listAction: module_url + "actions/proposal_actions.php?action=list_proposals"
 				},
 				fields: {
 					proposal_id: {
@@ -297,7 +297,7 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 						sorting: true,
 						defaultSorting: "pid ASC",
 						actions: {
-							listAction: moduleUrl + "actions/project_actions.php?action=list_search_proposal_count<?php echo $only_mine_query;?>"
+							listAction: module_url + "actions/project_actions.php?action=list_search_proposal_count<?php echo $only_mine_query;?>"
 						},
 						fields: {
 							pid: {
@@ -422,7 +422,7 @@ function initBrowseProposalsByTypeLayout($owner_only=false){
 		 					sorting: true,
 		 					defaultSorting: "pid ASC",
 		 					actions: {
-		 						listAction: moduleUrl + "actions/institute_actions.php?action=list_search_proposal_count_student<?php echo $only_mine_query;?>"
+		 						listAction: module_url + "actions/institute_actions.php?action=list_search_proposal_count_student<?php echo $only_mine_query;?>"
 		 					},
 		 					fields: {
 		 						uid: {
@@ -515,7 +515,7 @@ function showProposalsForProject($project_id, $show_only_mine){
 						sorting: true,
 						defaultSorting: "pid ASC",
 						actions: {
-							listAction: moduleUrl + "actions/proposal_actions.php?action=list_proposals"
+							listAction: module_url + "actions/proposal_actions.php?action=list_proposals"
 						},
 						fields: {
 							proposal_id: {
@@ -645,7 +645,7 @@ function showProposalsForStudent($student_id, $show_only_mine){
 						sorting: true,
 						defaultSorting: "pid ASC",
 						actions: {
-							listAction: moduleUrl + "actions/proposal_actions.php?action=list_proposals"
+							listAction: module_url + "actions/proposal_actions.php?action=list_proposals"
 						},
 						fields: {
 							proposal_id: {

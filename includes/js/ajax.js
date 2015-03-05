@@ -2,8 +2,8 @@
 //These settings are now included in a general settings file
 //var debugging = true;
 //var console_Jquery_migrate_warnings = false;
-//var baseUrl = '/vals/';
-//var moduleUrl = baseUrl + 'sites/all/modules/vals_soc/';
+//var base_url = '/vals/';
+//var module_url = base_url + 'sites/all/modules/vals_soc/';
 
 var $jq = jQuery;
 
@@ -12,7 +12,7 @@ function alertdev(m) {
 		alert(m);
 }
 function url(category, action) {
-	return moduleUrl + "actions/"+category+"_actions.php?action="+ action;
+	return module_url + "actions/"+category+"_actions.php?action="+ action;
 }
 
 function altSub(arr_obj, prop, def){
@@ -382,7 +382,7 @@ $jq(document)
 						// //The user returns to the page after a long time and
 						// is logged out becauses of session expiration
 						if (confirm('It seems you are no longer logged in. Do you want to log in now?')) {
-							window.location.replace(baseUrl + "/user/login");
+							window.location.replace(base_url + "/user/login");
 							return;
 						} else {
 							return;

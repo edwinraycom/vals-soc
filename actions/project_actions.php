@@ -35,7 +35,8 @@ switch ($_GET['action']){
 		}
 	break;
 	case 'project_page':
-		initBrowseProjectLayout();
+        $pid = getRequestVar('pid');
+		initBrowseProjectLayout($pid);
 	break;
 	case 'mark':
 		if (!(Users::isStudent())){
@@ -161,6 +162,12 @@ switch ($_GET['action']){
 			if(isset($_POST['state'])){
 				$state = $_POST['state'];
 			}
+            $supervisor=null;
+			if(isset($_POST['supervisor'])){
+				$supervisor = $_POST['supervisor'];
+			}
+            
+            
 			$project_id = getRequestVar('pid', null);
 			$favourites_only = getRequestVar('favourites', false);
 			//Return result to jTable
@@ -181,9 +188,9 @@ switch ($_GET['action']){
 					}
 				} else {
 					$jTableResult['TotalRecordCount'] = Project::getInstance()->getProjectsRowCountBySearchCriteria(
-							$tags, $organisation, $state);
+							$tags, $organisation, $state, $supervisor);
 					$jTableResult['Records'] = Project::getInstance()->getProjectsBySearchCriteria($tags,
-							$organisation, $state, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
+							$organisation, $state, $supervisor, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
 				}
 			}
 			//Save it for navigation
