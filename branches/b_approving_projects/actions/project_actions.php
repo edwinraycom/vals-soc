@@ -167,7 +167,6 @@ switch ($_GET['action']){
 				$supervisor = $_POST['supervisor'];
 			}
             
-            
 			$project_id = getRequestVar('pid', null);
 			$favourites_only = getRequestVar('favourites', false);
 			//Return result to jTable

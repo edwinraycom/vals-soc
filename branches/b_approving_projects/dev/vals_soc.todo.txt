@@ -87,10 +87,11 @@ Additional -notes taken by Edwin in Udine (Marked * is something we will surely 
 21. Make it possible to download/summarize all the descriptions of interesting projects
 22. Make an overview of the current numbers visible for the SOC
 23. * Keep statistics about login, proposals by institute
-24. * Make a direct url per project possible so that supervisor can direct a student to that
+24. DONE Make a direct url per project possible so that supervisor can direct a student to that
 25. Search facility to search for Projects
 26. Matching in admin/SOC role
 27. Finish off project of a student when finished
+28. DONE Fix bug with tags (comma not allowed so only possible to filter on one tag)
 
 Query to see student numbers per university
 SELECT * from users u left join users_roles ur on u.uid = ur.uid

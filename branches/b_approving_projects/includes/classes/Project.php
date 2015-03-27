@@ -73,7 +73,14 @@ class Project extends AbstractEntity{
             $projectCount->condition('r.rate', 0, '>=');
         }
     	if(isset($tags) && $tags){
-    		$projectCount->condition('tags', '%'.$tags.'%', 'LIKE');
+            if (strpos($tags, ',') !== FALSE){
+                $tags_list = explode(",", $tags);
+                foreach ($tags_list as $tag){
+                    $projectCount->condition('tags', '%'.trim($tag).'%', 'LIKE');
+                }
+            } else {
+                $projectCount->condition('tags', '%'.$tags.'%', 'LIKE');
+            }
     	}
     	if(isset($organisation) && $organisation !="0"){
     		$projectCount->condition('org_id', $organisation);
@@ -87,16 +94,25 @@ class Project extends AbstractEntity{
     }
 
     public function getProjectsBySearchCriteria($tags, $organisation, $state, $supervisor, $sorting, $startIndex, $pageSize){
-    	$queryString = "SELECT p.pid, p.title, p.description, p.tags, p.state, p.proposal_id, p.selected, o.name, COUNT(v.proposal_id) AS proposal_count "
-    			."FROM soc_projects p "
-    			."LEFT JOIN soc_proposals AS v ON ( v.pid = p.pid ) "
-    			."LEFT JOIN soc_organisations o ON ( p.org_id = o.org_id) "
-                .($supervisor ? "LEFT JOIN soc_supervisor_rates AS r ON ( p.pid = r.pid) " : "")
-    			."WHERE ".
-                ($supervisor ? " r.uid = $supervisor AND r.rate >= 0 " : " 1=1 ");
+    	$queryString = "SELECT p.pid, p.title, p.description, p.tags, p.state, p.proposal_id, p.selected, o.name, ".
+            "COUNT(v.proposal_id) AS proposal_count "
+            ."FROM soc_projects p "
+            ."LEFT JOIN soc_proposals AS v ON ( v.pid = p.pid ) "
+            ."LEFT JOIN soc_organisations o ON ( p.org_id = o.org_id) "
+            .($supervisor ? "LEFT JOIN soc_supervisor_rates AS r ON ( p.pid = r.pid) " : "")
+            ."WHERE ".
+            ($supervisor ? " r.uid = $supervisor AND r.rate >= 0 " : " 1=1 ");
     	if(isset($tags) && $tags){
-    		$queryString .=	 " AND tags LIKE '%".$tags."%'";
+            if (strpos($tags, ',') !== FALSE){
+                $tags_list = explode(",", $tags);
+                foreach ($tags_list as $tag){
+                    $queryString .=	 " AND tags LIKE '%".trim($tag)."%'";
+                }
+            } else {
+                $queryString .=	 " AND tags LIKE '%".trim($tags)."%'";
+            }
     	}
+        
     	if(isset($organisation) && $organisation !="0"){
     		$queryString .=	 " AND p.org_id = ".$organisation;
     	}
@@ -196,12 +212,12 @@ class Project extends AbstractEntity{
     	}
     	$query .= 	 " ORDER BY " . $sorting
     	." LIMIT " . $startIndex . "," . $pageSize . ";";
-    	//echo $query;
     	$students = db_query($query, array(':grps' => $group))->fetchAll();
     	return $students;
     }
     
-    public function  getProjectsAndProposalCountByCriteriaRowCount($organisation='', $owner_id=''){
+    public function  getProjectsAndProposalCountByCriteriaRowCount($organisation='', 
+        $owner_id=''){
     	if(!$organisation){
     		$organisation = array();
     		$result = Organisations::getInstance()->getMyOrganisations(TRUE);
@@ -218,8 +234,8 @@ class Project extends AbstractEntity{
     	return $projects;
     }
     
-    public static function getProjectsAndProposalCountByCriteria($organisation, $owner_id='', $sorting='p.pid',
-    	$startIndex=1, $pageSize=10){
+    public static function getProjectsAndProposalCountByCriteria($organisation,
+        $owner_id='', $sorting='p.pid', $startIndex=1, $pageSize=10){
 
     	if(!$organisation){
     		$organisation = array();
