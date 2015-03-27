@@ -18,13 +18,15 @@ class ThreadUIBuilder {
 	 * @param array $comments
 	 */
 	function init($records) {
-		foreach ($records as $record) {
-			if ($record ['parent_id'] === NULL) {
-				$this->parents [$record ['id']] [] = $record;
-			} else {
-				$this->children [$record ['parent_id']] [] = $record;
-			}
-		}
+        if ($records){
+            foreach ($records as $record) {
+                if ($record ['parent_id'] === NULL) {
+                    $this->parents [$record ['id']] [] = $record;
+                } else {
+                    $this->children [$record ['parent_id']] [] = $record;
+                }
+            }
+        }
 		$count = sizeof($records);
 		$this->output .= "<div>";
 		$this->output .= "	<h2 style='display:inline-block'>";
@@ -32,7 +34,7 @@ class ThreadUIBuilder {
 		$this->output .= "		(<div style='display:inline;' id='comment-total-".$this->entity_type."-".$this->entity_id."'>".$count."</div>)";
 		$this->output .= "	</h2>";
 		$this->output .= "	&nbsp;";
-		$this->output .= "<input style='display:inline-block' id='comment-toggle-".$this->entity_id."-".$this->entity_type."' class='comment-toggle' type='button' value='".t('show')."'/>";
+		$this->output .= "<input style='display:inline-block' id='comment-toggle-".$this->entity_id."-".$this->entity_type."' class='comment-toggle' type='button' value='".($count ? t('show') : t('create'))."'/>";
 		$this->output .= "</div>";
 	}
 

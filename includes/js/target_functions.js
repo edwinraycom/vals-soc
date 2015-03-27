@@ -100,6 +100,7 @@ function refreshSingleComment(json_data, args){
 	var id = json_data.id;
 	var type = json_data.type;
 	if (json_data && (json_data.result !== 'error')){
+        showText = 'show';
 		ajaxCall(handler, 'view', {id:id,type:type,target:target}, 'handlePostDOMUPdate',
 				'html', [json_data.msg, id, parent_id, type, json_data.entity_id]);
 	} else {

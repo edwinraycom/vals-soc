@@ -242,21 +242,24 @@ function renderProject(project, apply_projects){
 	//content += '</div>';//end of project_content
 	
 	
-	
-	if(project.proposal_count){
-		content += "<h2>"+Drupal.t('Statistics')+"</h2>";
+	content += "<h2>"+Drupal.t('Statistics')+"</h2>";
+    if(project.proposal_count != "0"){
+        var has_preferred_proposal = (project.proposal_id != "0");
+        var is_selected_proposal = (project.selected=="1");
 		content += ''+ Drupal.t('Number of proposals already submitted to this project: ') + project.proposal_count;
-		if(project.proposal_id && project.selected=="0"){
+		if(has_preferred_proposal && !is_selected_proposal){
 			message = Drupal.t('The project mentor has selected an interim preferred proposal already, however this is not final and may change.');
 		}
-		else if(project.proposal_id && project.selected=="1"){
+		else if(has_preferred_proposal && is_selected_proposal){
 			message = Drupal.t('The project mentor has marked an existing proposal as final solution.');
 		}
 		else{
 			message = Drupal.t('The project mentor has not marked any proposal as their preferred solution yet.');
 		}
 		content += '<br/>'+ message +'<br/>';
-	}
+	} else {
+        content += Drupal.t('This project has no proposals yet.');
+    }
 
 	if ((typeof rate_projects != 'undefined') && rate_projects){
 		var rate = -2;
@@ -278,11 +281,7 @@ function renderProject(project, apply_projects){
 		if (typeof project.favourite != 'undefined') {
 			favourite = project.favourite;
 		}
-		if (false && favourite){//This is the non-icon solution we do not do anymore, we have a heart icon
-			content += Drupal.t('You marked this project as one of your favourites');
-		} else {
-			content += renderStudentLike(project.pid, favourite);
-		}
+        content += renderStudentLike(project.pid, favourite);
 		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='"+ Drupal.t('Create proposal for this project')+ "'/>";
 		content +="</div>";
 	}
@@ -618,7 +617,7 @@ function getInstituteDetail(id){
 }
 
 function testTagInput() {
-	var filter = /^[a-z0-9+_.\s]+$/i;
+	var filter = /^[a-z0-9+_.\,\s]+$/i;
 	if (filter.test($jq("#tags").val()) || $jq("#tags").val()=="") {
 		$jq("#tags").removeClass("error");
 		$jq("#infotext").removeClass("error");

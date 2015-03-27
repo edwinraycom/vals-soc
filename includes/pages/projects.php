@@ -359,7 +359,7 @@ function initBrowseProjectLayout($pid=''){
             <?php 
             if (Users::isUser() && ! Users::isMentor()) {
                 $supervisor_filter = TRUE;
-                echo "<BR/>"; echo t('Supervisors');
+                echo t('Supervisors');
                 $my_institute_result = Users::getInstituteForUser(Users::getMyId());
                 $my_institute_rec = $my_institute_result->fetchAssoc();
                 $my_institute_id = $my_institute_rec ? $my_institute_rec['inst_id']: 'all';
@@ -428,7 +428,7 @@ function initBrowseProjectLayout($pid=''){
 					title: "Url",
 					width: "2%",
 					display: function (data) {
-						return "<a title=\"Shrink result to this project\" href=\"" + base_url +"projects/browse?pid="+
+						return "<a title=\"Shrink search result to this project only. You can copy this link to bring it under attention of someone.\" href=\"" + base_url +"projects/browse?pid="+
 							data.record.pid+"\">&lArr;</a>";
 						},
 						create: false,
@@ -530,6 +530,7 @@ function initBrowseProjectLayout($pid=''){
 			tags: $("#tags").val(),
 			state: $("#state").val(),
 			organisation: $("#organisation").val()
+            <?php echo $supervisor_filter ? ", supervisor: $(\"#supervisor\").val()": "";?>
 			});
 		}
 	});
@@ -541,6 +542,7 @@ function initBrowseProjectLayout($pid=''){
 				tags: $("#tags").val(),
 				state: $("#state").val(),
 				organisation: $("#organisation").val()
+                <?php echo $supervisor_filter ? ", supervisor: $(\"#supervisor\").val()": "";?>
 			});
 		}
 	});
@@ -551,6 +553,7 @@ function initBrowseProjectLayout($pid=''){
 				tags: $("#tags").val(),
 				state: $("#state").val(),
 				organisation: $("#organisation").val()
+                <?php echo $supervisor_filter ? ", supervisor: $(\"#supervisor\").val()": "";?>
 			});
 		}
 	});
@@ -574,6 +577,7 @@ function initBrowseProjectLayout($pid=''){
 				tags: $("#tags").val(),
 				state: $("#state").val(),
 				organisation: $("#organisation").val()
+                <?php echo $supervisor_filter ? ", supervisor: $(\"#supervisor\").val()": "";?>
 			});
 		}
 	});
