@@ -323,10 +323,10 @@ function renderProposal($proposal, $target='none', $follow_action='show'){
 /*
  * This is a new function to show an overview of the proposals
  */
-function renderProposals($type='', $proposals='', $target=''){
+function renderProposals($type='', $proposals='', $target='', $render_details=TRUE){
 	//If no proposals dataset is passed on, retrieve them based on the other arguments
 	if (!$proposals){
-		$proposals = Proposal::getProposalsPerOrganisation('', '', $type);
+		$proposals = Proposal::getProposalsPerOrganisation('', '', $type, $render_details);
 		if (!($proposals)){
 			$proposals = null;
 		}
@@ -337,15 +337,19 @@ function renderProposals($type='', $proposals='', $target=''){
 		foreach($proposals as $member){
 			$id = $member->$key;
 			$s .=  "<li>";
-			$s .= "<a href='javascript:void(0);' onclick=\"ajaxCall('proposal', 'view', {type:'$type', id:$id, target:'$target'}, '$target');\">".$member->title."</a>";
+			$s .= "<a href='javascript:void(0);' onclick=\"ajaxCall('proposal', ".
+                "'view', {type:'$type', id:$id, target:'$target'}, '$target');\">".
+                ($member->title ?: ($render_details ? "Project: ". $member->pr_title: 'No title yet'))."</a>".
+                " <i>From: ".$member->i_name."</i>";
 			$s .= "</li>";
 		}
 		$s .= "</ul>";
-		return $s;
+		
 	} else {
 		$type = $type ?: _STUDENT_GROUP;
-		return tt('There are no %1$s %2$s yet.', t_type($type), t('proposals'));
+		$s = tt('There are no %1$s %2$s yet.', t_type($type), t('proposals'));
 	}
+    return $s;
 }
 
 function renderProjects($organisation_selection='', $projects='', $target='', $inline=FALSE, $reload_data=TRUE, $owner_only=FALSE){
