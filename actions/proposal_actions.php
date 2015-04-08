@@ -94,8 +94,9 @@ switch ($_GET['action']){
 		$target = altSubValue($_POST, 'target');
         $state  = altSubValue( $_GET, 'state');
 		if($state){
-			$proposals = Proposal::getProposalsPerOrganisation('','',$state);
-			echo renderProposals($state, $proposals, $target);
+            $with_details = TRUE;
+			$proposals = Proposal::getProposalsPerOrganisation('','',$state, $with_details);
+			echo renderProposals($state, $proposals, $target, $with_details);
 		} else {
 			echo "No state passed ";
 		}

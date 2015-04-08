@@ -51,7 +51,7 @@ function showAdminPage($show_action, $show_last=FALSE){
 		$nr_tabs = count($data);
 		
 		echo renderTabs($nr_tabs, null, 'admin_page-', _PROPOSAL_OBJ, $data, 0, TRUE,
-				renderProposals('draft', null, 'admin_page-1'), 1 , 'proposal');
+				renderProposals('draft', null, 'admin_page-1', TRUE), 1 , 'proposal');
 	}
 	$s = '';
 	for ($i=1;$i <= $nr_tabs;$i++){
