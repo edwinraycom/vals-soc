@@ -91,10 +91,9 @@ switch ($_GET['action']){
 		}
 		break;
 	case 'list':
-		$institute=null;
-		$target = altSubValue( $_POST, 'target');
-		if(isset($_GET['state']) && $_GET['state']){
-			$state = $_GET['state'];
+		$target = altSubValue($_POST, 'target');
+        $state  = altSubValue( $_GET, 'state');
+		if($state){
 			$proposals = Proposal::getProposalsPerOrganisation('','',$state);
 			echo renderProposals($state, $proposals, $target);
 		} else {

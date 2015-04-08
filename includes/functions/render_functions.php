@@ -344,8 +344,7 @@ function renderProposals($type='', $proposals='', $target=''){
 		return $s;
 	} else {
 		$type = $type ?: _STUDENT_GROUP;
-		return $proposal_head ? tt('You have no %1$s yet.', t_type($type)):
-		tt('There are no %1$s %2$s yet.', t_type($type), t('proposals'));
+		return tt('There are no %1$s %2$s yet.', t_type($type), t('proposals'));
 	}
 }
 
