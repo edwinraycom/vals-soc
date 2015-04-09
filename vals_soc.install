@@ -179,8 +179,8 @@ function vals_soc_update_7105() {
 	);
   db_create_table('soc_student_favourites', $schema['soc_student_favourites']);
 }
-
-function vals_soc_update_7106(){
+//The following updates have been performed in all databases
+function vals_soc__DONOTDOTHISupdate_7106(){
 	$spec = array(
 		'type' => 'enum',//DOES NOT EXIST as generic type
 		'not null' => TRUE,
@@ -193,12 +193,12 @@ function vals_soc_update_7106(){
 		"NOT NULL")->execute();
 	}
 	
-	function vals_soc_update_7107(){
+	function vals_soc__DONOTDOTHISupdate_7107(){
 		db_query("ALTER TABLE `soc_proposals` ADD `reason` VARCHAR( 512 ) NULL COMMENT 'reason for rejection or withdraw' AFTER `state`")->execute();
 	}
 	
 	//Done in 0.5.6
-	function vals_soc_update_7108(){
+	function vals_soc__DONOTDOTHISupdate_7108(){
 		db_query("ALTER TABLE `soc_projects`".
 			"ADD COLUMN `views` SMALLINT UNSIGNED NULL DEFAULT '0' AFTER `selected`,".
 			"ADD COLUMN `likes` SMALLINT UNSIGNED NULL DEFAULT '0' AFTER `views`")->execute();

@@ -224,7 +224,7 @@ function getMembersLink($path){ //dashboard/members
 	);
 }
 
-function getProposalsOverviewLink($path=''){ //
+function getProposalsOverviewLink($path=''){
 	return array(
 			'title' => t('Overview Proposals'),
 			'type' => MENU_CALLBACK,
@@ -237,7 +237,7 @@ function getProposalsOverviewLink($path=''){ //
 	);
 }
 
-function getOverviewLink($path){ //dashboard/members
+function getOverviewLink($path){
 	return array(
 			'title' => t('Overview'),
 			'type' => MENU_CALLBACK,

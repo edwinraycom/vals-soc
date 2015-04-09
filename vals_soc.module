@@ -50,6 +50,12 @@ function vals_soc_access_check($access_data) {
  */
 function vals_soc_permission() {
 	$perms = array();
+    $perms['vals access dashboard'] = array(
+		'title' => t('The user has a dashboard to view data or change things.'),
+		'description' => t('There should be a page available in the dashboard pages section'),
+		'restrict access' => FALSE,
+		//'warning' => t(''),
+	);
 	$perms['vals admin register'] = array(
 		'title' => t('Grant access to administer groups, organisations and institutes.'),
 		'description' => t('There is an admin page where you can add, delete and edit your organisation and groups.'),

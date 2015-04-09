@@ -253,7 +253,7 @@ function renderUsers($type='', $users='', $group_selection='', $group_type='', $
 
 }
 
-function renderDefaultField($field, $obj, $alternative_field=''){
+function renderDefaultField($field, $obj, $alternative_field='', $not_found_item=''){
 	static $unknown = null;
 
 	if (! $unknown) {
@@ -264,7 +264,9 @@ function renderDefaultField($field, $obj, $alternative_field=''){
 	} elseif ($alternative_field && isset($obj->$alternative_field) && $obj->$alternative_field){
 		return $obj->$alternative_field;
 	} else {
-		return sprintf($unknown, t(str_replace('_', ' ', $field)));
+		return sprintf($unknown,
+            $not_found_item ? t($not_found_item): t(str_replace('_', ' ', $field))
+        );
 	}
 }
 
@@ -310,7 +312,7 @@ function renderProposal($proposal, $target='none', $follow_action='show'){
 			"
 			<div id='solution_$propid' class='invisible'>
 			<h3>Solution</h3>
-			".renderDefaultField('solution_long', $proposal)."
+			".renderDefaultField('solution_long', $proposal, '', 'solution text')."
 			</div>
 			</div>";
 

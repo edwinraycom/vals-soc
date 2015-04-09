@@ -43,35 +43,41 @@ function create_permissions(){
 // 			'vals admin projects' => TRUE,
 // 	);
 	$perms[_SOC_TYPE] = array(
-			//'vals admin register' => TRUE,
-			'vals browse projects' => TRUE,
-			//'vals admin projects' => TRUE,
+        //'vals admin register' => TRUE,
+        'vals browse projects' => TRUE,
+        'vals access dashboard' => TRUE,
+        //'vals admin projects' => TRUE,
 	);
 	$perms[_ORGADMIN_TYPE] = array(
-			'vals admin register' => TRUE,
-			'vals browse projects' => TRUE,
-			'vals admin projects' => TRUE,
+        'vals admin register' => TRUE,
+        'vals browse projects' => TRUE,
+        'vals admin projects' => TRUE,
+        'vals access dashboard' => TRUE,
 	);
 	$perms[_SUPERVISOR_TYPE] = array(
-			'vals admin register' => TRUE,
-			'vals browse projects' => TRUE,
-			//'vals admin projects' => TRUE,
+        'vals admin register' => TRUE,
+        'vals browse projects' => TRUE,
+        //'vals admin projects' => TRUE,
+        'vals access dashboard' => TRUE,
 	);
 	$perms[_MENTOR_TYPE] = array(
-			//'vals admin register' => TRUE,
-			'vals browse projects' => TRUE,
-			'vals admin projects' => TRUE,
+        //'vals admin register' => TRUE,
+        'vals browse projects' => TRUE,
+        'vals admin projects' => TRUE,
+        'vals access dashboard' => TRUE,
 	);
 	$perms[_STUDENT_TYPE] = array(
-			//'vals admin register' => TRUE,
-			'vals browse projects' => TRUE,
-			//'vals admin projects' => TRUE,
-			'vals apply projects' => TRUE,
+        //'vals admin register' => TRUE,
+        'vals browse projects' => TRUE,
+        //'vals admin projects' => TRUE,
+        'vals apply projects' => TRUE,
+        'vals access dashboard' => TRUE,
 	);
 	$perms[_INSTADMIN_TYPE] = array(
-			'vals admin register' => TRUE,
-			'vals browse projects' => TRUE,
-			'vals edit projects' => TRUE,
+        'vals admin register' => TRUE,
+        'vals browse projects' => TRUE,
+        'vals edit projects' => TRUE,
+        'vals access dashboard' => TRUE,
 	);
 	foreach ($perms as $role => $permissions){
 		if (!$role_obj = user_role_load_by_name($role)) {
@@ -94,10 +100,10 @@ function create_permissions(){
 	}
 }
 
-/* This function can be called to add on the fly a new permission for a certain role. It should be called once only
- * of course
+/* This function can be called to set on the fly a new set of permissions for 
+ * a certain role. It should be called once only of course.
  */
-function addNewPermissions($role, $permissions){
+function setNewPermissions($role, $permissions){
 	if (!is_array($permissions)){
 		$permissions = array($permissions);
 	}
@@ -183,7 +189,7 @@ function getRoles($uid=''){
 	
     if ($uid) {
     	$roles = doAssocQuery("select r.rid,r.name from users_roles as ur left join role as r on r.rid=ur.rid ".
-    			"where ur.uid = $uid");//->fetchAll();
+    			"where ur.uid = $uid");
     	return $roles;
     } else {
     	 if (isset($user)){

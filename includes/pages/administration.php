@@ -1,10 +1,13 @@
 <?php
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after propjects.php which does the same
 
-function showRoleDependentAdminPage($role, $show_action='administer', $show_last= FALSE){
+function showRoleDependentPage($role, $show_action='administer', $show_last= FALSE){
 	echo "<a href='"._WEB_URL."/dashboard'>".t('Back To Dashboard')."</a><br/>";
 	switch ($role){
 		case _ADMINISTRATOR_TYPE:
+			showAdminPage($show_action, $show_last);
+			break;
+        case _SOC_TYPE:
 			showAdminPage($show_action, $show_last);
 			break;
 		case _SUPERVISOR_TYPE:
@@ -25,7 +28,8 @@ function showRoleDependentAdminPage($role, $show_action='administer', $show_last
 
 function showAdminPage($show_action, $show_last=FALSE){
 	$data = array();
-	if ($show_action == 'administer'){
+    $nr_tabs = 0;
+	if (($show_action == 'administer') || ($show_action = 'overview')){
 		echo '<h2>'.t('All the groups and persons').'</h2>';
 		$data[] = array(1, 'Institutes', 'list', _INSTITUTE_GROUP);
 		$data[] = array(1, 'Organisations', 'list', _ORGANISATION_GROUP);
@@ -84,7 +88,6 @@ function showSupervisorPage($show_action, $show_last=FALSE){
 		} elseif ($show_action == 'groups'){
 			showInstituteGroupsAdminPage($my_institute, $show_last);
 		} elseif ($show_action == 'overview'){
-			//echo "deze institute pagina voor supervisors";
 			 showInstituteOverviewPage($my_institute);
 		} else {
 			echo tt('there is no such action possible %1$s', $show_action);
