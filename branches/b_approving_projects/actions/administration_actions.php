@@ -90,7 +90,7 @@ switch ($_GET['action']){
     		}
     	}
     	$show_last = altSubValue($_POST, 'new_tab', false);
-    	showRoleDependentAdminPage(getRole(), $show_action, $show_last);
+    	showRoleDependentPage(getRole(), $show_action, $show_last);
     break;
     case 'view':
     	$type = altSubValue($_POST, 'type');

@@ -468,7 +468,7 @@ function renderProposalTabs(result, labels, container){
 	var project_state = result.pr_state;
 	var proposal_state = result.state;
 	var edit_possible = ((proposal_state == 'draft') || (proposal_state == 'open'));
-	console.log(proposal_state +' llllllllllll' + project_state);
+	console.log(proposal_state +' proposal state and project state' + project_state);
 	
 	if (typeof container == 'undefined'){
 		container = 'tab_edit';

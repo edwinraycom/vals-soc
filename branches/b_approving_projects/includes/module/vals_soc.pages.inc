@@ -107,6 +107,9 @@ function vals_soc_dashboard_overview_page(){
 	if(hasRole(array(_ADMINISTRATOR_TYPE))){
 		$includeFile = 'includes/ui/dashboard/adminlayout';
 	}
+    if(hasRole(array(_SOC_TYPE))){
+		$includeFile = 'includes/ui/dashboard/soclayout';
+	}
 	elseif(hasRole(array(_ORGADMIN_TYPE))){
 		$includeFile = 'includes/ui/dashboard/orgadminlayout';
 	}

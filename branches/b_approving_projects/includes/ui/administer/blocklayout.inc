@@ -11,11 +11,9 @@ drupal_add_library('system','ui');
 include(_VALS_SOC_ROOT.'/includes/pages/administration.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 include(_VALS_SOC_ROOT.'/includes/functions/render_functions.php');
-//To test we switch here the user
-//31 student stuutje, 30 tutor zelfstandig, 27 salamanca (org inst), 25 orgadmin, 1 admin
-//$GLOBALS['user'] = user_load(30,  TRUE);
+
 $role = getRole();
 $action = isset($action) ? $action : 'administer';?>
 <div id='admin_container' class='tabs_container'>
-	<?php showRoleDependentAdminPage($role, $action, false);?>
+	<?php showRoleDependentPage($role, $action, false);?>
 </div>
