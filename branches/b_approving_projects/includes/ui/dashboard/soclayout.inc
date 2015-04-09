@@ -11,8 +11,7 @@ function initDashboardLayout(){
 		<div class="dashboard" id="main-dashboard">
   <div class="dashboard-head">
     <span>
-      
-      Admin Dashboard
+      Semester of Code Project Member Dashboard
     </span>
   </div>
 
@@ -32,25 +31,11 @@ function initDashboardLayout(){
           </div>
     </div>
     
-    <div class="column second">
-        
-          <div class="column-entry participants">
-            <h4>
-              <a class="dashboard-link" href="#participants" title="Participants">Participants</a>
-              
-            </h4>
-            <p>List of all participants in this program.</p>
-            
-              <div>
-                <a class="dashboard-link" href="'.$base_url.'/dashboard/" title="Browse all proposals">
-	            Browse all proposals</a>
-              </div>
-          </div>
-          
+    <div class="column second">          
           <div class="column-entry manage_organizations">
             <h4>
-              <a class="dashboard-link" href="'.$base_url.'/dashboard/members" title="Manage organizations">Manage organizations</a>
-              
+              <a class="dashboard-link" href="'.$base_url.
+                '/dashboard/members" title="Manage organizations">Manage organizations</a>
             </h4>
             <p>Manage organizations from active program. You can 
 allocate slots for organizations, list mentors and administrators from 

@@ -29,7 +29,7 @@ function showRoleDependentPage($role, $show_action='administer', $show_last= FAL
 function showAdminPage($show_action, $show_last=FALSE){
 	$data = array();
     $nr_tabs = 0;
-	if (($show_action == 'administer') || ($show_action = 'overview')){
+	if (($show_action == 'administer') || ($show_action == 'overview')){
 		echo '<h2>'.t('All the groups and persons').'</h2>';
 		$data[] = array(1, 'Institutes', 'list', _INSTITUTE_GROUP);
 		$data[] = array(1, 'Organisations', 'list', _ORGANISATION_GROUP);
