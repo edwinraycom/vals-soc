@@ -66,6 +66,10 @@ class Users extends AbstractEntity{
     	return isset($user) && isset($user->uid) && $user->uid;
     }
     
+    public static function isSoc(){
+        return self::isOfType(_SOC_TYPE);
+    }
+    
 	public static function isOfType($type, $uid=''){
 		global $user;
 		

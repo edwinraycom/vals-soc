@@ -97,6 +97,9 @@ switch ($_GET['action']){
     	$id = altSubValue($_POST, 'id');
     	$target = altSubValue($_POST, 'target', '');
     	$buttons = altSubValue($_GET, 'buttons', true);
+        if (Users::isOfType(_SOC_TYPE)){
+            $buttons = FALSE;
+        }
     	if (! ($id && $type && $target)){
     		die(t('There are missing arguments. Please inform the administrator of this mistake.'));
     	}
