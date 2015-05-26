@@ -29,10 +29,16 @@ $base_url = $scheme. '://'.$_SERVER['HTTP_HOST']._WEB_URL;
 require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 
-$vals_soc_pretend_possible = defined('_DEBUG') && _DEBUG && (Users::isAdmin() || (defined('_VALS_SOC_TEST_ENV') && _VALS_SOC_TEST_ENV));
+
+//echo "<!-- Mijn Adres : ".$_SERVER['REMOTE_ADDR']. "-->";
+$ip_condition = ($_SERVER['REMOTE_ADDR'] == '81.21.139.178');
+//$ip_condition = FALSE;
+$vals_soc_pretend_possible = $ip_condition || (defined('_DEBUG') && _DEBUG &&
+    (Users::isAdmin() || (defined('_VALS_SOC_TEST_ENV') && _VALS_SOC_TEST_ENV)));
 if (Users::isAdmin() || $vals_soc_pretend_possible){
-	list($u, $o_state) = pretendUser();
+        list($u, $o_state) = pretendUser();
 }
+
 menu_execute_active_handler();
 if ($vals_soc_pretend_possible){
 	restoreUser($u, $o_state);

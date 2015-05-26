@@ -404,10 +404,7 @@ switch ($_GET['action']){
 			return;
 		}
 		 
-		$selected_prev_set = false;
-		if($was_selected == 1){
-			$selected_prev_set = true;
-		}
+		$selected_prev_set = ($was_selected == 1);
 	
 		if(!$selected_prev_set){
 			// update the project
@@ -485,8 +482,7 @@ switch ($_GET['action']){
 							if ($single_proposal_for_accepted_project->proposal_id == $proposal_id){
 								//email SUCCESSFUL (student, supervisor, mentor) that this project has now been accepted by this student
 								notify_all_of_project_offer_acceptance($single_proposal_for_accepted_project, $proposal_id, true);
-								$props = array();
-								$props['state'] = 'accepted'; //set this proposal to 'accepted'
+								$props = array('state' => 'accepted');//set this proposal to 'accepted'
 								Proposal::getInstance()->updateProposal($props, $proposal_id);
 								$props['state'] = 'active'; //set the project to 'active'
 								Project::getInstance()->changeProject($props, $project_id);
@@ -536,9 +532,7 @@ switch ($_GET['action']){
 				}
 
 				// next create the initial agreement entity in the db
-				$a_props = array();
-				$a_props['proposal_id'] = $proposal_id;
-				$agreement = Agreement::getInstance()->insertAgreement($a_props);
+				$agreement = Agreement::getInstance()->insertAgreement(array('proposal_id' => $proposal_id));
 				echo getAcceptedProjectResponse();
 			}
 			else{
