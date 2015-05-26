@@ -58,7 +58,9 @@ if (_DEBUG){
 	getTimelineTester();
 }
 
-if (_DEBUG && isset($GLOBALS['vals_soc_pretend_possible']) && 
-			$GLOBALS['vals_soc_pretend_possible']){
+if ((_DEBUG || (isset($GLOBALS['ip_condition']) && 
+		$GLOBALS['ip_condition'])) && 
+    isset($GLOBALS['vals_soc_pretend_possible']) && 
+	$GLOBALS['vals_soc_pretend_possible']){
 	getUserPretendTester();
 }
