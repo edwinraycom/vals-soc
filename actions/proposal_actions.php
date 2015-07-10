@@ -469,11 +469,14 @@ switch ($_GET['action']){
 		}
 		if(isset($_POST['proposal_id']) && $_POST['proposal_id'] && isset($_POST['project_id']) && $_POST['project_id']){
 			$proposal_id = $_POST['proposal_id'];
+            
 			if(Groups::isOwner('proposal', $proposal_id)){
 				module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
 				// get ALL my proposals
 				$all_my_proposals = Proposal::getInstance()->getProposalsBySearchCriteria($student, '', '', '', '', 0, 1000);
 				foreach ($all_my_proposals as $my_proposal){
+                    //From all my proposals this is the one I accept. Notify 
+                    //all stakeholders of this decision
 					if ($my_proposal->proposal_id == $proposal_id){
 						$project_id = $my_proposal->pid;
 						// next find all the other proposals for this project
@@ -483,7 +486,7 @@ switch ($_GET['action']){
 								//email SUCCESSFUL (student, supervisor, mentor) that this project has now been accepted by this student
 								notify_all_of_project_offer_acceptance($single_proposal_for_accepted_project, $proposal_id, true);
 								$props = array('state' => 'accepted');//set this proposal to 'accepted'
-								Proposal::getInstance()->updateProposal($props, $proposal_id);
+                                Proposal::getInstance()->updateProposal($props, $proposal_id);
 								$props['state'] = 'active'; //set the project to 'active'
 								Project::getInstance()->changeProject($props, $project_id);
 							}
@@ -506,20 +509,20 @@ switch ($_GET['action']){
 						}
 						$project_id = $my_proposal->pid;
 						$all_proposals_for_this_project = Proposal::getInstance()->getProposalsPerProject($project_id, '', true); // TODO - may need to set details flag here
-						foreach ($all_proposals_for_this_project as $single_proposal_for_unaccepted_project){
-							if ($single_proposal_for_unaccepted_project->owner_id == $student && 
-								$single_proposal_for_unaccepted_project->proposal_id == $single_proposal_for_unaccepted_project->pr_proposal_id){
+						foreach ($all_proposals_for_this_project as $single_proposal_for_this_project){
+							if ($single_proposal_for_this_project->owner_id == $student && 
+								$single_proposal_for_this_project->proposal_id == $single_proposal_for_this_project->pr_proposal_id){
 								$update_props = array();
 								$update_props['proposal_id'] = NULL;
-								if($single_proposal_for_unaccepted_project->selected == "0"){ //(means its an interim)
+								if($single_proposal_for_this_project->selected == "0"){ //(means its an interim)
 									// email mentor only - withdrawn PREFERRED INTERIM
-									notify_all_of_project_offer_rejection($single_proposal_for_unaccepted_project, $proposal_id, true);
+									notify_all_of_project_offer_rejection($single_proposal_for_this_project, $proposal_id, true);
 								}
 								else{ // (means its an offer)
 									$update_props['selected'] = 0;
 									// email (mentor) - rejected OFFER - project is therefore reopened and he should choose another proposal
 									// email this proposal (student & supervisor) to say that the project has reopended and the mentor can choose another, possibly theirs
-									notify_all_of_project_offer_rejection($single_proposal_for_unaccepted_project, $proposal_id, false);
+									notify_all_of_project_offer_rejection($single_proposal_for_this_project, $proposal_id, false);
 								}
 								//Proposal::getInstance()->updateProposal($update_props, $proposal_id); //uncomment to set this after testing *********
 								Project::getInstance()->changeProject($update_props, $project_id); //uncomment to set this after testing *********
