@@ -10,7 +10,7 @@ class Timeline {
 	private static function setupSession($timelineTestDate){
 		if(!isset($_SESSION)){
 			session_id('TimelineMultipageSession');
-			session_start();
+			drupal_session_start();
 		}
 		if(isset($timelineTestDate)){
 			$_SESSION['timelineDate'] = $timelineTestDate;

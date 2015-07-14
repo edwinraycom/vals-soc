@@ -108,7 +108,7 @@ function pretendUser(){
 	//the case, but still fires a warning. This function will and should nver be called in production, so it is not
 	//an issue there.
 	//if (session_status() == PHP_SESSION_NONE) {
-	    @session_start();
+	    drupal_session_start();
 	//}
 	$user_id = getRequestVar('pretend', altSubValue($_SESSION, 'pretend_user', 0));
 	if ($user_id){
