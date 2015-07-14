@@ -112,7 +112,7 @@ class Agreement extends AbstractEntity {
 	
 		} catch (Exception $ex) {
 			$txn->rollback();
-			drupal_set_message(t('We could not update your agreement.'). (_DEBUG? $ex->__toString(): ''), 'error');
+			drupal_set_message(t('We could not update the agreement.'). (_DEBUG? $ex->__toString(): ''), 'error');
 		}
 		return FALSE;
 	}
