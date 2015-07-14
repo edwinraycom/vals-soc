@@ -5,7 +5,7 @@
 function populate($obj, $prop, $default=''){
 	return ($obj && isset($obj->$prop)) ? $obj->$prop : $default;
 }
-
+//entityCall(_AGREEMENT_OBJ, $agreement, $target, '',_AGREEMENT_OBJ)),
 function entityCall($type, $obj, $target, $show_action='administer', $action_handler='administration',
 		$entity_action='save'){
 	$key = AbstractEntity::keyField($type);
@@ -1085,6 +1085,95 @@ function vals_soc_agreement_form($form, &$form_state, $agreement='', $target='')
 	);
 	return $form;
 }
+
+function vals_soc_final_form($form, &$form_state, $agreement='', $target=''){
+  $form = array(
+			'#prefix' => "<div id='vals_soc_entity_form_wrapper_$target'>",
+			'#suffix' => '</div>',
+	);
+    if (getRole() ==_STUDENT_TYPE){
+        $form['evaluation_text'] = array(
+                '#markup' => '<p><b>' . 'Evaluation of mentor and supervisor '.
+                '</b><br/>'. ($agreement->evaluation ?: t('No evaluation filled in yet')).'</p>'
+        );  
+    } else {
+        $form['evaluation'] = array(
+                "#type" => "textarea",
+                '#title' => t('Evaluation of the project'),
+                "#size" => 500,
+                "#default_value" => populate($agreement, 'evaluation'),
+                '#required' => '0'
+        );
+    }
+	$form['finalise_help_text'] = array(
+			'#markup' => '<p><i>' . 'This page is used to mark the project as done.'
+        . ' It also offers the mentors and supervisors a way to write some evaluation text. '.
+			'</i></p>'
+	);
+	if($agreement->student_completed == 1){
+		$form['student_completed_already'] = array(
+			'#type' => 'hidden',
+			"#default_value" => 1,
+		);
+	}
+	
+	$sname = (isset($agreement->student_name) ? $agreement->student_name : $agreement->name);
+	$form['student_completed'] = array(
+			'#type' => 'checkboxes',
+			'#options' => array(1 => "Student (". $sname .") marked the project completed "),
+			'#default_value' => array(populate($agreement, 'student_completed')),
+			'#disabled' => ($agreement->student_completed == 1 || (getRole()!=_STUDENT_TYPE)),
+	);
+	
+	if($agreement->supervisor_completed == 1){
+		$form['supervisor_completed_already'] = array(
+			'#type' => 'hidden',
+			"#default_value" => 1,
+		);
+	}
+	$spname = (isset($agreement->supervisor_name) ? $agreement->supervisor_name : $agreement->supervisor_user_name);
+	$form['supervisor_completed'] = array(
+			'#type' => 'checkboxes',
+			'#options' => array(1 => "Supervisor (". $spname .") marked the project as completed"),
+			'#default_value' => array(populate($agreement, 'supervisor_completed')),
+			'#disabled' => ($agreement->supervisor_completed == 1 || (getRole()!=_SUPERVISOR_TYPE && getRole()!=_INSTADMIN_TYPE)),
+	);
+	if($agreement->mentor_completed == 1){
+		$form['mentor_completed_already'] = array(
+			'#type' => 'hidden',
+			"#default_value" => 1,
+		);
+	}
+	
+	$mname = (isset($agreement->mentor_name) ? $agreement->mentor_name : $agreement->mentor_user_name);
+	$form['mentor_completed'] = array(
+			'#type' => 'checkboxes',
+			'#options' => array(1 => "Mentor (". $spname .") marked the project as completed"),
+			'#default_value' => array(populate($agreement, 'mentor_completed')),
+			'#disabled' => ($agreement->mentor_completed == 1 || (getRole()!=_MENTOR_TYPE && getRole()!=_ORGADMIN_TYPE)),
+	);	
+	$form['submit'] = array(
+			'#type' => 'submit',
+			'#attributes' => array('onclick'=> entityCall(_AGREEMENT_OBJ, $agreement, $target, '',_AGREEMENT_OBJ, 'finalise')),
+			'#value' => t('Save'),
+			'#post_render' => array('vals_soc_fix_submit_button'),
+	);
+	$form['cancel'] = array(
+			'#type' => 'button',
+			'#value' => t('Cancel'),
+			'#prefix' => '&nbsp; &nbsp; &nbsp;',
+			'#attributes' => array('onClick' => 'location.reload(); return true;'),
+			'#post_render' => array('vals_soc_fix_submit_button'),
+	);
+	$form['#vals_soc_attached']['js'] = array(
+			array(
+				'type'  => 'file',
+				'data' => '/includes/js/test_functions.js',
+			),
+	);
+	return $form;  
+}
+
 //
 /*
 * Drupal has a nasty habit of making buttons into "submit" buttons

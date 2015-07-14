@@ -130,6 +130,7 @@ function pageAccessCheck($access_string) {
 			};
 			break;
 		case 'dashboard/projects/mine':
+        case 'dashboard/projects/mine/finalise'://TODO THIS CONDITION SHOULD BE STRONGER
 		case 'dashboard/projects/mine/agreement':
 			if(! hasRole(array(_ANONYMOUS_TYPE)) && Timeline::getInstance()->hasStudentSignupPeriodOpened() ){
 				return TRUE;

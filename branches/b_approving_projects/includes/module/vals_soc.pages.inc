@@ -227,5 +227,12 @@ function vals_soc_my_accepted_project_agreement(){
 	module_load_include('inc', 'vals_soc', 'includes/ui/administer/agreement');
 	vals_soc_content_end();
 	return ob_get_clean();
-	
+}
+
+function vals_soc_my_accepted_project_finalisation(){
+	ob_start();
+	vals_soc_content_start();
+	module_load_include('inc', 'vals_soc', 'includes/ui/administer/finalise');
+	vals_soc_content_end();
+	return ob_get_clean();
 }

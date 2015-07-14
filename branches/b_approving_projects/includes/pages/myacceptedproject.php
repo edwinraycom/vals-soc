@@ -137,9 +137,13 @@ function getSingleAcceptedProjectView($agreement){
 	$project_details_legend = '';
 	$project_details_text = '';
 	
+    $finalise_text = t("The project will be marked as completed when all agree so. An evaluation input possibility is provided, your supervisor and your mentor");
+	$finalise_legend = t("Finalise the project");
+    
 	if(Users::isStudent()){
 		$output_text = t("Optionally create an agreement between you, your supervisor and your mentor");
 		$output_legend = t("My project agreement");
+       
 		$dashboard_legend = t('Here are the resources for your accepted project');
 		$project_details_legend = t("My project details");
 		$project_details_text = t("Shows you the original project idea along with the proposal you originally submitted");
@@ -165,11 +169,11 @@ function getSingleAcceptedProjectView($agreement){
 	
 	$output = '
 	 	<script type="text/javascript">
-		window.view_settings = {};
-		window.view_settings.apply_projects = 0;
-		window.view_settings.rate_projects  = 0;
-	</script>
-	';
+            window.view_settings = {};
+            window.view_settings.apply_projects = 0;
+            window.view_settings.rate_projects  = 0;
+        </script>
+        ';
 	 
 	if(Users::isStudent()){
 		$output .= '<div id="baktoprops"><a href=" '.$base_url.'/dashboard">'.t('Back to dashboard').'</a></div>';
@@ -212,6 +216,19 @@ function getSingleAcceptedProjectView($agreement){
 		$output .=		'</p>
 					</div>
 		';
+        
+        $output .='
+					<div class="column-entry org_app">
+						<h4>
+							<a class="dashboard-link component-link"
+								href="javascript:void(0);" onclick="getFinalisation('.$agreement->agreement_id.')"
+								title="'.$finalise_legend.'">'.$finalise_legend.'</a>
+						</h4>
+						<p>'.
+						$finalise_text;
+		$output .=		'</p>
+					</div>
+		';
 
 	$output .='
 				</div>
@@ -222,14 +239,14 @@ function getSingleAcceptedProjectView($agreement){
 
 	$output .='
 			<div class="column-entry proposals_submitted">
-						<h4>
-							<a class="dashboard-link component-link" '.
-							'href="javascript:void(0);" ' .
-							'onclick="getProposalDetail('.$agreement->proposal_id.')"'.
-									
-							' title="'.$project_details_legend.'">'.$project_details_legend.'</a>
-						</h4>
-						<p>'.$project_details_text.'</p>
+                <h4>
+                    <a class="dashboard-link component-link" '.
+                    'href="javascript:void(0);" ' .
+                    'onclick="getProposalDetail('.$agreement->proposal_id.')"'.
+
+                    ' title="'.$project_details_legend.'">'.$project_details_legend.'</a>
+                </h4>
+                <p>'.$project_details_text.'</p>
 			</div>
 		';
 

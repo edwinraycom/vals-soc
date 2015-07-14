@@ -69,8 +69,10 @@ function refreshSingleTab(json_data, args){
 	//Get the id and the type at first from the 
 	var id = json_data.id;
 	var type = json_data.type;
+    console.log('hoe zit het ', json_data);
+    var follow_up_action = json_data.show_action ? json_data.show_action : 'view';
 	if (json_data && (json_data.result !== 'error')){
-		ajaxCall(handler, 'view', {id:id,type:type,target:target}, 'handleContentAndMessage',
+		ajaxCall(handler, follow_up_action, {id:id,type:type,target:target}, 'handleContentAndMessage',
 			'html', [target, 'msg_'+target, json_data.msg]);
 	} else {
 		if (json_data && typeof json_data.error != 'undefined') {
