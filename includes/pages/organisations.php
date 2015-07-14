@@ -35,7 +35,7 @@ function initBrowseOrgsLayout($org_id=''){?>
 				sorting: true,
 				defaultSorting: "oname ASC",
 				actions: {
-					listAction: moduleUrl + "actions/organisation_actions.php?action=list_organisations"
+					listAction: module_url + "actions/organisation_actions.php?action=list_organisations"
 				},
 				fields: {
 					org_id: {
@@ -64,7 +64,7 @@ function initBrowseOrgsLayout($org_id=''){?>
 recordsLoaded: function(event, data) {
 					$(".jtable-data-row").click(function() {
 						var row_id = $(this).attr("data-record-key");
-						var url = baseUrl + "dashboard/organisations/browse?org_id=" + row_id;
+						var url = base_url + "dashboard/organisations/browse?org_id=" + row_id;
 						document.location.href=url;
 					});
 				}

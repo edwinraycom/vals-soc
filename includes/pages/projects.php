@@ -113,16 +113,204 @@ function showOrganisationProjects($org_nr, $projects, $organisation, $show_org_t
 	</script>
 	<?php
 }
-
-function initBrowseProjectLayout($pid=''){
+function initEvaluateProjectLayout($pid=''){
 	$org_id=0;
 	if(isset($_GET['organisation'])){
+		$org_id = $_GET['organisation'];
+	}
+// 	$state = null;
+// 	if(isset($_GET['state'])){
+// 		$state = $_GET['state'];
+// 	}
+// 	$apply_projects = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
+// 	$rate_projects = Users::isSuperVisor();
+	?>
+		<div class="filtering" id="browse_projects">
+			<span id="infotext" style="margin-left: 34px"></span>
+			<form id="project_filter">
+			<?php echo t('Tags');?>: <input type="text" name="tags" id="tags" />
+			<?php echo t('Organisations');?>:
+				<select id="organisation" name="organisation">
+				<option <?php echo  (! $org_id) ? 'selected="selected"': ''; ?> value="0"><?php echo t('All Organisations');?></option><?php
+				$result = Organisations::getInstance()->getOrganisationsLite();
+				foreach ($result as $record) {
+					$selected = ($record->org_id == $org_id ? 'selected="selected" ' : '');
+					echo '<option ' .$selected.'value="'.$record->org_id.'">'.$record->name.'</option>';
+				}?>
+				</select>
+				
+				<input type='hidden' value='pending' name='state' id='state'/>				
+			</form>
+		</div>
+		<div id="ProjectTableContainer" style="width: 700px;"></div>
+	
+	<script type="text/javascript">
+		jQuery(document).ready(function($){
+	
+			window.view_settings = {};
+			//window.view_settings.apply_projects = <?php echo $apply_projects ? 1: 0;?>;
+			//window.view_settings.rate_projects  = <?php echo $rate_projects  ? 1: 0;?>;
+		
+			//Prepare jTable
+			$("#ProjectTableContainer").jtable({
+				//title: "Table of projects",
+				paging: false,
+				pageSize: 10,
+				sorting: true,
+				defaultSorting: "title ASC",
+				actions: {
+					listAction: module_url + "actions/project_actions.php?action=list_search"
+				},
+				fields: {
+					pid: {
+						key: true,
+						create: false,
+						edit: false,
+						list: false
+					},
+					title: {
+						title: "Project title",
+						width: "40%",
+						display: function (data) {
+							return "<a title=\"View project details\" href=\"javascript:void(0);\" onclick=\"getProjectDetail("+
+								data.record.pid+")\">" + data.record.title + "</a>";
+							},
+							create: false,
+							edit: false
+					},
+					name: {
+						title: "Organisation",
+						width: "20%"
+					},
+					tags: {
+						title: "Tags",
+						width: "26%",
+						create: false,
+						edit: false
+					},
+					proposal_count: {
+						title: "Proposals",
+						width: "12%",
+						create: false,
+						edit: false
+					},
+					state: {
+						title: "Status",
+						//width: "12%",
+						create: false,
+						edit: false
+					}
+					/*
+					,
+					Detail: {
+						width: "2%",
+						title: "",
+						sorting: false,
+						display: function (data) {
+							return "<a title=\"View project details\" href=\"#\" onclick=\"getProjectDetail("+
+								data.record.pid+")\"><span class=\"ui-icon ui-icon-info\"></span></a>";
+							},
+						create: false,
+						edit: false
+					}
+					*/
+					
+				}
+				/*
+	//this makes of each row a filter for that project
+				,recordsLoaded: function(event, data) {
+					var browse_url = base_url + "dashboard/projects/browse?pid=";
+					
+					$(".jtable-data-row").each(function(){
+						var $parent = $(this);
+						
+						var row_id = $parent.attr("data-record-key");
+						$parent.children('td:first-child').click(function() {
+							document.location.href=browse_url + row_id;
+						});
+					});
+				}
+				*/
+			});
+		
+		//Load project list from server on initial page load
+		$("#ProjectTableContainer").jtable("load", {
+			tags: $("#tags").val(),
+			state: $("#state").val(),
+			organisation: $("#organisation").val()<?php 
+			if ($pid){echo ", pid: $pid";}?>
+		});
+			
+		$("#tags").keyup(function(e) {
+			e.preventDefault();
+			// only auto clear when there is no tag info
+			if(testTagInput() && $("#tags").val()==""){
+				$("#ProjectTableContainer").jtable("load", {
+				tags: $("#tags").val(),
+				state: $("#state").val(),
+				organisation: $("#organisation").val()
+				});
+			}
+		});
+			
+		$("#organisation").change(function(e) {
+			e.preventDefault();
+			if(testTagInput()){
+				$("#ProjectTableContainer").jtable("load", {
+					tags: $("#tags").val(),
+					state: $("#state").val(),
+					organisation: $("#organisation").val()
+				});
+			}
+		});
+		/* $("#state").change(function(e) {
+			e.preventDefault();
+			if(testTagInput()){
+				$("#ProjectTableContainer").jtable("load", {
+					tags: $("#tags").val(),
+					state: $("#state").val(),
+					organisation: $("#organisation").val()
+				});
+			}
+		});*/
+		
+		$("#project_filter").submit(function(e){
+			e.preventDefault();
+			if(testTagInput()){
+				$("#ProjectTableContainer").jtable("load", {
+					tags: $("#tags").val(),
+					state: $("#state").val(),
+					organisation: $("#organisation").val()
+				});
+			}
+		});
+	
+		
+		
+						
+		// define these at the window level so that they can still be called once loaded
+		//window.getProposalFormForProject = getProposalFormForProject;
+		window.getProjectDetail = getProjectDetail;
+		
+		});
+		</script>
+	<?php
+}
+function initBrowseProjectLayout($pid=''){
+	$org_id=0;
+    if(isset($_GET['organisation'])){
 		$org_id = $_GET['organisation'];
 	}
 	$state = null;
 	if(isset($_GET['state'])){
 		$state = $_GET['state'];
 	}
+    
+    $supervisor_id = 0;
+    if(isset($_GET['supervisor'])){
+		$state = $_GET['supervisor'];
+	}
+    
 	$apply_projects = vals_soc_access_check('dashboard/projects/apply') ? 1 : 0;
 	$rate_projects = Users::isSuperVisor();
 	$is_student = Users::isStudent();
@@ -167,7 +355,35 @@ function initBrowseProjectLayout($pid=''){
 					echo "<option $selected value='$key'>$stat</option>";
 				}?>
 			</select>
-			
+            
+            <?php 
+            if (Users::isUser() && ! Users::isMentor()) {
+                $supervisor_filter = TRUE;
+                echo t('Supervisors');
+                $my_institute_result = Users::getInstituteForUser(Users::getMyId());
+                $my_institute_rec = $my_institute_result->fetchAssoc();
+                $my_institute_id = $my_institute_rec ? $my_institute_rec['inst_id']: 'all';
+                $super_result = Users::getUsers(_SUPERVISOR_TYPE,_INSTITUTE_GROUP, $my_institute_id);
+                if ($super_result->rowCount()){  ?>
+                    <select id="supervisor" name="supervisor">
+                        <option <?php echo (! $supervisor_id) ? 'selected="selected"': '';
+                            ?> value="0"><?php echo t('NA');?></option><?php
+
+                        foreach ($super_result as $supervisor) {
+                            $selected = ($supervisor->uid == $supervisor_id ? 'selected="selected" ' : '');
+                            echo "<option $selected value='".
+                                $supervisor->uid."'>".
+                                altPropertyValue($supervisor, 'fullname', $supervisor->name).
+                                "</option>";
+                        }?>
+                    </select><?php
+                } else {
+                    echo "No supervisors registered for your institute ".
+                        $my_institute_rec['name'];
+                }
+            } else {
+                $supervisor_filter = FALSE;
+            }?>
 		</form>
 	</div>
 	<div id="ProjectTableContainer" style="width: 700px;"></div>
@@ -178,7 +394,19 @@ function initBrowseProjectLayout($pid=''){
 		window.view_settings = {};
 		window.view_settings.apply_projects = <?php echo $apply_projects ? 1: 0;?>;
 		window.view_settings.rate_projects  = <?php echo $rate_projects  ? 1: 0;?>;
-	
+        
+        var filter_function = function(e){
+            e.preventDefault();
+            if(testTagInput()){
+                $("#ProjectTableContainer").jtable("load", {
+                    tags: $("#tags").val(),
+                    state: $("#state").val(),
+                    organisation: $("#organisation").val()
+                    <?php echo $supervisor_filter ? ", supervisor: $(\"#supervisor\").val()": "";?>
+                    
+                });
+            }
+        }
 		//Prepare jTable
 		$("#ProjectTableContainer").jtable({
 			//title: "Table of projects",
@@ -187,7 +415,7 @@ function initBrowseProjectLayout($pid=''){
 			sorting: true,
 			defaultSorting: "title ASC",
 			actions: {
-				listAction: moduleUrl + "actions/project_actions.php?action=list_search"
+				listAction: module_url + "actions/project_actions.php?action=list_search"
 			},
 			fields: {
 				pid: {
@@ -195,6 +423,16 @@ function initBrowseProjectLayout($pid=''){
 					create: false,
 					edit: false,
 					list: false
+				},
+                url: {
+					title: "Url",
+					width: "2%",
+					display: function (data) {
+						return "<a title=\"Shrink search result to this project only. You can copy this link to bring it under attention of someone.\" href=\"" + base_url +"projects/browse?pid="+
+							data.record.pid+"\">&lArr;</a>";
+						},
+						create: false,
+						edit: false
 				},
 				title: {
 					title: "Project title",
@@ -261,7 +499,7 @@ function initBrowseProjectLayout($pid=''){
 			/*
 //this makes of each row a filter for that project
 			,recordsLoaded: function(event, data) {
-				var browse_url = baseUrl + "dashboard/projects/browse?pid=";
+				var browse_url = base_url + "dashboard/projects/browse?pid=";
 				
 				$(".jtable-data-row").each(function(){
 					var $parent = $(this);
@@ -280,7 +518,8 @@ function initBrowseProjectLayout($pid=''){
 		tags: $("#tags").val(),
 		state: $("#state").val(),
 		organisation: $("#organisation").val()<?php 
-		if ($pid){echo ", pid: $pid";}?>
+		if ($pid){echo ", pid: $pid";}
+        if ($supervisor_id){echo ", supervisor: $supervisor_id";}?>
 	});
 		
 	$("#tags").keyup(function(e) {
@@ -291,6 +530,7 @@ function initBrowseProjectLayout($pid=''){
 			tags: $("#tags").val(),
 			state: $("#state").val(),
 			organisation: $("#organisation").val()
+            <?php echo $supervisor_filter ? ", supervisor: $(\"#supervisor\").val()": "";?>
 			});
 		}
 	});
@@ -302,6 +542,7 @@ function initBrowseProjectLayout($pid=''){
 				tags: $("#tags").val(),
 				state: $("#state").val(),
 				organisation: $("#organisation").val()
+                <?php echo $supervisor_filter ? ", supervisor: $(\"#supervisor\").val()": "";?>
 			});
 		}
 	});
@@ -312,9 +553,15 @@ function initBrowseProjectLayout($pid=''){
 				tags: $("#tags").val(),
 				state: $("#state").val(),
 				organisation: $("#organisation").val()
+                <?php echo $supervisor_filter ? ", supervisor: $(\"#supervisor\").val()": "";?>
 			});
 		}
 	});
+    <?php if ($supervisor_filter){ ?>
+        $("#supervisor").change(filter_function);
+	<?php }?>
+    
+    
 	<?php if ($is_student){ ?>
 	$("#favourite_filter").click(function(e) {
 		e.preventDefault();
@@ -330,6 +577,7 @@ function initBrowseProjectLayout($pid=''){
 				tags: $("#tags").val(),
 				state: $("#state").val(),
 				organisation: $("#organisation").val()
+                <?php echo $supervisor_filter ? ", supervisor: $(\"#supervisor\").val()": "";?>
 			});
 		}
 	});

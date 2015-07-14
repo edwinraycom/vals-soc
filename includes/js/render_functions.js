@@ -29,7 +29,7 @@ function chooseProposalForProject(project_id, proposal_id, is_final){
 		content += '\n';
 	}
 	if (confirm(content)) {
-		var url = moduleUrl + "actions/proposal_actions.php?action=mark_proposal";
+		var url = module_url + "actions/proposal_actions.php?action=mark_proposal";
 		$jq.post(url, {'proposal_id': proposal_id, 'project_id' : project_id, 'is_final' : is_final}, function(data,status){
 			if(!is_final){
 				ajaxInsert(data, 'proposal-interim-markup-'+proposal_id+'-button');
@@ -50,7 +50,7 @@ function hideOtherDivsAfterProposalReject(proposal_id){
 }
 
 function rejectProposalForm(proposal_id, target){
-	var url = moduleUrl + "actions/proposal_actions.php?action=reject_form&id=" + proposal_id+ "&target="+target;
+	var url = module_url + "actions/proposal_actions.php?action=reject_form&id=" + proposal_id+ "&target="+target;
 	$jq.get(url,function(data,status){
 		ajaxInsert(data, target);
 	});
@@ -242,21 +242,24 @@ function renderProject(project, apply_projects){
 	//content += '</div>';//end of project_content
 	
 	
-	
-	if(project.proposal_count){
-		content += "<h2>"+Drupal.t('Statistics')+"</h2>";
+	content += "<h2>"+Drupal.t('Statistics')+"</h2>";
+    if(project.proposal_count != "0"){
+        var has_preferred_proposal = (project.proposal_id != "0");
+        var is_selected_proposal = (project.selected=="1");
 		content += ''+ Drupal.t('Number of proposals already submitted to this project: ') + project.proposal_count;
-		if(project.proposal_id && project.selected=="0"){
+		if(has_preferred_proposal && !is_selected_proposal){
 			message = Drupal.t('The project mentor has selected an interim preferred proposal already, however this is not final and may change.');
 		}
-		else if(project.proposal_id && project.selected=="1"){
+		else if(has_preferred_proposal && is_selected_proposal){
 			message = Drupal.t('The project mentor has marked an existing proposal as final solution.');
 		}
 		else{
 			message = Drupal.t('The project mentor has not marked any proposal as their preferred solution yet.');
 		}
 		content += '<br/>'+ message +'<br/>';
-	}
+	} else {
+        content += Drupal.t('This project has no proposals yet.');
+    }
 
 	if ((typeof rate_projects != 'undefined') && rate_projects){
 		var rate = -2;
@@ -278,11 +281,7 @@ function renderProject(project, apply_projects){
 		if (typeof project.favourite != 'undefined') {
 			favourite = project.favourite;
 		}
-		if (false && favourite){//This is the non-icon solution we do not do anymore, we have a heart icon
-			content += Drupal.t('You marked this project as one of your favourites');
-		} else {
-			content += renderStudentLike(project.pid, favourite);
-		}
+        content += renderStudentLike(project.pid, favourite);
 		content +="<input id='vals-btn-submit-proposal' type='button' onclick='getProposalFormForProject("+project.pid+")' value='"+ Drupal.t('Create proposal for this project')+ "'/>";
 		content +="</div>";
 	}
@@ -314,7 +313,7 @@ function renderStudentLike(pid, is_marked){
 	return "<div id='favourite_msg'>"+
 	//Drupal.t('You can mark this project as one of your favourites?')+
 	(is_marked ?
-		"<img src='"+ moduleUrl+ "includes/js/resources/heart_blue.png' title= '"+
+		"<img src='"+ module_url+ "includes/js/resources/heart_blue.png' title= '"+
 			Drupal.t('You marked this project as one of your favourites')+ "' />" :
 		"<input type='button' value='"+  Drupal.t('Mark this project') +
 			"' id='project_favour' name='project_favour' "+
@@ -385,7 +384,7 @@ function getProposalDetail(proposal_id, target, msg){
 	                     ,'tab_status'
 				      	//,'tab_modules'
 	                    ];
-	var url = moduleUrl + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" +
+	var url = module_url + "actions/proposal_actions.php?action=proposal_detail&proposal_id=" +
 		proposal_id;
 
   	if (window.view_settings.apply_projects){
@@ -426,7 +425,7 @@ function getProposalDetail(proposal_id, target, msg){
 					};
 
 				}
-			break ;
+			break;
 			default:
 				var data2 = jQuery.parseJSON(data);
 				if (data2.result == 'error' ){
@@ -463,15 +462,27 @@ function renderProposalTabs(result, labels, container){
 	var count = labels.length;
 	var target = '';
 	var onclick = '';
+	
+	//passed data
+	var ney = Drupal.t('Nothing entered yet');
+	var project_state = result.pr_state;
+	var proposal_state = result.state;
+	var edit_possible = ((proposal_state == 'draft') || (proposal_state == 'open'));
+	console.log(proposal_state +' proposal state and project state' + project_state);
+	
 	if (typeof container == 'undefined'){
 		container = 'tab_edit';
 	}
 	for (var t=0; t < count;t++){
 		target = labels[t].tab;
 		if (target == 'edit'){
-			onclick = "\" onclick=\"ajaxCall('proposal', 'edit', {proposal_id:"+
+			if (! edit_possible) {
+				onclick = "\" ";
+			} else {
+				onclick = "\" onclick=\"ajaxCall('proposal', 'edit', {proposal_id:"+
 				result.proposal_id+ ", target:'"+container+"'}, 'jsonFormResult', 'json', ['"+
 				container+"']);\"";
+			}
 		} else {
 			onclick = '" ';
 		}
@@ -487,10 +498,6 @@ function renderProposalTabs(result, labels, container){
 	s += '</ol>';
 	s += '<div class="tabs_container">';
 
-	var ney = Drupal.t('Nothing entered yet');
-	var project_state = result.pr_state;
-	var proposal_state = result.state;
-	console.log(proposal_state +' llllllllllll' + project_state);
 	for (var t=0; t < count;t++){
 		target = labels[t].tab;
 		s += '<div id="tab_'+ target + '" class="content">';
@@ -523,12 +530,16 @@ function renderProposalTabs(result, labels, container){
 				result.state = proposal_state;
 				s += renderProposalStatus(result);
 				break;
-			case 'edit': s += Drupal.t('Wait please');
+			case 'edit': s += edit_possible  ? 
+						Drupal.t('Wait please'):
+						'This proposal is already published and so cannot be edited anymore';
 			break;
-			case 'delete': s += Drupal.t('Are you sure you want to delete this proposal?<br>')+
-				'<input type="button" value="' + Drupal.t('Yes') +'" onclick="ajaxCall(\'proposal\', \'delete\', '+
-				'{proposal_id:'+result.proposal_id+', target: \''+ container+ '\' }, '+
-				'\'handleDeleteResult\', \'json\', [\'our_content\', \'proposal\', \'myproposal_page\']);"/>';
+			case 'delete': s += edit_possible  ? 
+						Drupal.t('Are you sure you want to delete this proposal?<br>')+
+						'<input type="button" value="' + Drupal.t('Yes') +'" onclick="ajaxCall(\'proposal\', \'delete\', '+
+						'{proposal_id:'+result.proposal_id+', target: \''+ container+ '\' }, '+
+						'\'handleDeleteResult\', \'json\', [\'our_content\', \'proposal\', \'myproposal_page\']);"/>'   :
+						'This proposal is already published and so cannot be deleted anymore';
 			break;
 		}
 		s += "</div>";
@@ -536,6 +547,10 @@ function renderProposalTabs(result, labels, container){
 	}
 	s += "</div>";
 	return s;
+}
+
+function getFinalisation(agreementId){
+	ajaxCall("agreement", "render_finalisation_for_id", {id: agreementId, target:'our_content'}, "formResult", 'html', 'our_content');
 }
 
 function getAgreement(agreementId){
@@ -577,7 +592,7 @@ function getProposalFormForProject(projectId){
 }
 
 function getProjectDetail(projectId){
-	var url = moduleUrl + "actions/project_actions.php?action=project_detail&project_id=" + projectId;
+	var url = module_url + "actions/project_actions.php?action=project_detail&project_id=" + projectId;
 	//TODO: currently the apply projects is passed around as global. not so elegant
 	$jq.get(url, function(data,status){
 		generateAndPopulateModal(data, renderProject, window.view_settings.apply_projects);
@@ -585,28 +600,28 @@ function getProjectDetail(projectId){
 }
 
 function getCommentsForEntity(id, entityType, target){
-	var url = moduleUrl + "actions/comment_actions.php?action=viewall&id=" + id + "&type=" + entityType;
+	var url = module_url + "actions/comment_actions.php?action=viewall&id=" + id + "&type=" + entityType;
 	$jq.get(url,function(data,status){
 		ajaxInsert(data, target);
 	});
 }
 
 function getOrganisationDetail(org_id){
-	var url = moduleUrl + "actions/organisation_actions.php?action=organisation_detail&orgid=" + org_id;
+	var url = module_url + "actions/organisation_actions.php?action=organisation_detail&orgid=" + org_id;
 	$jq.get(url,function(data,status){
 		generateAndPopulateModal(data, renderOrganisation, true);
 	});
 }
 
 function getInstituteDetail(id){
-	var url = moduleUrl + "actions/institute_actions.php?action=detail&instid=" + id;
+	var url = module_url + "actions/institute_actions.php?action=detail&instid=" + id;
 	$jq.get(url,function(data,status){
 		generateAndPopulateModal(data, renderInstitute, true);
 	});
 }
 
 function testTagInput() {
-	var filter = /^[a-z0-9+_.\s]+$/i;
+	var filter = /^[a-z0-9+_.\,\s]+$/i;
 	if (filter.test($jq("#tags").val()) || $jq("#tags").val()=="") {
 		$jq("#tags").removeClass("error");
 		$jq("#infotext").removeClass("error");

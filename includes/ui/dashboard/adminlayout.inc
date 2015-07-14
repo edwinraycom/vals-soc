@@ -57,26 +57,37 @@ function initDashboardLayout(){
         
           <div class="column-entry accept_proposals">
             <h4>
-              <a class="" href="https://vals-melange2.appspot.com/gsoc/accept_proposals/google/gsoc2014" title="Bulk accept proposals and send acceptance/rejection emails">Bulk accept proposals and send acceptance/rejection emails</a>
-              
+              <a class=""  href="https://vals-melange2.appspot.com/gsoc/accept_proposals/google/gsoc2014" title="Bulk accept proposals and send acceptance/rejection emails">Bulk accept proposals and send acceptance/rejection emails</a>
             </h4>
             <p>Start proposals into projects conversion</p>
             
           </div>
         
           <div class="column-entry manage_proposals">
-            <h4>
-              <a class="" href="https://vals-melange2.appspot.com/gsoc/admin/proposals/accept/google/gsoc2014" title="Proposals submitted">Proposals submitted</a>
-              
+            <h4><a class="dashboard-link" href="'.$base_url.'/dashboard/proposals/overview" title="Overview of proposals">
+            Overview of proposals per state</a>
             </h4>
-            <p>Lists all the proposals submitted to the program and lets accept individual proposals.</p>
+            <p>Lists all the proposals submitted to the program divided in tabs per state.
+            </p>
+            <div>
+	            <a class="dashboard-link" href="'.$base_url.'/dashboard/proposals/browse" title="Browse all proposals">
+	            Browse all proposals</a>
+            </div>
             
+            
+            
+            
+            
+            <!-- 
+              <a class="" href="https://vals-melange2.appspot.com/gsoc/admin/proposals/accept/google/gsoc2014" title="Proposals submitted">Proposals submitted</a>
+              -->
           </div>
         
           <div class="column-entry withdraw_projects">
             <h4>
-              <a class="" href="https://vals-melange2.appspot.com/gsoc/withdraw_projects/google/gsoc2014" title="Accept/withdraw projects">Accept/withdraw projects</a>
-              
+              <a class="" href="javascript:void(0);" onclick="ajaxCall(\'project\', \'eval_projects\', \'content\');"
+               title="Accept/withdraw projects">Accept/withdraw projects</a>
+              <!-- href="https://vals-melange2.appspot.com/gsoc/withdraw_projects/google/gsoc2014" -->
             </h4>
             <p>Withdraw accepted projects or accept withdrawn projects</p>
             

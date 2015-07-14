@@ -3,7 +3,8 @@ class Agreement extends AbstractEntity {
 	
 	public static $fields = array('agreement_id', 'student_id', 'supervisor_id', 
 			'mentor_id', 'proposal_id', 'project_id', 'description', 
-			'student_signed', 'supervisor_signed', 'mentor_signed');
+			'student_signed', 'supervisor_signed', 'mentor_signed',
+            'student_completed', 'supervisor_completed', 'mentor_completed', 'evaluation');
 	
 	private static $instance;
 	public static $type = _AGREEMENT_OBJ;
@@ -111,7 +112,7 @@ class Agreement extends AbstractEntity {
 	
 		} catch (Exception $ex) {
 			$txn->rollback();
-			drupal_set_message(t('We could not update your agreement.'). (_DEBUG? $ex->__toString(): ''), 'error');
+			drupal_set_message(t('We could not update the agreement.'). (_DEBUG? $ex->__toString(): ''), 'error');
 		}
 		return FALSE;
 	}

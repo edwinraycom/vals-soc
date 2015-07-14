@@ -1,10 +1,13 @@
 <?php
 include_once(_VALS_SOC_ROOT.'/includes/functions/tab_functions.php');//it is sometimes included after propjects.php which does the same
 
-function showRoleDependentAdminPage($role, $show_action='administer', $show_last= FALSE){
+function showRoleDependentPage($role, $show_action='administer', $show_last= FALSE){
 	echo "<a href='"._WEB_URL."/dashboard'>".t('Back To Dashboard')."</a><br/>";
 	switch ($role){
 		case _ADMINISTRATOR_TYPE:
+			showAdminPage($show_action, $show_last);
+			break;
+        case _SOC_TYPE:
 			showAdminPage($show_action, $show_last);
 			break;
 		case _SUPERVISOR_TYPE:
@@ -24,19 +27,36 @@ function showRoleDependentAdminPage($role, $show_action='administer', $show_last
 }
 
 function showAdminPage($show_action, $show_last=FALSE){
-	//TODO check for the role of current user
-	echo '<h2>'.t('All the groups and persons').'</h2>';
 	$data = array();
-	$data[] = array(1, 'Institutes', 'list', _INSTITUTE_GROUP);
-	$data[] = array(1, 'Organisations', 'list', _ORGANISATION_GROUP);
-	$data[] = array(1, 'Tutors', 'list', _SUPERVISOR_TYPE);
-	$data[] = array(1, 'Mentors', 'list', _MENTOR_TYPE);
-	$data[] = array(1, 'Students', 'list', _STUDENT_TYPE);
-	$data[] = array(1, 'Organisation Admins', 'list', _ORGADMIN_TYPE);
-	$data[] = array(1, 'Institute Admins', 'list', _INSTADMIN_TYPE);
-	$nr_tabs = count($data);
-	echo renderTabs($nr_tabs, null, 'admin_page-', '', $data, 0, TRUE,
-			renderOrganisations(_INSTITUTE_GROUP, '', 'all', 'admin_page-1'));
+    $nr_tabs = 0;
+	if (($show_action == 'administer') || ($show_action == 'overview')){
+		echo '<h2>'.t('All the groups and persons').'</h2>';
+		$data[] = array(1, 'Institutes', 'list', _INSTITUTE_GROUP);
+		$data[] = array(1, 'Organisations', 'list', _ORGANISATION_GROUP);
+		$data[] = array(1, 'Tutors', 'list', _SUPERVISOR_TYPE);
+		$data[] = array(1, 'Mentors', 'list', _MENTOR_TYPE);
+		$data[] = array(1, 'Students', 'list', _STUDENT_TYPE);
+		$data[] = array(1, 'Organisation Admins', 'list', _ORGADMIN_TYPE);
+		$data[] = array(1, 'Institute Admins', 'list', _INSTADMIN_TYPE);
+		$nr_tabs = count($data);
+		echo renderTabs($nr_tabs, null, 'admin_page-', '', $data, 0, TRUE,
+				renderOrganisations(_INSTITUTE_GROUP, '', 'all', 'admin_page-1'));
+	} elseif ($show_action == 'proposals') {
+		echo '<h2>'.t('Overview of proposals per state').'</h2>';
+		
+		$data[] = array(1, 'draft', 'list', _PROPOSAL_OBJ, 0, 'state=draft');
+		$data[] = array(1, 'open', 'list', _PROPOSAL_OBJ, 0, 'state=open');
+		$data[] = array(1, 'published', 'list', _PROPOSAL_OBJ, 0, 'state=published');
+		$data[] = array(1, 'accepted', 'list', _PROPOSAL_OBJ, 0, 'state=accepted');
+		$data[] = array(1, 'rejected', 'list', _PROPOSAL_OBJ, 0, 'state=rejected');
+		$data[] = array(1, 'retracted', 'list', _PROPOSAL_OBJ, 0, 'state=retracted');
+		$data[] = array(1, 'finished', 'list', _PROPOSAL_OBJ, 0, 'state=finished');
+		$data[] = array(1, 'archived', 'list', _PROPOSAL_OBJ, 0, 'state=archived');
+		$nr_tabs = count($data);
+		
+		echo renderTabs($nr_tabs, null, 'admin_page-', _PROPOSAL_OBJ, $data, 0, TRUE,
+				renderProposals('draft', null, 'admin_page-1', TRUE), 1 , 'proposal');
+	}
 	$s = '';
 	for ($i=1;$i <= $nr_tabs;$i++){
 		$s .= ($i > 1)? ', ':'';
@@ -68,7 +88,6 @@ function showSupervisorPage($show_action, $show_last=FALSE){
 		} elseif ($show_action == 'groups'){
 			showInstituteGroupsAdminPage($my_institute, $show_last);
 		} elseif ($show_action == 'overview'){
-			//echo "deze institute pagina voor supervisors";
 			 showInstituteOverviewPage($my_institute);
 		} else {
 			echo tt('there is no such action possible %1$s', $show_action);

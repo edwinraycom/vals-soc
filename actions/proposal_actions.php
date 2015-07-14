@@ -50,7 +50,7 @@ switch ($_GET['action']){
 				return;
 			}
 		} else {
-			$owner_id = $GLOBALS['user']->uid;
+			$owner_id = Users::getMyId();
 		}
 		$project = Project::getProjectById($project_id);
 		$student_details = Users::getStudentDetails($owner_id);
@@ -61,7 +61,7 @@ switch ($_GET['action']){
 		}
 		if ($student_details){
 			if (!$proposal_id){
-				$proposals = Proposal::getInstance()->getProposalsPerProject($project_id, Users::getMyId());
+				$proposals = Proposal::getInstance()->getProposalsPerProject($project_id, $owner_id);
 				if (count($proposals) > 1){
 					//This case should not occur or very little, once we catch the case of having already a version
 					echo '<span style="color:orange;">'.
@@ -73,7 +73,6 @@ switch ($_GET['action']){
 				$proposal = $proposal_id ? Proposal::getInstance()->getProposalById($proposal_id): null;
 			}
 	
-				
 			echo "<div id='edit_proposal' class='edit_proposal' style='border-style: solid;border-width: 1px; border-color:	rgb(153,​ 217,​ 234);padding:10px;'>
 			<h2>".tt('Create proposal for :"%1$s"',$project['title'])."</h2>";
 			echo '<h3>'.t('Student details').'</h3>';
@@ -89,6 +88,17 @@ switch ($_GET['action']){
 			echo "</div>";
 		} else {
 			echo errorDiv(t('Not all details could be retrieved for you. You might not have been put in a student group. Contact your lecturer please.'));
+		}
+		break;
+	case 'list':
+		$target = altSubValue($_POST, 'target');
+        $state  = altSubValue( $_GET, 'state');
+		if($state){
+            $with_details = TRUE;
+			$proposals = Proposal::getProposalsPerOrganisation('','',$state, $with_details);
+			echo renderProposals($state, $proposals, $target, $with_details);
+		} else {
+			echo "No state passed ";
 		}
 		break;
 	case 'list_proposals':
@@ -193,11 +203,11 @@ switch ($_GET['action']){
 		$proposal_id = getRequestVar('proposal_id', null, 'post');
 		$target = getRequestVar('target', 'our_content', 'post');
 		if($proposal_id){
-			$is_modal = ($target !== 'our_content');
+			$is_modal = ($target == 'tab_edit');
 			//we need the container where the result is bad and we show an error msg
-			$container =  $is_modal ? 'admin_container' : 'our_content';
-			$before = 'toc' ;
-			$args = array('id' => $proposal_id, 'before'=> $before, 'target'=> $container, 'replace_target'=> true);
+			$container =  'our_content';//$is_modal ? 'admin_container' : 'our_content';
+			$before = $is_modal ? 'TableContainer' : 'toc' ;
+			$args = array('id' => $proposal_id, 'before'=> $before, 'target'=> $container, 'replace_target'=> ! $is_modal);
 			$proposal_nr = Proposal::getInstance()->getProposalById($proposal_id);
 			if (!$proposal_nr){
 				jsonBadResult(t('This proposal was already deleted!'), $args);
@@ -216,7 +226,7 @@ switch ($_GET['action']){
 				if ($num_deleted){
 					// junk the proposal comments too
 					ThreadedComments::getInstance()->removethreadsForEntity($proposal_id, _PROPOSAL_OBJ);
-					$args['before'] = '';
+					//$args['before'] = '';
 					jsonGoodResult(TRUE, tt('You have removed the proposal %1$s', $title), $args);
 				} else {
 					jsonBadResult(t('We could not remove your proposal'), $args);
@@ -394,10 +404,7 @@ switch ($_GET['action']){
 			return;
 		}
 		 
-		$selected_prev_set = false;
-		if($was_selected == 1){
-			$selected_prev_set = true;
-		}
+		$selected_prev_set = ($was_selected == 1);
 	
 		if(!$selected_prev_set){
 			// update the project
@@ -461,12 +468,15 @@ switch ($_GET['action']){
 			return;
 		}
 		if(isset($_POST['proposal_id']) && $_POST['proposal_id'] && isset($_POST['project_id']) && $_POST['project_id']){
-			if(Groups::isOwner('proposal', $_POST['proposal_id'])){
-				$proposal_id = $_POST['proposal_id'];
+			$proposal_id = $_POST['proposal_id'];
+            
+			if(Groups::isOwner('proposal', $proposal_id)){
 				module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
 				// get ALL my proposals
 				$all_my_proposals = Proposal::getInstance()->getProposalsBySearchCriteria($student, '', '', '', '', 0, 1000);
 				foreach ($all_my_proposals as $my_proposal){
+                    //From all my proposals this is the one I accept. Notify 
+                    //all stakeholders of this decision
 					if ($my_proposal->proposal_id == $proposal_id){
 						$project_id = $my_proposal->pid;
 						// next find all the other proposals for this project
@@ -475,10 +485,9 @@ switch ($_GET['action']){
 							if ($single_proposal_for_accepted_project->proposal_id == $proposal_id){
 								//email SUCCESSFUL (student, supervisor, mentor) that this project has now been accepted by this student
 								notify_all_of_project_offer_acceptance($single_proposal_for_accepted_project, $proposal_id, true);
-								$props = array();
-								$props['state'] = 'accepted'; //set this one to 'accepted'
-								Proposal::getInstance()->updateProposal($props, $proposal_id);
-								$props['state'] = 'active'; //set this one to 'accepted'
+								$props = array('state' => 'accepted');//set this proposal to 'accepted'
+                                Proposal::getInstance()->updateProposal($props, $proposal_id);
+								$props['state'] = 'active'; //set the project to 'active'
 								Project::getInstance()->changeProject($props, $project_id);
 							}
 							else{
@@ -491,8 +500,10 @@ switch ($_GET['action']){
 								}
 							}
 						}
-					}
-					else{ // this.proposal =!= accepted proposal // any other proposals by this student not accepted
+					} else { 
+                        // this.proposal =!= accepted proposal
+                        // any other proposals by this student not accepted, so 
+                        // projects are freed. 
 						if($my_proposal->state != 'rejected'){
 							$props = array();
 							$props['state'] = 'archived'; // set these to archived in case we need to separate later between auto rejected & manually rejected
@@ -500,20 +511,21 @@ switch ($_GET['action']){
 						}
 						$project_id = $my_proposal->pid;
 						$all_proposals_for_this_project = Proposal::getInstance()->getProposalsPerProject($project_id, '', true); // TODO - may need to set details flag here
-						foreach ($all_proposals_for_this_project as $single_proposal_for_unaccepted_project){
-							if ($single_proposal_for_unaccepted_project->owner_id == $student && 
-								$single_proposal_for_unaccepted_project->proposal_id == $single_proposal_for_unaccepted_project->pr_proposal_id){
+						//Now administer and notify changed situation for all proposals attached
+                        //to the project this proposal was for
+                        foreach ($all_proposals_for_this_project as $single_proposal_for_this_project){
+							if ($single_proposal_for_this_project->owner_id == $student && 
+								$single_proposal_for_this_project->proposal_id == $single_proposal_for_this_project->pr_proposal_id){
 								$update_props = array();
-								$update_props['proposal_id'] = NULL;
-								if($single_proposal_for_unaccepted_project->selected == "0"){ //(means its an interim)
+								$update_props['proposal_id'] = 0;
+								if ($single_proposal_for_this_project->selected == "0"){ //(means its an interim)
 									// email mentor only - withdrawn PREFERRED INTERIM
-									notify_all_of_project_offer_rejection($single_proposal_for_unaccepted_project, $proposal_id, true);
-								}
-								else{ // (means its an offer)
+									notify_all_of_project_offer_rejection($single_proposal_for_this_project, $proposal_id, true);
+								} else { // (means its an offer)
 									$update_props['selected'] = 0;
 									// email (mentor) - rejected OFFER - project is therefore reopened and he should choose another proposal
 									// email this proposal (student & supervisor) to say that the project has reopended and the mentor can choose another, possibly theirs
-									notify_all_of_project_offer_rejection($single_proposal_for_unaccepted_project, $proposal_id, false);
+									notify_all_of_project_offer_rejection($single_proposal_for_this_project, $proposal_id, false);
 								}
 								//Proposal::getInstance()->updateProposal($update_props, $proposal_id); //uncomment to set this after testing *********
 								Project::getInstance()->changeProject($update_props, $project_id); //uncomment to set this after testing *********
@@ -526,9 +538,7 @@ switch ($_GET['action']){
 				}
 
 				// next create the initial agreement entity in the db
-				$a_props = array();
-				$a_props['proposal_id'] = $proposal_id;
-				$agreement = Agreement::getInstance()->insertAgreement($a_props);
+				$agreement = Agreement::getInstance()->insertAgreement(array('proposal_id' => $proposal_id));
 				echo getAcceptedProjectResponse();
 			}
 			else{

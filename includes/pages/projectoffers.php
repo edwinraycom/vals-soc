@@ -58,7 +58,7 @@ function initBrowseProjectOffersLayout(){
 						sorting: true,
 						defaultSorting: "pid ASC",
 						actions: {
-							listAction: moduleUrl + "actions/proposal_actions.php?action=list_my_offers"
+							listAction: module_url + "actions/proposal_actions.php?action=list_my_offers"
 						},
 						fields: {
 							pid: {

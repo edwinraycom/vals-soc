@@ -13,8 +13,30 @@ $path_arr = explode('/', $_SERVER['HTTP_REFERER']);//we need to store in separat
 $mine = ('mine' == (array_pop($path_arr)));//needed for save and delete
 
 switch ($_GET['action']){
+	case 'eval_projects':
+		if (!Users::isAdmin()){
+			echo jsonBadResult(t('You can only evaluate a project as admin.'));
+			return;
+		}
+		initEvaluateProjectLayout();
+	break;
+	case 'approve':
+		if (!Users::isAdmin()){
+			echo jsonBadResult(t('You can only approve a project as admin.'));
+			return;
+		}
+		//We could bulk it like this
+		//UPDATE  `vals_vps2`.`soc_projects` SET state = 'open'  where state ='pending'
+	break;
+	case 'reject':
+		if (!Users::isAdmin()){
+			echo jsonBadResult(t('You can only reject a project as admin.'));
+			return;
+		}
+	break;
 	case 'project_page':
-		initBrowseProjectLayout();
+        $pid = getRequestVar('pid');
+		initBrowseProjectLayout($pid);
 	break;
 	case 'mark':
 		if (!(Users::isStudent())){
@@ -140,6 +162,11 @@ switch ($_GET['action']){
 			if(isset($_POST['state'])){
 				$state = $_POST['state'];
 			}
+            $supervisor=null;
+			if(isset($_POST['supervisor'])){
+				$supervisor = $_POST['supervisor'];
+			}
+            
 			$project_id = getRequestVar('pid', null);
 			$favourites_only = getRequestVar('favourites', false);
 			//Return result to jTable
@@ -160,9 +187,9 @@ switch ($_GET['action']){
 					}
 				} else {
 					$jTableResult['TotalRecordCount'] = Project::getInstance()->getProjectsRowCountBySearchCriteria(
-							$tags, $organisation, $state);
+							$tags, $organisation, $state, $supervisor);
 					$jTableResult['Records'] = Project::getInstance()->getProjectsBySearchCriteria($tags,
-							$organisation, $state, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
+							$organisation, $state, $supervisor, $_GET["jtSorting"], $_GET["jtStartIndex"], $_GET["jtPageSize"]);
 				}
 			}
 			//Save it for navigation

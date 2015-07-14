@@ -90,13 +90,16 @@ switch ($_GET['action']){
     		}
     	}
     	$show_last = altSubValue($_POST, 'new_tab', false);
-    	showRoleDependentAdminPage(getRole(), $show_action, $show_last);
+    	showRoleDependentPage(getRole(), $show_action, $show_last);
     break;
     case 'view':
     	$type = altSubValue($_POST, 'type');
     	$id = altSubValue($_POST, 'id');
     	$target = altSubValue($_POST, 'target', '');
     	$buttons = altSubValue($_GET, 'buttons', true);
+        if (Users::isOfType(_SOC_TYPE)){
+            $buttons = FALSE;
+        }
     	if (! ($id && $type && $target)){
     		die(t('There are missing arguments. Please inform the administrator of this mistake.'));
     	}

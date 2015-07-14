@@ -29,6 +29,15 @@ function vals_soc_administer_page(){
     return ob_get_clean();
 }
 
+function vals_soc_overview_proposals_page(){
+	ob_start();
+	vals_soc_content_start();
+	$action = 'proposals';
+	include(_VALS_SOC_ROOT. '/includes/ui/administer/blocklayout.inc');
+	vals_soc_content_end();
+	return ob_get_clean();
+}
+
 function vals_soc_administer_entity_page($action='administer'){
 	ob_start();
 	vals_soc_content_start();
@@ -97,6 +106,9 @@ function vals_soc_dashboard_overview_page(){
 	$includeFile = null;
 	if(hasRole(array(_ADMINISTRATOR_TYPE))){
 		$includeFile = 'includes/ui/dashboard/adminlayout';
+	}
+    if(hasRole(array(_SOC_TYPE))){
+		$includeFile = 'includes/ui/dashboard/soclayout';
 	}
 	elseif(hasRole(array(_ORGADMIN_TYPE))){
 		$includeFile = 'includes/ui/dashboard/orgadminlayout';
@@ -215,5 +227,12 @@ function vals_soc_my_accepted_project_agreement(){
 	module_load_include('inc', 'vals_soc', 'includes/ui/administer/agreement');
 	vals_soc_content_end();
 	return ob_get_clean();
-	
+}
+
+function vals_soc_my_accepted_project_finalisation(){
+	ob_start();
+	vals_soc_content_start();
+	module_load_include('inc', 'vals_soc', 'includes/ui/administer/finalise');
+	vals_soc_content_end();
+	return ob_get_clean();
 }

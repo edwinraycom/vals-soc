@@ -66,6 +66,10 @@ class Users extends AbstractEntity{
     	return isset($user) && isset($user->uid) && $user->uid;
     }
     
+    public static function isSoc(){
+        return self::isOfType(_SOC_TYPE);
+    }
+    
 	public static function isOfType($type, $uid=''){
 		global $user;
 		
@@ -195,26 +199,18 @@ class Users extends AbstractEntity{
 					"SELECT group_id from soc_user_membership t".
 					" WHERE t.uid = $group_head AND t.type = '$group_type' ")
 					->fetchCol();
-			if ($group_ids){				 
-				//So we know which groups and of which type membertype should be member
-				$query = "SELECT DISTINCT u.*,n.name as fullname from users as u ".
-						"left join users_roles as ur on u.uid = ur.uid ".
-						"left join role as r  on ur.rid = r.rid ".
-						"left join soc_user_membership as um  on u.uid = um.uid ".
-						'left join soc_names as n on u.uid=n.names_uid '.
-						"WHERE r.name = '$member_type' AND um.type = '$group_type' AND um.group_id IN (".
-						implode(',', $group_ids).")";
-				$members = db_query($query);
-			} else {
-				//So the admin cannot see who are subscribed???? Used to be : return NULL;
-				$query = "SELECT DISTINCT u.*,n.name as fullname from users as u ".
+            $query = "SELECT DISTINCT u.*,n.name as fullname from users as u ".
 						"left join users_roles as ur on u.uid = ur.uid ".
 						"left join role as r  on ur.rid = r.rid ".
 						"left join soc_user_membership as um  on u.uid = um.uid ".
 						'left join soc_names as n on u.uid=n.names_uid '.
 						"WHERE r.name = '$member_type' AND um.type = '$group_type' ";
+			if ($group_ids){				 
+				//So we know which groups and of which type membertype should be member
+				$query .= " AND um.group_id IN (". implode(',', $group_ids).")";
 				$members = db_query($query);
 			}
+            $members = db_query($query);
 		} else {
 			if ($id){
 				$members = db_query(
@@ -462,7 +458,7 @@ class Users extends AbstractEntity{
 						" left join users_roles as ur  on u.uid = ur.uid".
 						" left join role as r on ur.rid = r.rid".
 						" left join soc_user_membership as um on u.uid = um.uid".
-						" WHERE r.name = ':orgadmin' AND um.type = :organisation AND um.group_id = $organisation ",
+						" WHERE r.name = :orgadmin AND um.type = :organisation AND um.group_id = $organisation ",
       						array(':orgadmin' => _ORGADMIN_TYPE, ':organisation' =>_ORGANISATION_GROUP));
 			} else {
 				return NULL;
@@ -476,8 +472,8 @@ class Users extends AbstractEntity{
 		if ($id){
 			$query = "SELECT o.* from soc_institutes as o
 						left join soc_user_membership as um on o.inst_id = um.group_id
-						WHERE um.type = 'institute' AND um.uid =".$id;
-			return db_query($query);
+						WHERE um.type = :institute AND um.uid =".$id;
+			return db_query($query, array(':institute' =>_INSTITUTE_GROUP));
 		} else {
 			return null;
 		}
