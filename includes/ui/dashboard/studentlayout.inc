@@ -116,7 +116,7 @@ function getStudentLayout($timeline_args){
 	$found_agreement = Agreement::getInstance()->getSingleStudentsAgreement();
 	if($timeline_args['myOffersVisible'] && (!$found_agreement)){
 		$output .='
-					<div class="column-entry  proposals_submitted">
+					<div class="column-entry proposals_submitted">
 						<h4>
 							<a class="dashboard-link component-link"
 							href="'.$base_url.'/dashboard/projects/offers"

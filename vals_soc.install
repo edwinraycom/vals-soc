@@ -204,5 +204,18 @@ function vals_soc__DONOTDOTHISupdate_7106(){
 			"ADD COLUMN `likes` SMALLINT UNSIGNED NULL DEFAULT '0' AFTER `views`")->execute();
 	}
 	
+    //To be done in 0.5.7
+    function vals_soc_update_7109(){
+        db_query("ALTER TABLE `soc_agreements`
+            ADD COLUMN `student_completed` TINYINT NULL DEFAULT '0' COMMENT 'Whether the project is signed as finished by the student' AFTER `mentor_signed`");
+        db_query("ALTER TABLE `soc_agreements`
+            ADD COLUMN `supervisor_completed` TINYINT NULL DEFAULT '0' COMMENT 'Whether the project is signed as finished by the supervisor' AFTER `student_completed`");
+
+        db_query("ALTER TABLE `soc_agreements`
+            ADD COLUMN `mentor_completed` TINYINT NULL DEFAULT '0' COMMENT 'Whether the project is signed as finished by the mentor' AFTER `supervisor_completed`");
+
+        db_query("ALTER TABLE `soc_agreements`
+            ADD COLUMN `evaluation` TEXT NULL COMMENT 'Space for evaluation text' AFTER `mentor_completed`");
+    }
 		
 	 

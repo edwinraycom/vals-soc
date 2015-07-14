@@ -500,8 +500,10 @@ switch ($_GET['action']){
 								}
 							}
 						}
-					}
-					else{ // this.proposal =!= accepted proposal // any other proposals by this student not accepted
+					} else { 
+                        // this.proposal =!= accepted proposal
+                        // any other proposals by this student not accepted, so 
+                        // projects are freed. 
 						if($my_proposal->state != 'rejected'){
 							$props = array();
 							$props['state'] = 'archived'; // set these to archived in case we need to separate later between auto rejected & manually rejected
@@ -509,16 +511,17 @@ switch ($_GET['action']){
 						}
 						$project_id = $my_proposal->pid;
 						$all_proposals_for_this_project = Proposal::getInstance()->getProposalsPerProject($project_id, '', true); // TODO - may need to set details flag here
-						foreach ($all_proposals_for_this_project as $single_proposal_for_this_project){
+						//Now administer and notify changed situation for all proposals attached
+                        //to the project this proposal was for
+                        foreach ($all_proposals_for_this_project as $single_proposal_for_this_project){
 							if ($single_proposal_for_this_project->owner_id == $student && 
 								$single_proposal_for_this_project->proposal_id == $single_proposal_for_this_project->pr_proposal_id){
 								$update_props = array();
-								$update_props['proposal_id'] = NULL;
-								if($single_proposal_for_this_project->selected == "0"){ //(means its an interim)
+								$update_props['proposal_id'] = 0;
+								if ($single_proposal_for_this_project->selected == "0"){ //(means its an interim)
 									// email mentor only - withdrawn PREFERRED INTERIM
 									notify_all_of_project_offer_rejection($single_proposal_for_this_project, $proposal_id, true);
-								}
-								else{ // (means its an offer)
+								} else { // (means its an offer)
 									$update_props['selected'] = 0;
 									// email (mentor) - rejected OFFER - project is therefore reopened and he should choose another proposal
 									// email this proposal (student & supervisor) to say that the project has reopended and the mentor can choose another, possibly theirs

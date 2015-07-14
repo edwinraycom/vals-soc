@@ -549,6 +549,10 @@ function renderProposalTabs(result, labels, container){
 	return s;
 }
 
+function getFinalisation(agreementId){
+	ajaxCall("agreement", "render_finalisation_for_id", {id: agreementId, target:'our_content'}, "formResult", 'html', 'our_content');
+}
+
 function getAgreement(agreementId){
 	ajaxCall("agreement", "render_agreement_for_id", {id: agreementId, target:'our_content'}, "formResult", 'html', 'our_content');
 }

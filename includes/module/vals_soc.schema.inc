@@ -25,8 +25,12 @@ function vals_soc_change_text_field_max_length($field_name, $new_length) {
 }
 
 function mymodule_update_7002() {
+    //When you have fields to enlarge, replace field_name for the name of the field
+    //you want to change
 	//vals_soc_change_text_field_max_length('field_name', 50);
+    //vals_soc_change_text_field_max_length('field_name', 50);//....
 }
+
 /* For the moment being we work with the sql scripts in the code. So when the module is installed it will call this function
  * to know about the db schema's to use for the db
 

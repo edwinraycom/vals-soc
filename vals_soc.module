@@ -222,10 +222,9 @@ function vals_soc_mail($key, &$message, $params) {
 }
 
 function vals_soc_init(){
-// we make sure the settings are included first and the migrate as the very last. The latter should be the last one,
-//I thought
-//So we can remove everywhere the settings.js
-
+    // we make sure the settings are included first and the migrate as the very last. The latter should be the last one,
+    //I thought
+    //So we can remove everywhere the settings.js
 	@session_start();
 	
 	$_SESSION['site_settings'] = array(_WEB_URL, Users::isUser(), _DEBUG);
