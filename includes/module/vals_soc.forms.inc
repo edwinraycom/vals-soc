@@ -914,6 +914,7 @@ function vals_soc_proposal_form($form, &$form_state, $proposal='', $target='', $
 }
 
 function vals_soc_invite_form($form, &$form_state, $org='', $target='', $show_action='administer', $type, $subtype=''){
+    //For the invite body we need the message body file
 	include_once(_VALS_SOC_ROOT. '/includes/module/vals_soc.mail_messages.inc');
 	$message = get_invite_email_body($org, $subtype, ($subtype== _STUDENT_TYPE)? t('your institute'): '');
 	

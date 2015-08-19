@@ -23,7 +23,7 @@ function getSupervisorLayout($timeline_args){
 	<!-- column one -->
 				<div class="column first">
 	';
-	if($timeline_args['managedOrganisationsVisible']){
+	if($timeline_args['managedInstitutesVisible']){
 		$output .='
 					<div class="column-entry org_app">
 						<h4>

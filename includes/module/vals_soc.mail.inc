@@ -295,6 +295,38 @@ function notify_students_and_supervisors_of_project_status_update($all_proposals
 	vals_soc_send_emails_cron($items);
 }
 
+function notify_all_of_project_finalisation($proposal, $signer_role){
+	$items = array();
+	$number_of_emails_count = 0;
+	$subject = t('VALS Notification: Someone has marked a project (you are involved in) as ready');
+    switch ($signer_role){
+        case _STUDENT_TYPE:
+                $m_body_1 = get_project_finalisation_email_body($proposal, _SUPERVISOR_TYPE);
+                $m_body_2 = get_project_finalisation_email_body($proposal, _MENTOR_TYPE);
+                $r_1 = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->supervisor_user_mail);
+                $r_2 = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mentor_user_mail);
+            break;
+        case _SUPERVISOR_TYPE:
+                $m_body_1 = get_project_finalisation_email_body($proposal, _STUDENT_TYPE);
+                $m_body_2 = get_project_finalisation_email_body($proposal, _MENTOR_TYPE);
+                $r_1 = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mail);
+                $r_2 = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mentor_user_mail);
+        break;
+        case _MENTOR_TYPE:
+                $m_body_1 = get_project_finalisation_email_body($proposal, _SUPERVISOR_TYPE);
+                $m_body_2 = get_project_finalisation_email_body($proposal, _STUDENT_TYPE);
+                $r_1 = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->supervisor_user_mail);
+                $r_2 = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mail);
+        break;
+    }
+    $items[] = array('key' => 'vals_soc_notify_project_finalisation', 'to' => $r_1,
+        'from' => NULL, 'subject' => $subject, 'body' => $m_body_1);
+	$items[] = array('key' => 'vals_soc_notify_project_finalisation', 'to' => $r_2,
+        'from' => NULL, 'subject' => $subject, 'body' => $m_body_2);
+
+	vals_soc_send_emails_cron($items);
+}
+
 function notify_all_of_project_offer_acceptance($proposal, $proposal_id, $was_successful){
 
 	$student_recipient = (_DEBUG ? _TEST_EMAIL_ADDRESS : $proposal->mail);

@@ -67,6 +67,15 @@ class Agreement extends AbstractEntity {
 			if (!isset($props['mentor_signed'])){
 				$props['mentor_signed'] = 0;
 			}
+            if (!isset($props['student_completed'])){
+				$props['student_completed'] = 0;
+			}
+			if (!isset($props['supervisor_completed'])){
+				$props['supervisor_completed'] = 0;
+			}
+			if (!isset($props['mentor_completed'])){
+				$props['mentor_completed'] = 0;
+			}
 			/*
 			if (! testInput($props, array('owner_id', 'org_id', 'inst_id', 'supervisor_id','pid', 'title'))){
 				return FALSE;
@@ -94,20 +103,41 @@ class Agreement extends AbstractEntity {
 		return FALSE;
 	}
 	
-	static function updateAgreement($props){
+	static public function updateAgreement($props){
 		if (!$props){
 			drupal_set_message(t('Update requested with empty (filtered) data set'), 'error');
 			return false;
 		}
-	//echo var_dump($props);
 		$txn = db_transaction();
 		try {
 			$id = db_update(tableName(_AGREEMENT_OBJ))->fields($props)
-			->condition(self::keyField(_AGREEMENT_OBJ), $props['agreement_id'])->execute();
+                ->condition(self::keyField(_AGREEMENT_OBJ), $props['agreement_id'])->execute();
 			if ($props['student_signed'] && $props['supervisor_signed'] && $props['mentor_signed']) {
 				$res = db_update(tableName(_PROJECT_OBJ))->fields(array('state'=>'active'))
-				->condition(self::keyField(_PROJECT_OBJ), $props['project_id'])->execute();
+                    ->condition(self::keyField(_PROJECT_OBJ), $props['project_id'])->execute();
+//Seems to be done elsewhere
+//                $res = db_update(tableName(_PROPOSAL_OBJ))->fields(array('state'=>'accepted'))
+//				->condition(self::keyField(_PROPOSAL_OBJ), $props['proposal_id'])->execute();
 			}
+            
+            //Verzend email
+            if ($props['student_completed'] || $props['supervisor_completed'] || $props['mentor_completed']){
+                //TODO: send mail here
+                module_load_include('php', 'vals_soc', '/includes/classes/Organisations');
+                module_load_include('php', 'vals_soc', '/includes/classes/Institutes');
+                module_load_include('php', 'vals_soc', '/includes/classes/Proposal');
+                
+                $agreement = self::getSingleAgreementById($props['agreement_id']);
+                $proposal = Proposal::getProposalById($agreement->proposal_id, true);
+                module_load_include('inc', 'vals_soc', 'includes/module/vals_soc.mail');
+                notify_all_of_project_finalisation($proposal, getRole());
+                if ($props['student_completed'] && $props['supervisor_completed'] && $props['mentor_completed']) {
+                    $res = db_update(tableName(_PROJECT_OBJ))->fields(array('state'=>'finished'))
+                    ->condition(self::keyField(_PROJECT_OBJ), $props['project_id'])->execute();
+                    $res = db_update(tableName(_PROPOSAL_OBJ))->fields(array('state'=>'finished'))
+                    ->condition(self::keyField(_PROPOSAL_OBJ), $props['proposal_id'])->execute();
+                }
+            }
 			return TRUE;
 	
 		} catch (Exception $ex) {
