@@ -22,22 +22,6 @@ function getOrgAdminLayout($timeline_args){
 				<!-- column one -->
 				<div class="column first">
 	';
-// 	if($timeline_args['connectionsVisible']){
-// 		$output .='
-// 					<div class="column-entry connections_dashboard">
-// 						<h4>
-// 							<a class="dashboard-link"
-// 							href="#"
-// 							title="'.t("Connections").'">'.t("Connections").'</a>
-// 						</h4>
-// 						<p>'.t("Connect with organisations, check current status and participate in the program.").'</p>
-// 						<div>
-// 							<a href="#" title="'.t("See your connections").'">'.t("See your connections").'</a> | 
-// 							<a href="#" title="'.t("Connect with organisations").'">'.t("Connect with organisations").'</a>
-// 						</div>
-// 					</div>
-// 		';
-// 	}
 	
 	if($timeline_args['managedOrganisationsVisible']){
 		$output .='

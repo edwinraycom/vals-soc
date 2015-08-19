@@ -21,7 +21,7 @@ function getInstAdminLayout($timeline_args){
 				<!-- column one -->
 				<div class="column first">
 	';
-	if($timeline_args['managedOrganisationsVisible']){
+	if($timeline_args['managedInstitutesVisible']){
 		$output .='
 					<div class="column-entry org_app">
 						<h4>
@@ -62,22 +62,6 @@ function getInstAdminLayout($timeline_args){
 		</div>
 		';
 	}
-/* 	if($timeline_args['connectionsVisible']){
-		$output .='
-					<div class="column-entry connections_dashboard">
-						<h4>
-							<a class="dashboard-link"
-							href="'.$base_url.'/dashboard/institute/group/administer"
-							title="'.t("Groups").'">'.t("Groups").'</a>
-						</h4>
-						<p>'.t("Create groups of students to manage codes and the initial supervisor-student relation.").'</p>
-						<div>
-							<a href="#" title="'.t("Create Groups").'">'.t("Create and see your list of groups").'</a> | 
-							<!-- <a href="#" title="'.t("Connect with organisations").'">'.t("Connect with organisations").'</a>-->
-						</div>
-					</div>
-		';
-	} */
 	
 	$output .='	
 				</div>

@@ -43,7 +43,6 @@ function showAdminPage($show_action, $show_last=FALSE){
 				renderOrganisations(_INSTITUTE_GROUP, '', 'all', 'admin_page-1'));
 	} elseif ($show_action == 'proposals') {
 		echo '<h2>'.t('Overview of proposals per state').'</h2>';
-		
 		$data[] = array(1, 'draft', 'list', _PROPOSAL_OBJ, 0, 'state=draft');
 		$data[] = array(1, 'open', 'list', _PROPOSAL_OBJ, 0, 'state=open');
 		$data[] = array(1, 'published', 'list', _PROPOSAL_OBJ, 0, 'state=published');

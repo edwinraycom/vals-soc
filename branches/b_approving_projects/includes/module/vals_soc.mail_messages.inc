@@ -142,7 +142,7 @@ function get_project_rejection_email_body($record, $is_interim, $user_type){
 
 	if($user_type=='student'){
 		$recipient_username = $student_username;
-		$alert .= t('A project idea for which you have previously written a proposal for has now reopened. ');
+		$alert .= t('A project idea for which you have previously written a proposal for, has now reopened. ');
 		$alert .= '<br/><br/>';
 		$alert .= t("This is because the project was offered to another student who subsequently chose another. ");
 		$alert .= t("If you have not already received a project offer from another project, then it may be worthwhile ");
@@ -794,8 +794,128 @@ function get_project_status_update_email_body($record, $is_final, $is_student, $
 	$output .= '<br/>';
 	$output .= sprintf('<img src="%1$s/sites/all/themes/media/logo.png">', $server);
 	$output .= '<p>';
-	//
+	return $output;
+}
 
+function get_project_finalisation_email_body($record, $recipient_role){
+	$output = '';
+	$server = _VALS_SOC_FULL_URL;
+	
+	$student_username = $record->name; //student userid
+	$student_email = $record->mail; // student mail
+	$student_institute = $record->i_name; //Institute name where student is from
+	
+	$supervisor_username = $record->supervisor_user_name;
+	$supervisor_email = $record->supervisor_user_mail;
+	
+	$mentor_username = $record->mentor_user_name;
+	$mentor_email = $record->mentor_user_mail;
+	$mentor_organisation = $record->o_name;
+	
+	$project_title = $record->pr_title; //project title
+	$proposal_title = $record->title; //proposal title
+	$proposal_synopsis = $record->solution_short;
+	$alert='';
+	
+	if($recipient_role == _SUPERVISOR_TYPE){
+		$recipient_username = $record->supervisor_user_name;
+		$alert .= t('One of your students has finished his/her work for the the project idea below. '.
+				'The mentor can write an evaluation text for the work done. You can finalise the '
+                . 'project and reward the student possibly with academic credits.');
+	} elseif ($recipient_role == _MENTOR_TYPE) {// student 
+		$recipient_username = $record->mentor_user_name;//$record->name;
+		$alert .= t('For one of your projects, the student has finished his/her work and signed the '
+            . 'projects as completed. Now it is time to review the work done, write an evaluation text, etc.'
+            . 'Of course you can contact the student and/or supervisor with'
+            . 'the contact details you find below.');
+    } else {
+        $recipient_username = $record->name;
+		$alert .= t('Your mentor and/or supervisor have (also) marked the project '
+            . 'you worked on, as completed.');
+    }
+       
+	$output='';
+	$output .= '<p>';
+	$output .= t('Hello').' '. $recipient_username . ',';
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= $alert;
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$text= '';
+	if(!$is_student){
+		$text='students ';
+	}
+	$output .= t('For information, here is an overview of your '.$text . 'submitted proposal...');
+	$output .= '<br/>';
+	
+	$output .= "<p>";
+	$output .= "<b>" . t('Project idea') . "</b>";
+	$output .= "<br/>";
+	$output .= $project_title;
+	$output .= "</p>";
+	
+	$output .= "<p>";
+	$output .= "<b>" . t('Proposal title') . "</b>";
+	$output .= "<br/>";
+	$output .= $proposal_title;
+	$output .= "</p>";
+	
+	$output .= "<p>";
+	$output .= "<b>" . t('Proposal synopsis') . "</b>";
+	$output .= "<br/>";
+	$output .= $proposal_synopsis;
+	$output .= "</p>";
+	
+	
+	$output .= "<b>" . t('Contact details') . "</b>";
+	$output .= '<ul class=\'grouplist\'>';
+	
+	$output .= "<li>";
+	$output .= t('Student username') . ": <i>" . $student_username . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Student email') . ": <i>" . $student_email . "</i>";
+	$output .= "</li>";
+	
+	$output .= '<br/>';
+	
+	$output .= "<li>";
+	$output .= t('Student supervisors username') . ": <i>" . $supervisor_username . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Student supervisors email') . ": <i>" . $supervisor_email . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Students Institution') . ": <i>" . $student_institute . "</i>";
+	$output .= "</li>";
+	
+	$output .= '<br/>';
+	
+	$output .= "<li>";
+	$output .= t('Initial mentors username') . ": <i>" . $mentor_username . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Initial mentors email') . ": <i>" . $mentor_email . "</i>";
+	$output .= "</li>";
+	$output .= "<li>";
+	$output .= t('Initial mentors Organisation') . ": <i>" . $mentor_organisation . "</i>";
+	$output .= "</li>";
+	
+	$output .= "</ul>";
+	
+	$output .= "<p>";
+	$output .= tt('Go to <a href="%1$s/dashboard" target="_blank">%1$s/dashboard</a> to view more details.', $server);
+	$output .= "</p>";
+	
+	$output .= '<br/>';
+	$output .= t('Many Thanks,');
+	$output .= '<br/>';
+	$output .= t('The VALS team');
+	$output .= '<br/>';
+	$output .= '<br/>';
+	$output .= sprintf('<img src="%1$s/sites/all/themes/media/logo.png">', $server);
+	$output .= '<p>';
 	return $output;
 }
 

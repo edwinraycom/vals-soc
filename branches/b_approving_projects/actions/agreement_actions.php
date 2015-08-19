@@ -1,5 +1,8 @@
 <?php
 include('include.php');//Includes the necessary bootstrapping and the ajax functions
+//include(_VALS_SOC_ROOT.'/includes/classes/Organisations.php');
+//include(_VALS_SOC_ROOT.'/includes/classes/Institutes.php');
+//include(_VALS_SOC_ROOT.'/includes/classes/Proposal.php');
 include(_VALS_SOC_ROOT.'/includes/classes/Agreement.php');
 include(_VALS_SOC_ROOT.'/includes/functions/render_functions.php');
 include(_VALS_SOC_ROOT.'/includes/pages/myacceptedproject.php');
@@ -80,8 +83,9 @@ switch ($_GET['action']){
 		$type = altSubValue($_POST, 'type', '');
 		$id = altSubValue($_POST, 'id', '');
 		//$show_action = altSubValue($_POST, 'show_action', '');
-	
-		$props = Agreement::getInstance()->filterPostLite(Agreement::getInstance()->getKeylessFields(), $_POST);
+        $agreement_obj = Agreement::getInstance();
+		$props = $agreement_obj->filterPostLite(
+            $agreement_obj->getKeylessFields());
 		
 		if(isset($_POST['student_completed'])){
 			$props['student_completed'] = 1;
@@ -96,8 +100,7 @@ switch ($_GET['action']){
 			$props['evaluation'] = $_POST['evaluation'];
 		}
 		$props['agreement_id'] = $id;
-        
-		$result = Agreement::getInstance()->updateAgreement($props);
+        $result = Agreement::getInstance()->updateAgreement($props);
 		if ($result){
 			echo json_encode(array(
 					'result'=>TRUE,
