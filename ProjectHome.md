@@ -1,0 +1,1 @@
+A drupal 7 module which is similar in nature to Googles Melange software, used to run the Summer of Code
